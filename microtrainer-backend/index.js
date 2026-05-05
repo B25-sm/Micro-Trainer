@@ -14,7 +14,7 @@ const { getStudentReport } = require("./services/analyticsService");
 
 // 🔥 NEW TRACKING + MEMORY
 const { aggregateStudent } = require("./services/trackingService");
-const { getStudentMemory } = require("./services/studentMemoryService");
+const { getStudentMemory } = require("./services/memoryService");
 const { getStudentHistory } = require("./services/readSheetsService");
 
 // 🔥 DASHBOARD
