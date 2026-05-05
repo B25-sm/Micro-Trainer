@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAnalytics, getMemory } from "../api/api";
+import { getAnalytics, getMemory } from "../api";
 import { motion } from "framer-motion";
 import {
   LineChart,

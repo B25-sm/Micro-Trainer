@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 /* =========================
    DESIGN TOKENS
@@ -53,19 +51,27 @@ html {
 }
 
 body {
-  @apply bg-bg text-text font-sans;
   margin: 0;
   line-height: 1.5;
   letter-spacing: 0.18px;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
 }
 
 /* =========================
    ROOT CONTAINER
 ========================= */
 #root {
-  @apply max-w-[1126px] mx-auto min-h-screen flex flex-col border-x border-border;
+  max-width: 1126px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
 }
 
 /* =========================
@@ -73,15 +79,19 @@ body {
 ========================= */
 h1,
 h2 {
-  @apply font-heading text-text-h;
+  font-family: var(--heading);
+  color: var(--text-h);
 }
 
 h1 {
-  @apply text-[56px] tracking-tight my-8;
+  font-size: 56px;
+  letter-spacing: -0.02em;
+  margin: 2rem 0;
 }
 
 h2 {
-  @apply text-2xl mb-2;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
 }
 
 p {
@@ -92,7 +102,12 @@ p {
    CODE BLOCK
 ========================= */
 code {
-  @apply font-mono text-sm px-2 py-1 rounded bg-code-bg text-text-h;
+  font-family: var(--mono);
+  font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  background-color: var(--code-bg);
+  color: var(--text-h);
 }
 
 /* =========================

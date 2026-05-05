@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getReport } from "../api/api";
+import { getReport } from "../api";
 import { motion } from "framer-motion";
 import {
   BarChart,
