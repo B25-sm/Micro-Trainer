@@ -5,6 +5,10 @@
 
 console.log('🧠 Micro Trainer: Background service worker started');
 
+// Production URLs
+const BACKEND_URL = 'https://micro-trainer.onrender.com';
+const FRONTEND_URL = 'https://micro-trainer.vercel.app';
+
 // Extension installed/updated
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'install') {
@@ -12,7 +16,7 @@ chrome.runtime.onInstalled.addListener((details) => {
     
     // Open welcome page
     chrome.tabs.create({
-      url: 'https://microtrainer.app/welcome'
+      url: FRONTEND_URL
     });
   }
   
@@ -38,8 +42,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     // Return configuration
     chrome.storage.sync.get(['apiUrl', 'studentId'], (data) => {
       sendResponse({
-        apiUrl: data.apiUrl || 'https://your-backend.onrender.com',
-        studentId: data.studentId || 'anonymous'
+        apiUrl: data.apiUrl || BACKEND_URL,
+        frontendUrl: FRONTEND_URL,
+        studentId: data.studentId || 'student_' + Date.now()
       });
     });
     return true; // Keep channel open for async response

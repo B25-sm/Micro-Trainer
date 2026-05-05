@@ -16,7 +16,7 @@ if (!document.getElementById('microtrainer-panel')) {
   // Create iframe to load React app
   const iframe = document.createElement('iframe');
   iframe.id = 'microtrainer-iframe';
-  iframe.src = chrome.runtime.getURL('dist/index.html');
+  iframe.src = 'https://micro-trainer.vercel.app';
   iframe.style.cssText = `
     width: 100%;
     height: 100%;
