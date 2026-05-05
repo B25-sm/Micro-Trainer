@@ -1,52 +1,99 @@
-const { google } = require("googleapis");
+const { getStudentReport, getStudentHistory } = require("./readSheetsService");
 
-const SPREADSHEET_ID = process.env.SHEET_ID;
-const SHEET_NAME = "Sheet1";
+// =======================================================
+// 🔹 Utility: Normalize Score
+// =======================================================
+function normalizeScore(val) {
+  if (!val) return 0;
+  return typeof val === "string" ? parseFloat(val) : val;
+}
 
-const auth = new google.auth.GoogleAuth({
-  keyFile: "credentials.json",
-  scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-});
+// =======================================================
+// 🔹 Utility: Detect Trend (Last 5 Answers)
+// =======================================================
+function getTrend(history = []) {
+  if (history.length < 2) return "stable";
 
-// 🔹 Get all rows
-async function getAllRows() {
+  const recent = history.slice(-5);
+  const scores = recent.map(h => normalizeScore(h.score));
+
+  const first = scores[0];
+  const last = scores[scores.length - 1];
+
+  if (last > first) return "improving";
+  if (last < first) return "declining";
+  return "stable";
+}
+
+// =======================================================
+// 🔹 Utility: Consistency Score
+// =======================================================
+function getConsistency(history = []) {
+  if (!history.length) return 0;
+
+  const scores = history.map(h => normalizeScore(h.score));
+  const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+
+  const variance =
+    scores.reduce((sum, s) => sum + Math.pow(s - avg, 2), 0) /
+    scores.length;
+
+  return (10 - Math.sqrt(variance)).toFixed(2); // higher = consistent
+}
+
+// =======================================================
+// 🔹 Utility: Performance Level
+// =======================================================
+function getLevel(avgScore) {
+  if (avgScore >= 8) return "Advanced";
+  if (avgScore >= 6) return "Intermediate";
+  if (avgScore >= 4) return "Beginner";
+  return "Weak";
+}
+
+// =======================================================
+// 🔹 MAIN MEMORY FUNCTION (UPGRADED)
+// =======================================================
+async function getStudentMemory(studentId) {
   try {
-    const client = await auth.getClient();
-    const sheets = google.sheets({ version: "v4", auth: client });
+    const report = await getStudentReport(studentId);
+    const history = await getStudentHistory(studentId);
 
-    const response = await sheets.spreadsheets.values.get({
-      spreadsheetId: SPREADSHEET_ID,
-      range: `${SHEET_NAME}!A:L`,
-    });
-
-    const rows = response.data.values;
-
-    if (!rows || rows.length <= 1) {
-      return [];
+    if (!report && !history?.length) {
+      return null;
     }
 
-    // Remove header row
-    const data = rows.slice(1);
+    const avgScore = normalizeScore(report?.averageScore);
+    const communication = normalizeScore(report?.communicationScore);
+    const technical = normalizeScore(report?.technicalScore);
 
-    return data.map(row => ({
-      timestamp: row[0],
-      studentId: row[1],
-      question: row[2],
-      answer: row[3],
-      subject: row[4],
-      score: Number(row[5]),
-      communication: row[6],
-      technical: row[7],
-      strengths: row[8],
-      mistakes: row[9],
-      improvement: row[10],
-      verdict: row[11],
-    }));
+    const trend = getTrend(history);
+    const consistency = getConsistency(history);
+    const level = getLevel(avgScore);
 
-  } catch (error) {
-    console.error("❌ Read Sheets Error:", error.message);
-    return [];
+    return {
+      // Core metrics
+      avgScore,
+      communication,
+      technical,
+
+      // Concepts
+      weakConcepts: report?.weakConcepts || [],
+      strongConcepts: report?.strongConcepts || [],
+
+      // Intelligence layer
+      trend,            // improving | declining | stable
+      consistency,      // stability score
+      level,            // Beginner | Intermediate | Advanced
+
+      // Raw meta
+      totalAttempts: history?.length || 0,
+      lastUpdated: new Date().toISOString(),
+    };
+  } catch (err) {
+    console.error("Memory Error:", err.message);
+    return null;
   }
 }
 
-module.exports = { getAllRows };
+module.exports = { getStudentMemory };

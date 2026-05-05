@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+// ================= SERVICES =================
 const { getAnswer } = require("./services/aiService");
 const { evaluateAnswer } = require("./services/interviewService");
 const {
@@ -10,14 +11,21 @@ const {
 } = require("./services/interviewSessionService");
 
 const { getStudentReport } = require("./services/analyticsService");
-const { getLeaderboard } = require("./services/leaderboardService");
 
-// 🔥 NEW (DASHBOARD)
+// 🔥 NEW TRACKING + MEMORY
+const { aggregateStudent } = require("./services/trackingService");
+const { getStudentMemory } = require("./services/studentMemoryService");
+const { getStudentHistory } = require("./services/readSheetsService");
+
+// 🔥 DASHBOARD
 const {
   getOverview,
   getWeakStudents,
   getTrends
 } = require("./services/dashboardService");
+
+// 🔥 NEW RANKING SYSTEM
+const { getLeaderboard } = require("./services/rankingService");
 
 const app = express();
 
@@ -27,6 +35,22 @@ const app = express();
 // =======================================================
 app.use(cors());
 app.use(express.json());
+
+
+// =======================================================
+// 🔐 SIMPLE TRAINER AUTH (UPGRADE LATER)
+// =======================================================
+function trainerOnly(req, res, next) {
+  const role = req.headers.role;
+
+  if (role !== "trainer") {
+    return res.status(403).json({
+      error: "Access denied (Trainer only)"
+    });
+  }
+
+  next();
+}
 
 
 // =======================================================
@@ -42,55 +66,33 @@ app.get("/", (req, res) => {
 
 
 // =======================================================
-// 🔹 TEACHING MODE (/ask)
+// 🔹 TEACHING MODE
 // =======================================================
 app.post("/ask", async (req, res) => {
   try {
     const { question } = req.body;
 
-    if (!question || typeof question !== "string" || question.trim() === "") {
-      return res.status(400).json({
-        error: "Question is required"
-      });
+    if (!question || typeof question !== "string") {
+      return res.status(400).json({ error: "Question is required" });
     }
 
     const result = await getAnswer(question);
 
-    if (!result || typeof result !== "object") {
-      return res.status(500).json({
-        error: "Invalid AI response"
-      });
-    }
-
-    const { answer, confidence } = result;
-    const isLow = confidence === "low";
-
-    console.log({
-      type: "ASK",
-      question,
-      confidence,
-      escalated: isLow,
-      time: new Date().toISOString()
-    });
-
     return res.json({
-      answer,
-      confidence,
-      escalated: isLow
+      answer: result.answer,
+      confidence: result.confidence,
+      escalated: result.confidence === "low"
     });
 
   } catch (error) {
-    console.error("Error in /ask:", error.message);
-
-    return res.status(500).json({
-      error: "Failed to process request"
-    });
+    console.error("ASK ERROR:", error.message);
+    res.status(500).json({ error: "Failed to process request" });
   }
 });
 
 
 // =======================================================
-// 🔹 SINGLE INTERVIEW (/interview)
+// 🔹 SINGLE INTERVIEW
 // =======================================================
 app.post("/interview", async (req, res) => {
   try {
@@ -109,53 +111,39 @@ app.post("/interview", async (req, res) => {
       studentId: studentId || "anonymous"
     });
 
-    console.log({
-      type: "INTERVIEW_SINGLE",
-      studentId,
-      score: feedback.score,
-      verdict: feedback.verdict,
-      time: new Date().toISOString()
-    });
-
     return res.json({
       feedback,
       time: new Date().toISOString()
     });
 
   } catch (error) {
-    console.error("Error in /interview:", error.message);
-
-    return res.status(500).json({
-      error: "Interview failed"
-    });
+    console.error("INTERVIEW ERROR:", error.message);
+    res.status(500).json({ error: "Interview failed" });
   }
 });
 
 
 // =======================================================
-// 🔹 START INTERVIEW SESSION
+// 🔹 SESSION FLOW
 // =======================================================
 app.post("/interview/start", async (req, res) => {
   try {
-    const { subject } = req.body;
+    const { subject, studentId } = req.body;
 
-    const session = await createSession(subject || "General");
+    const session = await createSession(
+      subject || "General",
+      20,
+      studentId || "anonymous"
+    );
 
     return res.json(session);
 
   } catch (error) {
-    console.error("Error starting interview:", error.message);
-
-    return res.status(500).json({
-      error: "Failed to start interview"
-    });
+    console.error("START ERROR:", error.message);
+    res.status(500).json({ error: "Failed to start interview" });
   }
 });
 
-
-// =======================================================
-// 🔹 ANSWER SESSION QUESTION
-// =======================================================
 app.post("/interview/answer", async (req, res) => {
   try {
     const { sessionId, answer } = req.body;
@@ -171,123 +159,112 @@ app.post("/interview/answer", async (req, res) => {
     return res.json(result);
 
   } catch (error) {
-    console.error("Error in session:", error.message);
-
-    return res.status(500).json({
-      error: "Session failed"
-    });
+    console.error("SESSION ERROR:", error.message);
+    res.status(500).json({ error: "Session failed" });
   }
 });
 
 
 // =======================================================
-// 🔹 STUDENT REPORT
+// 🔹 STUDENT APIs
 // =======================================================
+
+// Legacy
 app.get("/student/:studentId/report", async (req, res) => {
   try {
-    const { studentId } = req.params;
-
-    const report = await getStudentReport(studentId);
-
-    console.log({
-      type: "STUDENT_REPORT",
-      studentId,
-      time: new Date().toISOString()
-    });
-
+    const report = await getStudentReport(req.params.studentId);
     return res.json(report);
-
   } catch (error) {
-    console.error("Error in report:", error.message);
+    console.error("REPORT ERROR:", error.message);
+    res.status(500).json({ error: "Failed to fetch report" });
+  }
+});
 
-    return res.status(500).json({
-      error: "Failed to fetch report"
-    });
+// Analytics
+app.get("/student/:studentId/analytics", async (req, res) => {
+  try {
+    const history = await getStudentHistory(req.params.studentId);
+    const report = aggregateStudent(history);
+    return res.json(report);
+  } catch (error) {
+    console.error("ANALYTICS ERROR:", error.message);
+    res.status(500).json({ error: "Analytics failed" });
+  }
+});
+
+// Memory (AI adaptation)
+app.get("/student/:studentId/memory", async (req, res) => {
+  try {
+    const memory = await getStudentMemory(req.params.studentId);
+    return res.json(memory);
+  } catch (error) {
+    console.error("MEMORY ERROR:", error.message);
+    res.status(500).json({ error: "Memory fetch failed" });
   }
 });
 
 
 // =======================================================
-// 🔹 LEADERBOARD
+// 🔥 TRAINER-ONLY LEADERBOARD
 // =======================================================
-app.get("/leaderboard", async (req, res) => {
+
+// 🏆 FULLSTACK LEADERBOARD
+app.get("/trainer/leaderboard", trainerOnly, async (req, res) => {
   try {
     const data = await getLeaderboard();
+    return res.json(data);
+  } catch (error) {
+    console.error("LEADERBOARD ERROR:", error.message);
+    res.status(500).json({ error: "Leaderboard failed" });
+  }
+});
 
-    console.log({
-      type: "LEADERBOARD_VIEW",
-      time: new Date().toISOString()
-    });
+
+// 🧠 SUBJECT LEADERBOARD (React / Java / Python)
+app.get("/trainer/leaderboard/:subject", trainerOnly, async (req, res) => {
+  try {
+    const { subject } = req.params;
+
+    const data = await getLeaderboard(subject.toLowerCase());
 
     return res.json(data);
-
   } catch (error) {
-    console.error("Error in leaderboard:", error.message);
-
-    return res.status(500).json({
-      error: "Failed leaderboard"
-    });
+    console.error("SUBJECT LEADERBOARD ERROR:", error.message);
+    res.status(500).json({ error: "Subject leaderboard failed" });
   }
 });
 
 
 // =======================================================
-// 🔹 DASHBOARD APIs (🔥 NEW)
+// 🔹 DASHBOARD APIs
 // =======================================================
-
-// 📊 Overview
 app.get("/dashboard/overview", async (req, res) => {
   try {
     const data = await getOverview();
-
-    console.log({
-      type: "DASHBOARD_OVERVIEW",
-      time: new Date().toISOString()
-    });
-
     return res.json(data);
-
   } catch (error) {
-    console.error("Overview error:", error.message);
-    return res.status(500).json({ error: "Overview failed" });
+    console.error("OVERVIEW ERROR:", error.message);
+    res.status(500).json({ error: "Overview failed" });
   }
 });
 
-
-// ⚠️ Weak Students
 app.get("/dashboard/weak-students", async (req, res) => {
   try {
     const data = await getWeakStudents();
-
-    console.log({
-      type: "WEAK_STUDENTS_VIEW",
-      time: new Date().toISOString()
-    });
-
     return res.json(data);
-
   } catch (error) {
-    console.error("Weak students error:", error.message);
-    return res.status(500).json({ error: "Weak students failed" });
+    console.error("WEAK STUDENTS ERROR:", error.message);
+    res.status(500).json({ error: "Weak students failed" });
   }
 });
 
-
-// 📈 Trends
 app.get("/dashboard/trends", async (req, res) => {
   try {
     const data = await getTrends();
-
-    console.log({
-      type: "TRENDS_VIEW",
-      time: new Date().toISOString()
-    });
-
     return res.json(data);
-
   } catch (error) {
-    console.error("Trends error:", error.message);
-    return res.status(500).json({ error: "Trends failed" });
+    console.error("TRENDS ERROR:", error.message);
+    res.status(500).json({ error: "Trends failed" });
   }
 });
 
@@ -298,5 +275,5 @@ app.get("/dashboard/trends", async (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🚀 Micro Trainer Backend running on port ${PORT}`);
 });
