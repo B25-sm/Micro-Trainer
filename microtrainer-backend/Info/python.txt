@@ -1,0 +1,9 @@
+Python List:
+
+A list is a mutable data structure used to store multiple values.
+
+Example:
+numbers = [1, 2, 3]
+
+Common mistake:
+Students confuse list with tuple. Lists use [], tuples use ().
