@@ -2,6 +2,19 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+// =======================================================
+// 🔐 ENV VALIDATION (PREVENT SILENT FAILURES)
+// =======================================================
+if (!process.env.GROQ_API_KEY) {
+  throw new Error("❌ MISSING: GROQ_API_KEY in environment variables");
+}
+
+if (!process.env.SHEET_ID) {
+  throw new Error("❌ MISSING: SHEET_ID in environment variables");
+}
+
+console.log("✅ Environment variables validated");
+
 // ================= SERVICES =================
 const { getAnswer } = require("./services/aiService");
 const { evaluateAnswer } = require("./services/interviewService");
