@@ -2,6 +2,7 @@ const { evaluateAnswer } = require("./interviewService");
 const { generateQuestion } = require("./questionService");
 const { generateCoachReport } = require("./coachService"); // ✅ NEW
 const { generateFollowUp } = require("./adaptiveFollowupService"); // 🔥 ADAPTIVE
+const { syncInterviewToCentral } = require("./centralPlatformSync"); // 🔄 SYNC
 
 const sessions = {};
 
@@ -92,6 +93,27 @@ async function submitAnswer(sessionId, answer) {
       history: session.history,
       studentId: session.studentId,
       subject: session.subject
+    });
+
+    // 🔄 SYNC TO CENTRAL PLATFORM (NEW)
+    const syncData = {
+      studentId: session.studentId,
+      sessionId: sessionId,
+      subject: session.subject,
+      history: session.history,
+      final: final,
+      coachReport: coachReport,
+      warningCount: 0, // TODO: Get from anti-cheat
+      suspicionScore: 0, // TODO: Get from anti-cheat
+      isDismissed: false, // TODO: Get from anti-cheat
+      totalQuestions: session.totalQuestions,
+      completionRate: 100,
+      duration: 0 // TODO: Calculate duration
+    };
+    
+    // Sync in background (don't wait)
+    syncInterviewToCentral(syncData).catch(err => {
+      console.error("Background sync error:", err.message);
     });
 
     delete sessions[sessionId];

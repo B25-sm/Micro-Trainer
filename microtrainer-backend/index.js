@@ -64,6 +64,20 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// =======================================================
+// 🔹 HEALTH CHECK
+// =======================================================
+console.log('🔹 Registering /health endpoint...');
+app.get('/health', (req, res) => {
+  console.log('✅ Health endpoint called!');
+  res.json({
+    status: 'healthy',
+    service: 'MicroTrainer Backend',
+    version: '1.0.0',
+    timestamp: new Date().toISOString()
+  });
+});
+
 
 // =======================================================
 // 🔐 SIMPLE TRAINER AUTH (UPGRADE LATER)
@@ -709,7 +723,6 @@ app.post("/anticheat/progress", (req, res) => {
     res.status(500).json({ error: "Failed to update progress" });
   }
 });
-
 
 // =======================================================
 // 🔹 SERVER START
