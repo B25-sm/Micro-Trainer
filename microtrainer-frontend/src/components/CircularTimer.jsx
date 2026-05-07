@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
 
-const CircularTimer = ({ timeLeft, total = 30 }) => {
+const CircularTimer = ({ timeLeft = 30, total = 30 }) => {
   const radius = 22;
   const circumference = 2 * Math.PI * radius;
 
-  const progress = timeLeft / total;
+  const progress = (timeLeft || 0) / total;
   const strokeDashoffset = circumference * (1 - progress);
 
   const isDanger = timeLeft <= 10;

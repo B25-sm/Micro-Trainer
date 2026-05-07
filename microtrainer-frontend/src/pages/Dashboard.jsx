@@ -8,6 +8,7 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  CartesianGrid,
 } from "recharts";
 
 const Dashboard = () => {
@@ -33,10 +34,21 @@ const Dashboard = () => {
   };
 
   if (!analytics || !memory) {
-    return <div className="p-6">Loading Dashboard...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="flex items-center gap-2 text-gray-500">
+          <div className="flex gap-1">
+            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></span>
+            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></span>
+            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></span>
+          </div>
+          <span>Loading Dashboard...</span>
+        </div>
+      </div>
+    );
   }
 
-  // 🔥 Chart Data (real scores progression if available)
+  // Chart Data
   const chartData =
     memory?.totalAttempts > 0
       ? Array.from({ length: memory.totalAttempts }, (_, i) => ({
@@ -46,62 +58,136 @@ const Dashboard = () => {
       : [];
 
   return (
-    <div className="min-h-screen p-6 space-y-6 bg-bg text-text">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-50">
+      
+      {/* Minimal Header - Gemini Style */}
+      <header className="px-6 py-4 flex items-center justify-between border-b border-gray-200">
+        <div className="flex items-center gap-4">
+          <button className="p-2 hover:bg-gray-100 rounded-lg transition">
+            <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <div>
+            <h1 className="text-lg font-normal text-gray-800">Dashboard</h1>
+            <p className="text-xs text-gray-500">Track your performance</p>
+          </div>
+        </div>
+      </header>
 
-      {/* HEADER */}
-      <div>
-        <h1 className="text-2xl font-bold">Student Dashboard</h1>
-        <p className="text-gray-400">
-          Live performance tracking & AI insights
-        </p>
-      </div>
+      {/* Main Content */}
+      <main className="flex-1 p-6">
+        <div className="max-w-6xl mx-auto space-y-6">
 
-      {/* STATS */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard title="Questions" value={analytics.totalQuestions} />
-        <StatCard title="Avg Score" value={analytics.averageScore} />
-        <StatCard title="Communication" value={analytics.communicationScore} />
-        <StatCard title="Technical" value={analytics.technicalScore} />
-      </div>
+          {/* Performance Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <StatCard 
+              title="Questions Answered" 
+              value={analytics.totalQuestions} 
+              color="text-accent"
+            />
+            <StatCard 
+              title="Average Score" 
+              value={`${analytics.averageScore}/10`} 
+              color="text-success"
+            />
+            <StatCard 
+              title="Communication" 
+              value={`${analytics.communicationScore}/10`} 
+              color="text-text-h"
+            />
+            <StatCard 
+              title="Technical" 
+              value={`${analytics.technicalScore}/10`} 
+              color="text-text-h"
+            />
+          </div>
 
-      {/* AI MEMORY STATS */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard title="Level" value={memory.level} />
-        <StatCard title="Trend" value={memory.trend} />
-        <StatCard title="Consistency" value={memory.consistency} />
-        <StatCard title="Attempts" value={memory.totalAttempts} />
-      </div>
+          {/* AI Learning Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <StatCard 
+              title="Current Level" 
+              value={memory.level} 
+              badge
+            />
+            <StatCard 
+              title="Trend" 
+              value={memory.trend} 
+              badge
+            />
+            <StatCard 
+              title="Consistency" 
+              value={memory.consistency} 
+              badge
+            />
+            <StatCard 
+              title="Total Attempts" 
+              value={memory.totalAttempts} 
+            />
+          </div>
 
-      {/* PERFORMANCE CHART */}
-      <div className="bg-code-bg p-4 rounded-2xl border border-border shadow-base">
-        <h2 className="mb-4 font-semibold">Performance Trend</h2>
+          {/* Performance Chart */}
+          <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+            <h2 className="text-lg font-normal text-gray-800 mb-4">
+              Performance Trend
+            </h2>
 
-        <ResponsiveContainer width="100%" height={250}>
-          <LineChart data={chartData}>
-            <XAxis dataKey="name" />
-            <YAxis domain={[0, 10]} />
-            <Tooltip />
-            <Line type="monotone" dataKey="value" />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
+            {chartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                  <XAxis 
+                    dataKey="name" 
+                    stroke="var(--text-secondary)"
+                    style={{ fontSize: '12px' }}
+                  />
+                  <YAxis 
+                    domain={[0, 10]} 
+                    stroke="var(--text-secondary)"
+                    style={{ fontSize: '12px' }}
+                  />
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: 'var(--bg-elevated)',
+                      border: '1px solid var(--border)',
+                      borderRadius: '8px',
+                    }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="value" 
+                    stroke="var(--accent)" 
+                    strokeWidth={2}
+                    dot={{ fill: 'var(--accent)', r: 4 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-64 flex items-center justify-center text-text-secondary">
+                No performance data yet. Start an interview to see your progress.
+              </div>
+            )}
+          </div>
 
-      {/* STRONG / WEAK */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Concepts Analysis */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-        <ListCard
-          title="Strong Concepts"
-          items={memory.strongConcepts}
-          color="text-green-400"
-        />
+            <ConceptCard
+              title="Strong Concepts"
+              items={memory.strongConcepts}
+              type="success"
+            />
 
-        <ListCard
-          title="Weak Concepts"
-          items={memory.weakConcepts}
-          color="text-red-400"
-        />
+            <ConceptCard
+              title="Areas to Improve"
+              items={memory.weakConcepts}
+              type="warning"
+            />
 
-      </div>
+          </div>
+
+        </div>
+      </main>
 
     </div>
   );
@@ -111,30 +197,38 @@ export default Dashboard;
 
 /* ================= COMPONENTS ================= */
 
-const StatCard = ({ title, value }) => (
+const StatCard = ({ title, value, color, badge }) => (
   <motion.div
-    whileHover={{ scale: 1.03 }}
-    className="bg-code-bg border border-border p-4 rounded-2xl shadow-base"
+    whileHover={{ y: -2 }}
+    className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm transition-all hover:shadow-md"
   >
-    <p className="text-sm text-gray-400">{title}</p>
-    <h2 className="text-xl font-bold capitalize">{value || "—"}</h2>
+    <p className="text-sm text-gray-500 mb-1">{title}</p>
+    <h3 className={`text-2xl font-normal ${color || 'text-gray-800'} ${badge ? 'capitalize' : ''}`}>
+      {value || "—"}
+    </h3>
   </motion.div>
 );
 
-const ListCard = ({ title, items = [], color }) => (
-  <div className="bg-code-bg border border-border p-4 rounded-2xl shadow-base">
-    <h2 className="mb-2 font-semibold">{title}</h2>
+const ConceptCard = ({ title, items = [], type }) => {
+  const colorClass = type === 'success' ? 'text-green-600' : 'text-amber-600';
+  const bgClass = type === 'success' ? 'bg-green-100' : 'bg-amber-100';
 
-    {items.length === 0 ? (
-      <p className="text-gray-400 text-sm">No data yet</p>
-    ) : (
-      <ul className="space-y-1 text-sm">
-        {items.map((item, index) => (
-          <li key={index} className={color}>
-            • {item}
-          </li>
-        ))}
-      </ul>
-    )}
-  </div>
-);
+  return (
+    <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+      <h3 className="text-lg font-normal text-gray-800 mb-4">{title}</h3>
+
+      {items.length === 0 ? (
+        <p className="text-gray-500 text-sm">No data available yet</p>
+      ) : (
+        <ul className="space-y-2">
+          {items.map((item, index) => (
+            <li key={index} className="flex items-start gap-2">
+              <span className={`inline-block w-1.5 h-1.5 rounded-full mt-2 ${bgClass}`} />
+              <span className={`text-sm ${colorClass}`}>{item}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};

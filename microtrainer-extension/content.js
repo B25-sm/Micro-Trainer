@@ -5,8 +5,22 @@
 
 console.log('🧠 Micro Trainer: Content script loaded');
 
-// Check if panel already exists (prevent duplicates)
-if (!document.getElementById('microtrainer-panel')) {
+// Function to inject the panel
+function injectPanel() {
+  // Check if panel already exists (prevent duplicates)
+  if (document.getElementById('microtrainer-panel')) {
+    console.log('⚠️ Micro Trainer: Panel already exists');
+    return;
+  }
+
+  // Check if body exists
+  if (!document.body) {
+    console.log('⚠️ Micro Trainer: Body not ready, waiting...');
+    setTimeout(injectPanel, 100);
+    return;
+  }
+  
+  console.log('🔧 Micro Trainer: Injecting panel...');
   
   // Create side panel container
   const panel = document.createElement('div');
@@ -35,8 +49,11 @@ if (!document.getElementById('microtrainer-panel')) {
   document.body.appendChild(panel);
   document.body.appendChild(toggleBtn);
   
+  console.log('✅ Micro Trainer: Panel and button added to DOM');
+  
   // Toggle functionality
   toggleBtn.addEventListener('click', () => {
+    console.log('🖱️ Micro Trainer: Toggle button clicked');
     panel.classList.toggle('microtrainer-hidden');
     toggleBtn.classList.toggle('active');
   });
@@ -56,5 +73,13 @@ if (!document.getElementById('microtrainer-panel')) {
     }
   });
   
-  console.log('✅ Micro Trainer: Panel injected');
+  console.log('✅ Micro Trainer: Panel injected successfully');
+}
+
+// Wait for DOM to be ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', injectPanel);
+} else {
+  // DOM is already ready
+  injectPanel();
 }

@@ -33,8 +33,15 @@ const Result = () => {
 
   if (!data) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-400">
-        Loading results...
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="flex items-center gap-2 text-gray-500">
+          <div className="flex gap-1">
+            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></span>
+            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></span>
+            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></span>
+          </div>
+          <span>Loading results...</span>
+        </div>
       </div>
     );
   }
@@ -46,13 +53,26 @@ const Result = () => {
   ];
 
   return (
-    <div className="min-h-screen p-6 space-y-6 bg-bg text-text">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-50">
 
-      {/* HEADER */}
-      <div>
-        <h1 className="text-2xl font-bold">Interview Result</h1>
-        <p className="text-gray-400">Performance summary</p>
-      </div>
+      {/* Minimal Header - Gemini Style */}
+      <header className="px-6 py-4 flex items-center justify-between border-b border-gray-200">
+        <div className="flex items-center gap-4">
+          <button className="p-2 hover:bg-gray-100 rounded-lg transition">
+            <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <div>
+            <h1 className="text-lg font-normal text-gray-800">Interview Results</h1>
+            <p className="text-xs text-gray-500">Performance summary</p>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 p-6">
+        <div className="max-w-6xl mx-auto space-y-6">
 
       {/* SCORE CARDS */}
       <div className="grid md:grid-cols-3 gap-4">
@@ -62,15 +82,21 @@ const Result = () => {
       </div>
 
       {/* CHART */}
-      <div className="bg-code-bg p-4 rounded-2xl border border-border shadow-base">
-        <h2 className="mb-4 font-semibold">Performance Chart</h2>
+      <div className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm">
+        <h2 className="mb-4 font-normal text-gray-800">Performance Chart</h2>
 
         <ResponsiveContainer width="100%" height={250}>
           <BarChart data={chartData}>
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="value" />
+            <XAxis dataKey="name" stroke="#9ca3af" style={{ fontSize: '12px' }} />
+            <YAxis stroke="#9ca3af" style={{ fontSize: '12px' }} />
+            <Tooltip 
+              contentStyle={{
+                backgroundColor: '#ffffff',
+                border: '1px solid #e5e7eb',
+                borderRadius: '12px',
+              }}
+            />
+            <Bar dataKey="value" fill="#1a73e8" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -91,9 +117,9 @@ const Result = () => {
       </div>
 
       {/* VERDICT TREND */}
-      <div className="bg-code-bg p-4 rounded-2xl border border-border shadow-base">
-        <h2 className="mb-2 font-semibold">Verdict Trend</h2>
-        <p className="text-sm text-gray-400">
+      <div className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm">
+        <h2 className="mb-2 font-normal text-gray-800">Verdict Trend</h2>
+        <p className="text-sm text-gray-500">
           {data.verdictTrend?.join(" → ")}
         </p>
       </div>
@@ -105,7 +131,7 @@ const Result = () => {
           animate={{ opacity: 1 }}
           className="space-y-4"
         >
-          <h2 className="text-xl font-bold text-text-h">
+          <h2 className="text-xl font-normal text-gray-800">
             AI Coach Feedback
           </h2>
 
@@ -143,6 +169,9 @@ const Result = () => {
         </motion.div>
       )}
 
+        </div>
+      </main>
+
     </div>
   );
 };
@@ -154,20 +183,20 @@ export default Result;
 
 const Card = ({ title, value }) => (
   <motion.div
-    whileHover={{ scale: 1.03 }}
-    className="bg-code-bg border border-border p-4 rounded-2xl shadow-base"
+    whileHover={{ y: -2 }}
+    className="bg-white border border-gray-200 p-5 rounded-2xl shadow-sm transition-all hover:shadow-md"
   >
-    <p className="text-sm text-gray-400">{title}</p>
-    <h2 className="text-2xl font-bold">{value}</h2>
+    <p className="text-sm text-gray-500">{title}</p>
+    <h2 className="text-2xl font-normal text-gray-800">{value}</h2>
   </motion.div>
 );
 
 const ListCard = ({ title, items = [], color }) => (
-  <div className="bg-code-bg border border-border p-4 rounded-2xl shadow-base">
-    <h2 className="mb-2 font-semibold">{title}</h2>
+  <div className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm">
+    <h2 className="mb-2 font-normal text-gray-800">{title}</h2>
 
     {items.length === 0 ? (
-      <p className="text-gray-400 text-sm">No data</p>
+      <p className="text-gray-500 text-sm">No data</p>
     ) : (
       <ul className="space-y-1 text-sm">
         {items.map((item, index) => (
@@ -181,8 +210,8 @@ const ListCard = ({ title, items = [], color }) => (
 );
 
 const Section = ({ title, children }) => (
-  <div className="bg-code-bg border border-border p-4 rounded-2xl shadow-base">
-    <h2 className="text-lg font-semibold mb-2">{title}</h2>
-    <div className="text-sm text-gray-300">{children}</div>
+  <div className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm">
+    <h2 className="text-lg font-normal text-gray-800 mb-2">{title}</h2>
+    <div className="text-sm text-gray-600">{children}</div>
   </div>
 );

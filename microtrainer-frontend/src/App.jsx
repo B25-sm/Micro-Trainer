@@ -10,6 +10,8 @@ import Interview from "./pages/Interview.jsx";
 import Result from "./pages/Result.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import TrainerDashboard from "./pages/TrainerDashboard.jsx";
+import ProblemSolving from "./pages/ProblemSolving.jsx";
+import AdminDashboard from "./pages/AdminDashboard.jsx";
 
 function App() {
   return (
@@ -33,6 +35,16 @@ function App() {
             element={
               <MainLayout>
                 <Interview />
+              </MainLayout>
+            }
+          />
+
+          {/* Problem Solving */}
+          <Route
+            path="/problems"
+            element={
+              <MainLayout>
+                <ProblemSolving />
               </MainLayout>
             }
           />
@@ -64,6 +76,14 @@ function App() {
               <MainLayout>
                 <TrainerDashboard />
               </MainLayout>
+            }
+          />
+
+          {/* Admin Dashboard - Anti-Cheat Monitoring */}
+          <Route
+            path="/admin"
+            element={
+              <AdminDashboard />
             }
           />
 

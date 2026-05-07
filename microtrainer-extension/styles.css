@@ -1,5 +1,5 @@
 /* ===============================================
-   🎨 MICRO TRAINER - SIDE PANEL STYLES
+   🎨 MICRO TRAINER - PROFESSIONAL SIDE PANEL
    =============================================== */
 
 #microtrainer-panel {
@@ -8,48 +8,62 @@
   right: 0;
   width: 420px;
   height: 100vh;
-  background: white;
-  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
-  z-index: 2147483647; /* Maximum z-index */
+  background: #ffffff;
+  box-shadow: -2px 0 16px rgba(0, 0, 0, 0.1);
+  z-index: 2147483647;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   transform: translateX(0);
   overflow: hidden;
+  border-left: 1px solid #e5e7eb;
 }
 
 #microtrainer-panel.microtrainer-hidden {
   transform: translateX(100%);
 }
 
-/* Toggle Button */
+/* Toggle Button - Professional Design */
 #microtrainer-toggle {
   position: fixed;
   top: 50%;
   right: 20px;
   transform: translateY(-50%);
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #2563eb;
   border: none;
   color: white;
-  font-size: 24px;
+  font-size: 20px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
   z-index: 2147483646;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 #microtrainer-toggle:hover {
-  transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
+  transform: translateY(-50%) scale(1.05);
+  background: #1d4ed8;
+  box-shadow: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+#microtrainer-toggle:active {
+  transform: translateY(-50%) scale(0.95);
 }
 
 #microtrainer-toggle.active {
   right: 440px;
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: #10b981;
+}
+
+#microtrainer-toggle.active:hover {
+  background: #059669;
 }
 
 /* Responsive Design */
@@ -60,7 +74,7 @@
   
   #microtrainer-toggle.active {
     right: 20px;
-    opacity: 0.7;
+    opacity: 0.9;
   }
 }
 
@@ -72,12 +86,21 @@
 /* Loading state */
 #microtrainer-iframe {
   opacity: 0;
-  animation: fadeIn 0.5s ease forwards;
-  animation-delay: 0.2s;
+  animation: fadeIn 0.4s ease forwards;
+  animation-delay: 0.1s;
 }
 
 @keyframes fadeIn {
   to {
     opacity: 1;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  #microtrainer-panel {
+    background: #0f172a;
+    border-left-color: #334155;
+    box-shadow: -2px 0 16px rgba(0, 0, 0, 0.4);
   }
 }

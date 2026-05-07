@@ -1,4 +1,48 @@
-const { getStudentReport, getStudentHistory } = require("./readSheetsService");
+// =======================================================
+// 🔹 READ SHEETS SERVICE - Mock Implementation
+// =======================================================
+// TODO: Implement actual Google Sheets reading
+// For now, returning mock data to make the app functional
+
+// =======================================================
+// 🔹 Get Student Report
+// =======================================================
+async function getStudentReport(studentId) {
+  // Mock data - replace with actual Google Sheets API call
+  return {
+    studentId,
+    averageScore: 7.5,
+    communicationScore: 7.0,
+    technicalScore: 8.0,
+    weakConcepts: ["Closures", "Prototypes", "Event Loop"],
+    strongConcepts: ["React Hooks", "Async/Await", "ES6 Features"],
+    totalQuestions: 15,
+  };
+}
+
+// =======================================================
+// 🔹 Get Student History
+// =======================================================
+async function getStudentHistory(studentId) {
+  // Mock data - replace with actual Google Sheets API call
+  return [
+    { question: "What is a closure?", score: 7, timestamp: new Date() },
+    { question: "Explain async/await", score: 8, timestamp: new Date() },
+    { question: "What is React?", score: 7.5, timestamp: new Date() },
+  ];
+}
+
+// =======================================================
+// 🔹 Get All Students History (for leaderboard)
+// =======================================================
+async function getAllStudentsHistory() {
+  // Mock data - replace with actual Google Sheets API call
+  return [
+    { studentId: "student_1", avgScore: 8.5, totalQuestions: 20 },
+    { studentId: "student_2", avgScore: 7.2, totalQuestions: 15 },
+    { studentId: "student_3", avgScore: 9.1, totalQuestions: 25 },
+  ];
+}
 
 // =======================================================
 // 🔹 Utility: Normalize Score
@@ -96,4 +140,9 @@ async function getStudentMemory(studentId) {
   }
 }
 
-module.exports = { getStudentMemory };
+module.exports = { 
+  getStudentMemory,
+  getStudentReport,
+  getStudentHistory,
+  getAllStudentsHistory
+};

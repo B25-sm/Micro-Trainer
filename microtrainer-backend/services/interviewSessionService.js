@@ -1,6 +1,7 @@
 const { evaluateAnswer } = require("./interviewService");
 const { generateQuestion } = require("./questionService");
 const { generateCoachReport } = require("./coachService"); // ✅ NEW
+const { generateFollowUp } = require("./adaptiveFollowupService"); // 🔥 ADAPTIVE
 
 const sessions = {};
 
@@ -8,7 +9,7 @@ const sessions = {};
 // =======================================================
 // 🔹 Create Interview Session
 // =======================================================
-async function createSession(subject, totalQuestions = 20, studentId) {
+async function createSession(subject, totalQuestions = 5, studentId) { // Changed from 20 to 5 for testing
   const sessionId = "sess_" + Date.now();
 
   const firstQuestion = await generateQuestion({
@@ -30,9 +31,14 @@ async function createSession(subject, totalQuestions = 20, studentId) {
     ]
   };
 
+  console.log("✅ Session created:", sessionId);
+  console.log("📊 Total sessions:", Object.keys(sessions).length);
+
   return {
     sessionId,
-    firstQuestion
+    question: firstQuestion,
+    currentQuestion: 1,
+    totalQuestions
   };
 }
 
@@ -41,9 +47,13 @@ async function createSession(subject, totalQuestions = 20, studentId) {
 // 🔹 Submit Answer
 // =======================================================
 async function submitAnswer(sessionId, answer) {
+  console.log("📝 Submit Answer - Session ID:", sessionId);
+  console.log("📝 Available sessions:", Object.keys(sessions));
+  
   const session = sessions[sessionId];
 
   if (!session) {
+    console.error("❌ Session not found! ID:", sessionId);
     throw new Error("Invalid session ID");
   }
 
@@ -67,10 +77,14 @@ async function submitAnswer(sessionId, answer) {
 
   session.currentQuestion++;
 
+  console.log(`📊 Progress: ${session.currentQuestion}/${session.totalQuestions}`);
+
   // =======================================================
-  // 🔹 Completion Check
+  // 🔹 Completion Check (BEFORE generating next question)
   // =======================================================
   if (session.currentQuestion >= session.totalQuestions) {
+    console.log("🎉 Interview completed!");
+    
     const final = calculateFinal(session.history);
 
     // 🔥 COACH REPORT (NEW)
@@ -81,22 +95,46 @@ async function submitAnswer(sessionId, answer) {
     });
 
     delete sessions[sessionId];
+    console.log("🗑️ Session deleted:", sessionId);
 
     return {
       completed: true,
       final,
-      coachReport // ✅ NEW
+      coachReport, // ✅ NEW
+      message: "Interview complete! Here are your results..."
     };
   }
 
   // =======================================================
-  // 🔹 Generate Next Question (ADAPTIVE)
+  // 🔹 Generate Next Question (ADAPTIVE HYBRID)
   // =======================================================
-  const nextQuestion = await generateQuestion({
-    subject: session.subject,
-    history: session.history,
-    studentId: session.studentId
-  });
+  
+  // 🔥 CHECK IF FOLLOW-UP IS NEEDED (HYBRID - RULE-BASED + AI)
+  let nextQuestion;
+  
+  if (result.shouldFollowUp) {
+    // Try to generate adaptive follow-up (rule-based first, AI fallback)
+    const followUp = await generateFollowUp(currentEntry.question, answer, session.subject);
+    
+    if (followUp) {
+      console.log("🎯 Adaptive follow-up generated (hybrid)");
+      nextQuestion = followUp;
+    } else {
+      // No follow-up found, generate new question
+      nextQuestion = await generateQuestion({
+        subject: session.subject,
+        history: session.history,
+        studentId: session.studentId
+      });
+    }
+  } else {
+    // No follow-up needed, generate new question
+    nextQuestion = await generateQuestion({
+      subject: session.subject,
+      history: session.history,
+      studentId: session.studentId
+    });
+  }
 
   // 🔹 Add next question
   session.history.push({
@@ -106,9 +144,11 @@ async function submitAnswer(sessionId, answer) {
 
   return {
     completed: false,
-    progress: `${session.currentQuestion}/${session.totalQuestions}`,
-    lastResult: result,
-    nextQuestion
+    feedback: result.feedback,
+    score: result.score,
+    nextQuestion: nextQuestion,
+    currentQuestion: session.currentQuestion + 1,
+    totalQuestions: session.totalQuestions
   };
 }
 

@@ -9,6 +9,18 @@ const {
 // 🔹 Memory (NEW)
 const { getStudentMemory } = require("./memoryService");
 
+// 🔹 JavaScript Question Bank
+const { getRandomJSQuestion } = require("./javascriptQuestionBank");
+
+// 🔹 React Question Bank
+const { getRandomReactQuestion } = require("./reactQuestionBank");
+
+// 🔹 Node.js Question Bank
+const { getRandomNodeQuestion } = require("./nodejsQuestionBank");
+
+// 🔹 Java Question Bank
+const { getRandomJavaQuestion } = require("./javaQuestionBank");
+
 
 // =======================================================
 // 🔹 ADAPTIVE DIFFICULTY
@@ -83,11 +95,100 @@ function cleanQuestion(q) {
 
 
 // =======================================================
+// 🔹 TRANSFORM QUESTION TO SAI MAHENDRA'S STYLE
+// =======================================================
+function transformToSaiMahendraStyle(question) {
+  // Randomly decide if this should be a CODE/SYNTAX question (40% chance)
+  const shouldBePractical = Math.random() < 0.4;
+  
+  // If question starts with "What is", transform it
+  if (question.startsWith("What is ")) {
+    const concept = question.replace("What is ", "").replace("?", "").trim();
+    
+    if (shouldBePractical) {
+      // PRACTICAL - Ask for code/syntax
+      const practicalTransformations = [
+        `Write the syntax for ${concept} with a real example`,
+        `Show me the code for ${concept}`,
+        `Write a working example of ${concept}`,
+        `Give me the syntax of ${concept} with live data`,
+        `Code ${concept} - show me a practical implementation`
+      ];
+      return practicalTransformations[Math.floor(Math.random() * practicalTransformations.length)];
+    } else {
+      // THEORETICAL - But still practical
+      const theoreticalTransformations = [
+        `${concept} - explain with a real-time use case`,
+        `${concept} - give me a practical example`,
+        `${concept} - where do you use this in real projects?`,
+        `${concept} - how does it work internally?`,
+        `Purpose of ${concept} - explain with an example`
+      ];
+      return theoreticalTransformations[Math.floor(Math.random() * theoreticalTransformations.length)];
+    }
+  }
+  
+  // If question starts with "Explain", make it more direct
+  if (question.startsWith("Explain ")) {
+    const concept = question.replace("Explain ", "").replace("?", "").replace(".", "").trim();
+    
+    if (shouldBePractical) {
+      return `Write the code for ${concept} with a real example`;
+    } else {
+      return `${concept} - give me a live example`;
+    }
+  }
+  
+  // If question has "difference between", keep it but add example requirement
+  if (question.includes("difference between")) {
+    if (shouldBePractical) {
+      return question.replace("?", "") + " - show me with code examples";
+    } else {
+      return question.replace("?", "") + " - with practical examples";
+    }
+  }
+  
+  // If question asks "How do you", it's already practical - keep it
+  if (question.startsWith("How do you") || question.startsWith("How does")) {
+    return question;
+  }
+  
+  // Otherwise return as is
+  return question;
+}
+
+
+// =======================================================
 // 🔹 GENERATE QUESTION (FINAL)
 // =======================================================
 async function generateQuestion({ subject, history = [], studentId }) {
   try {
     const difficulty = getAdaptiveDifficulty(history);
+    
+    // 🔥 NEW: If subject is JavaScript, use JS question bank
+    if (subject.toLowerCase() === "javascript" || subject.toLowerCase() === "js") {
+      const question = getRandomJSQuestion(difficulty);
+      return transformToSaiMahendraStyle(question); // Transform to your style
+    }
+    
+    // 🔥 NEW: If subject is React, use React question bank
+    if (subject.toLowerCase() === "react" || subject.toLowerCase() === "reactjs") {
+      const question = getRandomReactQuestion(difficulty);
+      return transformToSaiMahendraStyle(question); // Transform to your style
+    }
+    
+    // 🔥 NEW: If subject is Node.js, use Node question bank
+    if (subject.toLowerCase() === "node" || subject.toLowerCase() === "nodejs" || subject.toLowerCase() === "node.js") {
+      const question = getRandomNodeQuestion(difficulty);
+      return transformToSaiMahendraStyle(question); // Transform to your style
+    }
+    
+    // 🔥 NEW: If subject is Java, use Java question bank
+    if (subject.toLowerCase() === "java") {
+      const question = getRandomJavaQuestion(difficulty);
+      return transformToSaiMahendraStyle(question); // Transform to your style
+    }
+    
     const weakFocus = getWeakFocus(history);
 
     // 🔹 MEMORY FETCH (NEW)
@@ -117,38 +218,44 @@ ${weakFocus || "None"}
 Previous Questions:
 ${previousQuestions.map(q => "- " + q).join("\n") || "None"}
 
-Generate ONE interview question.
+Generate ONE interview question in Sai Mahendra's style.
 
-STRICT RULES:
-- No jargon
-- One line only
-- Max 12 words preferred
-- Must test CORE concept
-- Must include real-world usage
-- Do NOT repeat previous questions
+CRITICAL RULES - YOUR QUESTIONING STYLE:
+- PRACTICAL, not theoretical
+- SPECIFIC, not vague  
+- MUST demand a REAL EXAMPLE or LIVE SCENARIO
+- Test DEPTH and UNDERSTANDING
+- Ask about PURPOSE, WHEN TO USE, HOW IT WORKS
 
-INTERVIEW STYLE:
-- Straight to the point
-- Practical
-- No theory-heavy wording
-- Answerable within 30 seconds
+GOOD EXAMPLES (Your Style):
+✓ "Purpose of Self in Python - explain with an example"
+✓ "Inner Join - give me a live example with two tables"
+✓ "Correlated subquery - explain with a real scenario"
+✓ "Virtual Environment - why do we need it? When?"
+✓ "Garbage Collector in Python - how does it work?"
+✓ "Runtime vs compile time polymorphism - where do you use each?"
+✓ "useEffect cleanup function - give me a practical use case"
+✓ "Second Highest Salary in SQL - write the query"
+
+BAD EXAMPLES (Not Your Style):
+✗ "What is closure?" (too vague)
+✗ "Explain React" (too broad)
+✗ "What is SQL?" (too basic)
+✗ "Define polymorphism" (theoretical)
 
 ADAPTIVE RULES:
 - Focus on weak concepts first
-- Avoid repeating strong areas too often
-- If student is strong → increase difficulty
-- If weak → reinforce basics
+- If student is strong → ask about edge cases and internals
+- If weak → ask about purpose and basic usage
+- Do NOT repeat previous questions
 
-GOOD:
-- What is state? Where do you use it?
-- What is useEffect? Give one real example.
-- When should you NOT use useEffect?
+QUESTION FORMAT:
+- One line only
+- Max 15 words
+- Must be answerable in 30-60 seconds
+- Must test practical understanding
 
-BAD:
-- Explain React lifecycle in detail
-- Describe architecture of React
-
-Return ONLY question text.
+Return ONLY the question text.
 `;
 
     const SYSTEM_PROMPT = `
