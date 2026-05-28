@@ -1,401 +1,267 @@
-# 🧠 MICRO TRAINER - AI Interview Coach
+# 🎓 MicroTrainer - AI-Powered Learning Platform
 
-**A browser extension that provides persistent AI mentorship for interview preparation and real-time learning.**
+**Learn programming with AI-powered adaptive teaching, structured learning paths, and hands-on coding practice.**
 
----
+⚠️ **License Required:** This software requires a license key. See [How to Get a License](HOW_TO_GET_LICENSE.md)
 
-## 🎯 WHAT IS THIS?
-
-Micro Trainer is a Chrome extension that injects a side panel AI coach into every webpage. It helps candidates:
-
-- Practice technical interviews
-- Get instant feedback
-- Learn concepts in real-time
-- Track progress over time
-- Never leave their workflow
-
-**Not just a chatbot. Not just a website. A persistent AI mentor that's always there.**
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
 
 ---
 
-## 🏗️ ARCHITECTURE
+## 🔑 Quick Start
 
-```
-Chrome Extension (React)
-    ↓
-Backend API (Node.js + Express)
-    ↓
-AI Service (Groq)
-    ↓
-Google Sheets (Analytics DB)
-    ↓
-Trainer Dashboard
-```
+### **📚 [Complete Setup Guide →](STUDENT_SETUP_GUIDE.md)**
 
----
+**3 Simple Steps:**
 
-## 📁 PROJECT STRUCTURE
+1. **Request License** (2 min) - Email your instructor
+2. **Get Groq API Key** (5 min) - Free at [console.groq.com](https://console.groq.com/)
+3. **Deploy** (10 min) - Click your personalized link
 
-```
-microtrainer/
-├── microtrainer-backend/       # Node.js API server
-│   ├── index.js               # Main server
-│   ├── services/              # 16 service modules
-│   └── package.json
-│
-├── microtrainer-frontend/      # React web app
-│   ├── src/
-│   │   ├── pages/             # Home, Dashboard, Trainer
-│   │   ├── components/        # Chat, Timer, Feedback
-│   │   └── api.js             # API client
-│   └── package.json
-│
-├── microtrainer-extension/     # Chrome extension
-│   ├── manifest.json          # Extension config
-│   ├── content.js             # Side panel injection
-│   ├── background.js          # Service worker
-│   ├── popup.html             # Extension popup
-│   └── build.sh               # Build script
-│
-└── Documentation/
-    ├── DEPLOYMENT_GUIDE.md    # Full deployment guide
-    ├── QUICK_START.md         # Quick start guide
-    ├── DEPLOYMENT_CHECKLIST.md # Step-by-step checklist
-    └── STATUS_REPORT.md       # Current status
-```
+**Total Time:** 15 minutes | **Cost:** $0 | **Installation:** None
+
+**[📖 Detailed Student Guide →](STUDENT_SETUP_GUIDE.md)**
 
 ---
 
-## 🚀 QUICK START
+## ✨ Features
 
-### Prerequisites
+### 🤖 **Adaptive Teaching System**
+- AI adapts to your learning level
+- Personalized explanations
+- Interactive Q&A with cross-questions
+- Verifies your understanding
 
+### 📚 **Structured Learning Paths**
+- **11 Technologies:** JavaScript, Python, Java, React, Node.js, TypeScript, MongoDB, Django, Spring Boot, HTML, CSS
+- **5 Concepts per Technology:** Progressive difficulty
+- **Track Progress:** See completed concepts and scores
+- **Resume Anytime:** Your progress is saved
+
+### 💻 **Code Compiler**
+- **50+ Programming Languages** when using a self-hosted **[Piston](https://github.com/engineer-man/piston)** instance (see `docker-compose.piston.yml` in this repo).
+- **Development fallback:** JavaScript and Python can run in-process when Piston is unreachable; other languages require Piston.
+- **Real-time Execution:** Run code against your test cases
+- **Detailed Feedback:** See what went wrong
+
+### 📊 **Progress Tracking**
+- View completed concepts
+- Track scores and performance
+- Resume your learning journey
+- Persistent progress (survives page refresh)
+
+---
+
+## 🚀 Quick Deploy (10 Minutes)
+
+### **Step 1: Get Groq API Key** (2 minutes)
+1. Visit [console.groq.com](https://console.groq.com/)
+2. Sign up (free)
+3. Create API key
+4. Copy your key (starts with `gsk_...`)
+
+### **Step 2: Deploy to Render** (1 click)
+Click the button above ☝️ or visit: [render.com/deploy](https://render.com/deploy)
+
+### **Step 3: Configure** (30 seconds)
+1. Paste your Groq API key
+2. Click **"Deploy"**
+3. Wait 10 minutes
+
+### **Done!** ✅
+You'll get 3 URLs:
+- **Frontend:** Your learning platform
+- **Backend:** API server
+- **Piston:** Code execution engine
+
+---
+
+## 💰 Cost
+
+### **Free Tier (Most Users):**
+- ✅ **$0/month** with Render free tier
+- ✅ 750 hours/month per service
+- ✅ Plenty for learning!
+
+### **If You Exceed Free Tier:**
+- 💵 **$7-14/month** for heavy usage
+- 💡 Most students stay within free tier
+
+---
+
+## 🎯 What You Get
+
+### **3 Services (Deployed Automatically):**
+
+1. **MicroTrainer Backend**
+   - AI teaching engine
+   - Progress tracking
+   - Assessment system
+
+2. **Piston Code Execution**
+   - Runs code in 50+ languages
+   - Secure sandboxed execution
+   - No compiler installation needed
+
+3. **Frontend**
+   - Beautiful UI
+   - Responsive design
+   - Fast loading
+
+---
+
+## 🔧 Local Development
+
+### **Prerequisites:**
 - Node.js 18+
 - npm or yarn
-- Chrome browser
-- Render account (backend)
-- Vercel account (frontend)
 
-### 1. Backend Setup
-
+### **Backend Setup:**
 ```bash
 cd microtrainer-backend
 npm install
+cp .env.example .env
+# Add your GROQ_API_KEY to .env
 npm start
 ```
 
-Backend runs on `http://localhost:5000`
-
-### 2. Frontend Setup
-
+### **Frontend Setup:**
 ```bash
 cd microtrainer-frontend
 npm install
 npm run dev
 ```
 
-Frontend runs on `http://localhost:5173`
-
-### 3. Extension Setup
-
-```bash
-cd microtrainer-extension
-./build.sh  # Mac/Linux
-# OR
-.\build.ps1  # Windows
-```
-
-Then:
-1. Open Chrome → `chrome://extensions/`
-2. Enable "Developer mode"
-3. Click "Load unpacked"
-4. Select `microtrainer-extension` folder
+### **Access:**
+- Frontend: http://localhost:5173
+- Backend: http://localhost:5000
 
 ---
 
-## 🔧 ENVIRONMENT VARIABLES
+## 📚 How to Use
 
-Create `microtrainer-backend/.env`:
+### **1. Guided Learning (Structured Path)**
+1. Click **"Learn"** in navigation
+2. Select **"Guided Course"**
+3. Choose a technology (JavaScript, Python, etc.)
+4. Start with Concept 1
+5. Learn → Answer questions → Get assessed
+6. Progress to next concept
 
-```bash
-GROQ_API_KEY=your_groq_api_key
-SHEET_ID=your_google_sheet_id
-PORT=5000
-```
+### **2. Ask Anything (Free-form Learning)**
+1. Click **"Learn"** in navigation
+2. Select **"Ask Anything"**
+3. Ask any programming question
+4. Get personalized explanations
+5. AI adapts to your level
 
----
-
-## 📦 DEPLOYMENT
-
-### Backend (Render)
-
-1. Create web service on Render
-2. Connect GitHub repository
-3. Add environment variables
-4. Deploy
-
-**See:** `DEPLOYMENT_GUIDE.md` for detailed steps
-
-### Frontend (Vercel)
-
-1. Update API URL in `src/api.js`
-2. Deploy to Vercel
-3. Test functionality
-
-**See:** `QUICK_START.md` for detailed steps
-
-### Extension (Chrome Web Store)
-
-1. Build extension
-2. Test locally
-3. Add icons
-4. Create ZIP
-5. Submit to Chrome Web Store
-
-**See:** `microtrainer-extension/README.md` for detailed steps
+### **3. Practice Coding (Problem Solving)**
+1. Click **"Problems"** in navigation
+2. Select a problem
+3. Choose your language (50+ options!)
+4. Write code
+5. Click **"Run Code"**
+6. See results and feedback
 
 ---
 
-## 🧪 TESTING
+## 🔒 Security
 
-### Backend Tests
+### **Code Execution:**
+- ✅ Sandboxed in Docker containers
+- ✅ Time-limited (5 seconds max)
+- ✅ Resource-limited (CPU, memory)
+- ✅ No file system access
+- ✅ No network access
 
-```bash
-# Health check
-curl http://localhost:5000/
-
-# Teaching mode
-curl -X POST http://localhost:5000/ask \
-  -H "Content-Type: application/json" \
-  -d '{"question":"What is React?"}'
-
-# Interview start
-curl -X POST http://localhost:5000/interview/start \
-  -H "Content-Type: application/json" \
-  -d '{"subject":"React","studentId":"test123"}'
-```
-
-### Frontend Tests
-
-- Visit `http://localhost:5173`
-- Test chat interface
-- Start interview
-- Check timer
-- View feedback
-
-### Extension Tests
-
-- Load extension in Chrome
-- Visit any website
-- Toggle side panel
-- Test chat
-- Start interview
+### **Your Data:**
+- ✅ Stored in YOUR deployment
+- ✅ Not shared with anyone
+- ✅ You control everything
+- ✅ Can delete anytime
 
 ---
 
-## 📚 DOCUMENTATION
+## 🎓 Supported Technologies
 
-| Document | Description |
-|----------|-------------|
-| `DEPLOYMENT_GUIDE.md` | Complete deployment instructions |
-| `QUICK_START.md` | Fast-track deployment guide |
-| `DEPLOYMENT_CHECKLIST.md` | Step-by-step checklist |
-| `STATUS_REPORT.md` | Current project status |
-| `microtrainer-extension/README.md` | Extension-specific guide |
+### **Programming Languages (50+):**
+JavaScript, Python, Java, C++, C, C#, TypeScript, Go, Rust, Ruby, PHP, Swift, Kotlin, Scala, Haskell, Lua, Perl, R, Dart, Elixir, and more!
 
----
-
-## 🎨 FEATURES
-
-### For Students
-
-- ✅ **Teaching Mode** - Ask any technical question
-- ✅ **Interview Mode** - Practice with timed questions
-- ✅ **Instant Feedback** - Get detailed evaluation
-- ✅ **Progress Tracking** - See improvement over time
-- ✅ **Memory System** - AI remembers your weak areas
-- ✅ **Always Available** - Side panel on every website
-
-### For Trainers
-
-- ✅ **Leaderboard** - Fullstack and subject-wise rankings
-- ✅ **Analytics** - Student performance metrics
-- ✅ **Weak Student Identification** - Find who needs help
-- ✅ **Trends** - Track improvement over time
-- ✅ **Real-time Data** - Google Sheets integration
+### **Learning Paths (11):**
+1. **JavaScript** - Variables, Functions, Arrays, Objects, Async
+2. **Python** - Basics, Data Structures, OOP, Modules, File I/O
+3. **Java** - Syntax, OOP, Collections, Exceptions, Streams
+4. **React** - Components, Props, State, Hooks, Context
+5. **Node.js** - Modules, Express, Async, Databases, APIs
+6. **TypeScript** - Types, Interfaces, Generics, Decorators, Advanced
+7. **MongoDB** - CRUD, Queries, Aggregation, Indexing, Schema
+8. **Django** - Models, Views, Templates, Forms, Authentication
+9. **Spring Boot** - Basics, REST APIs, JPA, Security, Testing
+10. **HTML** - Elements, Forms, Semantic, Accessibility, Best Practices
+11. **CSS** - Selectors, Box Model, Flexbox, Grid, Responsive
 
 ---
 
-## 🔐 SECURITY
+## 🐛 Troubleshooting
 
-- ENV validation prevents silent failures
-- CORS configured for security
-- Input validation on all endpoints
-- Error handling throughout
-- No sensitive data in logs
+### **Deployment Failed?**
+1. Check your Groq API key is correct
+2. Verify all files are committed to GitHub
+3. Check Render service logs
 
----
+### **Code Execution Not Working?**
+1. Wait 30 seconds (services wake from sleep)
+2. Check Piston service is running
+3. Try a different language
 
-## 🐛 TROUBLESHOOTING
-
-### Backend Won't Start
-
-```bash
-# Check ENV variables
-cat microtrainer-backend/.env
-
-# Check logs
-npm start
-```
-
-### Frontend Can't Connect
-
-```javascript
-// Check API URL in src/api.js
-const API_BASE_URL = "http://localhost:5000";
-```
-
-### Extension Not Loading
-
-1. Check `chrome://extensions/` for errors
-2. Verify `dist/` folder exists
-3. Reload extension
-4. Refresh webpage
-
-**See:** `DEPLOYMENT_GUIDE.md` for more troubleshooting
+### **Progress Not Saving?**
+1. Check backend service is running
+2. Verify you're logged in
+3. Clear browser cache and retry
 
 ---
 
-## 📊 TECH STACK
+## 📞 Support
 
-### Backend
-- Node.js + Express
-- Groq SDK (AI)
-- Google Sheets API
-- Axios
-
-### Frontend
-- React 19
-- Vite
-- Tailwind CSS
-- Framer Motion
-- Recharts
-
-### Extension
-- Chrome Extension Manifest v3
-- Content Scripts
-- Service Workers
+### **Need Help?**
+1. Check service logs in Render dashboard
+2. Verify all 3 services are "Live" (green)
+3. Test backend: `https://your-backend.onrender.com/`
+4. Test Piston: `https://your-piston.onrender.com/api/v2/runtimes`
 
 ---
 
-## 🎯 ROADMAP
+## 🎉 Success Checklist
 
-### Phase 1 (Current)
-- [x] Backend API
-- [x] Frontend UI
-- [x] Extension structure
-- [ ] Deploy backend
-- [ ] Deploy frontend
-- [ ] Test extension
+After deployment, verify:
+- [ ] Frontend loads at your URL
+- [ ] Can navigate to "Learn" page
+- [ ] Can select "Guided Course"
+- [ ] Can see 11 technologies
+- [ ] Can start learning
+- [ ] Can go to "Problems"
+- [ ] Can select a language
+- [ ] Can run code
+- [ ] See output/results
 
-### Phase 2
-- [ ] Chrome Web Store submission
-- [ ] User feedback collection
-- [ ] Bug fixes
-- [ ] Performance optimization
-
-### Phase 3
-- [ ] Voice input
-- [ ] Code editor integration
-- [ ] Team collaboration
-- [ ] Premium features
+**All checked?** You're ready to learn! 🚀
 
 ---
 
-## 📞 SUPPORT
+## 📄 License
 
-For issues or questions:
-
-1. Check documentation in `/Documentation`
-2. Review troubleshooting guides
-3. Check browser console for errors
-4. Verify environment variables
-5. Test API endpoints directly
+MIT License - Feel free to use and modify!
 
 ---
 
-## 📈 STATUS
+## 🚀 Get Started
 
-| Component | Status |
-|-----------|--------|
-| Backend Code | ✅ 100% |
-| Frontend Code | ✅ 100% |
-| Extension Code | ✅ 100% |
-| Backend Deployment | ⏳ Pending |
-| Frontend Deployment | ⏳ Pending |
-| Extension Testing | ⏳ Pending |
-| **Overall** | 🟡 70% |
+**Ready to deploy?**
 
-**Next Step:** Deploy backend to Render
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
 
----
+**Time:** 10 minutes  
+**Cost:** $0/month (free tier)  
+**Result:** Your own AI-powered learning platform!
 
-## 🤝 CONTRIBUTING
-
-This is a private project. For internal development:
-
-1. Create feature branch
-2. Make changes
-3. Test thoroughly
-4. Submit for review
-
----
-
-## 📄 LICENSE
-
-Proprietary - All rights reserved
-
----
-
-## 🎉 ACKNOWLEDGMENTS
-
-Built with:
-- Groq for AI inference
-- Google Sheets for analytics
-- Render for backend hosting
-- Vercel for frontend hosting
-- Chrome Extensions platform
-
----
-
-**Version:** 1.0.0  
-**Last Updated:** May 5, 2026  
-**Status:** Production Ready (Deployment Pending)
-
----
-
-## 🚀 GET STARTED NOW
-
-```bash
-# 1. Clone repository
-git clone <repository-url>
-
-# 2. Setup backend
-cd microtrainer-backend
-npm install
-npm start
-
-# 3. Setup frontend
-cd ../microtrainer-frontend
-npm install
-npm run dev
-
-# 4. Build extension
-cd ../microtrainer-extension
-./build.sh
-
-# 5. Load in Chrome
-# chrome://extensions/ → Load unpacked
-```
-
-**You're ready to go! 🎉**
+**Let's go!** 💪

@@ -6,18 +6,37 @@ const { syncInterviewToCentral } = require("./centralPlatformSync"); // 🔄 SYN
 
 const sessions = {};
 
+function secondsForDifficulty(difficulty) {
+  const d = String(difficulty || "easy").toLowerCase();
+  if (d === "hard") return 300;
+  if (d === "medium") return 120;
+  return 60;
+}
+
+/** generateQuestion returns { question, difficulty } */
+function unpackQuestion(gen, fallbackDifficulty = "easy") {
+  if (gen && typeof gen === "object" && gen.question != null) {
+    return {
+      text: gen.question,
+      difficulty: gen.difficulty || fallbackDifficulty,
+    };
+  }
+  return { text: String(gen ?? ""), difficulty: fallbackDifficulty };
+}
+
 
 // =======================================================
 // 🔹 Create Interview Session
 // =======================================================
-async function createSession(subject, totalQuestions = 5, studentId) { // Changed from 20 to 5 for testing
+async function createSession(subject, totalQuestions = 20, studentId) {
   const sessionId = "sess_" + Date.now();
 
-  const firstQuestion = await generateQuestion({
+  const generated = await generateQuestion({
     subject,
     history: [],
     studentId
   });
+  const { text: qText, difficulty } = unpackQuestion(generated);
 
   sessions[sessionId] = {
     studentId,
@@ -26,7 +45,8 @@ async function createSession(subject, totalQuestions = 5, studentId) { // Change
     totalQuestions,
     history: [
       {
-        question: firstQuestion,
+        question: qText,
+        difficulty,
         answer: null
       }
     ]
@@ -37,7 +57,9 @@ async function createSession(subject, totalQuestions = 5, studentId) { // Change
 
   return {
     sessionId,
-    question: firstQuestion,
+    question: qText,
+    difficulty,
+    questionTimeSeconds: secondsForDifficulty(difficulty),
     currentQuestion: 1,
     totalQuestions
   };
@@ -95,6 +117,20 @@ async function submitAnswer(sessionId, answer) {
       subject: session.subject
     });
 
+    // 🎯 UPDATE STUDENT PROFILE (NEW)
+    const { addTechnologyInterview } = require("./studentProfileService");
+    addTechnologyInterview(
+      session.studentId,
+      session.subject,
+      parseFloat(final.averageScore),
+      {
+        communicationScore: final.communicationScore,
+        technicalScore: final.technicalScore,
+        verdict: final.verdict,
+        totalQuestions: session.totalQuestions
+      }
+    );
+
     // 🔄 SYNC TO CENTRAL PLATFORM (NEW)
     const syncData = {
       studentId: session.studentId,
@@ -132,35 +168,44 @@ async function submitAnswer(sessionId, answer) {
   // =======================================================
   
   // 🔥 CHECK IF FOLLOW-UP IS NEEDED (HYBRID - RULE-BASED + AI)
-  let nextQuestion;
-  
+  let nextQuestionText;
+  let nextDifficulty;
+
   if (result.shouldFollowUp) {
-    // Try to generate adaptive follow-up (rule-based first, AI fallback)
-    const followUp = await generateFollowUp(currentEntry.question, answer, session.subject);
-    
+    const followUp = await generateFollowUp(
+      currentEntry.question,
+      answer,
+      session.subject
+    );
+
     if (followUp) {
       console.log("🎯 Adaptive follow-up generated (hybrid)");
-      nextQuestion = followUp;
+      nextQuestionText = followUp;
+      nextDifficulty = "medium";
     } else {
-      // No follow-up found, generate new question
-      nextQuestion = await generateQuestion({
+      const gen = await generateQuestion({
         subject: session.subject,
         history: session.history,
         studentId: session.studentId
       });
+      const u = unpackQuestion(gen);
+      nextQuestionText = u.text;
+      nextDifficulty = u.difficulty;
     }
   } else {
-    // No follow-up needed, generate new question
-    nextQuestion = await generateQuestion({
+    const gen = await generateQuestion({
       subject: session.subject,
       history: session.history,
       studentId: session.studentId
     });
+    const u = unpackQuestion(gen);
+    nextQuestionText = u.text;
+    nextDifficulty = u.difficulty;
   }
 
-  // 🔹 Add next question
   session.history.push({
-    question: nextQuestion,
+    question: nextQuestionText,
+    difficulty: nextDifficulty,
     answer: null
   });
 
@@ -168,7 +213,9 @@ async function submitAnswer(sessionId, answer) {
     completed: false,
     feedback: result.feedback,
     score: result.score,
-    nextQuestion: nextQuestion,
+    nextQuestion: nextQuestionText,
+    difficulty: nextDifficulty,
+    questionTimeSeconds: secondsForDifficulty(nextDifficulty),
     currentQuestion: session.currentQuestion + 1,
     totalQuestions: session.totalQuestions
   };

@@ -21,6 +21,11 @@ const { getRandomNodeQuestion } = require("./nodejsQuestionBank");
 // 🔹 Java Question Bank
 const { getRandomJavaQuestion } = require("./javaQuestionBank");
 
+const {
+  pickInterviewTopic,
+  getRolePromptHint,
+} = require("./dataScienceInterviewRoles");
+
 
 // =======================================================
 // 🔹 ADAPTIVE DIFFICULTY
@@ -161,32 +166,92 @@ function transformToSaiMahendraStyle(question) {
 // =======================================================
 // 🔹 GENERATE QUESTION (FINAL)
 // =======================================================
+function questionPack(questionText, difficulty) {
+  return { question: questionText, difficulty };
+}
+
 async function generateQuestion({ subject, history = [], studentId }) {
   try {
     const difficulty = getAdaptiveDifficulty(history);
     
-    // 🔥 NEW: If subject is JavaScript, use JS question bank
+    // 🔥 FULL STACK DETECTION
+    const isFullStack = subject.toLowerCase().includes("full stack") || subject.toLowerCase().includes("fullstack");
+    
+    // 🔥 MERN Stack - Mix of MongoDB, Express, React, Node.js
+    if (subject.toLowerCase().includes("mern")) {
+      const technologies = ["MongoDB", "Express", "React", "Node.js"];
+      const randomTech = technologies[Math.floor(Math.random() * technologies.length)];
+      
+      if (randomTech === "React") {
+        const question = getRandomReactQuestion(difficulty);
+        return questionPack(transformToSaiMahendraStyle(question), difficulty);
+      } else if (randomTech === "Node.js" || randomTech === "Express") {
+        const question = getRandomNodeQuestion(difficulty);
+        return questionPack(transformToSaiMahendraStyle(question), difficulty);
+      } else {
+        // MongoDB or general MERN question - use AI
+        subject = randomTech; // Override subject for AI generation
+      }
+    }
+    
+    // 🔥 Java Full Stack - Mix of Java backend + frontend
+    if (subject.toLowerCase().includes("java") && isFullStack) {
+      const technologies = ["Java", "Spring Boot", "Hibernate", "REST API", "React", "Angular"];
+      const randomTech = technologies[Math.floor(Math.random() * technologies.length)];
+      
+      if (randomTech === "Java" || randomTech === "Spring Boot" || randomTech === "Hibernate") {
+        const question = getRandomJavaQuestion(difficulty);
+        return questionPack(transformToSaiMahendraStyle(question), difficulty);
+      } else if (randomTech === "React") {
+        const question = getRandomReactQuestion(difficulty);
+        return questionPack(transformToSaiMahendraStyle(question), difficulty);
+      } else {
+        // REST API or Angular - use AI
+        subject = randomTech;
+      }
+    }
+    
+    // Data roles — Analyst, ML Engineer, or general Data Science
+    const originalSubject = subject;
+    const dsTopic = pickInterviewTopic(subject);
+    if (dsTopic) {
+      subject = dsTopic;
+    }
+    const dsRoleHint = getRolePromptHint(originalSubject);
+
+    // 🔥 Python Full Stack - Mix of Python backend + frontend
+    if (subject.toLowerCase().includes("python") && isFullStack) {
+      const technologies = ["Python", "Django", "Flask", "PostgreSQL", "REST API", "React"];
+      const randomTech = technologies[Math.floor(Math.random() * technologies.length)];
+      
+      if (randomTech === "React") {
+        const question = getRandomReactQuestion(difficulty);
+        return questionPack(transformToSaiMahendraStyle(question), difficulty);
+      } else {
+        // Python, Django, Flask, PostgreSQL - use AI
+        subject = randomTech;
+      }
+    }
+    
+    // 🔥 Individual Technologies
     if (subject.toLowerCase() === "javascript" || subject.toLowerCase() === "js") {
       const question = getRandomJSQuestion(difficulty);
-      return transformToSaiMahendraStyle(question); // Transform to your style
+      return questionPack(transformToSaiMahendraStyle(question), difficulty);
     }
     
-    // 🔥 NEW: If subject is React, use React question bank
     if (subject.toLowerCase() === "react" || subject.toLowerCase() === "reactjs") {
       const question = getRandomReactQuestion(difficulty);
-      return transformToSaiMahendraStyle(question); // Transform to your style
+      return questionPack(transformToSaiMahendraStyle(question), difficulty);
     }
     
-    // 🔥 NEW: If subject is Node.js, use Node question bank
     if (subject.toLowerCase() === "node" || subject.toLowerCase() === "nodejs" || subject.toLowerCase() === "node.js") {
       const question = getRandomNodeQuestion(difficulty);
-      return transformToSaiMahendraStyle(question); // Transform to your style
+      return questionPack(transformToSaiMahendraStyle(question), difficulty);
     }
     
-    // 🔥 NEW: If subject is Java, use Java question bank
     if (subject.toLowerCase() === "java") {
       const question = getRandomJavaQuestion(difficulty);
-      return transformToSaiMahendraStyle(question); // Transform to your style
+      return questionPack(transformToSaiMahendraStyle(question), difficulty);
     }
     
     const weakFocus = getWeakFocus(history);
@@ -205,6 +270,7 @@ async function generateQuestion({ subject, history = [], studentId }) {
     const prompt = `
 Subject: ${subject}
 Difficulty: ${difficulty}
+${dsRoleHint ? `\n${dsRoleHint}\n` : ""}
 
 Weak Concepts (Long-Term):
 ${weakConcepts || "None"}
@@ -252,7 +318,7 @@ ADAPTIVE RULES:
 QUESTION FORMAT:
 - One line only
 - Max 15 words
-- Must be answerable in 30-60 seconds
+- Must be answerable within the timer budget for its difficulty (about 1–5 minutes: easy/medium/hard)
 - Must test practical understanding
 
 Return ONLY the question text.
@@ -300,18 +366,18 @@ You generate questions like Sai Mahendra:
     // =======================================================
 
     if (!question) {
-      return getFallbackQuestion(subject, difficulty);
+      return questionPack(getFallbackQuestion(subject, difficulty), difficulty);
     }
 
     if (previousQuestions.includes(question)) {
-      return getFallbackQuestion(subject, difficulty);
+      return questionPack(getFallbackQuestion(subject, difficulty), difficulty);
     }
 
-    return question;
+    return questionPack(question, difficulty);
 
   } catch (error) {
     console.error("Question Generation Error:", error.message);
-    return getFallbackQuestion(subject, "easy");
+    return questionPack(getFallbackQuestion(subject, "easy"), "easy");
   }
 }
 

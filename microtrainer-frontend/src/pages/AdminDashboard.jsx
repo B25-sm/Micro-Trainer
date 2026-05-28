@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { API_BASE } from "../api";
 
 const AdminDashboard = () => {
   const [sessions, setSessions] = useState([]);
@@ -10,7 +11,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchSessions = async () => {
       try {
-        const response = await fetch("http://localhost:5000/anticheat/sessions");
+        const response = await fetch(`${API_BASE}/anticheat/sessions`);
         const data = await response.json();
         setSessions(data);
       } catch (error) {

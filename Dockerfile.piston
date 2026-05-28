@@ -1,0 +1,15 @@
+# Optional: use docker-compose.piston.yml (recommended) — pulls ghcr.io/engineer-man/piston:latest
+# and mounts ./data/piston/packages for runtime persistence.
+#
+# This file is NOT required for local dev. The upstream image already starts the API on port 2000.
+# Runtimes are NOT baked in; install them after start:
+#   node scripts/install-piston-packages.js
+#
+# For Render/production Docker deploys that need the same image:
+
+FROM ghcr.io/engineer-man/piston:latest
+
+EXPOSE 2000
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD wget -q -O- http://localhost:2000/api/v2/runtimes || exit 1

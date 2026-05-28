@@ -1,18 +1,31 @@
 import { useState, useEffect, useRef } from "react";
-import { startInterview, sendAnswer } from "../api";
+import { useSearchParams } from "react-router-dom";
+import {
+  startInterview,
+  sendAnswer,
+  API_BASE,
+  createAnticheatSession,
+  logAnticheatEvent,
+  updateAnticheatSuspicion,
+  incrementAnticheatWarning,
+  dismissAnticheatSession,
+  completeAnticheatSession,
+} from "../api";
 import { motion, AnimatePresence } from "framer-motion";
 import CircularTimer from "../components/CircularTimer";
-import FeedbackCard from "../components/FeedbackCard";
 import WebcamProctor from "../components/WebcamProctor";
 
 const Interview = () => {
+  const [searchParams] = useSearchParams();
   const [session, setSession] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [answer, setAnswer] = useState("");
-  const [feedback, setFeedback] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [subject, setSubject] = useState("JavaScript");
+  const [subject, setSubject] = useState("MERN Stack");
   const [chatHistory, setChatHistory] = useState([]);
+  const [questionSecondsTotal, setQuestionSecondsTotal] = useState(60);
+  const [questionSecondsLeft, setQuestionSecondsLeft] = useState(60);
+  const [questionDifficulty, setQuestionDifficulty] = useState("easy");
   const chatEndRef = useRef(null);
   const inputRef = useRef(null); // For auto-focus
 
@@ -20,12 +33,26 @@ const Interview = () => {
   const [suspicionScore, setSuspicionScore] = useState(0);
   const [warningCount, setWarningCount] = useState(0);
   const [isDismissed, setIsDismissed] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [eventLog, setEventLog] = useState([]);
+  const [studentId] = useState(() => localStorage.getItem("studentId") || "");
+
+  const postAnticheat = async (fn, payload) => {
+    const sid = session?.sessionId;
+    if (!sid) return;
+    try {
+      await fn(payload);
+    } catch (err) {
+      console.error("Anti-cheat sync failed:", err?.error || err?.message || err);
+    }
+  };
 
   const scrollToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  useEffect(() => {
+    const fromUrl = searchParams.get("subject");
+    if (fromUrl) setSubject(fromUrl);
+  }, [searchParams]);
 
   // Auto-focus input after question loads
   useEffect(() => {
@@ -38,15 +65,30 @@ const Interview = () => {
     scrollToBottom();
   }, [chatHistory]);
 
+  useEffect(() => {
+    if (!session || session.completed || isDismissed || loading) return undefined;
+    const id = window.setInterval(() => {
+      setQuestionSecondsLeft((x) => Math.max(0, x - 1));
+    }, 1000);
+    return () => window.clearInterval(id);
+  }, [session?.sessionId, session?.completed, isDismissed, loading, questionSecondsTotal]);
+
   // 🔒 ANTI-CHEAT: Handle Webcam Violations
   const handleWebcamViolation = (type, points, reason) => {
     addSuspicion(points, reason);
-    
-    // Only warn for serious violations
-    if (type === "multiple_faces" || type === "camera_denied") {
+
+    // Count toward ⚠️ / 3 (WebcamProctor throttles repeats per violation type).
+    // "no_face_detected" is suspicion-only — lighting/model flicker caused unfair dismissals.
+    const warnsOnUi =
+      type === "multiple_faces" ||
+      type === "camera_denied" ||
+      type === "head_turned" ||
+      type === "looking_away";
+
+    if (warnsOnUi) {
       incrementWarning(reason);
     }
-    
+
     logEvent("webcam_" + type, { reason, points });
   };
 
@@ -58,10 +100,14 @@ const Interview = () => {
       suspicionScore,
       warningCount,
       sessionId: session?.sessionId,
-      ...details
+      ...details,
     };
-    setEventLog(prev => [...prev, event]);
     console.log("🚨 Anti-Cheat Event:", event);
+    postAnticheat(logAnticheatEvent, {
+      sessionId: session?.sessionId,
+      eventType,
+      details: event,
+    });
   };
 
   // 🔒 ANTI-CHEAT: Add Suspicion Score
@@ -69,6 +115,11 @@ const Interview = () => {
     const newScore = suspicionScore + points;
     setSuspicionScore(newScore);
     logEvent("suspicion_added", { points, reason, newScore });
+    postAnticheat(updateAnticheatSuspicion, {
+      sessionId: session?.sessionId,
+      points,
+      reason,
+    });
   };
 
   // 🔒 ANTI-CHEAT: Increment Warning
@@ -76,6 +127,10 @@ const Interview = () => {
     const newCount = warningCount + 1;
     setWarningCount(newCount);
     logEvent("warning_issued", { warningCount: newCount, reason });
+    postAnticheat(incrementAnticheatWarning, {
+      sessionId: session?.sessionId,
+      reason,
+    });
 
     if (newCount === 1) {
       alert("⚠️ WARNING #1: " + reason + "\n\nYou have 2 warnings left before dismissal.");
@@ -90,6 +145,10 @@ const Interview = () => {
   const dismissInterview = (reason) => {
     setIsDismissed(true);
     logEvent("interview_dismissed", { reason, finalScore: suspicionScore });
+    postAnticheat(dismissAnticheatSession, {
+      sessionId: session?.sessionId,
+      reason,
+    });
     alert("❌ INTERVIEW DISMISSED\n\nReason: " + reason + "\n\nYou have been flagged for suspicious behavior.");
   };
 
@@ -97,7 +156,6 @@ const Interview = () => {
   useEffect(() => {
     const handleFullscreenChange = () => {
       const isNowFullscreen = !!document.fullscreenElement;
-      setIsFullscreen(isNowFullscreen);
 
       if (!isNowFullscreen && session && !session.completed) {
         addSuspicion(20, "Exited fullscreen");
@@ -176,10 +234,15 @@ const Interview = () => {
     try {
       const response = await startInterview({
         subject,
-        studentId: "student_" + Date.now(),
+        studentId,
       });
       setSession(response.data);
       setCurrentQuestion(response.data.question);
+      const secs = response.data.questionTimeSeconds ?? 60;
+      const diff = (response.data.difficulty || "easy").toLowerCase();
+      setQuestionSecondsTotal(secs);
+      setQuestionSecondsLeft(secs);
+      setQuestionDifficulty(diff);
       setChatHistory([
         {
           type: "ai",
@@ -188,16 +251,11 @@ const Interview = () => {
         },
       ]);
 
-      // 🔒 ANTI-CHEAT: Create session in backend
       try {
-        await fetch("http://localhost:5000/anticheat/session", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            sessionId: response.data.sessionId,
-            studentId: "student_" + Date.now(),
-            subject
-          })
+        await createAnticheatSession({
+          sessionId: response.data.sessionId,
+          studentId,
+          subject,
         });
       } catch (err) {
         console.error("Failed to create anti-cheat session:", err);
@@ -206,7 +264,6 @@ const Interview = () => {
       // 🔒 ANTI-CHEAT: Enter fullscreen mode
       try {
         await document.documentElement.requestFullscreen();
-        setIsFullscreen(true);
         logEvent("interview_started", { fullscreen: true });
       } catch (err) {
         console.error("Fullscreen failed:", err);
@@ -276,9 +333,18 @@ const Interview = () => {
           finalReport: response.data.coachReport,
           finalScores: response.data.final
         });
+
+        postAnticheat(completeAnticheatSession, {
+          sessionId: session.sessionId,
+        });
         
         return; // Stop here, but chat remains active
       } else if (response.data.nextQuestion) {
+        const secs = response.data.questionTimeSeconds ?? 60;
+        const diff = (response.data.difficulty || "easy").toLowerCase();
+        setQuestionSecondsTotal(secs);
+        setQuestionSecondsLeft(secs);
+        setQuestionDifficulty(diff);
         // Just show next question, NO feedback
         aiMessages.push({
           type: "ai",
@@ -297,8 +363,9 @@ const Interview = () => {
     }
   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter" && !e.shiftKey && !loading) {
+  const handleKeyDown = (e) => {
+    // Enter = new line (default textarea). Ctrl/Cmd+Enter = send.
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey) && !loading) {
       e.preventDefault();
       handleSubmit();
     }
@@ -309,59 +376,45 @@ const Interview = () => {
     try {
       // Create context from the final report
       const context = `
-You just completed an interview. Here was your feedback:
-
+Interview Feedback Summary:
 ${formatFinalFeedback(session.finalReport, session.finalScores)}
 
-The candidate is now asking: "${question}"
+Student's message: "${question}"
 
-Respond as Sai Mahendra - be direct, helpful, and provide actionable advice.
+IMPORTANT: 
+- Detect the emotion behind their message (frustration, confusion, disappointment, curiosity)
+- Acknowledge their feeling like a human would
+- Then provide clear, actionable guidance
+- Be conversational and empathetic, not robotic
 `;
 
-      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      const response = await fetch(`${API_BASE.replace(/\/$/, "")}/chat/ask`, {
         method: "POST",
-        headers: {
-          "Authorization": `Bearer ${import.meta.env.VITE_GROQ_API_KEY || ""}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          model: "llama-3.1-8b-instant",
-          messages: [
-            {
-              role: "system",
-              content: "You are Sai Mahendra, a direct and practical AI trainer. Answer follow-up questions about interview feedback clearly and actionably."
-            },
-            {
-              role: "user",
-              content: context
-            }
-          ],
-          temperature: 0.7,
-          max_tokens: 300
-        })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: context }),
       });
 
-      const data = await response.json();
-      const aiResponse = data.choices?.[0]?.message?.content || "I'm here to help! Can you rephrase that?";
+      const chatData = await response.json();
+      const followUpAnswer = chatData.answer || "I'm having trouble responding right now.";
 
       setChatHistory((prev) => [
         ...prev,
         {
           type: "ai",
-          content: aiResponse,
+          content: followUpAnswer,
           timestamp: new Date(),
-        }
+        },
       ]);
-
+      return;
     } catch (error) {
-      console.error("Follow-up error:", error);
+      console.error("Follow-up failed:", error);
       setChatHistory((prev) => [
         ...prev,
         {
           type: "ai",
-          content: "Sorry, I couldn't process that. Try asking again!",
+          content: "Sorry, I couldn't process that. Please try again.",
           timestamp: new Date(),
-        }
+        },
       ]);
     } finally {
       setLoading(false);
@@ -370,20 +423,8 @@ Respond as Sai Mahendra - be direct, helpful, and provide actionable advice.
 
   if (!session) {
     return (
-      <div className="min-h-screen flex flex-col bg-white dark:bg-gray-50">
+      <div className="min-h-screen flex flex-col bg-white">
         
-        {/* Minimal Header */}
-        <header className="px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition">
-              <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-            <h1 className="text-xl font-normal text-gray-800">MicroTrainer</h1>
-          </div>
-        </header>
-
         {/* Setup Form - Gemini Style */}
         <div className="flex-1 flex items-center justify-center p-6">
           <motion.div
@@ -423,11 +464,26 @@ Respond as Sai Mahendra - be direct, helpful, and provide actionable advice.
                   onChange={(e) => setSubject(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                 >
-                  <option value="JavaScript">JavaScript</option>
-                  <option value="React">React</option>
-                  <option value="Node.js">Node.js</option>
-                  <option value="Java">Java</option>
-                  <option value="Python">Python</option>
+                  <optgroup label="Full Stack Roles">
+                    <option value="MERN Stack">MERN Stack Developer</option>
+                    <option value="Java Full Stack">Java Full Stack Developer</option>
+                    <option value="Python Full Stack">Python Full Stack Developer</option>
+                  </optgroup>
+                  <optgroup label="Data & ML Roles">
+                    <option value="Data Analyst">Data Analyst</option>
+                    <option value="ML Engineer">ML Engineer</option>
+                    <option value="Data Science">Data Scientist (General)</option>
+                  </optgroup>
+                  <optgroup label="Individual Technologies">
+                    <option value="JavaScript">JavaScript</option>
+                    <option value="React">React</option>
+                    <option value="Node.js">Node.js</option>
+                    <option value="Java">Java</option>
+                    <option value="Python">Python</option>
+                    <option value="SQL">SQL</option>
+                    <option value="Angular">Angular</option>
+                    <option value="TypeScript">TypeScript</option>
+                  </optgroup>
                 </select>
               </div>
 
@@ -481,7 +537,8 @@ Respond as Sai Mahendra - be direct, helpful, and provide actionable advice.
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-50">
+    /* Navbar + layout padding already consume viewport height — filling another full screen pushes the composer below the fold */
+    <div className="flex flex-col w-full overflow-hidden bg-white h-[calc(100dvh-8rem)] min-h-[28rem] sm:h-[calc(100dvh-7rem)] sm:min-h-[360px]">
       
       {/* 🔒 WEBCAM PROCTORING */}
       <WebcamProctor 
@@ -489,13 +546,14 @@ Respond as Sai Mahendra - be direct, helpful, and provide actionable advice.
         onViolation={handleWebcamViolation}
       />
 
-      {/* Minimal Header */}
-      <header className="px-6 py-4 flex items-center justify-between border-b border-gray-200">
-        <div className="flex items-center gap-4">
-          <button className="p-2 hover:bg-gray-100 rounded-lg transition">
-            <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+      {/* Unified Header with Interview Info */}
+      <header className="flex-shrink-0 px-6 py-3 flex items-center justify-between border-b border-gray-200 bg-white">
+        <div className="flex items-center gap-8">
+          <button
+            onClick={() => window.location.href = "/"}
+            className="text-xl font-semibold text-gray-800 hover:text-blue-500 transition"
+          >
+            MicroTrainer
           </button>
           <div>
             <h1 className="text-lg font-normal text-gray-800">{subject} Interview</h1>
@@ -514,18 +572,30 @@ Respond as Sai Mahendra - be direct, helpful, and provide actionable advice.
               Score: {suspicionScore}
             </div>
           </div>
-          <CircularTimer duration={30} />
-          <button className="p-2 hover:bg-gray-100 rounded-lg transition">
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          {session && !session.completed && (
+            <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
+              <div className="flex flex-col items-end leading-tight">
+                <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+                  {questionDifficulty}
+                </span>
+                <span className="text-[9px] text-gray-400 tabular-nums">
+                  {questionSecondsTotal >= 60
+                    ? `${Math.round(questionSecondsTotal / 60)} min`
+                    : `${questionSecondsTotal}s`}
+                </span>
+              </div>
+              <CircularTimer
+                timeLeft={questionSecondsLeft}
+                total={questionSecondsTotal}
+              />
+            </div>
+          )}
         </div>
       </header>
 
-      {/* Chat Area - Gemini Style */}
-      <main className="flex-1 overflow-y-auto px-6 py-8">
-        <div className="max-w-3xl mx-auto space-y-6">
+      {/* Chat scrolls; input stays visible (flex footer — min-h-0 lets flex-1 shrink inside viewport) */}
+      <main className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4 overscroll-contain">
+        <div className="max-w-3xl mx-auto space-y-6 pb-2">
           
           <AnimatePresence>
             {chatHistory.map((message, index) => (
@@ -552,8 +622,8 @@ Respond as Sai Mahendra - be direct, helpful, and provide actionable advice.
         </div>
       </main>
 
-      {/* Input Area - Fixed at Bottom - Gemini Style */}
-      <div className="border-t border-gray-200 bg-white px-6 py-4">
+      {/* Composer pinned to bottom of interview panel (not below viewport) */}
+      <div className="flex-shrink-0 border-t border-gray-200 bg-white px-4 sm:px-6 py-3 shadow-[0_-4px_24px_rgba(0,0,0,0.06)]">
         <div className="max-w-3xl mx-auto">
           <div className="bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-end gap-3 px-5 py-3">
@@ -561,9 +631,9 @@ Respond as Sai Mahendra - be direct, helpful, and provide actionable advice.
                 ref={inputRef}
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
-                onKeyPress={handleKeyPress}
+                onKeyDown={handleKeyDown}
                 placeholder={session?.completed ? "Ask me about your feedback..." : "Type your answer..."}
-                rows={1}
+                rows={3}
                 disabled={loading}
                 className="flex-1 bg-transparent text-gray-800 placeholder-gray-400 outline-none text-base resize-none max-h-32 disabled:opacity-50 disabled:cursor-not-allowed select-none"
                 style={{ minHeight: "24px", userSelect: "none" }}
@@ -589,8 +659,12 @@ Respond as Sai Mahendra - be direct, helpful, and provide actionable advice.
               </button>
             </div>
           </div>
-          <p className="text-xs text-gray-500 text-center mt-3">
-            Press Enter to send, Shift+Enter for new line
+          <p className="text-xs text-gray-500 text-center mt-2 leading-relaxed">
+            Press Enter for a new line. Ctrl+Enter (⌘+Enter on Mac) to send.
+            <span className="block mt-1 text-gray-400">
+              Answers are scored by AI on clarity and correctness (including code snippets if you paste them).
+              Code is not executed here — use Problems for runnable coding.
+            </span>
           </p>
         </div>
       </div>

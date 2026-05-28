@@ -9,6 +9,7 @@ const cors = require('cors');
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
+const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const app = express();
@@ -152,37 +153,33 @@ function buildRenderDeployUrl({ email, licenseKey, groqKey }) {
 }
 
 async function sendEmail({ to, subject, text, html }) {
-  if (!process.env.SENDGRID_API_KEY) {
-    console.log('📧 SENDGRID_API_KEY missing. Email content printed instead.');
-    console.log('To:', to);
-    console.log('Subject:', subject);
-    console.log(text);
-    return { sent: false, mode: 'console' };
-  }
+  if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT || 587),
+      secure: Number(process.env.SMTP_PORT || 587) === 465,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
 
-  const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${process.env.SENDGRID_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      personalizations: [{ to: [{ email: to }] }],
-      from: { email: FROM_EMAIL, name: FROM_NAME },
+    await transporter.sendMail({
+      from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
+      to,
       subject,
-      content: [
-        { type: 'text/plain', value: text },
-        { type: 'text/html', value: html },
-      ],
-    }),
-  });
+      text,
+      html,
+    });
 
-  if (!response.ok) {
-    const body = await response.text();
-    throw new Error(`SendGrid failed: ${response.status} ${body}`);
+    return { sent: true, mode: 'smtp' };
   }
 
-  return { sent: true, mode: 'sendgrid' };
+  console.log('📧 SMTP email provider missing. Email content printed instead.');
+  console.log('To:', to);
+  console.log('Subject:', subject);
+  console.log(text);
+  return { sent: false, mode: 'console' };
 }
 
 function cleanupPendingSetups() {

@@ -1,0 +1,162 @@
+import { useState, useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { LifeBuoy, Send, ChevronUp, X } from "lucide-react";
+import { reportIssue } from "../api";
+
+/**
+ * Floating help / bug report — works signed in or on login (guest reports by IP).
+ */
+export default function ReportIssueButton() {
+  const location = useLocation();
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState("idle");
+  const [toast, setToast] = useState("");
+  const panelRef = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onDocClick(e) {
+      if (panelRef.current && !panelRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, [open]);
+
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(""), 5000);
+    return () => clearTimeout(t);
+  }, [toast]);
+
+  async function submit(note = "") {
+    if (status === "sending") return;
+    setStatus("sending");
+    try {
+      const pageUrl = window.location.href;
+      const pagePath = location.pathname + location.search;
+      const res = await reportIssue({
+        message: note,
+        pageUrl,
+        pagePath,
+        userAgent: navigator.userAgent,
+      });
+      setStatus("ok");
+      setOpen(false);
+      setMessage("");
+      setToast(res.data?.message || "Report sent. Thank you!");
+    } catch (err) {
+      setStatus("err");
+      setToast(
+        err?.error || err?.message || "Could not send report. Try again."
+      );
+    } finally {
+      setTimeout(() => setStatus("idle"), 1200);
+    }
+  }
+
+  const isSending = status === "sending";
+
+  return (
+    <div
+      ref={panelRef}
+      className="fixed bottom-6 right-6 z-[200] flex flex-col items-end gap-3"
+      aria-live="polite"
+    >
+      {toast && (
+        <div
+          role="status"
+          className={`max-w-sm px-4 py-3 rounded-xl shadow-lg border text-sm leading-snug ${
+            status === "err"
+              ? "bg-red-50 border-red-200 text-red-800 dark:bg-red-950 dark:border-red-800 dark:text-red-100"
+              : "bg-white border-slate-200 text-slate-800 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100"
+          }`}
+        >
+          {toast}
+        </div>
+      )}
+
+      {open && (
+        <div className="w-[min(100vw-3rem,22rem)] rounded-2xl border border-slate-200/80 dark:border-slate-700/80 bg-white dark:bg-slate-900 shadow-2xl shadow-slate-900/10 dark:shadow-black/40 overflow-hidden read-mode:bg-[var(--read-surface-elevated)] read-mode:border-[var(--read-border)]">
+          <div className="flex items-start justify-between gap-3 px-4 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/50">
+            <div>
+              <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                Report a problem
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                We&apos;ll notify your trainer with this page and your account
+                details.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 dark:hover:bg-slate-700 transition"
+              aria-label="Close"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          <form onSubmit={(e) => { e.preventDefault(); submit(message.trim()); }} className="p-4 space-y-3">
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Page:{" "}
+              <span className="font-mono text-slate-700 dark:text-slate-300">
+                {location.pathname}
+              </span>
+            </p>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="What happened? Steps to reproduce help us fix it faster."
+              rows={4}
+              maxLength={2000}
+              className="w-full text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2.5 resize-none text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 read-mode:bg-[var(--read-surface)]"
+            />
+            <button
+              type="submit"
+              disabled={isSending}
+              className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-60 transition shadow-sm"
+            >
+              <Send className="w-4 h-4" />
+              {isSending ? "Sending…" : "Send report"}
+            </button>
+          </form>
+        </div>
+      )}
+
+      <div className="flex items-center gap-0 rounded-2xl border border-slate-200/90 dark:border-slate-700/90 bg-white dark:bg-slate-900 shadow-xl shadow-slate-900/8 dark:shadow-black/30 overflow-hidden">
+        <button
+          type="button"
+          onClick={() => submit("")}
+          disabled={isSending}
+          title="Tell us if something feels broken"
+          className="flex items-center gap-2.5 pl-4 pr-3 py-3 text-sm font-semibold text-slate-800 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-60 transition"
+        >
+          <span className="flex items-center justify-center w-8 h-8 rounded-xl bg-indigo-600 text-white shadow-sm">
+            <LifeBuoy className="w-4 h-4" strokeWidth={2.25} />
+          </span>
+          <span className="hidden sm:inline">
+            {isSending ? "Sending…" : "Something feels off?"}
+          </span>
+          <span className="sm:hidden">{isSending ? "…" : "Bug? Tell us"}</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          disabled={isSending}
+          title="Add details before sending"
+          className="flex items-center justify-center px-3 py-3 border-l border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
+          aria-expanded={open}
+          aria-label="Add details"
+        >
+          <ChevronUp
+            className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`}
+          />
+        </button>
+      </div>
+    </div>
+  );
+}

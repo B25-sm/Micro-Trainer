@@ -1,66 +1,114 @@
 // =======================================================
-// 🔹 READ SHEETS SERVICE - Mock Implementation
+// 🔹 READ SHEETS SERVICE — Google Sheets + dev fallback
 // =======================================================
-// TODO: Implement actual Google Sheets reading
-// For now, returning mock data to make the app functional
+// Column layout (matches sheetsService.logInterview):
+// A timestamp | B studentId | C question | D answer | E subject
+// F score | G communication | H technical | I strengths | J mistakes
+// K improvement | L verdict
 
-// =======================================================
-// 🔹 Get Student Report
-// =======================================================
-async function getStudentReport(studentId) {
-  // Mock data - replace with actual Google Sheets API call
-  return {
+const {
+  getSheetsApi,
+  isSheetsWriteEnabled,
+} = require("./googleSheetsAuth");
+
+const SPREADSHEET_ID = process.env.SHEET_ID;
+const SHEET_NAME = "Sheet1";
+const DATA_RANGE = `${SHEET_NAME}!A2:L`;
+
+let rowsCache = null;
+let cacheExpiresAt = 0;
+const CACHE_TTL_MS = 60_000;
+
+function parseScore(val) {
+  if (val === undefined || val === null || val === "") return 0;
+  const n = typeof val === "string" ? parseFloat(val) : Number(val);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function parseRow(cells) {
+  if (!cells || !cells.length) return null;
+
+  const [
+    timestamp,
     studentId,
-    averageScore: 7.5,
-    communicationScore: 7.0,
-    technicalScore: 8.0,
-    weakConcepts: ["Closures", "Prototypes", "Event Loop"],
-    strongConcepts: ["React Hooks", "Async/Await", "ES6 Features"],
-    totalQuestions: 15,
+    question,
+    answer,
+    subject,
+    score,
+    communication,
+    technical,
+    strengths,
+    mistakes,
+    improvement,
+    verdict,
+  ] = cells;
+
+  if (!studentId && !question) return null;
+
+  return {
+    timestamp: timestamp || new Date().toISOString(),
+    studentId: String(studentId || "anonymous").trim(),
+    question: question || "",
+    answer: answer || "",
+    subject: subject || "General",
+    score: parseScore(score),
+    communication: communication || "",
+    technical: technical || "",
+    strengths: strengths || "",
+    mistakes: mistakes || "",
+    improvement: improvement || "",
+    verdict: verdict || "",
   };
 }
 
-// =======================================================
-// 🔹 Get Student History
-// =======================================================
-async function getStudentHistory(studentId) {
-  // Mock data - replace with actual Google Sheets API call
-  return [
-    { question: "What is a closure?", score: 7, timestamp: new Date() },
-    { question: "Explain async/await", score: 8, timestamp: new Date() },
-    { question: "What is React?", score: 7.5, timestamp: new Date() },
-  ];
+async function fetchRowsFromSheets() {
+  if (!isSheetsWriteEnabled()) {
+    return null;
+  }
+
+  const sheets = await getSheetsApi();
+  const response = await sheets.spreadsheets.values.get({
+    spreadsheetId: SPREADSHEET_ID,
+    range: DATA_RANGE,
+  });
+
+  const values = response.data.values || [];
+  return values.map(parseRow).filter(Boolean);
 }
 
-// =======================================================
-// 🔹 Get All Students History (for leaderboard)
-// =======================================================
-async function getAllStudentsHistory() {
-  // Mock data - replace with actual Google Sheets API call
-  return [
-    { studentId: "student_1", avgScore: 8.5, totalQuestions: 20 },
-    { studentId: "student_2", avgScore: 7.2, totalQuestions: 15 },
-    { studentId: "student_3", avgScore: 9.1, totalQuestions: 25 },
-  ];
+async function getAllRows({ bypassCache = false } = {}) {
+  const now = Date.now();
+
+  if (!bypassCache && rowsCache && now < cacheExpiresAt) {
+    return rowsCache;
+  }
+
+  try {
+    const sheetRows = await fetchRowsFromSheets();
+    if (sheetRows) {
+      rowsCache = sheetRows;
+      cacheExpiresAt = now + CACHE_TTL_MS;
+      return sheetRows;
+    }
+  } catch (err) {
+    console.error("Google Sheets read failed:", err.message);
+    if (rowsCache) {
+      return rowsCache;
+    }
+  }
+
+  return [];
 }
 
-// =======================================================
-// 🔹 Utility: Normalize Score
-// =======================================================
 function normalizeScore(val) {
-  if (!val) return 0;
-  return typeof val === "string" ? parseFloat(val) : val;
+  return parseScore(val);
 }
 
-// =======================================================
-// 🔹 Utility: Detect Trend (Last 5 Answers)
-// =======================================================
 function getTrend(history = []) {
   if (history.length < 2) return "stable";
 
   const recent = history.slice(-5);
-  const scores = recent.map(h => normalizeScore(h.score));
-
+  const scores = recent.map((h) => normalizeScore(h.score));
   const first = scores[0];
   const last = scores[scores.length - 1];
 
@@ -69,25 +117,17 @@ function getTrend(history = []) {
   return "stable";
 }
 
-// =======================================================
-// 🔹 Utility: Consistency Score
-// =======================================================
 function getConsistency(history = []) {
   if (!history.length) return 0;
 
-  const scores = history.map(h => normalizeScore(h.score));
+  const scores = history.map((h) => normalizeScore(h.score));
   const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-
   const variance =
-    scores.reduce((sum, s) => sum + Math.pow(s - avg, 2), 0) /
-    scores.length;
+    scores.reduce((sum, s) => sum + Math.pow(s - avg, 2), 0) / scores.length;
 
-  return (10 - Math.sqrt(variance)).toFixed(2); // higher = consistent
+  return (10 - Math.sqrt(variance)).toFixed(2);
 }
 
-// =======================================================
-// 🔹 Utility: Performance Level
-// =======================================================
 function getLevel(avgScore) {
   if (avgScore >= 8) return "Advanced";
   if (avgScore >= 6) return "Intermediate";
@@ -95,43 +135,131 @@ function getLevel(avgScore) {
   return "Weak";
 }
 
-// =======================================================
-// 🔹 MAIN MEMORY FUNCTION (UPGRADED)
-// =======================================================
+function aggregateReportFromHistory(studentId, history) {
+  if (!history.length) {
+    return {
+      studentId,
+      averageScore: 0,
+      communicationScore: 0,
+      technicalScore: 0,
+      weakConcepts: [],
+      strongConcepts: [],
+      totalQuestions: 0,
+    };
+  }
+
+  const scores = history.map((h) => normalizeScore(h.score));
+  const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+
+  const commMap = { Good: 10, Average: 7, Weak: 4 };
+  const techMap = { Good: 10, Average: 7, Weak: 4 };
+
+  const commScores = history
+    .map((h) => commMap[h.communication] ?? normalizeScore(h.score))
+    .filter((s) => s > 0);
+  const techScores = history
+    .map((h) => techMap[h.technical] ?? normalizeScore(h.score))
+    .filter((s) => s > 0);
+
+  const weakFromMistakes = history
+    .flatMap((h) => (h.mistakes ? String(h.mistakes).split(/[,;]/).map((s) => s.trim()) : []))
+    .filter(Boolean)
+    .slice(0, 5);
+
+  const strongFromStrengths = history
+    .flatMap((h) => (h.strengths ? String(h.strengths).split(/[,;]/).map((s) => s.trim()) : []))
+    .filter(Boolean)
+    .slice(0, 5);
+
+  return {
+    studentId,
+    averageScore: parseFloat(avgScore.toFixed(2)),
+    communicationScore: commScores.length
+      ? parseFloat((commScores.reduce((a, b) => a + b, 0) / commScores.length).toFixed(2))
+      : parseFloat(avgScore.toFixed(2)),
+    technicalScore: techScores.length
+      ? parseFloat((techScores.reduce((a, b) => a + b, 0) / techScores.length).toFixed(2))
+      : parseFloat(avgScore.toFixed(2)),
+    weakConcepts: [...new Set(weakFromMistakes)],
+    strongConcepts: [...new Set(strongFromStrengths)],
+    totalQuestions: history.length,
+  };
+}
+
+async function getStudentHistory(studentId) {
+  const rows = await getAllRows();
+  return rows
+    .filter((r) => r.studentId === studentId)
+    .map((r) => ({
+      question: r.question,
+      answer: r.answer,
+      subject: r.subject,
+      score: r.score,
+      communication: r.communication,
+      technical: r.technical,
+      strengths: r.strengths,
+      mistakes: r.mistakes,
+      improvement: r.improvement,
+      verdict: r.verdict,
+      timestamp: r.timestamp,
+    }))
+    .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+}
+
+async function getStudentReport(studentId) {
+  const history = await getStudentHistory(studentId);
+  return aggregateReportFromHistory(studentId, history);
+}
+
+async function getAllStudentsHistory() {
+  const rows = await getAllRows();
+  const map = {};
+
+  rows.forEach((row) => {
+    if (!map[row.studentId]) {
+      map[row.studentId] = { scores: [], count: 0 };
+    }
+    map[row.studentId].scores.push(row.score);
+    map[row.studentId].count += 1;
+  });
+
+  return Object.keys(map).map((studentId) => {
+    const { scores, count } = map[studentId];
+    const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+    return {
+      studentId,
+      avgScore: parseFloat(avg.toFixed(2)),
+      totalQuestions: count,
+    };
+  });
+}
+
 async function getStudentMemory(studentId) {
   try {
     const report = await getStudentReport(studentId);
     const history = await getStudentHistory(studentId);
 
-    if (!report && !history?.length) {
+    if (!history.length) {
       return null;
     }
 
-    const avgScore = normalizeScore(report?.averageScore);
-    const communication = normalizeScore(report?.communicationScore);
-    const technical = normalizeScore(report?.technicalScore);
-
+    const avgScore = normalizeScore(report.averageScore);
+    const communication = normalizeScore(report.communicationScore);
+    const technical = normalizeScore(report.technicalScore);
     const trend = getTrend(history);
     const consistency = getConsistency(history);
     const level = getLevel(avgScore);
 
     return {
-      // Core metrics
       avgScore,
       communication,
       technical,
-
-      // Concepts
-      weakConcepts: report?.weakConcepts || [],
-      strongConcepts: report?.strongConcepts || [],
-
-      // Intelligence layer
-      trend,            // improving | declining | stable
-      consistency,      // stability score
-      level,            // Beginner | Intermediate | Advanced
-
-      // Raw meta
-      totalAttempts: history?.length || 0,
+      weakConcepts: report.weakConcepts || [],
+      strongConcepts: report.strongConcepts || [],
+      trend,
+      consistency,
+      level,
+      totalAttempts: history.length,
       lastUpdated: new Date().toISOString(),
     };
   } catch (err) {
@@ -140,9 +268,16 @@ async function getStudentMemory(studentId) {
   }
 }
 
-module.exports = { 
+function invalidateRowsCache() {
+  rowsCache = null;
+  cacheExpiresAt = 0;
+}
+
+module.exports = {
+  getAllRows,
   getStudentMemory,
   getStudentReport,
   getStudentHistory,
-  getAllStudentsHistory
+  getAllStudentsHistory,
+  invalidateRowsCache,
 };

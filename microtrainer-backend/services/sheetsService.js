@@ -1,47 +1,34 @@
-const { google } = require("googleapis");
+const {
+  getSheetsApi,
+  isSheetsWriteEnabled,
+  resolveCredentialsPath,
+} = require("./googleSheetsAuth");
 
-// =======================================================
-// 🔹 CONFIG
-// =======================================================
 const SPREADSHEET_ID = process.env.SHEET_ID;
 const SHEET_NAME = "Sheet1";
 
-// 🔥 VALIDATION (fail fast)
 if (!SPREADSHEET_ID) {
-  console.error("❌ ERROR: SHEET_ID is missing in .env");
+  console.error("❌ Google Sheets: SHEET_ID is missing in .env");
 }
 
-// =======================================================
-// 🔹 AUTH
-// =======================================================
-const auth = new google.auth.GoogleAuth({
-  keyFile: "credentials.json",
-  scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-});
-
-// =======================================================
-// 🔹 Safe Value Helper
-// =======================================================
 function safe(val) {
   if (val === undefined || val === null) return "";
   if (Array.isArray(val)) return val.join(", ");
   return val;
 }
 
-// =======================================================
-// 🔹 Log Interview
-// =======================================================
 async function logInterview(data) {
+  if (!isSheetsWriteEnabled()) {
+    console.warn(
+      "⚠️ Google Sheets: write skipped (missing credentials.json or SHEET_ID)"
+    );
+    console.warn(`   Expected credentials at: ${resolveCredentialsPath()}`);
+    return;
+  }
+
   try {
-    // 🔥 HARD CHECK
-    if (!SPREADSHEET_ID) {
-      throw new Error("SHEET_ID is undefined. Check .env file.");
-    }
+    const sheets = await getSheetsApi();
 
-    const client = await auth.getClient();
-    const sheets = google.sheets({ version: "v4", auth: client });
-
-    // 🔹 Prepare row
     const row = [
       new Date().toISOString(),
       safe(data.studentId || "anonymous"),
@@ -57,45 +44,125 @@ async function logInterview(data) {
       safe(data.verdict),
     ];
 
-    // ===================================================
-    // 🔥 DEBUG LOGS (VERY IMPORTANT)
-    // ===================================================
-    console.log("====================================");
-    console.log("📤 SENDING DATA TO GOOGLE SHEETS");
-    console.log("📌 SHEET_ID:", SPREADSHEET_ID);
-    console.log("📌 RANGE:", `${SHEET_NAME}!A:L`);
-    console.log("📌 ROW:", row);
-    console.log("====================================");
+    const range = `${SHEET_NAME}!A:L`;
 
-    // ===================================================
-    // 🔹 API CALL
-    // ===================================================
     const response = await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${SHEET_NAME}!A:L`,
+      range,
       valueInputOption: "USER_ENTERED",
+      insertDataOption: "INSERT_ROWS",
       resource: {
         values: [row],
       },
     });
 
-    console.log("✅ SUCCESS: Data logged to Google Sheets");
-    console.log("📊 Updates:", response.data.updates);
+    const updatedRange =
+      response.data.updates?.updatedRange || response.data.updates?.tableRange;
+    const updatedRows = response.data.updates?.updatedRows ?? 1;
 
-  } catch (error) {
-    console.error("❌ GOOGLE SHEETS ERROR (FULL):");
+    console.log("✅ Google Sheets: row inserted successfully");
+    console.log(`   Range: ${updatedRange || range}`);
+    console.log(`   Rows added: ${updatedRows}`);
+    console.log(`   Student: ${safe(data.studentId || "anonymous")}`);
 
-    // 🔥 FULL ERROR PRINT
-    console.error(error);
-
-    if (error.response) {
-      console.error("📉 API RESPONSE ERROR:", error.response.data);
+    try {
+      const { invalidateRowsCache } = require("./readSheetsService");
+      invalidateRowsCache();
+    } catch (_) {
+      /* optional */
     }
+  } catch (error) {
+    console.error("❌ Google Sheets: row insert failed");
+    console.error(`   ${error.message}`);
 
-    if (error.message) {
-      console.error("📛 MESSAGE:", error.message);
+    if (error.response?.data) {
+      console.error("   API:", JSON.stringify(error.response.data));
     }
   }
 }
 
-module.exports = { logInterview };
+const BUG_REPORTS_SHEET = "BugReports";
+
+async function ensureBugReportsSheet() {
+  if (!isSheetsWriteEnabled()) return false;
+  const sheets = await getSheetsApi();
+  const spreadsheet = await sheets.spreadsheets.get({
+    spreadsheetId: SPREADSHEET_ID,
+  });
+  const exists = spreadsheet.data.sheets?.some(
+    (s) => s.properties?.title === BUG_REPORTS_SHEET
+  );
+  if (!exists) {
+    await sheets.spreadsheets.batchUpdate({
+      spreadsheetId: SPREADSHEET_ID,
+      resource: {
+        requests: [
+          {
+            addSheet: {
+              properties: {
+                title: BUG_REPORTS_SHEET,
+                gridProperties: { frozenRowCount: 1 },
+              },
+            },
+          },
+        ],
+      },
+    });
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `${BUG_REPORTS_SHEET}!A1:G1`,
+      valueInputOption: "USER_ENTERED",
+      resource: {
+        values: [
+          [
+            "timestamp",
+            "studentId",
+            "email",
+            "name",
+            "message",
+            "pagePath",
+            "pageUrl",
+          ],
+        ],
+      },
+    });
+    console.log(`✅ Google Sheets: created tab "${BUG_REPORTS_SHEET}"`);
+  }
+  return true;
+}
+
+async function logFeedbackReport(data) {
+  if (!isSheetsWriteEnabled()) {
+    return false;
+  }
+
+  try {
+    await ensureBugReportsSheet();
+    const sheets = await getSheetsApi();
+    const row = [
+      new Date().toISOString(),
+      safe(data.studentId),
+      safe(data.email),
+      safe(data.name),
+      safe(data.message),
+      safe(data.pagePath),
+      safe(data.pageUrl),
+    ];
+
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `${BUG_REPORTS_SHEET}!A:G`,
+      valueInputOption: "USER_ENTERED",
+      insertDataOption: "INSERT_ROWS",
+      resource: { values: [row] },
+    });
+
+    console.log("✅ Google Sheets: bug report logged");
+    return true;
+  } catch (error) {
+    console.warn("⚠️  Google Sheets: bug report tab skipped —", error.message);
+    return false;
+  }
+}
+
+module.exports = { logInterview, logFeedbackReport };

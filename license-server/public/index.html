@@ -124,6 +124,24 @@
       cursor: not-allowed;
     }
 
+    .chrome-button {
+      display: block;
+      width: 100%;
+      margin: 18px 0 8px;
+      border-radius: 16px;
+      background: #0f172a;
+      color: white;
+      padding: 15px 18px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .chrome-button:hover {
+      background: #1e293b;
+    }
+
     .hint {
       margin-top: 6px;
       font-size: 12px;
@@ -213,8 +231,16 @@
     <section class="panel">
       <h1>Setup MicroTrainer in minutes</h1>
       <p>
-        Fill your details once. We verify your email, create your license, and
-        open Render with backend, frontend, and Piston preconfigured.
+        Install the extension first, then fill this form. We verify your email,
+        create your license, and open Render with backend, frontend, and Piston
+        preconfigured.
+      </p>
+
+      <a id="chromeStoreLink" class="chrome-button" href="#" target="_blank" rel="noreferrer">
+        Add MicroTrainer to Chrome
+      </a>
+      <p class="hint">
+        Install once. After deployment, opening your MicroTrainer app will connect the extension automatically.
       </p>
 
       <div class="requirements">
@@ -227,29 +253,32 @@
         <div class="step">
           <span class="num">1</span>
           <div>
-            <strong>Enter details</strong>
-            Your email and Groq key are used for your own deployment.
+            <strong>Install extension</strong>
+            Add MicroTrainer from the Chrome Web Store before deployment.
           </div>
         </div>
         <div class="step">
           <span class="num">2</span>
           <div>
-            <strong>Click secure email link</strong>
-            This verifies you own the email and opens Render.
+            <strong>Fill setup form</strong>
+            Enter name, email, and your Groq key for your own AI usage.
           </div>
         </div>
         <div class="step">
           <span class="num">3</span>
           <div>
-            <strong>Deploy and use extension</strong>
-            Render creates frontend, backend, and Piston for you.
+            <strong>Click email link and deploy</strong>
+            Render opens prefilled. Click Deploy, then open your app once.
           </div>
         </div>
       </div>
     </section>
 
     <section class="panel">
-      <h2>Student Setup</h2>
+      <h2>Step 2: Student Details</h2>
+      <p class="hint">
+        Already installed the extension? Fill this form and we will send your secure deploy link.
+      </p>
       <form id="setupForm">
         <label for="name">Name</label>
         <input id="name" name="name" autocomplete="name" placeholder="Your name" required>
@@ -284,6 +313,10 @@
     const form = document.getElementById('setupForm');
     const submitBtn = document.getElementById('submitBtn');
     const statusBox = document.getElementById('status');
+    const chromeStoreLink = document.getElementById('chromeStoreLink');
+    const CHROME_EXTENSION_URL = 'https://chrome.google.com/webstore/detail/microtrainer/YOUR_EXTENSION_ID';
+
+    chromeStoreLink.href = CHROME_EXTENSION_URL;
 
     function setStatus(message, isError = false, devVerifyUrl = '') {
       statusBox.className = `status show${isError ? ' error' : ''}`;

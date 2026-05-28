@@ -1,292 +1,247 @@
-# ⚡ MICRO TRAINER - QUICK START GUIDE
+# ⚡ Quick Start - Deploy in 10 Minutes
 
-## 🎯 CURRENT STATUS
+## 🎯 For Students
 
-Your system is **95% complete**. Here's what needs to happen:
+### **Step 1: Get Groq API Key** ⏱️ 2 minutes
 
-### ✅ DONE
-- Backend code complete
-- Frontend code complete
-- Extension structure created
-- ENV validation added
-- All services working
+1. Go to https://console.groq.com/
+2. Click "Sign Up" (it's free!)
+3. Verify your email
+4. Go to "API Keys" section
+5. Click "Create API Key"
+6. Copy your key (starts with `gsk_...`)
 
-### 🔄 IN PROGRESS
-- Backend deployment (Render)
-- Frontend deployment (Vercel)
-- Extension testing
-
-### ⏳ TODO
-- Deploy backend
-- Deploy frontend
-- Build extension
-- Chrome Web Store submission
+**Keep this key safe!** You'll need it in Step 3.
 
 ---
 
-## 🚀 DEPLOYMENT IN 3 STEPS
+### **Step 2: Click Deploy Button** ⏱️ 1 click
 
-### STEP 1: Deploy Backend (15 minutes)
+Click this button:
 
-1. **Go to Render Dashboard**
-   - https://dashboard.render.com
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
 
-2. **Create New Web Service**
-   - Connect GitHub repository
-   - Select `microtrainer-backend` folder
-   - Build Command: `npm install`
-   - Start Command: `node index.js`
-
-3. **Add Environment Variables**
-   ```
-   GROQ_API_KEY=your_groq_api_key_here
-   SHEET_ID=your_google_sheet_id_here
-   PORT=5000
-   ```
-   
-   **Note:** Get actual values from `microtrainer-backend/.env` file
-
-4. **Deploy & Test**
-   ```bash
-   # Test health endpoint
-   curl https://your-app.onrender.com/
-   
-   # Should return: {"status":"OK","service":"Micro Trainer Backend"}
-   ```
-
-**✅ Success Criteria:** Backend returns 200 OK on health check
+**What happens:**
+- Opens Render website
+- Shows deployment form
+- Lists 3 services to deploy
 
 ---
 
-### STEP 2: Deploy Frontend (10 minutes)
+### **Step 3: Configure & Deploy** ⏱️ 1 minute
 
-1. **Update API URL**
-   
-   Edit `microtrainer-frontend/src/api.js`:
-   ```javascript
-   const API_BASE_URL = "https://your-backend.onrender.com";
-   ```
+1. **Sign in to Render** (create free account if needed)
 
-2. **Deploy to Vercel**
-   ```bash
-   cd microtrainer-frontend
-   npm install -g vercel
-   vercel --prod
-   ```
-   
-   OR use Vercel Dashboard:
-   - Import GitHub repo
-   - Framework: Vite
-   - Build: `npm run build`
-   - Output: `dist`
+2. **Review Services:**
+   - ✅ microtrainer-backend (Node.js)
+   - ✅ microtrainer-piston (Docker)
+   - ✅ microtrainer-frontend (Static)
 
-3. **Test**
-   - Visit deployed URL
-   - Try chat interface
-   - Start interview
-   - Check console for errors
+3. **Add Your Groq API Key:**
+   - Find `GROQ_API_KEY` field
+   - Paste your key from Step 1
+   - **Important:** Don't skip this!
 
-**✅ Success Criteria:** Frontend loads and connects to backend
+4. **Click "Deploy"**
 
 ---
 
-### STEP 3: Build Extension (20 minutes)
+### **Step 4: Wait for Deployment** ⏱️ 5-10 minutes
 
-1. **Build Extension**
-   ```bash
-   cd microtrainer-extension
-   chmod +x build.sh
-   ./build.sh
-   ```
+**What's happening:**
+- ✅ Building backend (2-3 min)
+- ✅ Pulling Piston image (3-4 min)
+- ✅ Building frontend (2-3 min)
+- ✅ Connecting services (automatic)
 
-2. **Test Locally**
-   - Open Chrome → `chrome://extensions/`
-   - Enable "Developer mode"
-   - Click "Load unpacked"
-   - Select `microtrainer-extension` folder
-
-3. **Test Functionality**
-   - Click extension icon
-   - Toggle side panel
-   - Test chat
-   - Start interview
-   - Check on multiple websites
-
-4. **Add Icons** (before publishing)
-   - Create 16x16, 48x48, 128x128 PNG icons
-   - Place in `microtrainer-extension/icons/`
-   - Use brain emoji or custom logo
-
-**✅ Success Criteria:** Extension works on all websites without errors
-
----
-
-## 🧪 TESTING CHECKLIST
-
-### Backend Tests
-```bash
-# Health
-curl https://your-backend.onrender.com/
-
-# Teaching
-curl -X POST https://your-backend.onrender.com/ask \
-  -H "Content-Type: application/json" \
-  -d '{"question":"What is React?"}'
-
-# Interview
-curl -X POST https://your-backend.onrender.com/interview/start \
-  -H "Content-Type: application/json" \
-  -d '{"subject":"React","studentId":"test123"}'
+**You'll see:**
+```
+microtrainer-backend: Building...
+microtrainer-piston: Pulling image...
+microtrainer-frontend: Building...
 ```
 
-### Frontend Tests
-- [ ] Home page loads
-- [ ] Chat works
-- [ ] Interview starts
-- [ ] Timer functions
-- [ ] Feedback displays
-- [ ] Dashboard shows data
-
-### Extension Tests
-- [ ] Installs without errors
-- [ ] Panel injects on all sites
-- [ ] Toggle button works
-- [ ] Chat interface loads
-- [ ] API calls succeed
-- [ ] No console errors
-- [ ] Works on: Google, GitHub, YouTube
-
----
-
-## 🐛 TROUBLESHOOTING
-
-### Backend Won't Start
-```bash
-# Check Render logs
-# Verify ENV variables are set
-# Ensure GROQ_API_KEY and SHEET_ID are correct
+**When done:**
 ```
-
-### Frontend Can't Reach Backend
-```javascript
-// Check CORS in backend index.js
-app.use(cors({
-  origin: ['https://your-frontend.vercel.app', 'chrome-extension://*']
-}));
-```
-
-### Extension Not Loading
-```bash
-# Check manifest.json syntax
-# Verify dist/ folder exists
-# Reload extension in chrome://extensions/
-# Refresh webpage
+✅ microtrainer-backend: Live
+✅ microtrainer-piston: Live
+✅ microtrainer-frontend: Live
 ```
 
 ---
 
-## 📦 PRODUCTION CHECKLIST
+### **Step 5: Access Your App** ⏱️ 30 seconds
 
-### Before Publishing
-
-- [ ] Backend deployed and tested
-- [ ] Frontend deployed and tested
-- [ ] Extension tested on 5+ websites
-- [ ] Icons added (16, 48, 128)
-- [ ] No console errors
-- [ ] API calls working
-- [ ] Performance acceptable
-- [ ] Mobile responsive
-
-### Chrome Web Store
-
-1. Create developer account ($5 one-time fee)
-2. Upload `microtrainer-extension.zip`
-3. Fill store listing:
-   - Name: Micro Trainer - AI Interview Coach
-   - Description: Real-time AI mentor for interview prep
-   - Category: Productivity
-   - Screenshots: 5 images showing features
-4. Submit for review (1-3 days)
+1. **Click on `microtrainer-frontend`**
+2. **Copy the URL** (looks like: `https://your-app.onrender.com`)
+3. **Open in browser**
+4. **Start learning!** 🎉
 
 ---
 
-## 🎯 SUCCESS METRICS
+## ✅ Verify Everything Works
 
-### Technical
-- Backend uptime: 99%+
-- API response time: < 2s
-- Extension load time: < 1s
-- Zero console errors
+### **Test 1: Frontend Loads**
+- [ ] Open your frontend URL
+- [ ] See MicroTrainer homepage
+- [ ] Navigation works
 
-### User Experience
-- Panel loads instantly
-- Chat responds in < 3s
-- Interview flow smooth
-- No page interference
+### **Test 2: Learning Works**
+- [ ] Click "Learn"
+- [ ] See "Ask Anything" and "Guided Course"
+- [ ] Click "Guided Course"
+- [ ] See 11 technologies
 
----
+### **Test 3: Code Execution Works**
+- [ ] Click "Problems"
+- [ ] Select a problem
+- [ ] Choose a language (JavaScript, Python, Java, etc.)
+- [ ] Write simple code:
+  ```javascript
+  function solution(input) {
+    return input * 2;
+  }
+  ```
+- [ ] Click "Run Code"
+- [ ] See output with test results
 
-## 📞 NEXT ACTIONS (RIGHT NOW)
-
-1. **Deploy Backend**
-   - Go to Render
-   - Add ENV variables
-   - Deploy
-
-2. **Test Backend**
-   - Run curl commands
-   - Verify responses
-
-3. **Deploy Frontend**
-   - Update API URL
-   - Deploy to Vercel
-   - Test UI
-
-4. **Build Extension**
-   - Run build script
-   - Test locally
-   - Fix any issues
-
-5. **Production**
-   - Add icons
-   - Create ZIP
-   - Submit to Chrome Web Store
+**All checked?** You're ready! 🚀
 
 ---
 
-## 🔥 PRIORITY ORDER
+## 🐛 Troubleshooting
 
-1. **CRITICAL:** Backend deployment (blocks everything)
-2. **HIGH:** Frontend deployment (needed for extension)
-3. **HIGH:** Extension build (core product)
-4. **MEDIUM:** Chrome Web Store submission
-5. **LOW:** Analytics and monitoring
+### **Issue: "Deployment Failed"**
 
----
+**Check:**
+1. Did you add Groq API key?
+2. Is the key valid? (starts with `gsk_`)
+3. Check service logs in Render dashboard
 
-## 📊 TIME ESTIMATE
-
-- Backend deployment: 15 min
-- Frontend deployment: 10 min
-- Extension build: 20 min
-- Testing: 30 min
-- **Total: ~75 minutes to production**
+**Solution:**
+- Go to Render dashboard
+- Click on failed service
+- Check "Logs" tab
+- Look for error message
 
 ---
 
-## 🎉 FINAL NOTES
+### **Issue: "Frontend loads but can't connect to backend"**
 
-Your system is **technically complete**. The remaining work is:
-- Configuration (ENV variables)
-- Deployment (Render + Vercel)
-- Packaging (Extension ZIP)
+**Check:**
+1. Is backend service "Live"? (green status)
+2. Is Piston service "Live"? (green status)
+3. Wait 2-3 minutes for services to fully start
 
-No code changes needed. Just deploy and test.
-
-**You're 75 minutes away from a working product.**
+**Solution:**
+- Refresh the page
+- Check backend URL: `https://your-backend.onrender.com/`
+- Should see: `{"message":"MicroTrainer API is running"}`
 
 ---
 
-**Last Updated:** May 5, 2026  
-**Status:** Ready for deployment
+### **Issue: "Code execution not working"**
+
+**Check:**
+1. Is Piston service "Live"?
+2. Did you write code in correct format?
+3. Check browser console (F12) for errors
+
+**Solution:**
+- Make sure code has `function solution(input)` format
+- Try simple code first
+- Check Piston URL: `https://your-piston.onrender.com/api/v2/runtimes`
+- Should see list of available languages
+
+---
+
+### **Issue: "Services keep sleeping"**
+
+**This is normal on free tier!**
+
+**What happens:**
+- Services sleep after 15 minutes of inactivity
+- Wake up on first request (~30 seconds)
+
+**Solutions:**
+1. **Accept it** (it's free!)
+2. **Upgrade to paid** ($7/month per service for always-on)
+3. **Use a pinger** (ping your URL every 10 minutes)
+
+---
+
+## 💰 Cost Management
+
+### **Stay on Free Tier:**
+- ✅ Use less than 750 hours/month per service
+- ✅ That's ~100% uptime for one service
+- ✅ Or 50% uptime for two services
+- ✅ Most students stay free!
+
+### **If You Exceed:**
+- Backend: $7/month
+- Piston: $7/month
+- Frontend: Always free
+- **Total: $7-14/month**
+
+### **Monitor Usage:**
+1. Go to Render dashboard
+2. Click on service
+3. Check "Metrics" tab
+4. See hours used
+
+---
+
+## 🎓 Next Steps
+
+### **1. Explore Features:**
+- [ ] Try "Ask Anything" mode
+- [ ] Try "Guided Course" mode
+- [ ] Solve coding problems
+- [ ] Try different languages
+
+### **2. Track Progress:**
+- [ ] Complete a concept
+- [ ] See progress bar update
+- [ ] Check scores
+- [ ] Resume learning
+
+### **3. Practice Coding:**
+- [ ] Try JavaScript
+- [ ] Try Python
+- [ ] Try Java
+- [ ] Try C++
+- [ ] Try all 50+ languages!
+
+---
+
+## 📚 Learn More
+
+- **[Full Deployment Guide](DEPLOYMENT_GUIDE.md)** - Detailed instructions
+- **[README](README.md)** - Features and documentation
+- **[Language Support](LANGUAGE_SUPPORT_ADDED.md)** - All supported languages
+
+---
+
+## 🎉 Success!
+
+**You now have:**
+- ✅ Your own MicroTrainer instance
+- ✅ AI-powered learning
+- ✅ 50+ language support
+- ✅ Progress tracking
+- ✅ $0 cost (free tier)
+
+**Start learning at:** `https://your-app.onrender.com`
+
+---
+
+## 📞 Need Help?
+
+1. **Check logs** in Render dashboard
+2. **Read** [Deployment Guide](DEPLOYMENT_GUIDE.md)
+3. **Open issue** on GitHub
+
+---
+
+**Happy Learning!** 🚀

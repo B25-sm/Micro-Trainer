@@ -18,7 +18,7 @@ function createAntiCheatSession(sessionId, studentId, subject) {
     startTime: new Date().toISOString(),
     endTime: null,
     currentQuestion: 0,
-    totalQuestions: 5,
+    totalQuestions: 20,
     suspicionScore: 0,
     warningCount: 0,
     dismissalReason: null,

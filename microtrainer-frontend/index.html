@@ -4,7 +4,25 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>microtrainer-frontend</title>
+    
+    <!-- Prevent aggressive caching -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    
+    <title>MicroTrainer - Practice Technical Interviews</title>
+    
+    <!-- Apply saved dark / read mode before React paints -->
+    <script>
+      (function () {
+        try {
+          var dark = localStorage.getItem("microtrainer_dark_mode") === "true";
+          var read = localStorage.getItem("microtrainer_read_mode") === "true";
+          document.documentElement.classList.toggle("dark", dark);
+          document.documentElement.classList.toggle("read-mode", read);
+        } catch (e) { /* ignore */ }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

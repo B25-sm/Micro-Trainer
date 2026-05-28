@@ -16,8 +16,9 @@ async function getOverview() {
   const avgScore =
     data.reduce((sum, d) => sum + d.score, 0) / totalInterviews;
 
-  const selectedCount =
-    data.filter(d => d.verdict === "Selected").length;
+  const selectedCount = data.filter((d) =>
+    /selected/i.test(String(d.verdict || ""))
+  ).length;
 
   const selectionRate =
     ((selectedCount / totalInterviews) * 100).toFixed(2);

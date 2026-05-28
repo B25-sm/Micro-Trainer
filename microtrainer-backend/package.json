@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node scripts/smoke-test.js",
+    "verify:sheets": "node scripts/verify-google-sheets.js"
   },
   "keywords": [],
   "author": "",
@@ -16,11 +17,17 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "google-auth-library": "^10.6.2",
     "googleapis": "^171.4.0",
-    "groq-sdk": "^1.1.2",
+    "jsonwebtoken": "^9.0.3",
+    "mongodb": "^6.21.0",
+    "node-cron": "^4.2.1",
+    "nodemailer": "^8.0.9",
     "openai": "^6.35.0",
+    "socket.io": "^4.8.3",
     "uuid": "^9.0.0",
-    "vm2": "^3.9.19"
+    "vm2": "^3.9.19",
+    "web-push": "^3.6.7"
   },
   "description": ""
 }

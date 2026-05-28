@@ -1,0 +1,24 @@
+# Standalone Piston Deployment for Render
+# Deploy this FIRST, then use the URL in your MicroTrainer backend
+
+services:
+  - type: web
+    name: piston-code-execution
+    runtime: docker
+    region: oregon
+    plan: starter  # $7/month - BEST for production
+    dockerfilePath: ./Dockerfile.piston
+    dockerContext: .
+    healthCheckPath: /api/v2/runtimes
+    envVars:
+      - key: PORT
+        value: 2000
+      - key: PISTON_LOG_LEVEL
+        value: INFO
+    autoDeploy: true
+    
+    # Resource allocation (starter plan)
+    disk:
+      name: piston-data
+      mountPath: /piston
+      sizeGB: 10
