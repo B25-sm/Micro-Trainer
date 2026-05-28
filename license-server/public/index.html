@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MicroTrainer Setup</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #dff4ff;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 920px;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 18px;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 26px;
+      padding: 28px;
+      box-shadow: 0 24px 80px rgba(15, 23, 42, 0.25);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.08;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 20px;
+    }
+
+    p {
+      color: #475569;
+      line-height: 1.6;
+    }
+
+    .steps {
+      margin-top: 22px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .step {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px;
+      border-radius: 16px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+
+    .step strong {
+      display: block;
+      color: #111827;
+    }
+
+    .num {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: #2563eb;
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      flex: 0 0 auto;
+    }
+
+    label {
+      display: block;
+      margin: 14px 0 7px;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 13px 14px;
+      font-size: 15px;
+    }
+
+    input:focus {
+      outline: 3px solid rgba(37, 99, 235, 0.16);
+      border-color: #2563eb;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 18px;
+      border: 0;
+      border-radius: 16px;
+      background: #2563eb;
+      color: white;
+      padding: 15px 18px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .hint {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    .groq-guide {
+      margin-top: 12px;
+      border: 1px solid #bfdbfe;
+      border-radius: 16px;
+      background: #eff6ff;
+      padding: 14px;
+    }
+
+    .groq-guide h3 {
+      margin: 0 0 8px;
+      font-size: 15px;
+      color: #1e3a8a;
+    }
+
+    .groq-guide ol {
+      margin: 0;
+      padding-left: 20px;
+      color: #334155;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .groq-guide a {
+      color: #2563eb;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .requirements {
+      margin-top: 16px;
+      border-radius: 16px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 14px;
+      color: #334155;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .requirements strong {
+      color: #0f172a;
+    }
+
+    .status {
+      display: none;
+      margin-top: 16px;
+      border-radius: 14px;
+      padding: 13px;
+      background: #eff6ff;
+      color: #1e3a8a;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .status.show {
+      display: block;
+    }
+
+    .status.error {
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .dev-link {
+      display: block;
+      margin-top: 10px;
+      word-break: break-all;
+      color: #2563eb;
+      font-weight: 700;
+    }
+
+    @media (max-width: 780px) {
+      .shell {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="panel">
+      <h1>Setup MicroTrainer in minutes</h1>
+      <p>
+        Fill your details once. We verify your email, create your license, and
+        open Render with backend, frontend, and Piston preconfigured.
+      </p>
+
+      <div class="requirements">
+        <strong>These 3 fields are enough:</strong> name for your profile, email
+        for license verification, and Groq key for your own AI usage. Render will
+        create backend, frontend, and Piston automatically.
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <span class="num">1</span>
+          <div>
+            <strong>Enter details</strong>
+            Your email and Groq key are used for your own deployment.
+          </div>
+        </div>
+        <div class="step">
+          <span class="num">2</span>
+          <div>
+            <strong>Click secure email link</strong>
+            This verifies you own the email and opens Render.
+          </div>
+        </div>
+        <div class="step">
+          <span class="num">3</span>
+          <div>
+            <strong>Deploy and use extension</strong>
+            Render creates frontend, backend, and Piston for you.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Student Setup</h2>
+      <form id="setupForm">
+        <label for="name">Name</label>
+        <input id="name" name="name" autocomplete="name" placeholder="Your name" required>
+
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+
+        <label for="groqKey">Groq API Key</label>
+        <input id="groqKey" name="groqKey" type="password" autocomplete="off" placeholder="gsk_..." required>
+        <p class="hint">
+          Get it free from console.groq.com. We use it only to prefill your Render deployment link.
+        </p>
+
+        <div class="groq-guide">
+          <h3>How to get your Groq API key</h3>
+          <ol>
+            <li>Open <a href="https://console.groq.com/keys" target="_blank" rel="noreferrer">console.groq.com/keys</a>.</li>
+            <li>Sign in or create a free Groq account.</li>
+            <li>Click <strong>Create API Key</strong> and name it <strong>MicroTrainer</strong>.</li>
+            <li>Copy the key that starts with <strong>gsk_</strong> and paste it above.</li>
+          </ol>
+        </div>
+
+        <button id="submitBtn" type="submit">Send Secure Deploy Link</button>
+      </form>
+
+      <div id="status" class="status"></div>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById('setupForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const statusBox = document.getElementById('status');
+
+    function setStatus(message, isError = false, devVerifyUrl = '') {
+      statusBox.className = `status show${isError ? ' error' : ''}`;
+      statusBox.innerHTML = message;
+      if (devVerifyUrl) {
+        const link = document.createElement('a');
+        link.href = devVerifyUrl;
+        link.className = 'dev-link';
+        link.textContent = 'Development only: open deploy link';
+        statusBox.appendChild(link);
+      }
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+      setStatus('Creating your secure setup link...');
+
+      const payload = {
+        name: document.getElementById('name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        groqKey: document.getElementById('groqKey').value.trim(),
+      };
+
+      try {
+        const response = await fetch('/api/public/start-setup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || data.message || 'Setup failed');
+        }
+
+        setStatus(
+          `<strong>Check your email.</strong><br>${data.message}<br>The link expires at ${new Date(data.expiresAt).toLocaleTimeString()}.`,
+          false,
+          data.devVerifyUrl
+        );
+        form.reset();
+      } catch (error) {
+        setStatus(error.message || 'Setup failed. Please try again.', true);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Secure Deploy Link';
+      }
+    });
+  </script>
+</body>
+</html>

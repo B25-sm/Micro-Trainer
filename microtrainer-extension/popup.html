@@ -12,7 +12,7 @@
     }
     
     body {
-      width: 320px;
+      width: 340px;
       padding: 20px;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -67,6 +67,16 @@
       border-radius: 8px;
       font-size: 12px;
     }
+
+    .app-url {
+      margin: 10px 0 14px;
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.12);
+      font-size: 11px;
+      line-height: 1.4;
+      word-break: break-all;
+    }
     
     .status-dot {
       display: inline-block;
@@ -77,6 +87,21 @@
       margin-right: 6px;
       animation: pulse 2s infinite;
     }
+
+    .tracking-status {
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(250, 204, 21, 0.18);
+      border: 1px solid rgba(250, 204, 21, 0.35);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .tracking-status.connected {
+      background: rgba(74, 222, 128, 0.18);
+      border-color: rgba(74, 222, 128, 0.35);
+    }
     
     @keyframes pulse {
       0%, 100% { opacity: 1; }
@@ -85,18 +110,25 @@
   </style>
 </head>
 <body>
-  <h1>🧠 Micro Trainer</h1>
-  <p>Your AI interview coach, always ready</p>
+  <h1>🧠 MicroTrainer</h1>
+  <p>Use the side panel for quick help or open the full app for deep work.</p>
+
+  <div id="appUrl" class="app-url">Checking connected app...</div>
   
   <div class="actions">
-    <button id="toggleBtn">Toggle Side Panel</button>
-    <button id="startInterview">Start Interview</button>
+    <button id="openSidePanel">Open Side Panel</button>
+    <button id="openFullscreen">Open Fullscreen App</button>
+    <button id="openSyncStatus" class="secondary">Sync Status</button>
     <button id="settings" class="secondary">Settings</button>
   </div>
   
   <div class="status">
     <span class="status-dot"></span>
     <span id="statusText">Ready</span>
+  </div>
+
+  <div id="trackingStatus" class="tracking-status">
+    Checking official tracking connection...
   </div>
   
   <script src="popup.js"></script>

@@ -1,0 +1,77 @@
+# Render Blueprint for MicroTrainer
+# One-click deployment for students
+
+services:
+  # Backend Service (Node.js)
+  - type: web
+    name: microtrainer-backend
+    runtime: node
+    region: oregon
+    plan: free
+    buildCommand: cd microtrainer-backend && npm install
+    startCommand: cd microtrainer-backend && npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: GROQ_API_KEY
+        sync: false  # Student will provide this
+      - key: LICENSE_KEY
+        sync: false  # Prefilled by the verified setup link
+      - key: STUDENT_EMAIL
+        sync: false  # Prefilled by the verified setup link
+      - key: LICENSE_SERVER_URL
+        sync: false  # Prefilled by the verified setup link
+      - key: OFFICIAL_SYNC_REQUIRED
+        value: "1"
+      - key: OFFICIAL_SYNC_STALE_HOURS
+        value: "72"
+      - key: PISTON_URL
+        fromService:
+          type: web
+          name: microtrainer-piston
+          property: host
+        # This automatically connects to the Piston service
+    autoDeploy: true
+
+  # Piston Service (Docker - Code Execution)
+  - type: web
+    name: microtrainer-piston
+    runtime: docker
+    region: oregon
+    plan: free
+    dockerfilePath: ./Dockerfile.piston
+    dockerContext: .
+    healthCheckPath: /api/v2/runtimes
+    envVars:
+      - key: PORT
+        value: 2000
+    autoDeploy: true
+
+  # Frontend Service (Static Site)
+  - type: web
+    name: microtrainer-frontend
+    runtime: static
+    region: oregon
+    plan: free
+    buildCommand: cd microtrainer-frontend && npm install && npm run build
+    staticPublishPath: ./microtrainer-frontend/dist
+    pullRequestPreviewsEnabled: true
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: microtrainer-backend
+          property: host
+        # This automatically connects to the backend
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    autoDeploy: true

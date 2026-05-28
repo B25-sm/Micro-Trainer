@@ -1,6 +1,89 @@
 const express = require("express");
 const cors = require("cors");
-require("dotenv").config();
+const axios = require("axios");
+const path = require("path");
+
+// Always load .env from backend folder (works even if started from repo root)
+require("dotenv").config({ path: path.join(__dirname, ".env") });
+
+if (process.env.GROQ_API_KEY) {
+  process.env.GROQ_API_KEY = process.env.GROQ_API_KEY.trim();
+}
+const groqConfigured = Boolean(process.env.GROQ_API_KEY);
+console.log(
+  groqConfigured
+    ? "✅ GROQ_API_KEY loaded — AI lessons enabled"
+    : "❌ GROQ_API_KEY missing — lessons will use fallback content only"
+);
+
+// =======================================================
+// 🔒 LICENSE VALIDATION (MUST BE FIRST)
+// =======================================================
+const {
+  validateLicense,
+  validateLicenseOffline,
+  startPeriodicCheck,
+  checkAttribution
+} = require("./services/licenseService");
+
+console.log("================================================================================");
+console.log("🎓 MICROTRAINER - AI-POWERED LEARNING PLATFORM");
+console.log("📄 Copyright (c) 2026 [Your Name/Organization]");
+console.log("📋 Licensed under Educational Use License");
+console.log("================================================================================");
+console.log("");
+
+// Validate license on startup
+(async () => {
+  console.log("🔒 Validating license...");
+  
+  // Skip license validation in development
+  if (process.env.NODE_ENV === 'development' || !process.env.LICENSE_KEY || process.env.LICENSE_KEY === 'your-email@example.com:abc123def456') {
+    console.log("⚠️  Running in DEVELOPMENT mode - License validation skipped");
+    console.log("");
+    return;
+  }
+  
+  // Try remote validation first
+  let valid = await validateLicense();
+  
+  // If remote fails, try offline validation
+  if (!valid && process.env.LICENSE_KEY) {
+    console.log("⚠️  Remote validation failed, trying offline validation...");
+    valid = validateLicenseOffline();
+  }
+  
+  if (!valid) {
+    console.error("");
+    console.error("================================================================================");
+    console.error("❌ LICENSE VALIDATION FAILED");
+    console.error("================================================================================");
+    console.error("");
+    console.error("This software requires a valid license key to operate.");
+    console.error("");
+    console.error("📋 TO OBTAIN A LICENSE KEY:");
+    console.error("   1. Contact: [your-email@example.com]");
+    console.error("   2. Subject: 'MicroTrainer License Request'");
+    console.error("   3. Include: Your name, email, and intended use");
+    console.error("");
+    console.error("📄 See LICENSE file for full terms and conditions");
+    console.error("🌐 Website: [https://your-website.com]");
+    console.error("");
+    console.error("================================================================================");
+    process.exit(1);
+  }
+  
+  console.log("✅ License validated successfully");
+  console.log("");
+  
+  // Check attribution
+  checkAttribution();
+  
+  // Start periodic license checks (every 60 minutes)
+  if (process.env.NODE_ENV === 'production') {
+    startPeriodicCheck(60);
+  }
+})();
 
 // =======================================================
 // 🔐 ENV VALIDATION (PREVENT SILENT FAILURES)
@@ -10,10 +93,18 @@ if (!process.env.GROQ_API_KEY) {
 }
 
 if (!process.env.SHEET_ID) {
-  throw new Error("❌ MISSING: SHEET_ID in environment variables");
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error("❌ MISSING: SHEET_ID in environment variables");
+  }
+  process.env.SHEET_ID = 'dev-no-google-sheet';
+  console.warn(
+    '⚠️ SHEET_ID not set — using dev placeholder. Google Sheets features need a real SHEET_ID in .env.'
+  );
 }
 
 console.log("✅ Environment variables validated");
+
+const { verifyGoogleSheetsSetup } = require("./services/googleSheetsAuth");
 
 // ================= SERVICES =================
 const { getAnswer } = require("./services/aiService");
@@ -43,6 +134,8 @@ const { getLeaderboard } = require("./services/rankingService");
 // 🔥 CODE EXECUTION & PROBLEM SOLVING
 const {
   executeCode,
+  runCodeOnce,
+  buildJudgeResponse,
   validateCode,
   getCodeTemplate
 } = require("./services/codeExecutionService");
@@ -70,29 +163,34 @@ app.use(express.json());
 console.log('🔹 Registering /health endpoint...');
 app.get('/health', (req, res) => {
   console.log('✅ Health endpoint called!');
+  let mongoConnected = false;
+  try {
+    const { getMongoClient } = require('./services/mongoClient');
+    mongoConnected = !!getMongoClient();
+  } catch (_) {
+    /* optional module */
+  }
   res.json({
     status: 'healthy',
     service: 'MicroTrainer Backend',
     version: '1.0.0',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    mongoConnected
   });
 });
 
 
 // =======================================================
-// 🔐 SIMPLE TRAINER AUTH (UPGRADE LATER)
+// 🔐 ACCESS CONTROL (trainer key + student self-only)
 // =======================================================
-function trainerOnly(req, res, next) {
-  const role = req.headers.role;
-
-  if (role !== "trainer") {
-    return res.status(403).json({
-      error: "Access denied (Trainer only)"
-    });
-  }
-
-  next();
-}
+const {
+  trainerOnly,
+  studentSelfOrTrainer,
+} = require("./middleware/accessControl");
+const {
+  getStudentSyncStatus,
+  getAllSyncStatuses,
+} = require("./services/syncStatusService");
 
 
 // =======================================================
@@ -106,11 +204,52 @@ app.get("/", (req, res) => {
   });
 });
 
+app.get("/api/sync/status/:studentId", studentSelfOrTrainer, (req, res) => {
+  try {
+    res.json(getStudentSyncStatus(req.params.studentId));
+  } catch (error) {
+    console.error("SYNC STATUS ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get sync status" });
+  }
+});
+
+app.get("/api/certificate/eligibility/:studentId", studentSelfOrTrainer, (req, res) => {
+  try {
+    const syncStatus = getStudentSyncStatus(req.params.studentId);
+    res.json({
+      studentId: req.params.studentId,
+      eligible: syncStatus.officialBenefitsEnabled,
+      reason: syncStatus.officialBenefitsEnabled
+        ? "Official sync is connected."
+        : "Certificates require recent official progress sync.",
+      syncStatus,
+    });
+  } catch (error) {
+    console.error("CERTIFICATE ELIGIBILITY ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get certificate eligibility" });
+  }
+});
+
+app.get("/trainer/sync-status", trainerOnly, (req, res) => {
+  try {
+    const statuses = getAllSyncStatuses();
+    res.json({
+      statuses,
+      count: statuses.length,
+      disconnected: statuses.filter((status) => !status.officialBenefitsEnabled).length,
+    });
+  } catch (error) {
+    console.error("TRAINER SYNC STATUS ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get sync statuses" });
+  }
+});
+
 
 // =======================================================
 // 🔹 TEACHING MODE (ADAPTIVE)
 // =======================================================
 const { adaptiveTeach } = require("./services/adaptiveTeachingService");
+const { saveStudentLevel, getStudentLevel } = require("./services/memoryService");
 
 // Teaching sessions storage (in-memory for now)
 const teachingSessions = {};
@@ -121,7 +260,8 @@ app.post("/ask", async (req, res) => {
       question, 
       answer, 
       sessionId, 
-      level 
+      level,
+      studentId // NEW: Track student
     } = req.body;
 
     if (!question || typeof question !== "string") {
@@ -134,23 +274,38 @@ app.post("/ask", async (req, res) => {
       teachingSessions[sid] = {
         history: [],
         level: null,
-        concept: null
+        concept: null,
+        studentId: studentId || "anonymous"
       };
     }
 
     const session = teachingSessions[sid];
+
+    // If student has a saved level, use it
+    let detectedLevel = level || session.level;
+    if (studentId && !detectedLevel) {
+      detectedLevel = getStudentLevel(studentId);
+      if (detectedLevel) {
+        console.log(`📚 Retrieved saved level for ${studentId}: ${detectedLevel}`);
+      }
+    }
 
     // Adaptive teaching
     const result = await adaptiveTeach({
       concept: question,
       studentAnswer: answer || null,
       conversationHistory: session.history,
-      detectedLevel: level || session.level
+      detectedLevel: detectedLevel
     });
 
     // Update session
     if (result.level) {
       session.level = result.level;
+      
+      // Save level to persistent memory
+      if (studentId) {
+        saveStudentLevel(studentId, result.level);
+      }
     }
     
     session.history.push({
@@ -174,6 +329,136 @@ app.post("/ask", async (req, res) => {
   } catch (error) {
     console.error("ASK ERROR:", error.message);
     res.status(500).json({ error: "Failed to process request" });
+  }
+});
+
+
+// =======================================================
+// 🔹 CHAT WITH MICROTRAINER (HOME PAGE)
+// =======================================================
+
+// Chat sessions storage (in-memory)
+const chatSessions = {};
+
+app.post("/chat/ask", async (req, res) => {
+  try {
+    const { question, sessionId } = req.body;
+
+    if (!question || typeof question !== "string") {
+      return res.status(400).json({ error: "Question is required" });
+    }
+
+    if (question.length > 500) {
+      return res.status(400).json({ error: "Question too long (max 500 characters)" });
+    }
+
+    // Get or create session
+    const sid = sessionId || "chat_" + Date.now();
+    if (!chatSessions[sid]) {
+      chatSessions[sid] = {
+        history: [],
+        questionCount: 0,
+        createdAt: Date.now()
+      };
+    }
+
+    const session = chatSessions[sid];
+
+    // Rate limiting: max 20 questions per session
+    if (session.questionCount >= 20) {
+      return res.status(429).json({ 
+        error: "You've asked 20 questions! Time to start an interview and put your knowledge to the test! 🚀" 
+      });
+    }
+
+    // Build conversation history
+    const messages = [
+      {
+        role: "system",
+        content: `You are MicroTrainer, a friendly AI interview coach helping students prepare for technical interviews.
+
+Your role:
+- Answer questions about interview preparation
+- Explain technical concepts clearly and concisely
+- Provide career guidance
+- Help students understand the platform
+
+Available interview types:
+- MERN Stack Developer (MongoDB, Express, React, Node.js)
+- Java Full Stack Developer (Spring Boot, Hibernate, React/Angular)
+- Python Full Stack Developer (Django/Flask, PostgreSQL, React)
+- Data Analyst (SQL, Excel, dashboards, A/B testing, storytelling)
+- ML Engineer (ML, deployment, MLOps, LLMs, pipelines)
+- Data Scientist / Data Science (general mix of analytics + ML)
+- Individual technologies: React, JavaScript, Java, Python, SQL, Node.js, Angular, TypeScript
+- Problem Solving & DSA (Algorithms, Data Structures)
+
+Guidelines:
+- Be concise (2-3 paragraphs max, 200-300 words)
+- Use examples and code snippets when helpful (keep code short)
+- Be encouraging and supportive
+- Suggest starting an interview when relevant
+- Use simple, clear language
+- Format responses with markdown (bold, lists, code blocks)
+- If asked about platform features: scoring system tracks correctness, completeness, clarity, and code quality
+
+Don't:
+- Give overly long explanations
+- Use complex jargon without explanation
+- Discourage students
+- Provide incorrect information`
+      },
+      ...session.history.slice(-6), // Last 3 exchanges
+      {
+        role: "user",
+        content: question
+      }
+    ];
+
+    // Call GROQ API
+    const response = await axios.post(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        model: "llama-3.1-8b-instant",
+        messages: messages,
+        temperature: 0.7,
+        max_tokens: 500
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        timeout: 15000
+      }
+    );
+
+    const answer = response?.data?.choices?.[0]?.message?.content || "I'm having trouble responding right now. Please try again.";
+
+    // Update session
+    session.history.push({ role: "user", content: question });
+    session.history.push({ role: "assistant", content: answer });
+    session.questionCount++;
+
+    return res.json({
+      sessionId: sid,
+      answer: answer,
+      questionCount: session.questionCount,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error("CHAT ERROR:", error.message);
+    
+    if (error.code === "ECONNABORTED" || error.message.includes("timeout")) {
+      return res.status(504).json({ 
+        error: "This is taking longer than expected. Please try again." 
+      });
+    }
+    
+    res.status(500).json({ 
+      error: "I'm having trouble connecting. Please try again." 
+    });
   }
 });
 
@@ -256,8 +541,29 @@ app.post("/interview/answer", async (req, res) => {
 // 🔹 STUDENT APIs
 // =======================================================
 
+const authRoutes = require("./routes/authRoutes");
+app.use("/auth", authRoutes);
+
+const { registerStudentProfile } = require("./services/studentProfileStore");
+
+app.post("/auth/student-register", (req, res) => {
+  try {
+    const { studentId, name, initial, batch } = req.body || {};
+    if (!studentId || !name || !initial || !batch) {
+      return res.status(400).json({
+        error: "studentId, name, initial, and batch are required",
+      });
+    }
+    const profile = registerStudentProfile({ studentId, name, initial, batch });
+    res.json(profile);
+  } catch (error) {
+    console.error("STUDENT REGISTER ERROR:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Legacy
-app.get("/student/:studentId/report", async (req, res) => {
+app.get("/student/:studentId/report", studentSelfOrTrainer, async (req, res) => {
   try {
     const report = await getStudentReport(req.params.studentId);
     return res.json(report);
@@ -268,7 +574,7 @@ app.get("/student/:studentId/report", async (req, res) => {
 });
 
 // Analytics
-app.get("/student/:studentId/analytics", async (req, res) => {
+app.get("/student/:studentId/analytics", studentSelfOrTrainer, async (req, res) => {
   try {
     const history = await getStudentHistory(req.params.studentId);
     const report = aggregateStudent(history);
@@ -280,13 +586,28 @@ app.get("/student/:studentId/analytics", async (req, res) => {
 });
 
 // Memory (AI adaptation)
-app.get("/student/:studentId/memory", async (req, res) => {
+app.get("/student/:studentId/memory", studentSelfOrTrainer, async (req, res) => {
   try {
     const memory = await getStudentMemory(req.params.studentId);
     return res.json(memory);
   } catch (error) {
     console.error("MEMORY ERROR:", error.message);
     res.status(500).json({ error: "Memory fetch failed" });
+  }
+});
+
+// Get student's teaching level
+app.get("/student/:studentId/level", studentSelfOrTrainer, async (req, res) => {
+  try {
+    const level = getStudentLevel(req.params.studentId);
+    return res.json({ 
+      studentId: req.params.studentId,
+      level: level,
+      hasLevel: !!level
+    });
+  } catch (error) {
+    console.error("LEVEL FETCH ERROR:", error.message);
+    res.status(500).json({ error: "Level fetch failed" });
   }
 });
 
@@ -318,6 +639,62 @@ app.get("/trainer/leaderboard/:subject", trainerOnly, async (req, res) => {
   } catch (error) {
     console.error("SUBJECT LEADERBOARD ERROR:", error.message);
     res.status(500).json({ error: "Subject leaderboard failed" });
+  }
+});
+
+// =======================================================
+// 👨‍🏫 TRAINER — Guided course (learning path) progress
+// =======================================================
+const {
+  getAllStudentsLearningProgress,
+  getMergedProgressForStudent,
+} = require("./services/learningProgressTrainerService");
+const {
+  syncAllLocalProgressToSheets,
+} = require("./services/learningProgressSheetsService");
+const {
+  getAllStudentsProgressRaw,
+  enrichProgressForTechnology,
+} = require("./services/learningPathService");
+
+app.get("/trainer/learning-progress", trainerOnly, async (req, res) => {
+  try {
+    const students = await getAllStudentsLearningProgress();
+    res.json({ students, count: students.length });
+  } catch (error) {
+    console.error("TRAINER LEARNING PROGRESS ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get learning progress" });
+  }
+});
+
+app.get("/trainer/learning-progress/:studentId", trainerOnly, async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const detail = await getMergedProgressForStudent(studentId);
+    res.json(detail);
+  } catch (error) {
+    console.error("TRAINER STUDENT LEARNING PROGRESS ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get student learning progress" });
+  }
+});
+
+app.post("/trainer/learning-progress/sync", trainerOnly, async (req, res) => {
+  try {
+    const result = await syncAllLocalProgressToSheets(
+      getAllStudentsProgressRaw,
+      enrichProgressForTechnology
+    );
+    res.json({
+      success: true,
+      message: `Synced ${result.synced} technology records for ${result.students} students`,
+      ...result,
+    });
+  } catch (error) {
+    console.error("LEARNING PROGRESS SYNC ERROR:", error.message);
+    res.status(500).json({
+      error: "Failed to sync learning progress to Google Sheets",
+      details: error.message,
+    });
   }
 });
 
@@ -433,6 +810,11 @@ app.get("/code/template/:language", async (req, res) => {
     const { problemId } = req.query;
     
     const template = getCodeTemplate(language, problemId);
+    if (!template) {
+      return res.status(400).json({
+        error: "Unsupported language. Use javascript, python, or java.",
+      });
+    }
     return res.json({ template, language });
   } catch (error) {
     console.error("TEMPLATE ERROR:", error.message);
@@ -445,48 +827,79 @@ app.get("/code/template/:language", async (req, res) => {
 // 🔹 CODE EXECUTION APIs
 // =======================================================
 
-// Execute code with test cases
+// Execute code — mode "run" = single raw execution; mode "judge" = all testcases
 app.post("/code/execute", async (req, res) => {
   try {
-    const { language, code, testCases, timeout } = req.body;
-    
+    const { language, code, testCases, timeout, mode, input } = req.body;
+
+    console.log("BODY:", req.body);
+    console.log("📥 POST /code/execute", {
+      language,
+      mode: mode || "judge",
+      testCaseCount: testCases?.length,
+    });
+
     if (!language || !code) {
       return res.status(400).json({
-        error: "Language and code are required"
+        success: false,
+        error: "Language and code are required",
+        passedTests: 0,
+        totalTests: 0,
+        failedTests: [],
       });
     }
-    
-    if (!testCases || testCases.length === 0) {
-      return res.status(400).json({
-        error: "At least one test case is required"
-      });
-    }
-    
-    // Validate code first
+
     const validation = validateCode(language, code);
     if (!validation.valid) {
       return res.status(400).json({
+        success: false,
         error: "Code validation failed",
-        errors: validation.errors
+        errors: validation.errors,
+        passedTests: 0,
+        totalTests: testCases?.length || 0,
+        failedTests: [],
       });
     }
-    
-    // Execute code
-    const result = await executeCode(
-      language,
-      code,
-      testCases,
-      timeout || 5000
-    );
-    
+
+    const runTimeout = timeout || 3000;
+
+    if (mode === "run") {
+      const runInput =
+        input !== undefined ? input : testCases?.[0]?.input ?? null;
+      const result = await runCodeOnce(language, code, runInput, runTimeout);
+      console.log("📤 /code/execute (run) response:", {
+        success: result.success,
+        exitCode: result.exitCode,
+        stdoutLen: result.stdout?.length,
+      });
+      return res.json(result);
+    }
+
+    if (!testCases || testCases.length === 0) {
+      return res.status(400).json(
+        buildJudgeResponse({
+          language,
+          error: "At least one test case is required",
+        })
+      );
+    }
+
+    const result = await executeCode(language, code, testCases, runTimeout);
+    console.log("📤 /code/execute (judge) response:", {
+      passedTests: result.passedTests,
+      totalTests: result.totalTests,
+      allPassed: result.allPassed,
+    });
     return res.json(result);
-    
   } catch (error) {
     console.error("CODE EXECUTION ERROR:", error.message);
-    res.status(500).json({
-      error: "Code execution failed",
-      message: error.message
-    });
+    res.status(500).json(
+      buildJudgeResponse({
+        language: req.body?.language,
+        totalTests: req.body?.testCases?.length || 0,
+        error: error.message || "Code execution failed",
+      })
+    );
   }
 });
 
@@ -510,52 +923,74 @@ app.post("/code/validate", async (req, res) => {
   }
 });
 
-// Submit solution for a problem
+// Submit solution for a problem (judge all testcases)
 app.post("/problems/:id/submit", async (req, res) => {
   try {
     const { language, code, studentId } = req.body;
     const problemId = req.params.id;
-    
-    // Get problem
+
+    console.log("📥 POST /problems/:id/submit", {
+      problemId,
+      language,
+      studentId: studentId || "anonymous",
+      codeLength: code?.length,
+    });
+
     const problem = getProblemById(problemId);
     if (!problem) {
-      return res.status(404).json({ error: "Problem not found" });
+      return res.status(404).json(
+        buildJudgeResponse({
+          language,
+          error: "Problem not found",
+        })
+      );
     }
-    
-    // Validate code
+
+    const totalTests = problem.testCases?.length || 0;
+
     const validation = validateCode(language, code);
     if (!validation.valid) {
       return res.status(400).json({
-        error: "Code validation failed",
-        errors: validation.errors
+        ...buildJudgeResponse({
+          totalTests,
+          language,
+          error: "Code validation failed",
+        }),
+        errors: validation.errors,
       });
     }
-    
-    // Execute with problem's test cases
+
     const result = await executeCode(
       language,
       code,
       problem.testCases,
-      5000
+      3000
     );
-    
-    // Calculate score
-    const score = (result.passedTests / result.totalTests) * 100;
-    
-    // TODO: Save submission to database/sheets
-    // await saveSubmission(studentId, problemId, code, result, score);
-    
-    return res.json({
+
+    const payload = {
       ...result,
-      score: score,
-      problemId: problemId,
-      studentId: studentId,
-      submittedAt: new Date().toISOString()
+      mode: "submit",
+      problemId,
+      studentId: studentId || "anonymous",
+      submittedAt: new Date().toISOString(),
+    };
+
+    console.log("📤 Submit response:", {
+      passedTests: payload.passedTests,
+      totalTests: payload.totalTests,
+      allPassed: payload.allPassed,
+      score: payload.score,
     });
-    
+
+    return res.json(payload);
   } catch (error) {
     console.error("SUBMIT SOLUTION ERROR:", error.message);
-    res.status(500).json({ error: "Submission failed" });
+    res.status(500).json(
+      buildJudgeResponse({
+        language: req.body?.language,
+        error: error.message || "Submission failed",
+      })
+    );
   }
 });
 
@@ -725,10 +1160,891 @@ app.post("/anticheat/progress", (req, res) => {
 });
 
 // =======================================================
-// 🔹 SERVER START
+// 🎯 STUDENT PROFILE ENDPOINTS (NEW)
 // =======================================================
-const PORT = process.env.PORT || 5000;
+const {
+  addTechnologyInterview,
+  addProblemSolvingResult,
+  getStudentProfile,
+  getLeaderboard: getProfileLeaderboard,
+  getLevelDescription
+} = require("./services/studentProfileService");
 
-app.listen(PORT, () => {
+// =======================================================
+// 📚 LEARNING PATH ENDPOINTS (NEW)
+// =======================================================
+const {
+  getAvailableTechnologies,
+  getCurriculum
+} = require("./services/curriculumService");
+
+const {
+  startLearningPath,
+  getCurrentConceptTeaching,
+  submitConceptAnswers,
+  getStudentProgress,
+  getAllStudentProgress
+} = require("./services/learningPathService");
+
+// Get available technologies for structured learning
+app.get("/learning-path/technologies", (req, res) => {
+  try {
+    const technologies = getAvailableTechnologies();
+    res.json(technologies);
+  } catch (error) {
+    console.error("GET TECHNOLOGIES ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get technologies" });
+  }
+});
+
+// Get curriculum for a technology
+app.get("/learning-path/curriculum/:technology", (req, res) => {
+  try {
+    const { technology } = req.params;
+    const curriculum = getCurriculum(technology);
+    res.json(curriculum);
+  } catch (error) {
+    console.error("GET CURRICULUM ERROR:", error.message);
+    res.status(404).json({ error: error.message });
+  }
+});
+
+// Start a learning path session
+app.post("/learning-path/start", (req, res) => {
+  try {
+    const { studentId, technology, conceptOrder } = req.body;
+    
+    console.log(`🚀 POST /learning-path/start - studentId: ${studentId}, technology: ${technology}, conceptOrder: ${conceptOrder ?? "default"}`);
+    
+    if (!studentId || !technology) {
+      return res.status(400).json({ error: "studentId and technology required" });
+    }
+
+    const requestedOrder = Number(conceptOrder || 1);
+    if (
+      process.env.TRAINER_BATCH_UNLOCK_REQUIRES_SYNC === "1" &&
+      requestedOrder > 1 &&
+      !getStudentSyncStatus(studentId).officialBenefitsEnabled
+    ) {
+      return res.status(423).json({
+        error: "Official progress sync required",
+        message:
+          "Trainer-managed lessons after Lesson 1 require recent official progress sync.",
+        syncStatus: getStudentSyncStatus(studentId),
+      });
+    }
+    
+    const session = startLearningPath(studentId, technology, conceptOrder);
+    console.log(`✅ Session created: ${session.sessionId}`);
+    res.json(session);
+  } catch (error) {
+    console.error("START LEARNING PATH ERROR:", error.message);
+    res.status(500).json({ error: "Failed to start learning path" });
+  }
+});
+
+// Test Groq API connection (for debugging)
+app.get("/health/groq", async (req, res) => {
+  try {
+    const { testGroqConnection } = require("./services/groqClient");
+    const result = await testGroqConnection();
+    res.json({ status: "ok", ...result });
+  } catch (error) {
+    res.status(503).json({ status: "error", message: error.message });
+  }
+});
+
+// Get current concept teaching content
+app.get("/learning-path/concept/:sessionId", async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const { studentLevel, useAI, reteach } = req.query;
+    
+    const useAIQuestions = useAI === 'true';
+    const isReteach = reteach === 'true';
+    
+    console.log(`📖 GET /learning-path/concept/${sessionId} level: ${studentLevel}, reteach: ${isReteach}`);
+    
+    const teaching = await getCurrentConceptTeaching(sessionId, studentLevel, useAIQuestions, isReteach);
+    res.json(teaching);
+  } catch (error) {
+    console.error("GET CONCEPT ERROR:", error.message);
+    if (error.isRateLimit) {
+      return res.status(429).json({
+        error: error.message,
+        code: "GROQ_RATE_LIMIT",
+        retryAfterMs: error.retryAfterMs || 20000,
+      });
+    }
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Simplify current Quick Check question (same concept, easier wording)
+app.post("/learning-path/simplify-question", async (req, res) => {
+  try {
+    const { sessionId, questionIndex } = req.body;
+    if (!sessionId || questionIndex === undefined) {
+      return res.status(400).json({ error: "sessionId and questionIndex required" });
+    }
+
+    const { simplifyQuestionForSession } = require("./services/learningPathService");
+    const result = await simplifyQuestionForSession(sessionId, questionIndex);
+    res.json(result);
+  } catch (error) {
+    console.error("SIMPLIFY QUESTION ERROR:", error.message);
+    if (error.code === "SIMPLIFY_LIMIT") {
+      return res.status(400).json({ error: error.message, code: error.code });
+    }
+    if (error.isRateLimit) {
+      return res.status(429).json({
+        error: error.message,
+        code: "GROQ_RATE_LIMIT",
+        retryAfterMs: error.retryAfterMs || 20000,
+      });
+    }
+    res.status(500).json({ error: error.message || "Failed to simplify question" });
+  }
+});
+
+// Submit concept answers for assessment
+app.post("/learning-path/submit", async (req, res) => {
+  try {
+    const { sessionId, answers } = req.body;
+    
+    console.log(`📥 Received submit request:`, { sessionId, answerCount: answers?.length });
+    
+    if (!sessionId || !answers || !Array.isArray(answers)) {
+      console.error(`❌ Invalid request: sessionId=${sessionId}, answers=${answers}`);
+      return res.status(400).json({ error: "sessionId and answers array required" });
+    }
+    
+    const result = await submitConceptAnswers(sessionId, answers);
+    console.log(`✅ Assessment complete:`, result);
+    res.json(result);
+  } catch (error) {
+    console.error("❌ SUBMIT ANSWERS ERROR:", error.message);
+    console.error("Stack trace:", error.stack);
+    res.status(500).json({ 
+      error: "Failed to submit answers",
+      details: error.message 
+    });
+  }
+});
+
+// Get student progress for a technology
+app.get("/learning-path/progress/:studentId/:technology", studentSelfOrTrainer, (req, res) => {
+  try {
+    const { studentId, technology } = req.params;
+    const progress = getStudentProgress(studentId, technology);
+    res.json(progress);
+  } catch (error) {
+    console.error("GET PROGRESS ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get progress" });
+  }
+});
+
+// Get all student progress across technologies
+app.get("/learning-path/progress/:studentId", studentSelfOrTrainer, (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const progress = getAllStudentProgress(studentId);
+    res.json(progress);
+  } catch (error) {
+    console.error("GET ALL PROGRESS ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get progress" });
+  }
+});
+
+// Get student profile
+app.get("/profile/:studentId", (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const profile = getStudentProfile(studentId);
+    
+    if (!profile) {
+      return res.json({
+        studentId,
+        message: "No profile found. Start practicing to build your profile!"
+      });
+    }
+    
+    // Add level descriptions
+    profile.technologyLevelInfo = getLevelDescription(profile.technologyLevel, 'technology');
+    profile.problemSolvingLevelInfo = getLevelDescription(profile.problemSolvingLevel, 'problemSolving');
+    
+    res.json(profile);
+  } catch (error) {
+    console.error("GET PROFILE ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get profile" });
+  }
+});
+
+// Get leaderboard with combined scores
+app.get("/leaderboard/combined", (req, res) => {
+  try {
+    const { sortBy } = req.query; // 'overall', 'technology', 'problemSolving'
+    const leaderboard = getProfileLeaderboard(sortBy || 'overall');
+    
+    res.json(leaderboard);
+  } catch (error) {
+    console.error("GET LEADERBOARD ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get leaderboard" });
+  }
+});
+
+// =======================================================
+// 📊 EXPORT STUDENT STATUS TO GOOGLE SHEETS
+// =======================================================
+const {
+  exportStudentStatus,
+  exportSubjectStatus,
+  scheduleAutoExport
+} = require("./services/exportStudentStatusService");
+
+// Export current student status to Google Sheets
+app.post("/admin/export-status", trainerOnly, async (req, res) => {
+  try {
+    console.log("📊 Export student status requested");
+    const result = await exportStudentStatus();
+    
+    res.json({
+      success: true,
+      message: "Student status exported successfully",
+      ...result
+    });
+  } catch (error) {
+    console.error("EXPORT STATUS ERROR:", error.message);
+    res.status(500).json({ 
+      error: "Failed to export student status",
+      details: error.message 
+    });
+  }
+});
+
+// Export subject-specific status
+app.post("/admin/export-status/:subject", trainerOnly, async (req, res) => {
+  try {
+    const { subject } = req.params;
+    console.log(`📊 Export ${subject} status requested`);
+    
+    const result = await exportSubjectStatus(subject);
+    
+    res.json({
+      success: true,
+      message: `${subject} status exported successfully`,
+      ...result
+    });
+  } catch (error) {
+    console.error(`EXPORT ${req.params.subject} STATUS ERROR:`, error.message);
+    res.status(500).json({ 
+      error: `Failed to export ${req.params.subject} status`,
+      details: error.message 
+    });
+  }
+});
+
+// Get export status/info
+app.get("/admin/export-info", trainerOnly, (req, res) => {
+  res.json({
+    available: true,
+    endpoints: {
+      exportAll: "POST /admin/export-status",
+      exportSubject: "POST /admin/export-status/:subject"
+    },
+    subjects: ["react", "java", "python", "javascript", "nodejs", "angular", "typescript"],
+    sheetId: process.env.SHEET_ID,
+    summarySheetName: "Student_Status_Summary",
+    description: "Export current student rankings and analytics to Google Sheets"
+  });
+});
+
+// =======================================================
+// 🎯 ENGAGEMENT & ASSESSMENT SYSTEM (NEW)
+// =======================================================
+const {
+  recordActivity,
+  getStudentStatus,
+  getStudentStreak,
+  calculateAllStreaks,
+  getAllStudentsEngagement
+} = require("./services/engagementService");
+
+const {
+  generateMiniAssessment,
+  getTodayMiniAssessment,
+  submitMiniAssessment,
+  generateMockTest,
+  submitMockTest
+} = require("./services/assessmentService");
+
+const {
+  checkAndAwardBadges,
+  getStudentBadges,
+  getAllBadgeDefinitions
+} = require("./services/badgeService");
+
+const {
+  getStudentDashboardAnalytics,
+  getAdminStudentsList,
+  getActivityFeed,
+  getStudentDetail
+} = require("./services/engagementAnalyticsService");
+
+// Import event broadcaster for real-time updates
+const {
+  broadcastStatusUpdate,
+  broadcastActivityCompleted,
+  broadcastStreakUpdate,
+  broadcastBadgeEarned,
+  broadcastAtRiskAlert
+} = require("./services/eventBroadcaster");
+
+// ===== ENGAGEMENT ENDPOINTS =====
+
+// Record student activity
+app.post("/api/engagement/activity", (req, res) => {
+  try {
+    const { studentId, activityType, technology, conceptId, timeSpent, score } = req.body;
+    
+    if (!studentId || !activityType || !technology) {
+      return res.status(400).json({ error: "studentId, activityType, and technology required" });
+    }
+    
+    const result = recordActivity(studentId, activityType, technology, conceptId, timeSpent, score);
+    
+    // Check for new badges
+    const badges = checkAndAwardBadges(studentId, {
+      currentStreak: result.streak || 0,
+      lastScore: score,
+      totalActivities: result.todaySummary.activitiesCompleted
+    });
+    
+    // Broadcast real-time updates
+    broadcastStatusUpdate(studentId, {
+      status: result.status,
+      todaySummary: result.todaySummary
+    });
+    
+    broadcastActivityCompleted(studentId, {
+      activityType,
+      technology,
+      score,
+      timeSpent
+    });
+    
+    // Broadcast badge earned if any
+    if (badges && badges.length > 0) {
+      badges.forEach(badge => {
+        broadcastBadgeEarned(studentId, badge);
+      });
+    }
+    
+    // Check if student is at risk
+    if (result.status === 'At_Risk') {
+      broadcastAtRiskAlert(studentId, {
+        status: result.status,
+        lastActivity: new Date().toISOString()
+      });
+    }
+    
+    res.json({
+      ...result,
+      badgesEarned: badges
+    });
+  } catch (error) {
+    console.error("RECORD ACTIVITY ERROR:", error.message);
+    res.status(500).json({ error: "Failed to record activity" });
+  }
+});
+
+// Get student engagement status
+app.get("/api/engagement/status/:studentId", (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const status = getStudentStatus(studentId);
+    res.json(status);
+  } catch (error) {
+    console.error("GET STATUS ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get status" });
+  }
+});
+
+// Get student streak
+app.get("/api/engagement/streak/:studentId", (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const streak = getStudentStreak(studentId);
+    res.json(streak);
+  } catch (error) {
+    console.error("GET STREAK ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get streak" });
+  }
+});
+
+// Calculate streaks (admin only - can be called manually or by cron)
+app.post("/api/engagement/streak/calculate", trainerOnly, (req, res) => {
+  try {
+    const { studentId } = req.body;
+    
+    if (studentId) {
+      // Calculate for specific student
+      const { updateStreak } = require("./services/engagementService");
+      const streak = updateStreak(studentId);
+      res.json({ studentsProcessed: 1, streaksUpdated: 1, streak });
+    } else {
+      // Calculate for all students
+      const result = calculateAllStreaks();
+      res.json(result);
+    }
+  } catch (error) {
+    console.error("CALCULATE STREAKS ERROR:", error.message);
+    res.status(500).json({ error: "Failed to calculate streaks" });
+  }
+});
+
+// ===== ASSESSMENT ENDPOINTS =====
+
+// Get today's mini-assessment
+app.get("/api/assessment/mini-assessment/:studentId", (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const { technology } = req.query;
+    
+    if (!technology) {
+      return res.status(400).json({ error: "technology query parameter required" });
+    }
+    
+    const assessment = getTodayMiniAssessment(studentId, technology);
+    res.json(assessment);
+  } catch (error) {
+    console.error("GET MINI-ASSESSMENT ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get assessment" });
+  }
+});
+
+// Submit mini-assessment
+app.post("/api/assessment/mini-assessment/submit", async (req, res) => {
+  try {
+    const { assessmentId, studentId, answers, timeSpent } = req.body;
+    
+    if (!assessmentId || !studentId || !answers) {
+      return res.status(400).json({ error: "assessmentId, studentId, and answers required" });
+    }
+    
+    const result = await submitMiniAssessment(assessmentId, studentId, answers, timeSpent);
+    
+    // Record activity
+    const activityResult = recordActivity(
+      studentId,
+      'mini_assessment',
+      result.technology || 'General',
+      null,
+      timeSpent,
+      result.score
+    );
+    
+    // Check for badges
+    const badges = checkAndAwardBadges(studentId, {
+      currentStreak: activityResult.streak || 0,
+      lastScore: result.score,
+      totalActivities: activityResult.todaySummary.activitiesCompleted
+    });
+    
+    res.json({
+      ...result,
+      badgesEarned: badges
+    });
+  } catch (error) {
+    console.error("SUBMIT MINI-ASSESSMENT ERROR:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Generate on-demand assessment
+app.post("/api/assessment/generate", (req, res) => {
+  try {
+    const { studentId, technology, conceptIds } = req.body;
+    
+    if (!studentId || !technology) {
+      return res.status(400).json({ error: "studentId and technology required" });
+    }
+    
+    const assessment = generateMiniAssessment(studentId, technology, conceptIds);
+    res.json(assessment);
+  } catch (error) {
+    console.error("GENERATE ASSESSMENT ERROR:", error.message);
+    res.status(500).json({ error: "Failed to generate assessment" });
+  }
+});
+
+// Get mock test
+app.get("/api/assessment/mock-test/:studentId", (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const { technologies } = req.query;
+    
+    const techArray = technologies ? technologies.split(',') : ['JavaScript'];
+    const mockTest = generateMockTest(studentId, techArray);
+    
+    res.json(mockTest);
+  } catch (error) {
+    console.error("GET MOCK TEST ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get mock test" });
+  }
+});
+
+// Submit mock test
+app.post("/api/assessment/mock-test/submit", async (req, res) => {
+  try {
+    const { mockTestId, studentId, answers } = req.body;
+    
+    if (!mockTestId || !studentId || !answers) {
+      return res.status(400).json({ error: "mockTestId, studentId, and answers required" });
+    }
+    
+    const result = await submitMockTest(mockTestId, studentId, answers);
+    res.json(result);
+  } catch (error) {
+    console.error("SUBMIT MOCK TEST ERROR:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ===== BADGE ENDPOINTS =====
+
+// Get student badges
+app.get("/api/badges/:studentId", (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const badges = getStudentBadges(studentId);
+    res.json({ badges });
+  } catch (error) {
+    console.error("GET BADGES ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get badges" });
+  }
+});
+
+// Get all badge definitions
+app.get("/api/badges/definitions/all", (req, res) => {
+  try {
+    const definitions = getAllBadgeDefinitions();
+    res.json({ badges: definitions });
+  } catch (error) {
+    console.error("GET BADGE DEFINITIONS ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get badge definitions" });
+  }
+});
+
+// ===== PUSH NOTIFICATION ENDPOINTS =====
+
+const {
+  subscribe: subscribePush,
+  unsubscribe: unsubscribePush,
+  sendTestNotification
+} = require('./services/pushNotificationService');
+
+// ===== STUDENT FEEDBACK / BUG REPORTS =====
+const { requireAuth, optionalAuth } = require("./routes/authRoutes");
+const {
+  submitFeedbackReport,
+  getRecentFeedbackReports,
+} = require("./services/feedbackService");
+
+app.post("/api/feedback", optionalAuth, async (req, res) => {
+  try {
+    const { message, pageUrl, pagePath, userAgent } = req.body || {};
+    const result = await submitFeedbackReport({
+      authUser: req.authUser,
+      req,
+      message,
+      pageUrl,
+      pagePath,
+      userAgent,
+    });
+    res.json(result);
+  } catch (error) {
+    const status = error.statusCode || 500;
+    if (status >= 500) {
+      console.error("FEEDBACK ERROR:", error.message);
+    }
+    res.status(status).json({
+      error: error.message || "Failed to submit report",
+    });
+  }
+});
+
+app.get("/trainer/feedback/recent", trainerOnly, (req, res) => {
+  try {
+    const limit = Math.min(parseInt(req.query.limit, 10) || 15, 50);
+    const reports = getRecentFeedbackReports(limit);
+    res.json({ reports, count: reports.length });
+  } catch (error) {
+    console.error("GET FEEDBACK RECENT ERROR:", error.message);
+    res.status(500).json({ error: "Failed to load reports" });
+  }
+});
+
+// Subscribe to push notifications
+app.post("/api/notifications/subscribe", (req, res) => {
+  try {
+    const { studentId, subscription } = req.body;
+    
+    if (!studentId || !subscription) {
+      return res.status(400).json({ error: "studentId and subscription required" });
+    }
+    
+    subscribePush(studentId, subscription);
+    res.json({ success: true, message: "Subscribed to push notifications" });
+  } catch (error) {
+    console.error("SUBSCRIBE PUSH ERROR:", error.message);
+    res.status(500).json({ error: "Failed to subscribe" });
+  }
+});
+
+// Unsubscribe from push notifications
+app.post("/api/notifications/unsubscribe", (req, res) => {
+  try {
+    const { studentId } = req.body;
+    
+    if (!studentId) {
+      return res.status(400).json({ error: "studentId required" });
+    }
+    
+    unsubscribePush(studentId);
+    res.json({ success: true, message: "Unsubscribed from push notifications" });
+  } catch (error) {
+    console.error("UNSUBSCRIBE PUSH ERROR:", error.message);
+    res.status(500).json({ error: "Failed to unsubscribe" });
+  }
+});
+
+// Send test notification
+app.post("/api/notifications/test", async (req, res) => {
+  try {
+    const { studentId } = req.body;
+    
+    if (!studentId) {
+      return res.status(400).json({ error: "studentId required" });
+    }
+    
+    const result = await sendTestNotification(studentId);
+    res.json(result);
+  } catch (error) {
+    console.error("TEST NOTIFICATION ERROR:", error.message);
+    res.status(500).json({ error: "Failed to send test notification" });
+  }
+});
+
+// Get notification preferences
+app.get("/api/notifications/preferences/:studentId", (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const { getNotificationPreferences } = require('./services/notificationPreferencesService');
+    
+    const preferences = getNotificationPreferences(studentId);
+    res.json(preferences);
+  } catch (error) {
+    console.error("GET PREFERENCES ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get preferences" });
+  }
+});
+
+// Update notification preferences
+app.put("/api/notifications/preferences/:studentId", (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const preferences = req.body;
+    const { saveNotificationPreferences } = require('./services/notificationPreferencesService');
+    
+    saveNotificationPreferences(studentId, preferences);
+    res.json({ success: true, message: "Preferences saved" });
+  } catch (error) {
+    console.error("SAVE PREFERENCES ERROR:", error.message);
+    res.status(500).json({ error: "Failed to save preferences" });
+  }
+});
+
+// ===== PROGRESS SHEET EXPORT ENDPOINTS =====
+
+const {
+  exportWithMetadata,
+  getAvailableExports,
+  getExportFile
+} = require('./services/progressSheetExportService');
+
+// Export student progress sheet
+app.post("/api/export/progress", trainerOnly, (req, res) => {
+  try {
+    const { type, studentId, startDate, endDate } = req.body;
+    
+    if (!type) {
+      return res.status(400).json({ error: "Export type required" });
+    }
+    
+    const result = exportWithMetadata(type, studentId || startDate, endDate);
+    res.json(result);
+  } catch (error) {
+    console.error("EXPORT PROGRESS ERROR:", error.message);
+    res.status(500).json({ error: "Failed to export progress sheet" });
+  }
+});
+
+// Get available exports
+app.get("/api/export/list", trainerOnly, (req, res) => {
+  try {
+    const exports = getAvailableExports();
+    res.json({ exports });
+  } catch (error) {
+    console.error("LIST EXPORTS ERROR:", error.message);
+    res.status(500).json({ error: "Failed to list exports" });
+  }
+});
+
+// Download export file
+app.get("/api/export/download/:filename", trainerOnly, (req, res) => {
+  try {
+    const { filename } = req.params;
+    const { filepath, content } = getExportFile(filename);
+    
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.send(content);
+  } catch (error) {
+    console.error("DOWNLOAD EXPORT ERROR:", error.message);
+    res.status(404).json({ error: "Export file not found" });
+  }
+});
+
+// ===== ANALYTICS ENDPOINTS =====
+
+// Get student dashboard analytics
+app.get("/api/analytics/dashboard/:studentId", (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const analytics = getStudentDashboardAnalytics(studentId);
+    res.json(analytics);
+  } catch (error) {
+    console.error("GET DASHBOARD ANALYTICS ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get analytics" });
+  }
+});
+
+// Get admin students list
+app.get("/api/analytics/admin/students", trainerOnly, (req, res) => {
+  try {
+    const { filter, sortBy, limit, offset } = req.query;
+    const result = getAdminStudentsList(
+      filter,
+      sortBy || 'last_activity',
+      parseInt(limit) || 50,
+      parseInt(offset) || 0
+    );
+    res.json(result);
+  } catch (error) {
+    console.error("GET ADMIN STUDENTS ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get students" });
+  }
+});
+
+// Get activity feed
+app.get("/api/analytics/admin/activity-feed", trainerOnly, (req, res) => {
+  try {
+    const { limit, since } = req.query;
+    const activities = getActivityFeed(
+      parseInt(limit) || 20,
+      since
+    );
+    res.json({ activities });
+  } catch (error) {
+    console.error("GET ACTIVITY FEED ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get activity feed" });
+  }
+});
+
+// Get student detail (for admin modal)
+app.get("/api/analytics/admin/student/:studentId", trainerOnly, (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const detail = getStudentDetail(studentId);
+    res.json(detail);
+  } catch (error) {
+    console.error("GET STUDENT DETAIL ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get student detail" });
+  }
+});
+
+// =======================================================
+// 🔹 SERVER START WITH SOCKET.IO
+// =======================================================
+const http = require('http');
+const { Server } = require('socket.io');
+
+const PORT = process.env.PORT || 5000;
+const server = http.createServer(app);
+
+// Initialize Socket.io with CORS
+const io = new Server(server, {
+  cors: {
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});
+
+// Socket.io connection handling
+io.on('connection', (socket) => {
+  console.log(`✅ Client connected: ${socket.id}`);
+  
+  // Handle authentication
+  const { studentId, role } = socket.handshake.auth || {};
+  
+  if (studentId) {
+    // Join student-specific room
+    socket.join(`student:${studentId}`);
+    console.log(`👤 Student ${studentId} joined their room`);
+  }
+  
+  if (role === 'admin' || role === 'trainer') {
+    // Join admin room for monitoring
+    socket.join('admin');
+    console.log(`👨‍💼 Admin joined monitoring room`);
+  }
+  
+  // Handle disconnection
+  socket.on('disconnect', () => {
+    console.log(`❌ Client disconnected: ${socket.id}`);
+  });
+  
+  // Handle ping for connection health
+  socket.on('ping', () => {
+    socket.emit('pong');
+  });
+});
+
+// Make io available globally for broadcasting events
+global.io = io;
+
+// Initialize cron jobs for background tasks
+const { initializeCronJobs } = require('./services/cronJobs');
+const { initOptionalMongo } = require('./services/mongoClient');
+
+void initOptionalMongo().catch((e) =>
+  console.warn('Optional MongoDB init:', e.message)
+);
+
+server.listen(PORT, async () => {
   console.log(`🚀 Micro Trainer Backend running on port ${PORT}`);
+  console.log(`📊 Engagement & Assessment System: ACTIVE`);
+  console.log(`🔌 WebSocket Server: ACTIVE`);
+
+  await verifyGoogleSheetsSetup();
+
+  // Initialize background jobs
+  initializeCronJobs();
+  
+  // Optional: Enable auto-export every 60 minutes
+  // Uncomment the line below to enable automatic exports
+  // scheduleAutoExport(60);
+});
 });

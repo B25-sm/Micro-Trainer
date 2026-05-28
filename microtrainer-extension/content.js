@@ -5,6 +5,21 @@
 
 console.log('🧠 Micro Trainer: Content script loaded');
 
+const DEFAULT_FRONTEND_URL = 'https://micro-trainer.vercel.app';
+const PANEL_PATH = '/extension';
+
+function buildAppUrl(frontendUrl, path = PANEL_PATH) {
+  try {
+    const url = new URL(frontendUrl || DEFAULT_FRONTEND_URL);
+    url.pathname = path;
+    url.search = '';
+    url.hash = '';
+    return url.toString();
+  } catch (_) {
+    return `${DEFAULT_FRONTEND_URL}${path}`;
+  }
+}
+
 // Function to inject the panel
 function injectPanel() {
   // Check if panel already exists (prevent duplicates)
@@ -30,7 +45,7 @@ function injectPanel() {
   // Create iframe to load React app
   const iframe = document.createElement('iframe');
   iframe.id = 'microtrainer-iframe';
-  iframe.src = 'https://micro-trainer.vercel.app';
+  iframe.src = buildAppUrl(DEFAULT_FRONTEND_URL);
   iframe.style.cssText = `
     width: 100%;
     height: 100%;
@@ -57,13 +72,56 @@ function injectPanel() {
     panel.classList.toggle('microtrainer-hidden');
     toggleBtn.classList.toggle('active');
   });
+
+  chrome.storage.sync.get(['frontendUrl'], (data) => {
+    iframe.src = buildAppUrl(data.frontendUrl);
+  });
+
+  window.addEventListener('message', (event) => {
+    if (event.source !== iframe.contentWindow && event.source !== window) return;
+
+    const message = event.data || {};
+    if (message.type !== 'MICROTRAINER_CONNECT' || !message.frontendUrl) return;
+
+    try {
+      const frontendUrl = new URL(message.frontendUrl).origin;
+      chrome.storage.sync.set({ frontendUrl }, () => {
+        iframe.src = buildAppUrl(frontendUrl);
+        console.log('✅ Micro Trainer: Official app connected', frontendUrl);
+      });
+    } catch (error) {
+      console.error('Invalid MicroTrainer frontend URL:', error);
+    }
+  });
   
   // Listen for messages from extension
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.action === 'toggle') {
-      panel.classList.toggle('microtrainer-hidden');
-      toggleBtn.classList.toggle('active');
+    if (request.action === 'toggle' || request.action === 'openPanel') {
+      if (request.path) {
+        chrome.storage.sync.get(['frontendUrl'], (data) => {
+          iframe.src = buildAppUrl(data.frontendUrl, request.path);
+        });
+      }
+
+      if (request.action === 'openPanel') {
+        panel.classList.remove('microtrainer-hidden');
+        toggleBtn.classList.add('active');
+      } else {
+        panel.classList.toggle('microtrainer-hidden');
+        toggleBtn.classList.toggle('active');
+      }
+
       sendResponse({ success: true });
+    }
+
+    if (request.action === 'navigatePanel') {
+      chrome.storage.sync.get(['frontendUrl'], (data) => {
+        iframe.src = buildAppUrl(data.frontendUrl, request.path || PANEL_PATH);
+        panel.classList.remove('microtrainer-hidden');
+        toggleBtn.classList.add('active');
+        sendResponse({ success: true });
+      });
+      return true;
     }
     
     if (request.action === 'getState') {

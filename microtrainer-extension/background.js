@@ -14,9 +14,9 @@ chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'install') {
     console.log('✅ Micro Trainer installed');
     
-    // Open welcome page
+    // Open settings so students can connect their own deployed app.
     chrome.tabs.create({
-      url: FRONTEND_URL
+      url: chrome.runtime.getURL('settings.html')
     });
   }
   
@@ -40,10 +40,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   
   if (request.action === 'getConfig') {
     // Return configuration
-    chrome.storage.sync.get(['apiUrl', 'studentId'], (data) => {
+    chrome.storage.sync.get(['apiUrl', 'studentId', 'frontendUrl'], (data) => {
       sendResponse({
         apiUrl: data.apiUrl || BACKEND_URL,
-        frontendUrl: FRONTEND_URL,
+        frontendUrl: data.frontendUrl || FRONTEND_URL,
         studentId: data.studentId || 'student_' + Date.now()
       });
     });

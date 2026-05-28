@@ -1,15 +1,20 @@
 import axios from "axios";
+import {
+  getTrainerApiHeaders,
+  getStudentApiHeaders,
+  getBearerHeaders,
+} from "./utils/authSession";
 
 // =======================================================
 // 🔹 BASE CONFIG
 // =======================================================
 
 // 🔥 Use ENV in production (Vercel / Extension)
-const BASE_URL =
+export const API_BASE =
   import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 const API = axios.create({
-  baseURL: BASE_URL,
+  baseURL: API_BASE,
   timeout: 10000,
 });
 
@@ -48,20 +53,33 @@ export const askAI = (data) =>
 
 
 // =======================================================
+// 🔹 CHAT WITH MICROTRAINER (HOME PAGE)
+// =======================================================
+
+export const chatWithMicroTrainer = (data) =>
+  API.post("/chat/ask", data);
+
+
+// =======================================================
 // 🔹 STUDENT ANALYTICS
 // =======================================================
 
 // 🔹 Legacy report (optional)
 export const getReport = (id) =>
-  API.get(`/student/${id}/report`);
+  API.get(`/student/${id}/report`, { headers: getStudentApiHeaders(id) });
 
 // 🔥 New analytics (USE THIS)
 export const getAnalytics = (id) =>
-  API.get(`/student/${id}/analytics`);
+  API.get(`/student/${id}/analytics`, { headers: getStudentApiHeaders(id) });
 
 // 🔥 AI memory (adaptive system)
 export const getMemory = (id) =>
-  API.get(`/student/${id}/memory`);
+  API.get(`/student/${id}/memory`, { headers: getStudentApiHeaders(id) });
+
+export const getCertificateEligibility = (id) =>
+  API.get(`/api/certificate/eligibility/${id}`, {
+    headers: getStudentApiHeaders(id),
+  });
 
 
 // =======================================================
@@ -69,7 +87,29 @@ export const getMemory = (id) =>
 // =======================================================
 
 export const getLeaderboard = () =>
-  API.get("/leaderboard");
+  API.get("/trainer/leaderboard", { headers: getTrainerApiHeaders() });
+
+// =======================================================
+// 🔹 ANTI-CHEAT (mock interview proctoring)
+// =======================================================
+
+export const createAnticheatSession = (data) =>
+  API.post("/anticheat/session", data);
+
+export const logAnticheatEvent = (data) =>
+  API.post("/anticheat/event", data);
+
+export const updateAnticheatSuspicion = (data) =>
+  API.post("/anticheat/suspicion", data);
+
+export const incrementAnticheatWarning = (data) =>
+  API.post("/anticheat/warning", data);
+
+export const dismissAnticheatSession = (data) =>
+  API.post("/anticheat/dismiss", data);
+
+export const completeAnticheatSession = (data) =>
+  API.post("/anticheat/complete", data);
 
 export const getOverview = () =>
   API.get("/dashboard/overview");
@@ -79,6 +119,14 @@ export const getWeakStudents = () =>
 
 export const getTrends = () =>
   API.get("/dashboard/trends");
+
+
+// =======================================================
+// 🔹 BUG / INCONVENIENCE REPORTS
+// =======================================================
+
+export const reportIssue = (data) =>
+  API.post("/api/feedback", data, { headers: getBearerHeaders() });
 
 
 // =======================================================

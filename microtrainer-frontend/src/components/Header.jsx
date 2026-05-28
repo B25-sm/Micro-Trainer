@@ -1,38 +1,41 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
-import DisplayModeToggle from "../components/DisplayModeToggle";
+import { useEffect, useState } from "react";
+import DisplayModeToggle from "./DisplayModeToggle";
 import { clearAuthSession } from "../utils/authSession";
+import { isTrainerSession } from "../utils/trainerAuth";
 
-const Navbar = ({ showLevelBadge = false, currentLevel = null }) => {
+const Header = ({ showLevelBadge = false, currentLevel = null }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [userRole, setUserRole] = useState('student');
-  const [userName, setUserName] = useState('');
+  const [userRole, setUserRole] = useState("student");
+  const [userName, setUserName] = useState("");
+  const showTrainerNav = isTrainerSession();
 
   useEffect(() => {
-    // Get user info from localStorage
-    const role = localStorage.getItem('userRole') || 'student';
-    const name = localStorage.getItem('userName') || (() => {
-      const full = localStorage.getItem('studentFullName');
-      const ini = localStorage.getItem('studentInitial');
-      const bat = localStorage.getItem('studentBatch');
-      if (full && ini && bat) return `${full} (${ini} · ${bat})`;
-      if (full) return full;
-      if (ini && bat) return `${ini} · ${bat}`;
-      return '';
-    })();
+    const role = localStorage.getItem("userRole") || "student";
+    const name =
+      localStorage.getItem("userName") ||
+      (() => {
+        const full = localStorage.getItem("studentFullName");
+        const initial = localStorage.getItem("studentInitial");
+        const batch = localStorage.getItem("studentBatch");
+        if (full && initial && batch) return `${full} (${initial} · ${batch})`;
+        if (full) return full;
+        if (initial && batch) return `${initial} · ${batch}`;
+        return "";
+      })();
 
     setUserRole(role);
     setUserName(name);
-  }, [location.pathname]); // Re-check on route change
+  }, [location.pathname]);
 
   const isActive = (path) => location.pathname === path;
 
-  function handleLogout() {
+  const handleLogout = () => {
     clearAuthSession();
     localStorage.clear();
-    navigate('/login');
-  }
+    navigate("/login");
+  };
 
   return (
     <header className="px-6 py-4 flex items-center justify-between border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] read-mode:bg-[var(--read-surface-elevated)] read-mode:border-[var(--read-border)] transition-colors duration-300">
@@ -114,15 +117,13 @@ const Navbar = ({ showLevelBadge = false, currentLevel = null }) => {
           >
             Settings
           </button>
-          
-          {/* TRAINER ONLY - Hide from students */}
-          {userRole === 'trainer' && (
-            <button 
+          {showTrainerNav && (
+            <button
               onClick={() => navigate("/trainer")}
               className={`px-3 py-1.5 text-sm rounded-lg transition ${
                 isActive("/trainer")
-                  ? "bg-blue-50 text-blue-600 font-medium"
-                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
+                  ? "bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 font-medium"
+                  : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700/50"
               }`}
             >
               Trainer
@@ -130,32 +131,23 @@ const Navbar = ({ showLevelBadge = false, currentLevel = null }) => {
           )}
         </nav>
       </div>
-      
       <div className="flex items-center gap-3">
         <DisplayModeToggle variant="compact" />
-
         {showLevelBadge && currentLevel && (
-          <div className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-full text-sm font-medium">
+          <div className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 rounded-full text-sm font-medium">
             Level: {currentLevel.charAt(0).toUpperCase() + currentLevel.slice(1)}
           </div>
         )}
-        
-        {/* User Info */}
         <div className="flex items-center gap-2">
           <div className="text-right">
-            <div className="text-sm font-medium text-gray-900">{userName || 'Guest'}</div>
-            <div className="text-xs text-gray-500">{userRole === 'trainer' ? 'Trainer' : 'Student'}</div>
-          </div>
-          
-          {/* Role Badge - Only show for trainers */}
-          {userRole === 'trainer' && (
-            <div className="px-3 py-1.5 rounded-full text-sm font-medium bg-purple-50 text-purple-600">
-              👨‍🏫 Trainer
+            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+              {userName || "Guest"}
             </div>
-          )}
+            <div className="text-xs text-gray-500 dark:text-gray-400">
+              {userRole === "trainer" ? "Trainer" : "Student"}
+            </div>
+          </div>
         </div>
-        
-        {/* Logout Button - More Visible */}
         <button
           onClick={handleLogout}
           className="ml-2 px-4 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition font-medium shadow-sm"
@@ -167,4 +159,4 @@ const Navbar = ({ showLevelBadge = false, currentLevel = null }) => {
   );
 };
 
-export default Navbar;
+export default Header;

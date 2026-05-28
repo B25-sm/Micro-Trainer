@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { getAnalytics, getMemory } from "../api";
 import { motion } from "framer-motion";
+import SyncRequiredBanner from "../components/SyncRequiredBanner";
+import { getStudentId } from "../utils/studentAuth";
 import {
   LineChart,
   Line,
@@ -14,6 +16,7 @@ import {
 const Dashboard = () => {
   const [analytics, setAnalytics] = useState(null);
   const [memory, setMemory] = useState(null);
+  const studentId = getStudentId() || "student_1";
 
   useEffect(() => {
     fetchData();
@@ -22,8 +25,8 @@ const Dashboard = () => {
   const fetchData = async () => {
     try {
       const [aRes, mRes] = await Promise.all([
-        getAnalytics("student_1"),
-        getMemory("student_1"),
+        getAnalytics(studentId),
+        getMemory(studentId),
       ]);
 
       setAnalytics(aRes.data);
@@ -58,7 +61,7 @@ const Dashboard = () => {
       : [];
 
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-[#202124]">
       
       {/* Minimal Header - Gemini Style */}
       <header className="px-6 py-4 flex items-center justify-between border-b border-gray-200">
@@ -78,6 +81,7 @@ const Dashboard = () => {
       {/* Main Content */}
       <main className="flex-1 p-6">
         <div className="max-w-6xl mx-auto space-y-6">
+          <SyncRequiredBanner studentId={studentId} />
 
           {/* Performance Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

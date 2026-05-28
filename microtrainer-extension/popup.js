@@ -3,49 +3,80 @@
 // Handles popup interactions
 // ===============================================
 
-const toggleBtn = document.getElementById('toggleBtn');
-const startInterview = document.getElementById('startInterview');
+const openSidePanel = document.getElementById('openSidePanel');
+const openFullscreen = document.getElementById('openFullscreen');
+const openSyncStatus = document.getElementById('openSyncStatus');
 const settings = document.getElementById('settings');
 const statusText = document.getElementById('statusText');
+const trackingStatus = document.getElementById('trackingStatus');
+const appUrl = document.getElementById('appUrl');
 
-// Toggle side panel
-toggleBtn.addEventListener('click', async () => {
+const DEFAULT_FRONTEND_URL = 'https://micro-trainer.vercel.app';
+
+function buildAppUrl(frontendUrl, path = '/') {
+  try {
+    const url = new URL(frontendUrl || DEFAULT_FRONTEND_URL);
+    url.pathname = path;
+    url.search = '';
+    url.hash = '';
+    return url.toString();
+  } catch (_) {
+    return `${DEFAULT_FRONTEND_URL}${path}`;
+  }
+}
+
+async function getActiveTab() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  
-  chrome.tabs.sendMessage(tab.id, { action: 'toggle' }, (response) => {
+  return tab;
+}
+
+function sendPanelMessage(tabId, message, successText) {
+  chrome.tabs.sendMessage(tabId, message, () => {
     if (chrome.runtime.lastError) {
       statusText.textContent = 'Error: Refresh page';
       console.error(chrome.runtime.lastError);
     } else {
-      statusText.textContent = 'Panel toggled';
+      statusText.textContent = successText;
       setTimeout(() => {
         window.close();
       }, 500);
     }
   });
+}
+
+// Open side panel
+openSidePanel.addEventListener('click', async () => {
+  const tab = await getActiveTab();
+  sendPanelMessage(
+    tab.id,
+    { action: 'openPanel', path: '/extension' },
+    'Side panel opened'
+  );
 });
 
-// Start interview
-startInterview.addEventListener('click', async () => {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  
-  // Send message to iframe to start interview
-  chrome.tabs.sendMessage(tab.id, { 
-    action: 'startInterview',
-    subject: 'React'
+// Open full app
+openFullscreen.addEventListener('click', () => {
+  chrome.storage.sync.get(['frontendUrl'], (data) => {
+    chrome.tabs.create({
+      url: buildAppUrl(data.frontendUrl, '/')
+    });
   });
-  
-  statusText.textContent = 'Interview starting...';
-  
-  setTimeout(() => {
-    window.close();
-  }, 1000);
+});
+
+// Open sync status inside side panel
+openSyncStatus.addEventListener('click', async () => {
+  const tab = await getActiveTab();
+  sendPanelMessage(
+    tab.id,
+    { action: 'navigatePanel', path: '/dashboard' },
+    'Sync status opened'
+  );
 });
 
 // Settings
 settings.addEventListener('click', () => {
   chrome.tabs.create({
-    url: 'settings.html'
+    url: chrome.runtime.getURL('settings.html')
   });
 });
 
@@ -58,4 +89,20 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       statusText.textContent = 'Panel closed';
     }
   });
+});
+
+chrome.storage.sync.get(['frontendUrl'], (data) => {
+  if (!trackingStatus) return;
+
+  if (data.frontendUrl) {
+    trackingStatus.classList.add('connected');
+    trackingStatus.textContent = `Official app connected: ${data.frontendUrl}`;
+    appUrl.textContent = `Connected app: ${data.frontendUrl}`;
+    return;
+  }
+
+  trackingStatus.classList.remove('connected');
+  trackingStatus.textContent =
+    'Not connected to an official MicroTrainer app. Progress may not count for trainer verification until setup is completed.';
+  appUrl.textContent = 'No student app connected yet. Use Settings after deployment.';
 });

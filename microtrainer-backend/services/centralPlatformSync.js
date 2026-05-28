@@ -4,8 +4,14 @@
 // =======================================================
 
 const axios = require("axios");
+const { recordSyncAttempt } = require("./syncStatusService");
 
-const CENTRAL_PLATFORM_URL = process.env.CENTRAL_PLATFORM_URL || "http://localhost:6000";
+const CENTRAL_SYNC_DISABLED =
+  process.env.CENTRAL_PLATFORM_ENABLED === "0" ||
+  process.env.CENTRAL_PLATFORM_ENABLED === "false";
+
+const CENTRAL_PLATFORM_URL =
+  process.env.CENTRAL_PLATFORM_URL || "http://localhost:6000";
 const PLATFORM_API_KEY = process.env.PLATFORM_API_KEY;
 const INSTITUTION_ID = process.env.INSTITUTION_ID;
 
@@ -13,9 +19,20 @@ const INSTITUTION_ID = process.env.INSTITUTION_ID;
 // 🔄 SYNC INTERVIEW TO CENTRAL PLATFORM
 // =======================================================
 async function syncInterviewToCentral(interviewData) {
+  if (CENTRAL_SYNC_DISABLED) {
+    recordSyncAttempt(interviewData?.studentId, "central_interview", {
+      success: false,
+      reason: "disabled",
+    });
+    return { success: false, reason: "disabled" };
+  }
   // Skip if no API key configured
   if (!PLATFORM_API_KEY) {
-    console.log("⚠️ Central platform sync disabled (no API key)");
+    console.log("⚠️ Central platform sync disabled (no PLATFORM_API_KEY)");
+    recordSyncAttempt(interviewData?.studentId, "central_interview", {
+      success: false,
+      reason: "no_api_key",
+    });
     return { success: false, reason: "no_api_key" };
   }
   
@@ -66,6 +83,9 @@ async function syncInterviewToCentral(interviewData) {
     );
     
     console.log(`✅ Interview synced to central platform: ${summary.interview_id}`);
+    recordSyncAttempt(interviewData.studentId, "central_interview", {
+      success: true,
+    });
     
     return {
       success: true,
@@ -74,6 +94,10 @@ async function syncInterviewToCentral(interviewData) {
     
   } catch (error) {
     console.error("❌ Central platform sync failed:", error.message);
+    recordSyncAttempt(interviewData?.studentId, "central_interview", {
+      success: false,
+      error: error.message,
+    });
     
     // Don't fail the interview if sync fails
     return {
@@ -163,8 +187,11 @@ function extractTopicFromQuestion(question) {
 // 🔄 BATCH SYNC (For backfilling)
 // =======================================================
 async function batchSyncInterviews(interviews) {
+  if (CENTRAL_SYNC_DISABLED) {
+    return { success: false, reason: "disabled" };
+  }
   if (!PLATFORM_API_KEY) {
-    console.log("⚠️ Central platform sync disabled (no API key)");
+    console.log("⚠️ Central platform sync disabled (no PLATFORM_API_KEY)");
     return { success: false, reason: "no_api_key" };
   }
   
