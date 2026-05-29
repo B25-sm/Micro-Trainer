@@ -24,7 +24,15 @@ function loadCurriculums() {
       }
     });
     
-    console.log(`✅ Loaded ${Object.keys(curriculums).length} curriculums`);
+    const count = Object.keys(curriculums).length;
+    if (count === 0) {
+      console.error(
+        '❌ No curriculum files found in data/curriculums — guided course will be empty. ' +
+          'Ensure *.json curriculums are deployed with the backend.'
+      );
+    } else {
+      console.log(`✅ Loaded ${count} curriculums`);
+    }
   } catch (error) {
     console.error('Failed to load curriculums:', error.message);
   }

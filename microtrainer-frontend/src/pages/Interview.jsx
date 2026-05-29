@@ -423,7 +423,7 @@ IMPORTANT:
 
   if (!session) {
     return (
-      <div className="min-h-screen flex flex-col bg-white">
+      <div className="min-h-screen flex flex-col bg-white dark:bg-[#202124]">
         
         {/* Setup Form - Gemini Style */}
         <div className="flex-1 flex items-center justify-center p-6">
@@ -432,19 +432,19 @@ IMPORTANT:
             animate={{ opacity: 1, y: 0 }}
             className="max-w-md w-full"
           >
-            <h2 className="text-4xl font-normal text-blue-500 text-center mb-12">
+            <h2 className="text-4xl font-normal text-blue-500 dark:text-blue-400 text-center mb-12">
               Start your interview
             </h2>
 
-            {/* 🔒 ANTI-CHEAT WARNING */}
-            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6">
+            {/* Anti-cheat notice — mt-callout pairs bg + text in dark/light */}
+            <div className="mt-callout mt-callout--warning mb-6" role="note">
               <div className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5 flex-shrink-0 mt-0.5 opacity-90" fill="currentColor" viewBox="0 0 20 20" aria-hidden>
                   <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                 </svg>
                 <div>
-                  <h3 className="text-sm font-semibold text-yellow-800 mb-1">Anti-Cheat Enabled</h3>
-                  <ul className="text-xs text-yellow-700 space-y-1">
+                  <p className="text-sm font-semibold mb-1">Anti-cheat enabled</p>
+                  <ul className="text-xs space-y-1 list-none opacity-95">
                     <li>• Fullscreen mode required</li>
                     <li>• Copy/paste disabled</li>
                     <li>• Tab switching monitored</li>
@@ -455,14 +455,14 @@ IMPORTANT:
             </div>
 
             <div className="space-y-4">
-              <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-                <label className="block text-sm font-medium text-gray-700 mb-3">
+              <div className="bg-white dark:bg-[#292a2d] rounded-2xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-3">
                   Select Subject
                 </label>
                 <select
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                  className="app-select w-full px-4 py-3 rounded-xl"
                 >
                   <optgroup label="Full Stack Roles">
                     <option value="MERN Stack">MERN Stack Developer</option>
@@ -490,7 +490,7 @@ IMPORTANT:
               <button
                 onClick={handleStart}
                 disabled={loading}
-                className="w-full py-3.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-medium hover:from-blue-600 hover:to-blue-700 transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3.5 bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 rounded-xl font-medium hover:opacity-90 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "Starting..." : "Begin Interview"}
               </button>

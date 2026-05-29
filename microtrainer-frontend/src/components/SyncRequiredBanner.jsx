@@ -46,10 +46,8 @@ export default function SyncRequiredBanner({ studentId }) {
 
   return (
     <div
-      className={`mb-6 rounded-2xl border p-4 ${
-        connected
-          ? "border-emerald-200 bg-emerald-50 text-emerald-900"
-          : "border-amber-200 bg-amber-50 text-amber-900"
+      className={`mt-callout mb-6 ${
+        connected ? "mt-callout--success" : "mt-callout--warning"
       }`}
     >
       <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">

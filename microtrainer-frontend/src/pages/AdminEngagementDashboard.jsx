@@ -156,7 +156,7 @@ export default function AdminEngagementDashboard() {
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                className="border rounded px-3 py-2"
+                className="app-select min-w-[160px]"
               >
                 <option value="all">All Students</option>
                 <option value="active_today">Active Today</option>
@@ -171,7 +171,7 @@ export default function AdminEngagementDashboard() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="border rounded px-3 py-2"
+                className="app-select min-w-[160px]"
               >
                 <option value="last_activity">Last Activity</option>
                 <option value="streak">Streak</option>

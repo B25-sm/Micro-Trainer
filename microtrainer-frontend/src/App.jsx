@@ -74,9 +74,11 @@ function App() {
           <Route
             path="/interview"
             element={
-              <MainLayout>
-                <Interview />
-              </MainLayout>
+              <RequireAuth>
+                <MainLayout>
+                  <Interview />
+                </MainLayout>
+              </RequireAuth>
             }
           />
 
@@ -84,9 +86,11 @@ function App() {
           <Route
             path="/problems"
             element={
-              <MainLayout>
-                <ProblemSolving />
-              </MainLayout>
+              <RequireAuth>
+                <MainLayout>
+                  <ProblemSolving />
+                </MainLayout>
+              </RequireAuth>
             }
           />
 
@@ -94,9 +98,11 @@ function App() {
           <Route
             path="/result"
             element={
-              <MainLayout>
-                <Result />
-              </MainLayout>
+              <RequireAuth>
+                <MainLayout>
+                  <Result />
+                </MainLayout>
+              </RequireAuth>
             }
           />
 
@@ -104,9 +110,11 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <MainLayout>
-                <Dashboard />
-              </MainLayout>
+              <RequireAuth>
+                <MainLayout>
+                  <Dashboard />
+                </MainLayout>
+              </RequireAuth>
             }
           />
 
@@ -114,9 +122,11 @@ function App() {
           <Route
             path="/engagement"
             element={
-              <MainLayout>
-                <EngagementDashboard />
-              </MainLayout>
+              <RequireAuth>
+                <MainLayout>
+                  <EngagementDashboard />
+                </MainLayout>
+              </RequireAuth>
             }
           />
 
@@ -124,9 +134,11 @@ function App() {
           <Route
             path="/settings/notifications"
             element={
-              <MainLayout>
-                <NotificationSettings />
-              </MainLayout>
+              <RequireAuth>
+                <MainLayout>
+                  <NotificationSettings />
+                </MainLayout>
+              </RequireAuth>
             }
           />
 
@@ -158,9 +170,11 @@ function App() {
           <Route
             path="/learn"
             element={
-              <MainLayout>
-                <Learn />
-              </MainLayout>
+              <RequireAuth>
+                <MainLayout>
+                  <Learn />
+                </MainLayout>
+              </RequireAuth>
             }
           />
 

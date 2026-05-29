@@ -120,7 +120,30 @@ const { getStudentReport } = require("./services/analyticsService");
 // 🔥 NEW TRACKING + MEMORY
 const { aggregateStudent } = require("./services/trackingService");
 const { getStudentMemory } = require("./services/memoryService");
-const { getStudentHistory } = require("./services/readSheetsService");
+const {
+  getStudentHistory,
+  getStudentMemory: getStudentMemoryFromSheets,
+} = require("./services/readSheetsService");
+
+const EMPTY_STUDENT_ANALYTICS = {
+  totalQuestions: 0,
+  averageScore: "0.00",
+  communicationScore: "0.00",
+  technicalScore: "0.00",
+  weakAreas: [],
+};
+
+const EMPTY_STUDENT_MEMORY = {
+  level: "Beginner",
+  trend: "Stable",
+  consistency: "New",
+  totalAttempts: 0,
+  strongConcepts: [],
+  weakConcepts: [],
+  avgScore: 0,
+  communication: 0,
+  technical: 0,
+};
 
 // 🔥 DASHBOARD
 const {
@@ -579,18 +602,20 @@ app.get("/student/:studentId/analytics", studentSelfOrTrainer, async (req, res) 
   try {
     const history = await getStudentHistory(req.params.studentId);
     const report = aggregateStudent(history);
-    return res.json(report);
+    return res.json(report || EMPTY_STUDENT_ANALYTICS);
   } catch (error) {
     console.error("ANALYTICS ERROR:", error.message);
     res.status(500).json({ error: "Analytics failed" });
   }
 });
 
-// Memory (AI adaptation)
+// Memory (AI adaptation + dashboard stats)
 app.get("/student/:studentId/memory", studentSelfOrTrainer, async (req, res) => {
   try {
-    const memory = await getStudentMemory(req.params.studentId);
-    return res.json(memory);
+    const memory =
+      (await getStudentMemoryFromSheets(req.params.studentId)) ||
+      (await getStudentMemory(req.params.studentId));
+    return res.json({ ...EMPTY_STUDENT_MEMORY, ...(memory || {}) });
   } catch (error) {
     console.error("MEMORY ERROR:", error.message);
     res.status(500).json({ error: "Memory fetch failed" });
@@ -1255,6 +1280,13 @@ const {
 app.get("/learning-path/technologies", (req, res) => {
   try {
     const technologies = getAvailableTechnologies();
+    if (!technologies.length) {
+      return res.status(503).json({
+        error: "No guided courses are configured on this server",
+        hint: "Add curriculum JSON files under microtrainer-backend/data/curriculums and redeploy",
+        technologies: [],
+      });
+    }
     res.json(technologies);
   } catch (error) {
     console.error("GET TECHNOLOGIES ERROR:", error.message);

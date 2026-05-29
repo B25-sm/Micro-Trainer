@@ -322,7 +322,7 @@ const TrainerDashboard = () => {
                 <select
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
-                  className="bg-white border border-gray-200 text-gray-800 p-2 rounded-xl"
+                  className="app-select p-2 rounded-xl min-w-[140px]"
                 >
                   <option value="fullstack">Fullstack</option>
                   <option value="react">React</option>

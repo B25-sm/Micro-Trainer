@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getAnalytics, getMemory } from "../api";
 import { motion } from "framer-motion";
 import SyncRequiredBanner from "../components/SyncRequiredBanner";
 import { getStudentId } from "../utils/studentAuth";
+import { isTrainerSession } from "../utils/trainerAuth";
 import {
   LineChart,
   Line,
@@ -13,216 +15,307 @@ import {
   CartesianGrid,
 } from "recharts";
 
+const EMPTY_ANALYTICS = {
+  totalQuestions: 0,
+  averageScore: "0.00",
+  communicationScore: "0.00",
+  technicalScore: "0.00",
+  weakAreas: [],
+};
+
+const EMPTY_MEMORY = {
+  level: "Beginner",
+  trend: "Stable",
+  consistency: "New",
+  totalAttempts: 0,
+  strongConcepts: [],
+  weakConcepts: [],
+};
+
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [analytics, setAnalytics] = useState(null);
   const [memory, setMemory] = useState(null);
-  const studentId = getStudentId() || "student_1";
+  const [status, setStatus] = useState("loading"); // loading | ready | error | trainer | no-profile
 
   useEffect(() => {
-    fetchData();
+    if (isTrainerSession()) {
+      setStatus("trainer");
+      return;
+    }
+
+    const studentId = getStudentId();
+    if (!studentId) {
+      setStatus("no-profile");
+      return;
+    }
+
+    fetchData(studentId);
   }, []);
 
-  const fetchData = async () => {
+  const fetchData = async (studentId) => {
+    setStatus("loading");
     try {
       const [aRes, mRes] = await Promise.all([
         getAnalytics(studentId),
         getMemory(studentId),
       ]);
 
-      setAnalytics(aRes.data);
-      setMemory(mRes.data);
+      setAnalytics({ ...EMPTY_ANALYTICS, ...(aRes.data || {}) });
+      setMemory({ ...EMPTY_MEMORY, ...(mRes.data || {}) });
+      setStatus("ready");
     } catch (err) {
       console.error("Dashboard error:", err);
+      setStatus("error");
     }
   };
 
-  if (!analytics || !memory) {
+  if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="flex items-center gap-2 text-gray-500">
+      <div className="min-h-[50vh] flex items-center justify-center">
+        <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
           <div className="flex gap-1">
-            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></span>
-            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></span>
-            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></span>
+            <span
+              className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+              style={{ animationDelay: "0ms" }}
+            />
+            <span
+              className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+              style={{ animationDelay: "150ms" }}
+            />
+            <span
+              className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+              style={{ animationDelay: "300ms" }}
+            />
           </div>
-          <span>Loading Dashboard...</span>
+          <span>Loading dashboard…</span>
         </div>
       </div>
     );
   }
 
-  // Chart Data
+  if (status === "trainer") {
+    return (
+      <div className="max-w-lg mx-auto py-16 px-4 text-center">
+        <h1 className="text-xl font-medium text-gray-900 dark:text-gray-100 mb-2">
+          Trainer account
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400 text-sm mb-6">
+          This page shows individual student progress. As a trainer, use the Trainer
+          panel to view and manage all students.
+        </p>
+        <button
+          type="button"
+          onClick={() => navigate("/trainer")}
+          className="px-5 py-2.5 rounded-lg bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 text-sm font-medium hover:opacity-90 transition"
+        >
+          Open Trainer panel
+        </button>
+      </div>
+    );
+  }
+
+  if (status === "no-profile") {
+    return (
+      <div className="max-w-lg mx-auto py-16 px-4 text-center">
+        <h1 className="text-xl font-medium text-gray-900 dark:text-gray-100 mb-2">
+          Complete your profile
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400 text-sm mb-6">
+          We need your student profile before we can show your dashboard.
+        </p>
+        <button
+          type="button"
+          onClick={() => navigate("/complete-profile")}
+          className="px-5 py-2.5 rounded-lg bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 text-sm font-medium hover:opacity-90 transition"
+        >
+          Complete profile
+        </button>
+      </div>
+    );
+  }
+
+  if (status === "error") {
+    const studentId = getStudentId();
+    return (
+      <div className="max-w-lg mx-auto py-16 px-4 text-center">
+        <h1 className="text-xl font-medium text-gray-900 dark:text-gray-100 mb-2">
+          Could not load dashboard
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400 text-sm mb-6">
+          Check your connection or try again in a moment.
+        </p>
+        <button
+          type="button"
+          onClick={() => studentId && fetchData(studentId)}
+          className="px-5 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700/50 transition"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  const studentId = getStudentId();
+
   const chartData =
     memory?.totalAttempts > 0
       ? Array.from({ length: memory.totalAttempts }, (_, i) => ({
           name: `Q${i + 1}`,
-          value: analytics.averageScore,
+          value: Number(analytics.averageScore) || 0,
         }))
       : [];
 
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-[#202124]">
-      
-      {/* Minimal Header - Gemini Style */}
-      <header className="px-6 py-4 flex items-center justify-between border-b border-gray-200">
-        <div className="flex items-center gap-4">
-          <button className="p-2 hover:bg-gray-100 rounded-lg transition">
-            <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-          <div>
-            <h1 className="text-lg font-normal text-gray-800">Dashboard</h1>
-            <p className="text-xs text-gray-500">Track your performance</p>
-          </div>
+    <div className="min-h-screen flex flex-col">
+      <header className="px-6 py-4 flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
+        <div>
+          <h1 className="text-lg font-medium text-gray-800 dark:text-gray-100">
+            Dashboard
+          </h1>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            Track your performance
+          </p>
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="flex-1 p-6">
         <div className="max-w-6xl mx-auto space-y-6">
           <SyncRequiredBanner studentId={studentId} />
 
-          {/* Performance Stats */}
+          {analytics.totalQuestions === 0 && (
+            <div className="rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40 px-4 py-3 text-sm text-blue-800 dark:text-blue-200">
+              No interview data yet. Start an{" "}
+              <button
+                type="button"
+                onClick={() => navigate("/interview")}
+                className="underline font-medium"
+              >
+                interview
+              </button>{" "}
+              to see your stats here.
+            </div>
+          )}
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard 
-              title="Questions Answered" 
-              value={analytics.totalQuestions} 
-              color="text-accent"
+            <StatCard
+              title="Questions Answered"
+              value={analytics.totalQuestions}
+              color="text-[#1a73e8] dark:text-[#8ab4f8]"
             />
-            <StatCard 
-              title="Average Score" 
-              value={`${analytics.averageScore}/10`} 
-              color="text-success"
+            <StatCard
+              title="Average Score"
+              value={`${analytics.averageScore}/10`}
+              color="text-green-600 dark:text-green-400"
             />
-            <StatCard 
-              title="Communication" 
-              value={`${analytics.communicationScore}/10`} 
-              color="text-text-h"
+            <StatCard
+              title="Communication"
+              value={`${analytics.communicationScore}/10`}
             />
-            <StatCard 
-              title="Technical" 
-              value={`${analytics.technicalScore}/10`} 
-              color="text-text-h"
+            <StatCard
+              title="Technical"
+              value={`${analytics.technicalScore}/10`}
             />
           </div>
 
-          {/* AI Learning Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard 
-              title="Current Level" 
-              value={memory.level} 
-              badge
-            />
-            <StatCard 
-              title="Trend" 
-              value={memory.trend} 
-              badge
-            />
-            <StatCard 
-              title="Consistency" 
-              value={memory.consistency} 
-              badge
-            />
-            <StatCard 
-              title="Total Attempts" 
-              value={memory.totalAttempts} 
-            />
+            <StatCard title="Current Level" value={memory.level} badge />
+            <StatCard title="Trend" value={memory.trend} badge />
+            <StatCard title="Consistency" value={memory.consistency} badge />
+            <StatCard title="Total Attempts" value={memory.totalAttempts} />
           </div>
 
-          {/* Performance Chart */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-            <h2 className="text-lg font-normal text-gray-800 mb-4">
-              Performance Trend
+          <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] p-6 shadow-sm">
+            <h2 className="text-lg font-medium text-gray-800 dark:text-gray-100 mb-4">
+              Performance trend
             </h2>
 
             {chartData.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                  <XAxis 
-                    dataKey="name" 
+                  <XAxis
+                    dataKey="name"
                     stroke="var(--text-secondary)"
-                    style={{ fontSize: '12px' }}
+                    style={{ fontSize: "12px" }}
                   />
-                  <YAxis 
-                    domain={[0, 10]} 
+                  <YAxis
+                    domain={[0, 10]}
                     stroke="var(--text-secondary)"
-                    style={{ fontSize: '12px' }}
+                    style={{ fontSize: "12px" }}
                   />
-                  <Tooltip 
+                  <Tooltip
                     contentStyle={{
-                      backgroundColor: 'var(--bg-elevated)',
-                      border: '1px solid var(--border)',
-                      borderRadius: '8px',
+                      backgroundColor: "var(--bg-elevated)",
+                      border: "1px solid var(--border)",
+                      borderRadius: "8px",
                     }}
                   />
-                  <Line 
-                    type="monotone" 
-                    dataKey="value" 
-                    stroke="var(--accent)" 
+                  <Line
+                    type="monotone"
+                    dataKey="value"
+                    stroke="var(--accent)"
                     strokeWidth={2}
-                    dot={{ fill: 'var(--accent)', r: 4 }}
+                    dot={{ fill: "var(--accent)", r: 4 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-64 flex items-center justify-center text-text-secondary">
+              <div className="h-64 flex items-center justify-center text-gray-500 dark:text-gray-400 text-sm">
                 No performance data yet. Start an interview to see your progress.
               </div>
             )}
           </div>
 
-          {/* Concepts Analysis */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
             <ConceptCard
-              title="Strong Concepts"
+              title="Strong concepts"
               items={memory.strongConcepts}
               type="success"
             />
-
             <ConceptCard
-              title="Areas to Improve"
+              title="Areas to improve"
               items={memory.weakConcepts}
               type="warning"
             />
-
           </div>
-
         </div>
       </main>
-
     </div>
   );
 };
 
 export default Dashboard;
 
-/* ================= COMPONENTS ================= */
-
 const StatCard = ({ title, value, color, badge }) => (
   <motion.div
     whileHover={{ y: -2 }}
-    className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm transition-all hover:shadow-md"
+    className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] p-5 shadow-sm transition-all hover:shadow-md"
   >
-    <p className="text-sm text-gray-500 mb-1">{title}</p>
-    <h3 className={`text-2xl font-normal ${color || 'text-gray-800'} ${badge ? 'capitalize' : ''}`}>
-      {value || "—"}
+    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{title}</p>
+    <h3
+      className={`text-2xl font-normal ${color || "text-gray-800 dark:text-gray-100"} ${badge ? "capitalize" : ""}`}
+    >
+      {value ?? "—"}
     </h3>
   </motion.div>
 );
 
 const ConceptCard = ({ title, items = [], type }) => {
-  const colorClass = type === 'success' ? 'text-green-600' : 'text-amber-600';
-  const bgClass = type === 'success' ? 'bg-green-100' : 'bg-amber-100';
+  const colorClass =
+    type === "success"
+      ? "text-green-600 dark:text-green-400"
+      : "text-amber-600 dark:text-amber-400";
+  const bgClass = type === "success" ? "bg-green-500" : "bg-amber-500";
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-      <h3 className="text-lg font-normal text-gray-800 mb-4">{title}</h3>
+    <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] p-6 shadow-sm">
+      <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100 mb-4">
+        {title}
+      </h3>
 
       {items.length === 0 ? (
-        <p className="text-gray-500 text-sm">No data available yet</p>
+        <p className="text-gray-500 dark:text-gray-400 text-sm">No data yet</p>
       ) : (
         <ul className="space-y-2">
           {items.map((item, index) => (

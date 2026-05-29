@@ -16,8 +16,8 @@ export const learningPathAPI = {
    * Get all available technologies
    * @returns {Promise} Array of technologies with id, name, totalConcepts
    */
-  getTechnologies: () => 
-    axios.get(`${API_URL}/learning-path/technologies`),
+  getTechnologies: () =>
+    axios.get(`${API_URL}/learning-path/technologies`, { timeout: 30000 }),
   
   /**
    * Get curriculum for a specific technology

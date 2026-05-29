@@ -361,7 +361,8 @@ const Home = () => {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => navigate("/interview")}
-        className="fixed bottom-8 right-8 w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 via-purple-600 to-pink-500 shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center"
+        className="fixed bottom-6 right-6 z-[100] w-14 h-14 rounded-full bg-[#1a73e8] dark:bg-[#8ab4f8] shadow-lg hover:opacity-90 transition flex items-center justify-center"
+        aria-label="Start interview"
       >
         <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />

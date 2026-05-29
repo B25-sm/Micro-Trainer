@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import { Play, Check, Code, Loader, RotateCcw } from 'lucide-react';
 import { API_BASE } from '../api.js';
 import ExecutionConsole from './ExecutionConsole.jsx';
 import ResizeSplitter from './ResizeSplitter.jsx';
-import { getStarterCode } from '../lib/problemStarters.js';
+import { getStarterCode } from '../lib/problemCodeTemplates.js';
+import { attachClipboardGuards } from '../lib/monacoEditorGuards.js';
 import {
   normalizeJudgeOutput,
   runCodeInBrowser,
@@ -18,26 +19,28 @@ const PROBLEM_SOLVING_LANGUAGES = [
   { value: 'java', label: 'Java (server runner required)' },
 ];
 
-const CodeEditor = ({ problem, onSubmit }) => {
+const CodeEditor = ({ problem, onSubmit, blockClipboard = true }) => {
   const [code, setCode] = useState('');
   const [language, setLanguage] = useState('javascript');
   const [output, setOutput] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
+  const [clipboardNotice, setClipboardNotice] = useState('');
+  const clipboardCleanupRef = useRef(null);
   const problemId = problem?.id;
 
   const applyStarter = useCallback(
-    (lang = language, starterProblemId = problemId) => {
-      setCode(getStarterCode(lang, starterProblemId));
+    (lang = language, prob = problem) => {
+      setCode(getStarterCode(lang, prob));
       setOutput(null);
     },
-    [language, problemId]
+    [language, problem]
   );
 
   const loadTemplate = useCallback(async () => {
-    const fallback = getStarterCode(language, problemId);
+    const fallback = getStarterCode(language, problem);
     try {
       const response = await fetch(
-        `${API_BASE}/code/template/${language}?problemId=${problemId || ''}`
+        `${API_BASE}/code/template/${language}?problemId=${encodeURIComponent(problemId || '')}`
       );
       const data = await response.json();
       setCode(data.template || fallback);
@@ -46,7 +49,7 @@ const CodeEditor = ({ problem, onSubmit }) => {
       setCode(fallback);
     }
     setOutput(null);
-  }, [language, problemId]);
+  }, [language, problemId, problem]);
 
   useEffect(() => {
     if (problemId) {
@@ -54,9 +57,35 @@ const CodeEditor = ({ problem, onSubmit }) => {
     }
   }, [problemId, loadTemplate]);
 
+  useEffect(() => {
+    if (!clipboardNotice) return;
+    const t = setTimeout(() => setClipboardNotice(''), 2500);
+    return () => clearTimeout(t);
+  }, [clipboardNotice]);
+
+  const handleEditorMount = useCallback(
+    (editor, monaco) => {
+      clipboardCleanupRef.current?.();
+      if (blockClipboard) {
+        clipboardCleanupRef.current = attachClipboardGuards(editor, monaco, {
+          onBlocked: () =>
+            setClipboardNotice('Copy and paste are disabled in the coding arena.'),
+        });
+      }
+    },
+    [blockClipboard]
+  );
+
+  useEffect(
+    () => () => {
+      clipboardCleanupRef.current?.();
+    },
+    []
+  );
+
   const handleLanguageChange = (newLang) => {
     setLanguage(newLang);
-    applyStarter(newLang, problemId);
+    applyStarter(newLang, problem);
   };
 
   const runCode = async () => {
@@ -199,7 +228,7 @@ const CodeEditor = ({ problem, onSubmit }) => {
           <select
             value={language}
             onChange={(e) => handleLanguageChange(e.target.value)}
-            className="rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="app-select rounded-lg px-3 py-2 min-w-[120px]"
           >
             {PROBLEM_SOLVING_LANGUAGES.map(({ value, label }) => (
               <option key={value} value={value}>
@@ -242,6 +271,12 @@ const CodeEditor = ({ problem, onSubmit }) => {
         </div>
       </div>
 
+      {clipboardNotice && (
+        <div className="shrink-0 border-b border-amber-700/50 bg-amber-950/80 px-4 py-2 text-xs text-amber-200">
+          {clipboardNotice}
+        </div>
+      )}
+
       {/* Resizable editor + console split */}
       <ResizeSplitter
         className="min-h-0 flex-1"
@@ -251,6 +286,7 @@ const CodeEditor = ({ problem, onSubmit }) => {
             language={language === 'java' ? 'java' : language}
             value={code}
             onChange={(value) => setCode(value || '')}
+            onMount={handleEditorMount}
             theme="vs-dark"
             options={{
               minimap: { enabled: false },
@@ -260,6 +296,7 @@ const CodeEditor = ({ problem, onSubmit }) => {
               automaticLayout: true,
               tabSize: 2,
               wordWrap: 'on',
+              dragAndDrop: false,
             }}
           />
         }

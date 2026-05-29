@@ -764,101 +764,14 @@ function validateCode(language, code) {
 }
 
 // =======================================================
-// 🔹 GET CODE TEMPLATE (solution(input) contract)
+// 🔹 GET CODE TEMPLATE (empty company-style shell only)
 // =======================================================
-const DEFAULT_STARTERS = {
-  javascript: `// Testcase input is injected automatically — do not hardcode values
-function solution(input) {
-  // Your code here
-  return null;
-}`,
-  python: `# Testcase input is injected automatically — do not hardcode values
-def solution(input):
-    # Your code here
-    return None`,
-  java: `// Testcase input is injected automatically — do not hardcode values
-Object solution(Object input) {
-    // Your code here
-    return null;
-}`,
-};
-
-const PROBLEM_STARTERS = {
-  'easy-num-1': {
-    javascript: `function solution(input) {
-  let num = parseInt(String(input).trim(), 10);
-  let sum = 0;
-  while (num > 0) {
-    sum += num % 10;
-    num = Math.floor(num / 10);
-  }
-  return sum;
-}`,
-    python: `def solution(input):
-    num = int(str(input).strip())
-    total = 0
-    while num > 0:
-        total += num % 10
-        num //= 10
-    return total`,
-    java: `Object solution(Object input) {
-    int num = Integer.parseInt(String.valueOf(input).trim());
-    int sum = 0;
-    while (num > 0) {
-        sum += num % 10;
-        num /= 10;
-    }
-    return sum;
-}`,
-  },
-  'easy-num-2': {
-    javascript: `function solution(input) {
-  const s = String(input).trim();
-  return parseInt(s.split('').reverse().join(''), 10);
-}`,
-    python: `def solution(input):
-    s = str(input).strip()
-    return int(s[::-1])`,
-    java: `Object solution(Object input) {
-    String s = String.valueOf(input).trim();
-    return Integer.parseInt(new StringBuilder(s).reverse().toString());
-}`,
-  },
-  'easy-num-3': {
-    javascript: `function solution(input) {
-  let n = parseInt(String(input).trim(), 10);
-  let fact = 1;
-  for (let i = 2; i <= n; i++) fact *= i;
-  return fact;
-}`,
-    python: `def solution(input):
-    n = int(str(input).strip())
-    fact = 1
-    for i in range(2, n + 1):
-        fact *= i
-    return fact`,
-    java: `Object solution(Object input) {
-    int n = Integer.parseInt(String.valueOf(input).trim());
-    long fact = 1;
-    for (int i = 2; i <= n; i++) fact *= i;
-    return (int) fact;
-}`,
-  },
-};
+const { buildProblemTemplate } = require("./problemCodeTemplates");
+const { getProblemById } = require("./problemSolvingQuestionBank");
 
 function getCodeTemplate(language, problemId) {
-  const key =
-    String(language).toLowerCase() === 'js'
-      ? 'javascript'
-      : String(language).toLowerCase() === 'py'
-        ? 'python'
-        : String(language).toLowerCase();
-
-  if (problemId && PROBLEM_STARTERS[problemId]?.[key]) {
-    return PROBLEM_STARTERS[problemId][key];
-  }
-
-  return DEFAULT_STARTERS[key] || null;
+  const problem = problemId ? getProblemById(problemId) : null;
+  return buildProblemTemplate(language, problem);
 }
 
 module.exports = {

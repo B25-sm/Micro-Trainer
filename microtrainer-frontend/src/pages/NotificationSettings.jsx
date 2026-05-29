@@ -1,17 +1,87 @@
 /**
- * Notification Settings Page
- * 
- * Allows students to manage notification preferences
+ * Notification Settings — preferences with auto-save and dark-mode UI.
  */
 
-import { useState, useEffect } from 'react';
-import { usePushNotifications } from '../hooks/usePushNotifications';
+import { useState, useEffect, useRef, useCallback } from "react";
+import { Bell, Mail, ListChecks, Moon } from "lucide-react";
+import { usePushNotifications } from "../hooks/usePushNotifications";
+import SettingSwitch from "../components/SettingSwitch";
+import AppSelect from "../components/AppSelect";
+import { getStudentId } from "../utils/studentAuth";
 
-const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  import.meta.env.VITE_BACKEND_URL ||
+  "http://localhost:5000";
+
+const DEFAULT_PREFERENCES = {
+  browserNotifications: false,
+  emailNotifications: true,
+  frequency: "daily",
+  quietHoursEnabled: false,
+  quietHoursStart: "22:00",
+  quietHoursEnd: "08:00",
+  notificationTypes: {
+    dailyReminders: true,
+    streakAlerts: true,
+    mockTestReminders: true,
+    progressAlerts: true,
+    badgeEarned: true,
+    assessmentAvailable: true,
+  },
+};
+
+function getPreferenceUserId() {
+  return (
+    getStudentId() ||
+    localStorage.getItem("userEmail") ||
+    localStorage.getItem("userName") ||
+    ""
+  );
+}
+
+function mergePreferences(loaded) {
+  if (!loaded || typeof loaded !== "object") return { ...DEFAULT_PREFERENCES };
+  return {
+    ...DEFAULT_PREFERENCES,
+    ...loaded,
+    notificationTypes: {
+      ...DEFAULT_PREFERENCES.notificationTypes,
+      ...(loaded.notificationTypes || {}),
+    },
+  };
+}
+
+function SectionCard({ icon: Icon, title, children }) {
+  return (
+    <section className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] p-6 mb-5 shadow-sm">
+      <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2 mb-4">
+        <Icon className="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden />
+        {title}
+      </h2>
+      {children}
+    </section>
+  );
+}
+
+function SettingRow({ label, description, children }) {
+  return (
+    <div className="flex items-center justify-between gap-4 py-3 border-b border-gray-100 dark:border-gray-700/80 last:border-0 last:pb-0 first:pt-0">
+      <div className="min-w-0">
+        <div className="font-medium text-gray-900 dark:text-gray-100">{label}</div>
+        {description && (
+          <div className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{description}</div>
+        )}
+      </div>
+      {children}
+    </div>
+  );
+}
 
 export default function NotificationSettings() {
-  const studentId = localStorage.getItem('studentId') || 'student123';
-  
+  const preferenceUserId = getPreferenceUserId();
+  const hasUserKey = Boolean(preferenceUserId);
+
   const {
     supported,
     permission,
@@ -19,76 +89,85 @@ export default function NotificationSettings() {
     loading: pushLoading,
     requestPermission,
     unsubscribe,
-    sendTestNotification
-  } = usePushNotifications(studentId);
+    sendTestNotification,
+  } = usePushNotifications(preferenceUserId || "anonymous");
 
-  const [preferences, setPreferences] = useState({
-    browserNotifications: false,
-    emailNotifications: true,
-    frequency: 'daily',
-    quietHoursEnabled: false,
-    quietHoursStart: '22:00',
-    quietHoursEnd: '08:00',
-    notificationTypes: {
-      dailyReminders: true,
-      streakAlerts: true,
-      mockTestReminders: true,
-      progressAlerts: true,
-      badgeEarned: true,
-      assessmentAvailable: true
-    }
-  });
+  const [preferences, setPreferences] = useState(DEFAULT_PREFERENCES);
+  const [loading, setLoading] = useState(true);
+  const [saveStatus, setSaveStatus] = useState("idle"); // idle | saving | saved | error
+  const skipAutoSave = useRef(true);
 
-  const [loading, setLoading] = useState(false);
-  const [saved, setSaved] = useState(false);
-
-  useEffect(() => {
-    loadPreferences();
+  const updatePreferences = useCallback((updater) => {
+    setPreferences((prev) =>
+      typeof updater === "function" ? updater(prev) : { ...prev, ...updater }
+    );
   }, []);
 
+  const savePreferences = useCallback(
+    async (prefs = preferences) => {
+      if (!hasUserKey) return false;
+      setSaveStatus("saving");
+      try {
+        const response = await fetch(
+          `${API_URL}/api/notifications/preferences/${encodeURIComponent(preferenceUserId)}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(prefs),
+          }
+        );
+        if (!response.ok) throw new Error("Save failed");
+        setSaveStatus("saved");
+        setTimeout(() => setSaveStatus("idle"), 2500);
+        return true;
+      } catch (error) {
+        console.error("Error saving preferences:", error);
+        setSaveStatus("error");
+        return false;
+      }
+    },
+    [hasUserKey, preferenceUserId, preferences]
+  );
+
   useEffect(() => {
-    setPreferences(prev => ({
+    async function load() {
+      if (!hasUserKey) {
+        setLoading(false);
+        skipAutoSave.current = false;
+        return;
+      }
+      try {
+        const response = await fetch(
+          `${API_URL}/api/notifications/preferences/${encodeURIComponent(preferenceUserId)}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setPreferences(mergePreferences(data));
+        }
+      } catch (error) {
+        console.error("Error loading preferences:", error);
+      } finally {
+        setLoading(false);
+        skipAutoSave.current = false;
+      }
+    }
+    load();
+  }, [hasUserKey, preferenceUserId]);
+
+  useEffect(() => {
+    updatePreferences((prev) => ({
       ...prev,
-      browserNotifications: isSubscribed
+      browserNotifications: isSubscribed,
     }));
-  }, [isSubscribed]);
+  }, [isSubscribed, updatePreferences]);
 
-  async function loadPreferences() {
-    try {
-      const response = await fetch(`${API_URL}/api/notifications/preferences/${studentId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setPreferences(prev => ({ ...prev, ...data }));
-      }
-    } catch (error) {
-      console.error('Error loading preferences:', error);
-    }
-  }
-
-  async function savePreferences() {
-    setLoading(true);
-    setSaved(false);
-
-    try {
-      const response = await fetch(`${API_URL}/api/notifications/preferences/${studentId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(preferences)
-      });
-
-      if (response.ok) {
-        setSaved(true);
-        setTimeout(() => setSaved(false), 3000);
-      }
-    } catch (error) {
-      console.error('Error saving preferences:', error);
-      alert('Failed to save preferences');
-    } finally {
-      setLoading(false);
-    }
-  }
+  useEffect(() => {
+    if (skipAutoSave.current || loading || !hasUserKey) return;
+    const timer = setTimeout(() => {
+      savePreferences(preferences);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [preferences, loading, hasUserKey, savePreferences]);
 
   async function handleBrowserNotificationToggle() {
     if (isSubscribed) {
@@ -99,238 +178,221 @@ export default function NotificationSettings() {
   }
 
   function handleNotificationTypeToggle(type) {
-    setPreferences(prev => ({
+    updatePreferences((prev) => ({
       ...prev,
       notificationTypes: {
         ...prev.notificationTypes,
-        [type]: !prev.notificationTypes[type]
-      }
+        [type]: !prev.notificationTypes[type],
+      },
     }));
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Notification Settings</h1>
-          <p className="text-gray-600 mt-2">Manage how and when you receive notifications</p>
-        </div>
+  const notificationTypeOptions = {
+    dailyReminders: {
+      label: "Daily practice reminders",
+      desc: "Remind you to complete your daily assessment",
+    },
+    streakAlerts: {
+      label: "Streak alerts",
+      desc: "When your learning streak is at risk",
+    },
+    mockTestReminders: {
+      label: "Mock test reminders",
+      desc: "Scheduled mock test notifications",
+    },
+    progressAlerts: {
+      label: "Progress alerts",
+      desc: "Updates on your learning progress",
+    },
+    badgeEarned: { label: "Badges earned", desc: "When you unlock a new badge" },
+    assessmentAvailable: {
+      label: "New assessments",
+      desc: "When a new assessment is ready",
+    },
+  };
 
-        {/* Browser Notifications */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-bold mb-4">🔔 Browser Notifications</h2>
-          
-          {!supported && (
-            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
-              <p className="text-yellow-700">
-                ⚠️ Browser notifications are not supported in your browser.
-              </p>
-            </div>
-          )}
-
-          {supported && (
-            <>
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <div className="font-medium">Enable Browser Notifications</div>
-                  <div className="text-sm text-gray-600">
-                    Receive push notifications even when the app is closed
-                  </div>
-                </div>
-                <button
-                  onClick={handleBrowserNotificationToggle}
-                  disabled={pushLoading}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    isSubscribed ? 'bg-blue-600' : 'bg-gray-300'
-                  } ${pushLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      isSubscribed ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
-
-              {isSubscribed && (
-                <div className="bg-green-50 border-l-4 border-green-400 p-4 mb-4">
-                  <p className="text-green-700">
-                    ✅ Browser notifications are enabled
-                  </p>
-                </div>
-              )}
-
-              {permission === 'denied' && (
-                <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
-                  <p className="text-red-700">
-                    ❌ Notification permission denied. Please enable notifications in your browser settings.
-                  </p>
-                </div>
-              )}
-
-              {isSubscribed && (
-                <button
-                  onClick={sendTestNotification}
-                  className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
-                >
-                  Send Test Notification
-                </button>
-              )}
-            </>
-          )}
-        </div>
-
-        {/* Email Notifications */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-bold mb-4">📧 Email Notifications</h2>
-          
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <div className="font-medium">Enable Email Notifications</div>
-              <div className="text-sm text-gray-600">
-                Receive reminders and updates via email
-              </div>
-            </div>
-            <button
-              onClick={() => setPreferences(prev => ({ ...prev, emailNotifications: !prev.emailNotifications }))}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                preferences.emailNotifications ? 'bg-blue-600' : 'bg-gray-300'
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  preferences.emailNotifications ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
-            </button>
-          </div>
-
-          {preferences.emailNotifications && (
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email Frequency
-              </label>
-              <select
-                value={preferences.frequency}
-                onChange={(e) => setPreferences(prev => ({ ...prev, frequency: e.target.value }))}
-                className="w-full border rounded px-3 py-2"
-              >
-                <option value="daily">Daily</option>
-                <option value="every2days">Every 2 Days</option>
-                <option value="weekly">Weekly</option>
-              </select>
-            </div>
-          )}
-        </div>
-
-        {/* Notification Types */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-bold mb-4">📋 Notification Types</h2>
-          <p className="text-sm text-gray-600 mb-4">Choose which notifications you want to receive</p>
-          
-          <div className="space-y-4">
-            {Object.entries({
-              dailyReminders: { label: 'Daily Practice Reminders', desc: 'Reminders to complete your daily assessment' },
-              streakAlerts: { label: 'Streak Alerts', desc: 'Alerts when your streak is at risk' },
-              mockTestReminders: { label: 'Mock Test Reminders', desc: 'Reminders for scheduled mock tests' },
-              progressAlerts: { label: 'Progress Alerts', desc: 'Alerts about your learning progress' },
-              badgeEarned: { label: 'Badge Earned', desc: 'Notifications when you earn new badges' },
-              assessmentAvailable: { label: 'Assessment Available', desc: 'Notifications when new assessments are ready' }
-            }).map(([key, { label, desc }]) => (
-              <div key={key} className="flex items-center justify-between">
-                <div>
-                  <div className="font-medium">{label}</div>
-                  <div className="text-sm text-gray-600">{desc}</div>
-                </div>
-                <button
-                  onClick={() => handleNotificationTypeToggle(key)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    preferences.notificationTypes[key] ? 'bg-blue-600' : 'bg-gray-300'
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      preferences.notificationTypes[key] ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Quiet Hours */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-bold mb-4">🌙 Quiet Hours</h2>
-          
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <div className="font-medium">Enable Quiet Hours</div>
-              <div className="text-sm text-gray-600">
-                Don't send notifications during specific hours
-              </div>
-            </div>
-            <button
-              onClick={() => setPreferences(prev => ({ ...prev, quietHoursEnabled: !prev.quietHoursEnabled }))}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                preferences.quietHoursEnabled ? 'bg-blue-600' : 'bg-gray-300'
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  preferences.quietHoursEnabled ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
-            </button>
-          </div>
-
-          {preferences.quietHoursEnabled && (
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Start Time
-                </label>
-                <input
-                  type="time"
-                  value={preferences.quietHoursStart}
-                  onChange={(e) => setPreferences(prev => ({ ...prev, quietHoursStart: e.target.value }))}
-                  className="w-full border rounded px-3 py-2"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  End Time
-                </label>
-                <input
-                  type="time"
-                  value={preferences.quietHoursEnd}
-                  onChange={(e) => setPreferences(prev => ({ ...prev, quietHoursEnd: e.target.value }))}
-                  className="w-full border rounded px-3 py-2"
-                />
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Save Button */}
-        <div className="flex justify-end space-x-4">
-          {saved && (
-            <div className="flex items-center text-green-600">
-              <span className="mr-2">✅</span>
-              <span>Preferences saved!</span>
-            </div>
-          )}
-          <button
-            onClick={savePreferences}
-            disabled={loading}
-            className={`px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 ${
-              loading ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
-          >
-            {loading ? 'Saving...' : 'Save Preferences'}
-          </button>
-        </div>
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-300 dark:border-gray-600 border-t-[#1a73e8] dark:border-t-[#8ab4f8]" />
       </div>
+    );
+  }
+
+  return (
+    <div className="max-w-2xl mx-auto pb-12">
+      <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-medium text-gray-900 dark:text-gray-100">
+            Notification settings
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">
+            Changes save automatically.
+          </p>
+        </div>
+        {saveStatus === "saving" && (
+          <span className="text-sm text-gray-500 dark:text-gray-400">Saving…</span>
+        )}
+        {saveStatus === "saved" && (
+          <span className="text-sm text-green-600 dark:text-green-400">Saved</span>
+        )}
+        {saveStatus === "error" && (
+          <span className="text-sm text-red-600 dark:text-red-400">
+            Could not save — check connection
+          </span>
+        )}
+      </div>
+
+      {!hasUserKey && (
+        <div className="mb-5 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 px-4 py-3 text-sm text-amber-800 dark:text-amber-200">
+          Sign in to save notification preferences.
+        </div>
+      )}
+
+      <SectionCard icon={Bell} title="Browser notifications">
+        {!supported ? (
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Browser notifications are not supported in this browser.
+          </p>
+        ) : (
+          <>
+            <SettingRow
+              label="Enable browser notifications"
+              description="Alerts even when MicroTrainer is closed"
+            >
+              <SettingSwitch
+                label="Enable browser notifications"
+                checked={isSubscribed}
+                disabled={pushLoading}
+                onChange={handleBrowserNotificationToggle}
+              />
+            </SettingRow>
+
+            {permission === "denied" && (
+              <p className="mt-3 text-sm text-red-600 dark:text-red-400">
+                Permission denied — enable notifications in your browser settings, then try again.
+              </p>
+            )}
+
+            {isSubscribed && (
+              <button
+                type="button"
+                onClick={sendTestNotification}
+                className="mt-4 text-sm px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition"
+              >
+                Send test notification
+              </button>
+            )}
+          </>
+        )}
+      </SectionCard>
+
+      <SectionCard icon={Mail} title="Email notifications">
+        <SettingRow
+          label="Enable email notifications"
+          description="Reminders and updates by email"
+        >
+          <SettingSwitch
+            label="Enable email notifications"
+            checked={preferences.emailNotifications}
+            onChange={(on) =>
+              updatePreferences((p) => ({ ...p, emailNotifications: on }))
+            }
+          />
+        </SettingRow>
+
+        {preferences.emailNotifications && (
+          <div className="mt-4">
+            <label
+              htmlFor="email-frequency"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
+              Email frequency
+            </label>
+            <AppSelect
+              id="email-frequency"
+              value={preferences.frequency}
+              onChange={(e) =>
+                updatePreferences((p) => ({ ...p, frequency: e.target.value }))
+              }
+              className="w-full max-w-xs"
+            >
+              <option value="daily">Daily</option>
+              <option value="every2days">Every 2 days</option>
+              <option value="weekly">Weekly</option>
+            </AppSelect>
+          </div>
+        )}
+      </SectionCard>
+
+      <SectionCard icon={ListChecks} title="Notification types">
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+          Choose what you want to hear about
+        </p>
+        {Object.entries(notificationTypeOptions).map(([key, { label, desc }]) => (
+          <SettingRow key={key} label={label} description={desc}>
+            <SettingSwitch
+              label={label}
+              checked={Boolean(preferences.notificationTypes[key])}
+              onChange={() => handleNotificationTypeToggle(key)}
+            />
+          </SettingRow>
+        ))}
+      </SectionCard>
+
+      <SectionCard icon={Moon} title="Quiet hours">
+        <SettingRow
+          label="Enable quiet hours"
+          description="Pause notifications during set times"
+        >
+          <SettingSwitch
+            label="Enable quiet hours"
+            checked={preferences.quietHoursEnabled}
+            onChange={(on) =>
+              updatePreferences((p) => ({ ...p, quietHoursEnabled: on }))
+            }
+          />
+        </SettingRow>
+
+        {preferences.quietHoursEnabled && (
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            <div>
+              <label
+                htmlFor="quiet-start"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
+                Start
+              </label>
+              <input
+                id="quiet-start"
+                type="time"
+                value={preferences.quietHoursStart}
+                onChange={(e) =>
+                  updatePreferences((p) => ({ ...p, quietHoursStart: e.target.value }))
+                }
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#202124] text-gray-900 dark:text-gray-100 px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="quiet-end"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
+                End
+              </label>
+              <input
+                id="quiet-end"
+                type="time"
+                value={preferences.quietHoursEnd}
+                onChange={(e) =>
+                  updatePreferences((p) => ({ ...p, quietHoursEnd: e.target.value }))
+                }
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#202124] text-gray-900 dark:text-gray-100 px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
+        )}
+      </SectionCard>
     </div>
   );
 }

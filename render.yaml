@@ -8,7 +8,7 @@ services:
     runtime: node
     region: oregon
     plan: free
-    buildCommand: cd microtrainer-backend && npm install
+    buildCommand: cd microtrainer-backend && npm install && node scripts/check-curriculums.js
     startCommand: cd microtrainer-backend && npm start
     healthCheckPath: /
     envVars:

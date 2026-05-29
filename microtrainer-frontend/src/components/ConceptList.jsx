@@ -8,26 +8,36 @@ const ConceptList = ({ technology, studentId, onConceptSelect, onBack }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const defaultProgress = {
+    currentConceptOrder: 1,
+    completedConcepts: [],
+    conceptScores: {},
+    overallProgress: 0,
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
         setError(null);
 
-        const [curriculumResponse, progressResponse] = await Promise.all([
-          learningPathAPI.getCurriculum(technology),
-          learningPathAPI.getProgress(studentId, technology),
-        ]);
-
+        const curriculumResponse = await learningPathAPI.getCurriculum(technology);
         setCurriculum(curriculumResponse.data);
-        setProgress(
-          progressResponse.data || {
-            currentConceptOrder: 1,
-            completedConcepts: [],
-            conceptScores: {},
-            overallProgress: 0,
+
+        if (studentId) {
+          try {
+            const progressResponse = await learningPathAPI.getProgress(
+              studentId,
+              technology
+            );
+            setProgress(progressResponse.data || defaultProgress);
+          } catch (progressErr) {
+            console.warn("Progress unavailable, using defaults:", progressErr);
+            setProgress(defaultProgress);
           }
-        );
+        } else {
+          setProgress(defaultProgress);
+        }
       } catch (err) {
         console.error("Error fetching curriculum:", err);
         setError(

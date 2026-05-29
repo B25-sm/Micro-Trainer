@@ -4,6 +4,20 @@ import ReactMarkdown from "react-markdown";
 import axios from "axios";
 import { askAI } from "../api";
 import Header from "../components/Header";
+import { getStudentId } from "../utils/studentAuth";
+import { isTrainerSession } from "../utils/trainerAuth";
+
+function resolveLearnStudentId() {
+  const id = getStudentId();
+  if (id) return id;
+  if (isTrainerSession()) {
+    const email = localStorage.getItem("userEmail");
+    if (email) {
+      return `trainer-preview-${email.replace(/[^a-z0-9]/gi, "_").slice(0, 40)}`;
+    }
+  }
+  return "";
+}
 import TechnologySelection from "../components/TechnologySelection";
 import ConceptList from "../components/ConceptList";
 import StructuredTeaching from "../components/StructuredTeaching";
@@ -27,7 +41,7 @@ const Learn = () => {
   const [sessionId, setSessionId] = useState(null);
   const [currentLevel, setCurrentLevel] = useState(null);
   const [awaitingAnswer, setAwaitingAnswer] = useState(false);
-  const [studentId] = useState(() => localStorage.getItem("studentId") || "");
+  const [studentId] = useState(() => resolveLearnStudentId());
   const chatEndRef = useRef(null);
   const inputRef = useRef(null);
 

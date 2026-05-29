@@ -170,12 +170,109 @@
   }
 }
 
+/* Callouts — paired background + text (fixes invisible title on pastel boxes) */
+.mt-callout {
+  border-radius: 0.75rem;
+  padding: 1rem;
+  border: 1px solid;
+}
+
+.mt-callout--warning {
+  background: #fffbeb;
+  border-color: #f59e0b;
+  color: #78350f;
+}
+
+.mt-callout--info {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #1e3a8a;
+}
+
+.mt-callout--success {
+  background: #ecfdf5;
+  border-color: #10b981;
+  color: #065f46;
+}
+
+.mt-callout--danger {
+  background: #fef2f2;
+  border-color: #ef4444;
+  color: #991b1b;
+}
+
+html.dark .mt-callout--warning,
+.dark .mt-callout--warning {
+  background: #422006 !important;
+  border-color: #d97706 !important;
+  color: #fde68a !important;
+}
+
+html.dark .mt-callout--info,
+.dark .mt-callout--info {
+  background: #172554 !important;
+  border-color: #3b82f6 !important;
+  color: #bfdbfe !important;
+}
+
+html.dark .mt-callout--success,
+.dark .mt-callout--success {
+  background: #052e16 !important;
+  border-color: #22c55e !important;
+  color: #bbf7d0 !important;
+}
+
+html.dark .mt-callout--danger,
+.dark .mt-callout--danger {
+  background: #450a0a !important;
+  border-color: #ef4444 !important;
+  color: #fecaca !important;
+}
+
+.mt-callout :where(p, li, span, h1, h2, h3, h4, strong, svg) {
+  color: inherit;
+}
+
+/* Legacy pastel Tailwind boxes — fix bg + text together */
+.dark :where(.bg-yellow-50, .bg-amber-50) {
+  background-color: #422006 !important;
+  border-color: #b45309 !important;
+  color: #fde68a !important;
+}
+
+.dark :where(.bg-green-50, .bg-emerald-50) {
+  background-color: #052e16 !important;
+  border-color: #15803d !important;
+  color: #bbf7d0 !important;
+}
+
+.dark :where(.bg-blue-50) {
+  background-color: #172554 !important;
+  border-color: #2563eb !important;
+  color: #bfdbfe !important;
+}
+
+.dark :where(.bg-red-50) {
+  background-color: #450a0a !important;
+  border-color: #dc2626 !important;
+  color: #fecaca !important;
+}
+
+.dark :where(.bg-yellow-50, .bg-amber-50, .bg-green-50, .bg-emerald-50, .bg-blue-50, .bg-red-50) :where(*) {
+  color: inherit !important;
+}
+
 /* =========================
    BASE STYLES - CLEAN & MINIMAL
 ========================= */
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
 }
 
 body {
@@ -205,7 +302,7 @@ body {
 /* =========================
    TYPOGRAPHY - GEMINI STYLE
 ========================= */
-:where(h1, h2, h3, h4) {
+:where(h1, h2, h3, h4):where(:not([class*="text-"])) {
   font-family: var(--heading);
   color: var(--text-h);
   font-weight: 400;
@@ -348,12 +445,88 @@ pre code {
 }
 
 /* =========================
+   NATIVE SELECT / DROPDOWN — readable in light & dark
+   Fixes white-on-white option text in dark mode (Windows/Chrome).
+========================= */
+select,
+.app-select {
+  color: #202124;
+  background-color: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.5rem 2rem 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  cursor: pointer;
+  color-scheme: light;
+  appearance: auto;
+}
+
+select option,
+select optgroup,
+.app-select option,
+.app-select optgroup {
+  background-color: #ffffff !important;
+  color: #202124 !important;
+}
+
+.dark select,
+.dark .app-select {
+  color: #e8eaed !important;
+  background-color: #292a2d !important;
+  border-color: #3c4043 !important;
+  color-scheme: dark;
+}
+
+.dark select option,
+.dark select optgroup,
+.dark .app-select option,
+.dark .app-select optgroup {
+  background-color: #292a2d !important;
+  color: #e8eaed !important;
+}
+
+.read-mode select,
+.read-mode .app-select {
+  color: var(--read-text);
+  background-color: var(--read-surface-elevated);
+  border-color: var(--read-border);
+}
+
+.read-mode select option,
+.read-mode select optgroup,
+.read-mode .app-select option,
+.read-mode .app-select optgroup {
+  background-color: var(--read-surface-elevated) !important;
+  color: var(--read-text) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not(.dark) select,
+  html:not(.dark) .app-select {
+    color-scheme: dark;
+    color: #e8eaed !important;
+    background-color: #292a2d !important;
+    border-color: #3c4043 !important;
+  }
+
+  html:not(.dark) select option,
+  html:not(.dark) select optgroup,
+  html:not(.dark) .app-select option,
+  html:not(.dark) .app-select optgroup {
+    background-color: #292a2d !important;
+    color: #e8eaed !important;
+  }
+}
+
+/* =========================
    FOCUS STYLES - ACCESSIBLE
 ========================= */
 button:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
-select:focus-visible {
+select:focus-visible,
+.app-select:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
