@@ -24,12 +24,12 @@ export default function DisplayModeToggle({ variant = "panel" }) {
             e.stopPropagation();
             toggleReadMode();
           }}
-          title="Read mode — warmer colors, easier on the eyes"
+          title="Read mode — dim, low-glare colors for long sessions"
           aria-label="Toggle read mode"
           aria-pressed={readMode}
           className={`inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-medium transition border ${
             readMode
-              ? "border-blue-400 dark:border-blue-500 bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-200"
+              ? "border-[var(--read-border)] bg-[var(--read-surface-elevated)] text-[var(--read-text-heading)]"
               : "border-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50"
           }`}
         >

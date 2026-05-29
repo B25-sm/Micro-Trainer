@@ -493,38 +493,54 @@ textarea:focus {
 }
 
 /* =========================
-   READ MODE — WARM / NIGHT STUDY
+   READ MODE — DIM, LOW-GLARE (easy on eyes)
 ========================= */
 .read-mode {
-  --read-surface: #f7f0e3;
-  --read-surface-elevated: #faf6ee;
-  --read-text: #3d3429;
-  --read-text-heading: #2a231c;
-  --read-border: #e8dcc8;
-  --read-accent: #b45309;
+  --read-surface: #ddd5c4;
+  --read-surface-elevated: #d4cbb8;
+  --read-text: #5a5348;
+  --read-text-heading: #4a443c;
+  --read-text-muted: #6f6860;
+  --read-border: #c4b9a4;
+  --read-accent: #7a6b4f;
+  --read-btn-bg: #6b6254;
+  --read-btn-text: #ebe6dc;
+  --read-callout-bg: #d0c8b6;
+  --read-callout-border: #a89a7e;
 
   --bg: var(--read-surface);
   --bg-secondary: var(--read-surface);
   --bg-elevated: var(--read-surface-elevated);
   --text: var(--read-text);
   --text-h: var(--read-text-heading);
+  --text-secondary: var(--read-text-muted);
   --border: var(--read-border);
+  --accent: var(--read-accent);
+  --accent-hover: #6a5d45;
 }
 
 .read-mode.dark {
-  --read-surface: #1e1b16;
-  --read-surface-elevated: #2a261f;
-  --read-text: #e8dcc8;
-  --read-text-heading: #f5efe3;
-  --read-border: #3d3629;
-  --read-accent: #fbbf24;
+  --read-surface: #0a0908;
+  --read-surface-elevated: #12100d;
+  --read-text: #6f6860;
+  --read-text-heading: #8a8276;
+  --read-text-muted: #5c564e;
+  --read-border: #1e1c18;
+  --read-accent: #7a7264;
+  --read-btn-bg: #2a2722;
+  --read-btn-text: #a39a8c;
+  --read-callout-bg: #14120f;
+  --read-callout-border: #3a352c;
 
   --bg: var(--read-surface);
   --bg-secondary: var(--read-surface);
   --bg-elevated: var(--read-surface-elevated);
   --text: var(--read-text);
   --text-h: var(--read-text-heading);
+  --text-secondary: var(--read-text-muted);
   --border: var(--read-border);
+  --accent: var(--read-accent);
+  --accent-hover: #8a8274;
 }
 
 .read-mode body,
@@ -549,6 +565,56 @@ textarea:focus {
 
 .read-mode :where(.text-gray-700, .text-gray-600, .text-gray-500, .text-slate-700, .text-slate-600, .text-slate-500) {
   color: var(--read-text) !important;
+}
+
+/* Soften bright blues, greens, and primary buttons in read mode */
+.read-mode :where([class*="text-blue-"], [class*="text-indigo-"]) {
+  color: var(--read-accent) !important;
+  opacity: 0.92;
+}
+
+.read-mode :where([class*="bg-\[#1a73e8\]"], [class*="bg-\[#8ab4f8\]"]) {
+  background-color: var(--read-btn-bg) !important;
+  color: var(--read-btn-text) !important;
+  box-shadow: none !important;
+}
+
+.read-mode :where(button, [role="button"]) {
+  filter: none;
+}
+
+.read-mode :where(.shadow-sm, .shadow-md, .shadow-lg, .shadow-xl) {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06) !important;
+}
+
+.read-mode.dark :where(.shadow-sm, .shadow-md, .shadow-lg, .shadow-xl) {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Dark arbitrary page backgrounds → read surfaces */
+.read-mode.dark :where([class*="dark:bg-\[#"]) {
+  background-color: var(--read-surface-elevated) !important;
+}
+
+.read-mode .mt-callout--warning,
+.read-mode .mt-callout--info,
+.read-mode .mt-callout--success,
+.read-mode .mt-callout--danger {
+  background: var(--read-callout-bg) !important;
+  border-color: var(--read-callout-border) !important;
+  color: var(--read-text) !important;
+}
+
+.read-mode .mt-callout :where(p, li, span, strong, svg) {
+  color: inherit !important;
+  opacity: 0.95;
+}
+
+.read-mode select,
+.read-mode .app-select {
+  background-color: var(--read-surface-elevated) !important;
+  color: var(--read-text) !important;
+  border-color: var(--read-border) !important;
 }
 
 .read-mode h1,
