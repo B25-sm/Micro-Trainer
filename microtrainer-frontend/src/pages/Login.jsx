@@ -64,17 +64,17 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4 py-8">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#202124] flex items-center justify-center px-4 py-8">
+      <div className="max-w-md w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] shadow-sm p-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">MicroTrainer</h1>
-          <p className="text-gray-600 text-sm">
+          <h1 className="text-2xl font-medium text-gray-900 dark:text-gray-100 mb-2">MicroTrainer</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
             Sign in with Google or GitHub to continue
           </p>
         </div>
 
         {(error || urlError) && (
-          <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+          <div className="mb-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-200 px-4 py-3 rounded-lg text-sm">
             {error || decodeURIComponent(urlError)}
           </div>
         )}
@@ -102,13 +102,13 @@ export default function Login() {
             type="button"
             onClick={handleGitHubLogin}
             disabled={oauthLoading}
-            className="w-full flex items-center justify-center gap-2 py-3 border border-gray-300 rounded-lg font-medium text-gray-800 hover:bg-gray-50 transition disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-2 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/40 transition disabled:opacity-50"
           >
             Continue with GitHub
           </button>
         </div>
 
-        <p className="mt-8 text-center text-xs text-gray-500 leading-relaxed">
+        <p className="mt-8 text-center text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
           Students will enter <strong>Name</strong>, <strong>Initial</strong>, and{" "}
           <strong>Batch</strong> after their first sign-in. Trainer access is only
           for authorized accounts.

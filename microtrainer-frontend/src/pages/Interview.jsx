@@ -432,7 +432,7 @@ IMPORTANT:
             animate={{ opacity: 1, y: 0 }}
             className="max-w-md w-full"
           >
-            <h2 className="text-4xl font-normal text-blue-500 dark:text-blue-400 text-center mb-12">
+            <h2 className="text-2xl font-medium text-gray-900 dark:text-gray-100 text-center mb-10">
               Start your interview
             </h2>
 
@@ -538,7 +538,7 @@ IMPORTANT:
 
   return (
     /* Navbar + layout padding already consume viewport height — filling another full screen pushes the composer below the fold */
-    <div className="flex flex-col w-full overflow-hidden bg-white h-[calc(100dvh-8rem)] min-h-[28rem] sm:h-[calc(100dvh-7rem)] sm:min-h-[360px]">
+    <div className="flex flex-col w-full overflow-hidden bg-white dark:bg-[#202124] h-[calc(100dvh-8rem)] min-h-[28rem] sm:h-[calc(100dvh-7rem)] sm:min-h-[360px]">
       
       {/* 🔒 WEBCAM PROCTORING */}
       <WebcamProctor 
@@ -623,9 +623,9 @@ IMPORTANT:
       </main>
 
       {/* Composer pinned to bottom of interview panel (not below viewport) */}
-      <div className="flex-shrink-0 border-t border-gray-200 bg-white px-4 sm:px-6 py-3 shadow-[0_-4px_24px_rgba(0,0,0,0.06)]">
+      <div className="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] px-4 sm:px-6 py-3">
         <div className="max-w-3xl mx-auto">
-          <div className="bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#202124] shadow-sm transition-shadow">
             <div className="flex items-end gap-3 px-5 py-3">
               <textarea
                 ref={inputRef}
@@ -635,7 +635,7 @@ IMPORTANT:
                 placeholder={session?.completed ? "Ask me about your feedback..." : "Type your answer..."}
                 rows={3}
                 disabled={loading}
-                className="flex-1 bg-transparent text-gray-800 placeholder-gray-400 outline-none text-base resize-none max-h-32 disabled:opacity-50 disabled:cursor-not-allowed select-none"
+                className="flex-1 bg-transparent text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 outline-none text-base resize-none max-h-32 disabled:opacity-50 disabled:cursor-not-allowed select-none"
                 style={{ minHeight: "24px", userSelect: "none" }}
                 onCopy={(e) => e.preventDefault()}
                 onPaste={(e) => e.preventDefault()}
@@ -644,7 +644,7 @@ IMPORTANT:
               <button
                 onClick={handleSubmit}
                 disabled={loading || !answer.trim()}
-                className="p-2.5 bg-gradient-to-br from-purple-500 via-purple-600 to-pink-500 text-white rounded-full hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                className="p-2.5 bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 rounded-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
               >
                 {loading ? (
                   <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -729,8 +729,8 @@ const ChatMessage = ({ message }) => {
       className={`flex gap-4 ${isUser ? "justify-end" : "justify-start"}`}
     >
       {!isUser && (
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">
-          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="w-8 h-8 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 flex items-center justify-center flex-shrink-0">
+          <svg className="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
           </svg>
         </div>
@@ -740,12 +740,12 @@ const ChatMessage = ({ message }) => {
         <div
           className={`rounded-2xl px-5 py-3 ${
             isUser
-              ? "bg-blue-500 text-white"
+              ? "bg-gray-800 dark:bg-gray-700 text-gray-100"
               : isFinalFeedback
-              ? "bg-gradient-to-br from-green-50 to-blue-50 border-2 border-green-300 text-gray-800"
+              ? "bg-gray-50 dark:bg-[#292a2d] border border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200"
               : isFeedback
-              ? "bg-green-50 border border-green-200 text-gray-800"
-              : "bg-gray-100 text-gray-800"
+              ? "bg-gray-50 dark:bg-[#292a2d] border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200"
+              : "bg-gray-100 dark:bg-gray-800/60 text-gray-800 dark:text-gray-200"
           }`}
         >
           {isFinalFeedback ? (

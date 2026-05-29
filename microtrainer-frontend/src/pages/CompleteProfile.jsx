@@ -73,10 +73,10 @@ export default function CompleteProfile() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Complete your profile</h1>
-        <p className="text-gray-600 text-sm mb-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#202124] flex items-center justify-center px-4">
+      <div className="max-w-md w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] shadow-sm p-8">
+        <h1 className="text-2xl font-medium text-gray-900 dark:text-gray-100 mb-2">Complete your profile</h1>
+        <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
           You signed in with Google or GitHub. Add your class details so your trainer
           can identify you.
         </p>
@@ -90,7 +90,7 @@ export default function CompleteProfile() {
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#202124] text-gray-900 dark:text-gray-100"
               required
             />
           </div>
@@ -102,7 +102,7 @@ export default function CompleteProfile() {
               type="text"
               value={initial}
               onChange={(e) => setInitial(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg uppercase"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#202124] text-gray-900 dark:text-gray-100 uppercase"
               required
               maxLength={20}
             />
@@ -115,7 +115,7 @@ export default function CompleteProfile() {
               type="text"
               value={batch}
               onChange={(e) => setBatch(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#202124] text-gray-900 dark:text-gray-100"
               required
               maxLength={40}
             />
@@ -130,7 +130,7 @@ export default function CompleteProfile() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50"
+            className="w-full bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 py-3 rounded-lg text-sm font-medium hover:opacity-90 disabled:opacity-50"
           >
             {loading ? "Saving…" : "Continue"}
           </button>

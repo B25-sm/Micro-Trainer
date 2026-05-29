@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Code2, Lightbulb, Target, Trophy, ChevronRight } from 'lucide-react';
 import CodeEditor from '../components/CodeEditor';
 import { API_BASE } from '../api.js';
+import { btnPrimary, headingPage, textMuted } from '../lib/ui';
 
 const ProblemSolving = () => {
   const [problems, setProblems] = useState([]);
@@ -70,10 +71,10 @@ const ProblemSolving = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-2">
-                Problem Solving Arena
+              <h1 className={`${headingPage} mb-2`}>
+                Problem solving
               </h1>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className={textMuted}>
                 Practice coding challenges and improve your skills
               </p>
             </div>
@@ -119,8 +120,9 @@ const ProblemSolving = () => {
             ))}
 
             <button
+              type="button"
               onClick={getRandomProblem}
-              className="ml-auto px-6 py-2 bg-gradient-to-br from-purple-500 via-purple-600 to-pink-500 hover:shadow-lg text-white rounded-lg font-semibold transition-all flex items-center gap-2"
+              className={`ml-auto ${btnPrimary}`}
             >
               <Trophy className="w-4 h-4" />
               Random Challenge

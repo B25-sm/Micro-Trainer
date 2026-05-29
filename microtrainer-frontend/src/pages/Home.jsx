@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { chatWithMicroTrainer } from "../api";
 import Header from "../components/Header";
+import { pageShell, headingSection, textMuted, chipButton, chipButtonSm, inputShell } from "../lib/ui";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -82,7 +83,7 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className={`flex flex-col ${pageShell}`}>
       
       {/* Unified Header */}
       <Header />
@@ -94,33 +95,33 @@ const Home = () => {
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-5xl md:text-6xl font-normal text-blue-500 text-center mb-4 leading-tight"
+          className="text-3xl md:text-4xl font-medium text-gray-900 dark:text-gray-100 text-center mb-3 leading-tight tracking-tight"
         >
           Practice technical interviews
         </motion.h2>
         
-        <p className="text-gray-600 text-center mb-12 text-lg">
+        <p className={`${textMuted} text-center mb-10 text-base`}>
           Choose full stack roles or individual technologies
         </p>
 
         {/* Full Stack Interviews */}
         <div className="w-full mb-8">
-          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3 px-2">
+          <h3 className={`${headingSection} mb-3 px-2`}>
             Full Stack Developer Roles
           </h3>
           <div className="space-y-3">
             <SuggestionChip
-              text="🚀 MERN Stack Developer"
+              text="MERN Stack Developer"
               subtitle="MongoDB, Express, React, Node.js"
               onClick={() => navigate("/interview?subject=MERN Stack")}
             />
             <SuggestionChip
-              text="☕ Java Full Stack Developer"
+              text="Java Full Stack Developer"
               subtitle="Spring Boot, Hibernate, React/Angular"
               onClick={() => navigate("/interview?subject=Java Full Stack")}
             />
             <SuggestionChip
-              text="🐍 Python Full Stack Developer"
+              text="Python Full Stack Developer"
               subtitle="Django/Flask, PostgreSQL, React"
               onClick={() => navigate("/interview?subject=Python Full Stack")}
             />
@@ -129,22 +130,22 @@ const Home = () => {
 
         {/* Data & ML Roles */}
         <div className="w-full mb-8">
-          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3 px-2">
+          <h3 className={`${headingSection} mb-3 px-2`}>
             Data & ML Roles
           </h3>
           <div className="space-y-3">
             <SuggestionChip
-              text="📈 Data Analyst"
+              text="Data Analyst"
               subtitle="SQL, Excel, dashboards, A/B tests & storytelling"
               onClick={() => navigate("/interview?subject=Data Analyst")}
             />
             <SuggestionChip
-              text="🤖 ML Engineer"
+              text="ML Engineer"
               subtitle="Models, deployment, MLOps, LLMs & pipelines"
               onClick={() => navigate("/interview?subject=ML Engineer")}
             />
             <SuggestionChip
-              text="📊 Data Scientist (General)"
+              text="Data Scientist"
               subtitle="Full-stack DS: Python, stats, ML & analytics"
               onClick={() => navigate("/interview?subject=Data Science")}
             />
@@ -153,48 +154,48 @@ const Home = () => {
 
         {/* Individual Technologies */}
         <div className="w-full mb-8">
-          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3 px-2">
+          <h3 className={`${headingSection} mb-3 px-2`}>
             Individual Technologies
           </h3>
           <div className="grid grid-cols-2 gap-3">
             <TechChip
-              text="⚛️ React"
+              text="React"
               onClick={() => navigate("/interview?subject=React")}
             />
             <TechChip
-              text="📜 JavaScript"
+              text="JavaScript"
               onClick={() => navigate("/interview?subject=JavaScript")}
             />
             <TechChip
-              text="☕ Java"
+              text="Java"
               onClick={() => navigate("/interview?subject=Java")}
             />
             <TechChip
-              text="🐍 Python"
+              text="Python"
               onClick={() => navigate("/interview?subject=Python")}
             />
             <TechChip
-              text="🗄️ SQL"
+              text="SQL"
               onClick={() => navigate("/interview?subject=SQL")}
             />
             <TechChip
-              text="🟢 Node.js"
+              text="Node.js"
               onClick={() => navigate("/interview?subject=Node.js")}
             />
             <TechChip
-              text="🅰️ Angular"
+              text="Angular"
               onClick={() => navigate("/interview?subject=Angular")}
             />
             <TechChip
-              text="🔷 TypeScript"
+              text="TypeScript"
               onClick={() => navigate("/interview?subject=TypeScript")}
             />
             <TechChip
-              text="📈 Data Analyst"
+              text="Data Analyst"
               onClick={() => navigate("/interview?subject=Data Analyst")}
             />
             <TechChip
-              text="🤖 ML Engineer"
+              text="ML Engineer"
               onClick={() => navigate("/interview?subject=ML Engineer")}
             />
           </div>
@@ -203,17 +204,17 @@ const Home = () => {
         {/* Other Options */}
         <div className="w-full space-y-3 mb-8">
           <SuggestionChip
-            text="🎓 Learn Concepts Interactively"
+            text="Guided course"
             subtitle="Adaptive teaching that matches your level"
             onClick={() => navigate("/learn")}
           />
           <SuggestionChip
-            text="🧩 Problem Solving & DSA"
+            text="Problem solving"
             subtitle="Algorithms, Data Structures, Coding Challenges"
             onClick={() => navigate("/problems")}
           />
           <SuggestionChip
-            text="📊 View Performance Dashboard"
+            text="Performance dashboard"
             subtitle="Track your progress and scores"
             onClick={() => navigate("/dashboard")}
           />
@@ -231,12 +232,12 @@ const Home = () => {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
-                    className={`p-4 rounded-2xl ${
+                    className={`p-4 rounded-xl ${
                       message.role === "user"
-                        ? "bg-blue-50 border border-blue-100 ml-8"
+                        ? "bg-gray-100 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700 ml-8"
                         : message.role === "error"
-                        ? "bg-red-50 border border-red-200"
-                        : "bg-gray-50 border border-gray-200 mr-8"
+                        ? "bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 mr-8"
+                        : "bg-gray-50 dark:bg-[#292a2d] border border-gray-200 dark:border-gray-700 mr-8"
                     }`}
                   >
                     {message.role === "user" ? (
@@ -281,7 +282,7 @@ const Home = () => {
           )}
 
           {/* Input Box */}
-          <form onSubmit={handleSubmit} className="w-full bg-white rounded-full border border-gray-200 shadow-sm hover:shadow-md focus-within:shadow-lg transition-all duration-200">
+          <form onSubmit={handleSubmit} className={`w-full rounded-full ${inputShell}`}>
             <div className="flex items-center gap-3 px-6 py-4">
               <input
                 type="text"
@@ -291,7 +292,7 @@ const Home = () => {
                 placeholder="Ask MicroTrainer anything..."
                 disabled={isLoading}
                 maxLength={500}
-                className="flex-1 bg-transparent text-gray-800 placeholder-gray-400 text-base disabled:opacity-50 py-1"
+                className="flex-1 bg-transparent text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 text-base disabled:opacity-50 py-1"
                 style={{ 
                   border: 'none',
                   outline: 'none',
@@ -348,9 +349,9 @@ const Home = () => {
 
         {/* Beta Badge & Footer Text */}
         <div className="mt-6 text-center">
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500 dark:text-gray-400">
             MicroTrainer can make mistakes.{" "}
-            <a href="#" className="underline hover:text-gray-700">Learn more</a>
+            <a href="#" className="underline hover:text-gray-700 dark:hover:text-gray-300">Learn more</a>
           </p>
         </div>
 
@@ -379,12 +380,13 @@ export default Home;
 
 const SuggestionChip = ({ text, subtitle, onClick }) => (
   <motion.button
-    whileHover={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}
+    type="button"
+    whileHover={{ scale: 1.005 }}
     onClick={onClick}
-    className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border border-gray-200 hover:border-gray-300 transition-all text-left group"
+    className={chipButton}
   >
     <svg 
-      className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition flex-shrink-0" 
+      className="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition flex-shrink-0" 
       fill="none" 
       stroke="currentColor" 
       viewBox="0 0 24 24"
@@ -392,18 +394,19 @@ const SuggestionChip = ({ text, subtitle, onClick }) => (
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
     </svg>
     <div className="flex-1">
-      <div className="text-gray-700 text-sm font-normal">{text}</div>
-      {subtitle && <div className="text-gray-500 text-xs mt-0.5">{subtitle}</div>}
+      <div className="text-gray-800 dark:text-gray-200 text-sm font-medium">{text}</div>
+      {subtitle && <div className="text-gray-500 dark:text-gray-400 text-xs mt-0.5">{subtitle}</div>}
     </div>
   </motion.button>
 );
 
 const TechChip = ({ text, onClick }) => (
   <motion.button
-    whileHover={{ scale: 1.02 }}
-    whileTap={{ scale: 0.98 }}
+    type="button"
+    whileHover={{ scale: 1.01 }}
+    whileTap={{ scale: 0.99 }}
     onClick={onClick}
-    className="px-4 py-3 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all text-sm font-medium text-gray-700 hover:text-blue-600"
+    className={chipButtonSm}
   >
     {text}
   </motion.button>

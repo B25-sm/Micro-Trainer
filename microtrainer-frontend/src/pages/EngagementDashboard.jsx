@@ -70,7 +70,7 @@ export default function EngagementDashboard() {
     const unsubBadge = on('badge:earned', (data) => {
       console.log('Badge earned:', data);
       // Show notification
-      showNotification(`🎉 Badge Earned: ${data.badgeName}!`);
+      showNotification(`Badge earned: ${data.badgeName}`);
     });
 
     // Assessment available
@@ -161,23 +161,23 @@ export default function EngagementDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-[#202124] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading your dashboard...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-300 dark:border-gray-600 border-t-[#1a73e8] dark:border-t-[#8ab4f8] mx-auto mb-4"></div>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Loading dashboard…</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-white dark:bg-[#202124] py-8">
       <div className="max-w-7xl mx-auto px-4">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Engagement Dashboard</h1>
+          <h1 className="text-2xl font-medium text-gray-900 dark:text-gray-100 tracking-tight">Engagement</h1>
           <div className="flex items-center mt-2">
-            <div className={`w-3 h-3 rounded-full ${connected ? 'bg-green-500' : 'bg-red-500'} mr-2`}></div>
-            <span className="text-sm text-gray-600">
+            <div className={`w-2 h-2 rounded-full ${connected ? 'bg-green-500' : 'bg-gray-400'} mr-2`}></div>
+            <span className="text-sm text-gray-500 dark:text-gray-400">
               {connected ? 'Connected' : 'Disconnected'}
             </span>
           </div>

@@ -21,7 +21,7 @@ export default function PerformanceAnalytics({ analytics }) {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-      <h3 className="text-xl font-bold mb-4">📊 Performance Analytics</h3>
+      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Performance analytics</h3>
       
       {/* Engagement Score */}
       <div className="mb-6">

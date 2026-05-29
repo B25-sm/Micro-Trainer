@@ -50,7 +50,7 @@ export default function MiniAssessmentCard({ assessment }) {
         <div className="flex justify-between text-sm">
           <span className="text-gray-600">Status:</span>
           <span className={`font-medium ${isCompleted ? 'text-green-600' : 'text-orange-600'}`}>
-            {isCompleted ? '✅ Completed' : '⏳ Pending'}
+            {isCompleted ? 'Completed' : 'Pending'}
           </span>
         </div>
       </div>

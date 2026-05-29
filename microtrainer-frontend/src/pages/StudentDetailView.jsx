@@ -60,9 +60,11 @@ const StudentDetailView = () => {
   };
 
   const getLevelColor = (level) => {
-    if (level === "advanced") return "bg-purple-100 text-purple-700 border-purple-300";
-    if (level === "intermediate") return "bg-blue-100 text-blue-700 border-blue-300";
-    return "bg-green-100 text-green-700 border-green-300";
+    if (level === "advanced")
+      return "bg-gray-100 dark:bg-gray-700/60 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-600";
+    if (level === "intermediate")
+      return "bg-gray-100 dark:bg-gray-700/60 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600";
+    return "bg-gray-50 dark:bg-gray-800/80 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700";
   };
 
   const getScoreColor = (score) => {
@@ -74,8 +76,8 @@ const StudentDetailView = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen p-6 bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-500">Loading student data...</div>
+      <div className="min-h-screen p-6 bg-white dark:bg-[#202124] flex items-center justify-center">
+        <div className="text-gray-500 dark:text-gray-400 text-sm">Loading student data…</div>
       </div>
     );
   }
@@ -86,7 +88,7 @@ const StudentDetailView = () => {
 
   if (!hasInterviewData && !hasLearning) {
     return (
-      <div className="min-h-screen p-6 bg-gray-50">
+      <div className="min-h-screen p-6 bg-white dark:bg-[#202124]">
         <button
           onClick={() => navigate("/trainer")}
           className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-6"
@@ -94,10 +96,10 @@ const StudentDetailView = () => {
           <ArrowLeft className="w-5 h-5" />
           Back to Dashboard
         </button>
-        <div className="bg-white rounded-2xl p-8 text-center">
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] p-8 text-center">
           <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-gray-800 mb-2">No Data Available</h2>
-          <p className="text-gray-600">
+          <h2 className="text-xl font-medium text-gray-900 dark:text-gray-100 mb-2">No data available</h2>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
             This student has no interview or guided course progress recorded yet.
           </p>
         </div>
@@ -117,7 +119,7 @@ const StudentDetailView = () => {
       </button>
 
       {/* HEADER */}
-      <div className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
+      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] p-6 mb-6">
         <div className="flex items-start justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 mb-2">
@@ -177,7 +179,7 @@ const StudentDetailView = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl p-6 shadow-sm"
+          className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] p-6"
         >
           <div className="text-sm text-gray-500 mb-2">Questions Answered</div>
           <div className="text-3xl font-bold text-gray-800">
@@ -190,7 +192,7 @@ const StudentDetailView = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-2xl p-6 shadow-sm"
+          className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] p-6"
         >
           <div className="text-sm text-gray-500 mb-2">Communication</div>
           <div className="text-3xl font-bold text-blue-600">
@@ -204,7 +206,7 @@ const StudentDetailView = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-2xl p-6 shadow-sm"
+          className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] p-6"
         >
           <div className="text-sm text-gray-500 mb-2">Technical</div>
           <div className="text-3xl font-bold text-purple-600">
@@ -218,7 +220,7 @@ const StudentDetailView = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white rounded-2xl p-6 shadow-sm"
+          className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] p-6"
         >
           <div className="text-sm text-gray-500 mb-2">Technology Level</div>
           <div className="text-3xl font-bold text-indigo-600">
@@ -232,7 +234,7 @@ const StudentDetailView = () => {
 
       {/* SUBJECT SCORES */}
       {profile?.technologyInterviews && profile.technologyInterviews.length > 0 && (
-        <div className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] p-6 mb-6">
           <h2 className="text-xl font-bold text-gray-800 mb-4">Subject Performance</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {profile.technologyInterviews.map((tech, index) => (
@@ -260,7 +262,7 @@ const StudentDetailView = () => {
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="bg-white rounded-2xl p-6 shadow-sm"
+          className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] p-6"
         >
           <div className="flex items-center gap-2 mb-4">
             <CheckCircle className="w-5 h-5 text-green-500" />
@@ -286,7 +288,7 @@ const StudentDetailView = () => {
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="bg-white rounded-2xl p-6 shadow-sm"
+          className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] p-6"
         >
           <div className="flex items-center gap-2 mb-4">
             <AlertCircle className="w-5 h-5 text-amber-500" />
@@ -312,7 +314,7 @@ const StudentDetailView = () => {
 
       {/* GUIDED COURSE PROGRESS (trainer API — local + Google Sheets) */}
       {hasLearning && (
-        <div className="bg-white rounded-2xl p-6 mb-6 shadow-sm border border-emerald-100">
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] p-6 mb-6">
           <h2 className="text-xl font-bold text-gray-800 mb-1">Guided Course Progress</h2>
           <p className="text-sm text-gray-500 mb-4">
             {learningProgress.summary.technologiesStudied} technologies ·{" "}
@@ -362,7 +364,7 @@ const StudentDetailView = () => {
 
       {/* PROBLEM SOLVING */}
       {profile?.problemSolvingResults && profile.problemSolvingResults.length > 0 && (
-        <div className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] p-6 mb-6">
           <h2 className="text-xl font-bold text-gray-800 mb-4">Problem Solving</h2>
           <div className="grid grid-cols-3 gap-4">
             <div className="border border-gray-200 rounded-xl p-4">
@@ -388,7 +390,7 @@ const StudentDetailView = () => {
       )}
 
       {/* RECOMMENDATIONS */}
-      <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6 border border-blue-200">
+      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#292a2d] p-6">
         <div className="flex items-center gap-2 mb-4">
           <Award className="w-5 h-5 text-blue-600" />
           <h2 className="text-xl font-bold text-gray-800">Recommendations</h2>
@@ -401,7 +403,7 @@ const StudentDetailView = () => {
           )}
           {analytics?.weakAreas && analytics.weakAreas.length > 0 && (
             <p className="text-gray-700">
-              📚 Focus on: {analytics.weakAreas.join(", ")}
+              Focus on: {analytics.weakAreas.join(", ")}
             </p>
           )}
           {memory?.consistency === "low" && (
@@ -417,7 +419,7 @@ const StudentDetailView = () => {
           {(!analytics?.weakAreas || analytics.weakAreas.length === 0) && 
            memory?.trend === "improving" && (
             <p className="text-gray-700">
-              ✅ Great progress! Keep up the excellent work.
+              Great progress. Keep up the consistent practice.
             </p>
           )}
         </div>

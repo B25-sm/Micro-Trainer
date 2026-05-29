@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { learningPathAPI } from "../api/learningPath";
 import { getStudentId } from "../utils/studentAuth";
 import { isTrainerSession } from "../utils/trainerAuth";
+import { monogram } from "../lib/ui";
 
 function normalizeTechnologies(payload) {
   if (Array.isArray(payload)) return payload;
@@ -73,22 +74,22 @@ const TechnologySelection = ({ studentId: studentIdProp, onTechnologySelect }) =
     fetchData();
   }, [fetchData]);
 
-  const getTechnologyIcon = (techId) => {
-    const icons = {
-      javascript: "🟨",
-      python: "🐍",
-      java: "☕",
-      react: "⚛️",
-      nodejs: "🟢",
-      django: "🎸",
-      springboot: "🍃",
-      typescript: "🔷",
-      mongodb: "🗄️",
-      html: "📄",
-      css: "🎨",
-      datascience: "📊",
+  const getTechnologyMonogram = (techId) => {
+    const map = {
+      javascript: "JS",
+      python: "PY",
+      java: "JA",
+      react: "RE",
+      nodejs: "ND",
+      django: "DJ",
+      springboot: "SB",
+      typescript: "TS",
+      mongodb: "MG",
+      html: "HT",
+      css: "CS",
+      datascience: "DS",
     };
-    return icons[techId] || "📚";
+    return map[techId] || techId.slice(0, 2).toUpperCase();
   };
 
   const getProgressInfo = (techId) => {
@@ -149,8 +150,8 @@ const TechnologySelection = ({ studentId: studentIdProp, onTechnologySelect }) =
       animate={{ opacity: 1, y: 0 }}
       className="w-full"
     >
-      <h2 className="text-4xl font-normal text-blue-500 dark:text-blue-400 text-center mb-3">
-        Choose Your Learning Path
+      <h2 className="text-2xl font-medium text-gray-900 dark:text-gray-100 text-center mb-2">
+        Choose your learning path
       </h2>
       <p className="text-gray-600 dark:text-gray-400 text-center mb-6">
         Select a technology to start your structured learning journey
@@ -183,16 +184,16 @@ const TechnologySelection = ({ studentId: studentIdProp, onTechnologySelect }) =
             >
               {progressInfo.status === "completed" && (
                 <div className="absolute top-4 right-4">
-                  <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-500 text-white text-xs font-medium rounded-full">
-                    ✓ Completed
+                  <span className="inline-flex items-center px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs font-medium rounded-md border border-gray-200 dark:border-gray-600">
+                    Completed
                   </span>
                 </div>
               )}
 
               <div className="flex items-start gap-4 mb-4">
-                <span className="text-5xl">{getTechnologyIcon(tech.id)}</span>
+                <span className={monogram}>{getTechnologyMonogram(tech.id)}</span>
                 <div className="flex-1">
-                  <h3 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-1">
+                  <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100 mb-1">
                     {tech.name}
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -226,18 +227,18 @@ const TechnologySelection = ({ studentId: studentIdProp, onTechnologySelect }) =
 
               <div className="flex items-center gap-2 mt-4">
                 {progressInfo.status === "not-started" && (
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
-                    🚀 Start your journey
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    Start course
                   </span>
                 )}
                 {progressInfo.status === "in-progress" && (
-                  <span className="text-sm text-blue-600 dark:text-blue-400 font-medium">
-                    📖 Continue learning
+                  <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">
+                    Continue learning
                   </span>
                 )}
                 {progressInfo.status === "completed" && (
-                  <span className="text-sm text-green-600 dark:text-green-400 font-medium">
-                    🎓 Review concepts
+                  <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">
+                    Review concepts
                   </span>
                 )}
               </div>

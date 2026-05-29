@@ -232,12 +232,12 @@ const Learn = () => {
   };
 
   const suggestedTopics = [
-    { emoji: "🔄", title: "Closures in JavaScript", subtitle: "Understand scope and memory" },
-    { emoji: "⚛️", title: "React Hooks", subtitle: "useState, useEffect, and more" },
-    { emoji: "🔗", title: "Promises and Async/Await", subtitle: "Asynchronous JavaScript" },
-    { emoji: "☕", title: "OOP in Java", subtitle: "Classes, inheritance, polymorphism" },
-    { emoji: "🐍", title: "Python Decorators", subtitle: "Function wrappers and metaprogramming" },
-    { emoji: "🗄️", title: "SQL Joins", subtitle: "INNER, LEFT, RIGHT, FULL joins" },
+    { title: "Closures in JavaScript", subtitle: "Understand scope and memory" },
+    { title: "React Hooks", subtitle: "useState, useEffect, and more" },
+    { title: "Promises and Async/Await", subtitle: "Asynchronous JavaScript" },
+    { title: "OOP in Java", subtitle: "Classes, inheritance, polymorphism" },
+    { title: "Python Decorators", subtitle: "Function wrappers and metaprogramming" },
+    { title: "SQL Joins", subtitle: "INNER, LEFT, RIGHT, FULL joins" },
   ];
 
   return (
@@ -256,10 +256,10 @@ const Learn = () => {
             animate={{ opacity: 1, y: 0 }}
             className="w-full"
           >
-            <h2 className="text-4xl font-normal text-blue-500 text-center mb-3">
+            <h2 className="text-2xl font-medium text-gray-900 dark:text-gray-100 text-center mb-2">
               What do you want to learn today?
             </h2>
-            <p className="text-gray-600 text-center mb-8">
+            <p className="text-gray-500 dark:text-gray-400 text-center mb-8 text-sm">
               Choose your learning style
             </p>
 
@@ -269,10 +269,9 @@ const Learn = () => {
                 whileHover={{ scale: 1.02, y: -4 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleModeSwitch("ask-anything")}
-                className="p-6 rounded-2xl border-2 border-blue-400 bg-blue-50 dark:bg-blue-950/40 text-left text-gray-900 dark:text-gray-100 shadow-md"
+                className="p-6 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#292a2d] text-left text-gray-900 dark:text-gray-100 shadow-sm"
               >
-                <div className="text-4xl mb-3">💬</div>
-                <h3 className="text-xl font-semibold mb-2" style={{ color: "inherit" }}>Ask Anything</h3>
+                <h3 className="text-lg font-medium mb-2">Ask anything</h3>
                 <p className="text-sm opacity-80" style={{ color: "inherit" }}>
                   Free-form learning. Ask about any concept and I'll teach it at your level.
                 </p>
@@ -282,10 +281,9 @@ const Learn = () => {
                 whileHover={{ scale: 1.02, y: -4 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleModeSwitch("guided-course")}
-                className="p-6 rounded-2xl border-2 border-gray-200 dark:border-gray-700 hover:border-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-left text-gray-900 dark:text-gray-100 transition-all"
+                className="p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] hover:border-gray-300 dark:hover:border-gray-600 text-left text-gray-900 dark:text-gray-100 transition-all"
               >
-                <div className="text-4xl mb-3">🎯</div>
-                <h3 className="text-xl font-semibold mb-2" style={{ color: "inherit" }}>Guided Course</h3>
+                <h3 className="text-lg font-medium mb-2">Guided course</h3>
                 <p className="text-sm opacity-80" style={{ color: "inherit" }}>
                   Structured learning path. Master technologies step-by-step with progress tracking.
                 </p>
@@ -307,12 +305,9 @@ const Learn = () => {
                     }}
                     className="p-4 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#25262a] hover:border-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-all text-left text-gray-900 dark:text-gray-100"
                   >
-                    <div className="flex items-start gap-3">
-                      <span className="text-2xl">{topic.emoji}</span>
-                      <div>
-                        <div className="font-medium" style={{ color: "inherit" }}>{topic.title}</div>
-                        <div className="text-sm opacity-75 mt-0.5" style={{ color: "inherit" }}>{topic.subtitle}</div>
-                      </div>
+                    <div>
+                      <div className="font-medium text-gray-900 dark:text-gray-100">{topic.title}</div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{topic.subtitle}</div>
                     </div>
                   </motion.button>
                 ))}
