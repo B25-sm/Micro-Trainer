@@ -44,12 +44,12 @@ export default function StoryLessonContent({
             className={`flex flex-wrap items-center gap-2 mb-4 pb-3 border-b ${themeStyles.divider}`}
           >
             {levelLabel && (
-              <span className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-800 border border-blue-200 dark:bg-blue-950/60 dark:text-blue-200 dark:border-blue-800">
+              <span className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-800 border border-blue-200">
                 {levelLabel}
               </span>
             )}
             {badge && (
-              <span className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-900 border border-amber-200 dark:bg-amber-950/50 dark:text-amber-200 dark:border-amber-800">
+              <span className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-900 border border-amber-200">
                 {badge}
               </span>
             )}
@@ -61,14 +61,16 @@ export default function StoryLessonContent({
             {normalized.split("\n").filter((l) => l.trim()).map((line, i) => (
               <div
                 key={i}
-                className="text-[15px] leading-relaxed text-gray-800 dark:text-slate-200 read-mode:text-[var(--read-text)] read-mode:text-[1.125rem] read-mode:leading-[1.85]"
+                className={`text-[15px] leading-relaxed read-mode:text-[1.125rem] read-mode:leading-[1.85] ${themeStyles.prose}`}
               >
                 <ReactMarkdown components={mdComponents}>{line}</ReactMarkdown>
               </div>
             ))}
           </div>
         ) : (
-          <motion.div className="lesson-prose prose prose-base prose-neutral max-w-none text-gray-800 dark:text-slate-200 read-mode:text-[var(--read-text)] leading-relaxed [&_p]:leading-relaxed read-mode:prose-lg">
+          <motion.div
+            className={`lesson-prose prose prose-base prose-neutral max-w-none leading-relaxed [&_p]:leading-relaxed read-mode:prose-lg read-mode:text-[var(--read-text)] ${themeStyles.prose}`}
+          >
             <ReactMarkdown components={mdComponents}>{normalized}</ReactMarkdown>
           </motion.div>
         )}

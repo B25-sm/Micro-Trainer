@@ -2,47 +2,52 @@ export const LESSON_CARD_THEMES = {
   white: {
     id: "white",
     label: "White",
-    swatch: "bg-white border-gray-300 dark:bg-slate-700 dark:border-slate-500",
+    swatch: "bg-white border-gray-300",
     article:
-      "bg-white border-gray-200 dark:bg-slate-800 dark:border-slate-600 read-mode:bg-[var(--read-surface-elevated)] read-mode:border-[var(--read-border)]",
+      "lesson-card-surface bg-white border-gray-200 shadow-sm dark:bg-white dark:border-slate-400",
+    prose: "text-gray-800 dark:text-gray-900",
     divider:
-      "border-gray-100 dark:border-slate-700 read-mode:border-[var(--read-border)]",
+      "border-gray-100 dark:border-gray-200 read-mode:border-[var(--read-border)]",
   },
   yellow: {
     id: "yellow",
     label: "Yellow",
-    swatch: "bg-amber-50 border-amber-300 dark:bg-amber-950 dark:border-amber-700",
+    swatch: "bg-amber-50 border-amber-300",
     article:
-      "bg-amber-50/95 border-amber-200 dark:bg-amber-950/80 dark:border-amber-800 read-mode:bg-[var(--read-surface-elevated)] read-mode:border-[var(--read-border)]",
+      "lesson-card-surface bg-amber-50 border-amber-200 shadow-sm dark:bg-amber-50 dark:border-amber-300",
+    prose: "text-gray-800 dark:text-gray-900",
     divider:
-      "border-amber-200/70 dark:border-amber-800 read-mode:border-[var(--read-border)]",
+      "border-amber-200/80 dark:border-amber-200 read-mode:border-[var(--read-border)]",
   },
   mint: {
     id: "mint",
     label: "Mint",
-    swatch: "bg-emerald-50 border-emerald-300 dark:bg-emerald-950 dark:border-emerald-700",
+    swatch: "bg-emerald-50 border-emerald-300",
     article:
-      "bg-emerald-50/95 border-emerald-200 dark:bg-emerald-950/80 dark:border-emerald-800 read-mode:bg-[var(--read-surface-elevated)] read-mode:border-[var(--read-border)]",
+      "lesson-card-surface bg-emerald-50 border-emerald-200 shadow-sm dark:bg-emerald-50 dark:border-emerald-300",
+    prose: "text-gray-800 dark:text-gray-900",
     divider:
-      "border-emerald-200/70 dark:border-emerald-800 read-mode:border-[var(--read-border)]",
+      "border-emerald-200/80 dark:border-emerald-200 read-mode:border-[var(--read-border)]",
   },
   sky: {
     id: "sky",
     label: "Sky",
-    swatch: "bg-sky-50 border-sky-300 dark:bg-sky-950 dark:border-sky-700",
+    swatch: "bg-sky-50 border-sky-300",
     article:
-      "bg-sky-50/95 border-sky-200 dark:bg-sky-950/80 dark:border-sky-800 read-mode:bg-[var(--read-surface-elevated)] read-mode:border-[var(--read-border)]",
+      "lesson-card-surface bg-sky-50 border-sky-200 shadow-sm dark:bg-sky-50 dark:border-sky-300",
+    prose: "text-gray-800 dark:text-gray-900",
     divider:
-      "border-sky-200/70 dark:border-sky-800 read-mode:border-[var(--read-border)]",
+      "border-sky-200/80 dark:border-sky-200 read-mode:border-[var(--read-border)]",
   },
   lavender: {
     id: "lavender",
     label: "Lavender",
-    swatch: "bg-violet-50 border-violet-300 dark:bg-violet-950 dark:border-violet-700",
+    swatch: "bg-violet-50 border-violet-300",
     article:
-      "bg-violet-50/95 border-violet-200 dark:bg-violet-950/80 dark:border-violet-800 read-mode:bg-[var(--read-surface-elevated)] read-mode:border-[var(--read-border)]",
+      "lesson-card-surface bg-violet-50 border-violet-200 shadow-sm dark:bg-violet-50 dark:border-violet-300",
+    prose: "text-gray-800 dark:text-gray-900",
     divider:
-      "border-violet-200/70 dark:border-violet-800 read-mode:border-[var(--read-border)]",
+      "border-violet-200/80 dark:border-violet-200 read-mode:border-[var(--read-border)]",
   },
 };
 

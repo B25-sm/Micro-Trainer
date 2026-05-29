@@ -175,28 +175,24 @@ html.dark .mt-callout--danger,
   color: inherit;
 }
 
-/* Learn lesson — analogy / cast lines readable in dark + read mode (all subjects) */
-html.dark .lesson-prose .lesson-cast-line,
-.dark .lesson-prose .lesson-cast-line {
-  background-color: rgb(30 27 75 / 0.75) !important;
-  border-left-color: rgb(129 140 248) !important;
-  color: rgb(241 245 249) !important;
+/* Learn lesson cards stay true-to-name in dark mode (white = white, yellow = yellow, …) */
+html.dark .lesson-card-surface .lesson-prose,
+html.dark .lesson-card-surface .lesson-prose :where(p, li, ol, ul, strong):not(.lesson-section-heading),
+.dark .lesson-card-surface .lesson-prose,
+.dark .lesson-card-surface .lesson-prose :where(p, li, ol, ul, strong):not(.lesson-section-heading) {
+  color: rgb(31 41 55) !important;
 }
 
-html.dark .lesson-prose .lesson-cast-line :where(strong, p, span, em),
-.dark .lesson-prose .lesson-cast-line :where(strong, p, span, em) {
-  color: inherit !important;
+html.dark .lesson-card-surface .lesson-cast-line,
+.dark .lesson-card-surface .lesson-cast-line {
+  background-color: rgb(238 242 255) !important;
+  border-left-color: rgb(99 102 241) !important;
+  color: rgb(17 24 39) !important;
 }
 
-html.dark .lesson-prose .lesson-section-heading,
-.dark .lesson-prose .lesson-section-heading {
-  color: rgb(147 197 253) !important;
-}
-
-/* Tailwind prose plugin can wash out custom li colors in dark mode */
-html.dark .lesson-prose :where(p, li, ol, ul):not(.lesson-cast-line),
-.dark .lesson-prose :where(p, li, ol, ul):not(.lesson-cast-line) {
-  color: rgb(226 232 240);
+html.dark .lesson-card-surface .lesson-section-heading,
+.dark .lesson-card-surface .lesson-section-heading {
+  color: rgb(30 64 175) !important;
 }
 
 /* Legacy pastel Tailwind boxes — fix bg + text together */
