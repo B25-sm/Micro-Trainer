@@ -28,26 +28,10 @@ services:
         value: "1"
       - key: OFFICIAL_SYNC_STALE_HOURS
         value: "72"
-      - key: PISTON_URL
-        fromService:
-          type: web
-          name: microtrainer-piston
-          property: host
-        # This automatically connects to the Piston service
-    autoDeploy: true
-
-  # Piston Service (Docker - Code Execution)
-  - type: web
-    name: microtrainer-piston
-    runtime: docker
-    region: oregon
-    plan: free
-    dockerfilePath: ./Dockerfile.piston
-    dockerContext: .
-    healthCheckPath: /api/v2/runtimes
-    envVars:
-      - key: PORT
-        value: 2000
+      - key: USE_LOCAL_CODE_FALLBACK
+        value: "true"
+        # JS/Python problem-solving runs in the browser. This only keeps the
+        # legacy backend execution endpoint usable for development/testing.
     autoDeploy: true
 
   # Frontend Service (Static Site)

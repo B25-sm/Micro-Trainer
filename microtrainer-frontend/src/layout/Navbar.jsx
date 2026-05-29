@@ -95,16 +95,6 @@ const Navbar = ({ showLevelBadge = false, currentLevel = null }) => {
             Dashboard
           </button>
           <button 
-            onClick={() => navigate("/certificates")}
-            className={`px-3 py-1.5 text-sm rounded-lg transition ${
-              isActive("/certificates")
-                ? "bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 font-medium"
-                : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700/50"
-            }`}
-          >
-            Certificates
-          </button>
-          <button 
             onClick={() => navigate("/settings/notifications")}
             className={`px-3 py-1.5 text-sm rounded-lg transition ${
               isActive("/settings/notifications")

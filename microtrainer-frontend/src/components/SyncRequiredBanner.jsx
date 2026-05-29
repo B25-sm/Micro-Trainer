@@ -62,7 +62,7 @@ export default function SyncRequiredBanner({ studentId }) {
           <p className="text-sm mt-1">
             {connected
               ? "Your progress is being reported for trainer verification."
-              : "Your app will keep working, but certificates, official badges, leaderboards, and trainer verification stay locked until progress sync reconnects."}
+              : "Your app will keep working, but official badges, leaderboards, and trainer verification stay locked until progress sync reconnects."}
           </p>
           {syncStatus.lastFailureReason && !connected && (
             <p className="text-xs mt-2 opacity-80">

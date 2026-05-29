@@ -39,8 +39,8 @@
 - **Resume Anytime:** Your progress is saved
 
 ### 💻 **Code Compiler**
-- **50+ Programming Languages** when using a self-hosted **[Piston](https://github.com/engineer-man/piston)** instance (see `docker-compose.piston.yml` in this repo).
-- **Development fallback:** JavaScript and Python can run in-process when Piston is unreachable; other languages require Piston.
+- **Browser execution for JavaScript and Python:** no Piston server, student card, or central execution cost required.
+- **Java/server languages:** require a future self-hosted runner such as Piston or Judge0.
 - **Real-time Execution:** Run code against your test cases
 - **Detailed Feedback:** See what went wrong
 
@@ -72,7 +72,7 @@ Click the button above ☝️ or visit: [render.com/deploy](https://render.com/d
 You'll get 3 URLs:
 - **Frontend:** Your learning platform
 - **Backend:** API server
-- **Piston:** Code execution engine
+- **Browser Code Runner:** JavaScript/Python execution in each student's browser
 
 ---
 
@@ -98,10 +98,10 @@ You'll get 3 URLs:
    - Progress tracking
    - Assessment system
 
-2. **Piston Code Execution**
-   - Runs code in 50+ languages
-   - Secure sandboxed execution
-   - No compiler installation needed
+2. **Browser Code Execution**
+   - Runs JavaScript and Python locally in the browser
+   - No server runner required for core problem-solving
+   - Java can be added later with Piston/Judge0
 
 3. **Frontend**
    - Beautiful UI
@@ -211,8 +211,8 @@ JavaScript, Python, Java, C++, C, C#, TypeScript, Go, Rust, Ruby, PHP, Swift, Ko
 
 ### **Code Execution Not Working?**
 1. Wait 30 seconds (services wake from sleep)
-2. Check Piston service is running
-3. Try a different language
+2. Try JavaScript or Python first
+3. Java requires a server-side runner and is not browser-executed
 
 ### **Progress Not Saving?**
 1. Check backend service is running
@@ -225,9 +225,8 @@ JavaScript, Python, Java, C++, C, C#, TypeScript, Go, Rust, Ruby, PHP, Swift, Ko
 
 ### **Need Help?**
 1. Check service logs in Render dashboard
-2. Verify all 3 services are "Live" (green)
+2. Verify frontend and backend services are "Live" (green)
 3. Test backend: `https://your-backend.onrender.com/`
-4. Test Piston: `https://your-piston.onrender.com/api/v2/runtimes`
 
 ---
 

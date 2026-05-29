@@ -24,7 +24,7 @@ Click this button:
 **What happens:**
 - Opens Render website
 - Shows deployment form
-- Lists 3 services to deploy
+- Lists frontend and backend services to deploy
 
 ---
 
@@ -50,7 +50,6 @@ Click this button:
 
 **What's happening:**
 - ✅ Building backend (2-3 min)
-- ✅ Pulling Piston image (3-4 min)
 - ✅ Building frontend (2-3 min)
 - ✅ Connecting services (automatic)
 
@@ -130,7 +129,7 @@ microtrainer-frontend: Building...
 
 **Check:**
 1. Is backend service "Live"? (green status)
-2. Is Piston service "Live"? (green status)
+2. Is frontend service "Live"? (green status)
 3. Wait 2-3 minutes for services to fully start
 
 **Solution:**
@@ -143,15 +142,15 @@ microtrainer-frontend: Building...
 ### **Issue: "Code execution not working"**
 
 **Check:**
-1. Is Piston service "Live"?
+1. Are you using JavaScript or Python?
 2. Did you write code in correct format?
 3. Check browser console (F12) for errors
 
 **Solution:**
 - Make sure code has `function solution(input)` format
+- For Python, make sure code has `def solution(input):`
 - Try simple code first
-- Check Piston URL: `https://your-piston.onrender.com/api/v2/runtimes`
-- Should see list of available languages
+- Java needs a future server-side runner such as Piston/Judge0
 
 ---
 
@@ -180,9 +179,8 @@ microtrainer-frontend: Building...
 
 ### **If You Exceed:**
 - Backend: $7/month
-- Piston: $7/month
 - Frontend: Always free
-- **Total: $7-14/month**
+- **Total: $7/month**
 
 ### **Monitor Usage:**
 1. Go to Render dashboard
@@ -209,9 +207,8 @@ microtrainer-frontend: Building...
 ### **3. Practice Coding:**
 - [ ] Try JavaScript
 - [ ] Try Python
-- [ ] Try Java
-- [ ] Try C++
-- [ ] Try all 50+ languages!
+- [ ] Try JavaScript
+- [ ] Try Python
 
 ---
 

@@ -21,7 +21,6 @@ import EngagementDashboard from "./pages/EngagementDashboard.jsx";
 import AdminEngagementDashboard from "./pages/AdminEngagementDashboard.jsx";
 import NotificationSettings from "./pages/NotificationSettings.jsx";
 import ExtensionPanel from "./pages/ExtensionPanel.jsx";
-import Certificates from "./pages/Certificates.jsx";
 
 // Protected Route Component
 import { TrainerOnly } from "./components/ProtectedRoute.jsx";
@@ -117,16 +116,6 @@ function App() {
             element={
               <MainLayout>
                 <EngagementDashboard />
-              </MainLayout>
-            }
-          />
-
-          {/* Certificates */}
-          <Route
-            path="/certificates"
-            element={
-              <MainLayout>
-                <Certificates />
               </MainLayout>
             }
           />

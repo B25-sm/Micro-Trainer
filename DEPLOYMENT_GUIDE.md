@@ -20,16 +20,15 @@
 4. Click **"Deploy"**
 
 ### **Done! ✅**
-Wait 5-10 minutes for deployment. You'll get 3 URLs:
+Wait 5-10 minutes for deployment. You'll get 2 URLs:
 - **Frontend:** `https://your-app.onrender.com`
 - **Backend:** `https://your-app-backend.onrender.com`
-- **Piston:** `https://your-app-piston.onrender.com`
 
 ---
 
 ## 📊 What Gets Deployed?
 
-### **3 Services (All Automatic):**
+### **2 Services (All Automatic):**
 
 1. **MicroTrainer Backend** (Node.js)
    - AI-powered teaching system
@@ -37,13 +36,7 @@ Wait 5-10 minutes for deployment. You'll get 3 URLs:
    - Assessment engine
    - **Cost:** FREE (Render free tier)
 
-2. **Piston Code Execution** (Docker)
-   - Runs code in 50+ languages
-   - Secure sandboxed execution
-   - No compiler installation needed
-   - **Cost:** FREE (Render free tier)
-
-3. **Frontend** (React Static Site)
+2. **Frontend** (React Static Site)
    - Beautiful UI
    - Responsive design
    - Fast loading
@@ -56,25 +49,13 @@ Wait 5-10 minutes for deployment. You'll get 3 URLs:
 
 ## 🎯 Supported Languages
 
-Your deployment will support **50+ languages** out of the box:
+Your deployment supports browser-based problem solving for:
 
 ### **Popular Languages:**
 - ✅ JavaScript
 - ✅ Python
-- ✅ Java
-- ✅ C++
-- ✅ C
-- ✅ C#
-- ✅ TypeScript
-- ✅ Go
-- ✅ Rust
-- ✅ Ruby
-- ✅ PHP
-- ✅ Swift
-- ✅ Kotlin
-- ✅ And 35+ more!
 
-**No installation required!** Everything works immediately after deployment.
+**No Piston server required for these two languages.** Java execution needs a future server runner such as Piston or Judge0.
 
 ---
 
@@ -87,7 +68,7 @@ The deployment automatically configures everything, but you can customize:
 #### **Backend (.env):**
 ```env
 GROQ_API_KEY=your_key_here          # Required (you provide)
-PISTON_URL=auto_configured          # Automatic
+USE_LOCAL_CODE_FALLBACK=true        # Legacy backend fallback only
 PORT=5000                            # Automatic
 NODE_ENV=production                  # Automatic
 ```
@@ -120,18 +101,14 @@ VITE_API_URL=auto_configured        # Automatic
    **Issue:** "Build failed"
    - **Solution:** Check if all files are committed to GitHub
 
-   **Issue:** "Piston service not starting"
-   - **Solution:** Wait 10 minutes (Docker images take time)
-
    **Issue:** "Frontend can't connect to backend"
    - **Solution:** Check if backend service is running
 
 ### **Still Having Issues?**
 
 1. Check service logs in Render dashboard
-2. Verify all 3 services are "Live" (green)
+2. Verify both services are "Live" (green)
 3. Test backend: `https://your-backend.onrender.com/`
-4. Test Piston: `https://your-piston.onrender.com/api/v2/runtimes`
 
 ---
 
@@ -148,10 +125,10 @@ VITE_API_URL=auto_configured        # Automatic
 - **14,400 requests/day**
 - **Plenty for learning!**
 
-### **Piston (Self-Hosted):**
-- **Unlimited requests**
-- **No rate limits**
-- **All languages included**
+### **Problem Solving:**
+- JavaScript and Python execute in the student's browser
+- No execution server cost for these languages
+- Java requires a future server runner
 
 ---
 
@@ -182,7 +159,7 @@ VITE_API_URL=auto_configured        # Automatic
 ### **What You Get:**
 1. ✅ Full MicroTrainer platform
 2. ✅ AI-powered learning
-3. ✅ Code execution in 50+ languages
+3. ✅ Browser code execution for JavaScript and Python
 4. ✅ Progress tracking
 5. ✅ Assessment system
 6. ✅ Structured learning paths
@@ -314,7 +291,6 @@ After deployment, verify:
 
 2. **Test Endpoints:**
    - Backend: `https://your-backend.onrender.com/`
-   - Piston: `https://your-piston.onrender.com/api/v2/runtimes`
 
 3. **Common Solutions:**
    - Restart service in Render dashboard

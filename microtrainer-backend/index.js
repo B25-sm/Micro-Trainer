@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
 const path = require("path");
+const fs = require("fs");
 
 // Always load .env from backend folder (works even if started from repo root)
 require("dotenv").config({ path: path.join(__dirname, ".env") });
@@ -991,6 +992,70 @@ app.post("/problems/:id/submit", async (req, res) => {
         error: error.message || "Submission failed",
       })
     );
+  }
+});
+
+// Record browser-graded JS/Python submissions without server-side execution.
+app.post("/problems/:id/browser-submit", async (req, res) => {
+  try {
+    const problemId = req.params.id;
+    const { language, studentId, result } = req.body || {};
+    const problem = getProblemById(problemId);
+
+    if (!problem) {
+      return res.status(404).json({ success: false, error: "Problem not found" });
+    }
+
+    if (!["javascript", "js", "python", "py"].includes(String(language).toLowerCase())) {
+      return res.status(400).json({
+        success: false,
+        error: "Browser submissions are supported only for JavaScript and Python",
+      });
+    }
+
+    if (!result || typeof result !== "object") {
+      return res.status(400).json({ success: false, error: "Result summary is required" });
+    }
+
+    const totalTests = problem.testCases?.length || 0;
+    const passedTests = Math.max(0, Number(result.passedTests || 0));
+    const submittedAt = new Date().toISOString();
+    const payload = {
+      success: true,
+      mode: "submit",
+      problemId,
+      studentId: studentId || "anonymous",
+      language,
+      passedTests,
+      totalTests,
+      failedCount: Math.max(0, totalTests - passedTests),
+      score:
+        typeof result.score === "number"
+          ? result.score
+          : totalTests > 0
+            ? (passedTests / totalTests) * 100
+            : 0,
+      allPassed: totalTests > 0 && passedTests === totalTests,
+      executionMode: result.executionMode || "browser",
+      submittedAt,
+      trustedExecution: false,
+    };
+
+    const dataDir = path.join(__dirname, "data");
+    fs.mkdirSync(dataDir, { recursive: true });
+    fs.appendFileSync(
+      path.join(dataDir, "browser-submissions.jsonl"),
+      `${JSON.stringify(payload)}\n`,
+      "utf8"
+    );
+
+    return res.json(payload);
+  } catch (error) {
+    console.error("BROWSER SUBMIT RECORD ERROR:", error.message);
+    return res.status(500).json({
+      success: false,
+      error: error.message || "Failed to record browser submission",
+    });
   }
 });
 
@@ -2046,5 +2111,4 @@ server.listen(PORT, async () => {
   // Optional: Enable auto-export every 60 minutes
   // Uncomment the line below to enable automatic exports
   // scheduleAutoExport(60);
-});
 });

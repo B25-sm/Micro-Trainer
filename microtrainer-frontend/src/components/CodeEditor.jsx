@@ -5,48 +5,18 @@ import { API_BASE } from '../api.js';
 import ExecutionConsole from './ExecutionConsole.jsx';
 import ResizeSplitter from './ResizeSplitter.jsx';
 import { getStarterCode } from '../lib/problemStarters.js';
+import {
+  normalizeJudgeOutput,
+  runCodeInBrowser,
+  supportsBrowserExecution,
+  unsupportedBrowserExecutionResult,
+} from '../lib/browserCodeRunner.js';
 
 const PROBLEM_SOLVING_LANGUAGES = [
   { value: 'javascript', label: 'JavaScript' },
   { value: 'python', label: 'Python' },
-  { value: 'java', label: 'Java' },
+  { value: 'java', label: 'Java (server runner required)' },
 ];
-
-function normalizeJudgeOutput(data) {
-  const results = Array.isArray(data?.results) ? data.results : [];
-  const totalTests =
-    typeof data?.totalTests === 'number' ? data.totalTests : results.length;
-  const passedTests =
-    typeof data?.passedTests === 'number'
-      ? data.passedTests
-      : results.filter((r) => r.passed).length;
-  const failedTestCases = Array.isArray(data?.failedTests)
-    ? data.failedTests
-    : results.filter((r) => !r.passed);
-
-  return {
-    ...data,
-    mode: data?.mode || 'submit',
-    success: data?.success !== false && !data?.error,
-    passedTests,
-    totalTests,
-    failedCount:
-      typeof data?.failedCount === 'number'
-        ? data.failedCount
-        : Math.max(0, totalTests - passedTests),
-    failedTests: failedTestCases,
-    results,
-    allPassed:
-      data?.allPassed === true ||
-      (totalTests > 0 && passedTests === totalTests),
-    score:
-      typeof data?.score === 'number'
-        ? data.score
-        : totalTests > 0
-          ? (passedTests / totalTests) * 100
-          : 0,
-  };
-}
 
 const CodeEditor = ({ problem, onSubmit }) => {
   const [code, setCode] = useState('');
@@ -106,42 +76,22 @@ const CodeEditor = ({ problem, onSubmit }) => {
     setOutput({ mode: 'run', pending: true, stdout: '', stderr: '' });
 
     try {
-      const payload = {
+      if (!supportsBrowserExecution(language)) {
+        setOutput({
+          ...unsupportedBrowserExecutionResult(language, 'run'),
+          input: sampleInput,
+        });
+        return;
+      }
+
+      const result = await runCodeInBrowser({
         language,
         code,
         mode: 'run',
         input: sampleInput,
         testCases: sampleInput !== null ? [{ input: sampleInput }] : [],
         timeout: 3000,
-      };
-
-      console.log('🚀 Run Code payload:', payload);
-
-      const response = await fetch(`${API_BASE}/code/execute`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
       });
-
-      const result = await response.json();
-      console.log('✅ Run Code result:', result);
-
-      if (!response.ok) {
-        const detail =
-          result.errors?.join?.('; ') ||
-          result.error ||
-          result.message ||
-          `HTTP ${response.status}`;
-        setOutput({
-          success: false,
-          mode: 'run',
-          error: detail,
-          stderr: result.stderr || detail,
-          stdout: result.stdout || '',
-          input: sampleInput,
-        });
-        return;
-      }
 
       setOutput({ ...result, mode: 'run', input: result.input ?? sampleInput });
     } catch (error) {
@@ -176,27 +126,50 @@ const CodeEditor = ({ problem, onSubmit }) => {
     setOutput({ mode: 'submit', pending: true, passedTests: 0, totalTests: problem.testCases?.length || 0, results: [] });
 
     try {
+      if (!supportsBrowserExecution(language)) {
+        setOutput(unsupportedBrowserExecutionResult(language, 'submit'));
+        return;
+      }
+
+      const result = normalizeJudgeOutput(
+        await runCodeInBrowser({
+          language,
+          code,
+          mode: 'submit',
+          testCases: problem.testCases || [],
+          timeout: 5000,
+        }),
+        'submit'
+      );
+
       const payload = {
         language,
-        code,
         studentId: localStorage.getItem('studentId') || 'anonymous',
+        result: {
+          passedTests: result.passedTests,
+          totalTests: result.totalTests,
+          failedCount: result.failedCount,
+          score: result.score,
+          allPassed: result.allPassed,
+          executionMode: result.executionMode,
+        },
       };
 
       console.log('📤 Submit payload:', { problemId: problem.id, ...payload });
 
-      const response = await fetch(`${API_BASE}/problems/${problem.id}/submit`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      const raw = await response.json();
-      console.log('📥 Submit response:', raw);
-
-      const result = normalizeJudgeOutput({ ...raw, mode: 'submit' });
       setOutput(result);
 
-      if (onSubmit && response.ok) {
+      try {
+        await fetch(`${API_BASE}/problems/${problem.id}/browser-submit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+      } catch (recordError) {
+        console.warn('Problem submission was graded locally but not recorded:', recordError);
+      }
+
+      if (onSubmit) {
         onSubmit(result);
       }
     } catch (error) {
