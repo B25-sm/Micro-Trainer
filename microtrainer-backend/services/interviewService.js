@@ -39,6 +39,27 @@ function cleanJSON(raw) {
     .trim();
 }
 
+function isBlankAnswer(answer) {
+  return !answer || !String(answer).trim();
+}
+
+/** Same policy as guided-course quiz: code expected only when the question asks for it */
+function questionRequiresCode(question) {
+  const q = String(question || "").toLowerCase();
+  return /\b(write|show\s*(me\s*)?(the\s*)?code|syntax|implement|code\s+example|snippet|function\s+that|program|class\s+that)\b/i.test(
+    q
+  );
+}
+
+function answerIncludesCode(answer) {
+  const a = String(answer || "");
+  return (
+    /```[\s\S]*?```/.test(a) ||
+    /[{}();]/.test(a) ||
+    /\b(function|const|let|var|=>|def |class |import |public |#include)\b/i.test(a)
+  );
+}
+
 
 // =======================================================
 // 🔹 Evaluate Answer (WITH RETRY LOGIC)
@@ -57,39 +78,38 @@ ${question}
 Student Answer:
 ${answer}
 
-Evaluate based on:
+Score MEANING only — same fairness as the Learn session quiz.
 
 1. Core Understanding (70%) - Did they get the main concept right?
-2. Practical Knowledge (20%) - Did they mention real-world usage or example?
-3. Clarity (10%) - Was the explanation clear?
+2. Practical Knowledge (20%) - Real-world usage or example (only if relevant to the question)
+3. Clarity (10%) - Was the explanation clear enough to understand?
 
-SPECIAL RULES FOR CODE/SYNTAX QUESTIONS:
-- If question asks for "Write", "Show me code", "Syntax" → Student MUST provide code
-- If they provide working code/syntax → Give high score (8-10)
-- If they explain without code when code was asked → Penalize (max 5/10)
-- If code has minor syntax errors but logic is correct → Be lenient (7-8/10)
+CRITICAL — NEVER score by length:
+- NEVER use word count, sentence count, or character count
+- A short answer with correct meaning = 9-10/10
+- A long answer with wrong or vague meaning = 0-4/10
+- "Too short" is NOT a valid reason to lower score unless the answer is empty
 
-SCORING RULES - BE LENIENT:
-- If answer is 90% correct → Give 9-10/10
-- If answer covers main concept well → Give 7-8/10
-- If answer is partially correct → Give 5-6/10
-- If answer is vague or wrong → Give 0-4/10
+CODE/SYNTAX QUESTIONS ONLY (when the question asks to write/show code or syntax):
+- Student should include code or concrete syntax
+- Working or mostly-correct code → 8-10/10
+- Explains concept but no code when code was asked → max 5/10
+- Minor syntax errors with correct logic → 7-8/10
+
+SCORING:
+- 9-10: meaning clearly correct
+- 6-8: mostly right, small gap
+- 0-4: wrong, unrelated, or empty — NOT because the answer was brief
 
 DO NOT penalize for:
-- Minor wording differences
-- Missing small details
-- Different explanation style
-- Not using exact technical terms
-- Minor syntax errors (if logic is correct)
+- Brief answers, bullet points, one-liners
+- Minor wording differences, missing small details
+- Different explanation style, informal language
 
 PENALIZE ONLY for:
-- Completely wrong concept
-- No real understanding
-- Totally vague answer
-- No practical knowledge
-- No code when code was explicitly asked
-
-Be FAIR and LENIENT. Focus on understanding, not perfection.
+- Wrong or unrelated meaning
+- Empty or non-answer
+- No code when the question explicitly required code/syntax
 
 Respond ONLY in JSON format:
 {
@@ -108,20 +128,12 @@ ${INTERVIEW_PERSONA}
 
 You are evaluating answers during an interview.
 
-CRITICAL RULES - BE LENIENT:
-- If student gets 90% of the concept right → Score 9-10
-- Focus on UNDERSTANDING, not perfection
-- Don't penalize for minor wording differences
-- Don't penalize for missing small details
-- Value practical knowledge over textbook definitions
+CRITICAL — same as Learn quiz grading:
+- Score MEANING only; never length or word count
+- Brief and correct beats long and wrong
+- Be strict only when meaning is wrong, empty, or code was required but missing
 
-BE STRICT ONLY when:
-- Answer is completely wrong
-- Shows no understanding
-- Totally vague or irrelevant
-
-Remember: Real interviews are about understanding, not memorization.
-Be FAIR. Be LENIENT. Reward good understanding.
+Real interviews reward understanding, not essay length.
 `;
 
       const response = await axios.post(
@@ -156,19 +168,22 @@ Be FAIR. Be LENIENT. Reward good understanding.
         parsed = getFallback("Invalid JSON from AI");
       }
 
-      // =======================================================
-      // 🔥 EXTRA STRICT VALIDATION (NEW)
-      // =======================================================
-
       if (!parsed.score && parsed.score !== 0) {
         parsed.score = 0;
       }
 
-      // Penalize if answer too short or vague
-      if (!answer || answer.length < 20) {
-        parsed.score = Math.min(parsed.score, 3);
-        parsed.mistakes = "Answer too short or unclear";
-        parsed.verdict = "Not Selected";
+      // Empty answer only — do not penalize short correct answers
+      if (isBlankAnswer(answer)) {
+        parsed.score = 0;
+        parsed.mistakes = "No answer provided";
+      } else if (
+        questionRequiresCode(question) &&
+        !answerIncludesCode(answer)
+      ) {
+        parsed.score = Math.min(Number(parsed.score) || 0, 5);
+        parsed.mistakes =
+          parsed.mistakes ||
+          "Question asked for code or syntax; include a concrete example";
       }
 
       // =======================================================

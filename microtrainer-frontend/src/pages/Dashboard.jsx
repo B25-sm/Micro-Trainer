@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getAnalytics, getMemory } from "../api";
 import { motion } from "framer-motion";
 import SyncRequiredBanner from "../components/SyncRequiredBanner";
+import InterviewHistoryPanel from "../components/InterviewHistoryPanel";
 import { getStudentId } from "../utils/studentAuth";
 import { isTrainerSession } from "../utils/trainerAuth";
 import {
@@ -279,6 +280,11 @@ const Dashboard = () => {
               type="warning"
             />
           </div>
+
+          <InterviewHistoryPanel
+            studentId={getStudentId()}
+            title="Your interview history"
+          />
         </div>
       </main>
     </div>

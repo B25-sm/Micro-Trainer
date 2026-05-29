@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import {
   startInterview,
   sendAnswer,
+  abandonInterview,
   API_BASE,
   createAnticheatSession,
   logAnticheatEvent,
@@ -16,6 +17,7 @@ import CircularTimer from "../components/CircularTimer";
 import WebcamProctor from "../components/WebcamProctor";
 
 const Interview = () => {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [session, setSession] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState(null);
@@ -32,8 +34,12 @@ const Interview = () => {
   // 🔒 ANTI-CHEAT STATE
   const [suspicionScore, setSuspicionScore] = useState(0);
   const [warningCount, setWarningCount] = useState(0);
+  const [proctorBanner, setProctorBanner] = useState(null);
   const [isDismissed, setIsDismissed] = useState(false);
+  const [isAbandoned, setIsAbandoned] = useState(false);
+  const [abandonSummary, setAbandonSummary] = useState(null);
   const [studentId] = useState(() => localStorage.getItem("studentId") || "");
+  const isEndingRef = useRef(false);
 
   const postAnticheat = async (fn, payload) => {
     const sid = session?.sessionId;
@@ -77,15 +83,19 @@ const Interview = () => {
   const handleWebcamViolation = (type, points, reason) => {
     addSuspicion(points, reason);
 
-    // Count toward ⚠️ / 3 (WebcamProctor throttles repeats per violation type).
-    // "no_face_detected" is suspicion-only — lighting/model flicker caused unfair dismissals.
     const warnsOnUi =
       type === "multiple_faces" ||
       type === "camera_denied" ||
       type === "head_turned" ||
-      type === "looking_away";
+      type === "looking_away" ||
+      type === "no_face_detected";
 
     if (warnsOnUi) {
+      const bannerText = `${reason} (${warningCount + 1}/3)`;
+      setProctorBanner(bannerText);
+      window.setTimeout(() => {
+        setProctorBanner((prev) => (prev === bannerText ? null : prev));
+      }, 8000);
       incrementWarning(reason);
     }
 
@@ -141,6 +151,49 @@ const Interview = () => {
     }
   };
 
+  const exitFullscreenSafe = async () => {
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      }
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const handleEndInterview = async () => {
+    if (!session || session.completed || isDismissed || isAbandoned || loading) {
+      return;
+    }
+    const ok = window.confirm(
+      "End this interview?\n\nYour progress will be saved. You can review it under Dashboard → Interview history."
+    );
+    if (!ok) return;
+
+    isEndingRef.current = true;
+    setLoading(true);
+    try {
+      logEvent("interview_abandoned_by_student");
+      const res = await abandonInterview({
+        sessionId: session.sessionId,
+        reason: "Student chose to end interview",
+      });
+      await exitFullscreenSafe();
+      setAbandonSummary({
+        partial: res.data?.partial,
+        questionsAnswered: res.data?.questionsAnswered ?? 0,
+        totalQuestions: res.data?.totalQuestions ?? 20,
+      });
+      setIsAbandoned(true);
+      setSession((prev) => ({ ...prev, completed: true }));
+    } catch (err) {
+      isEndingRef.current = false;
+      alert(err?.error || err?.message || "Could not end interview. Try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // 🔒 ANTI-CHEAT: Dismiss Interview
   const dismissInterview = (reason) => {
     setIsDismissed(true);
@@ -157,7 +210,12 @@ const Interview = () => {
     const handleFullscreenChange = () => {
       const isNowFullscreen = !!document.fullscreenElement;
 
-      if (!isNowFullscreen && session && !session.completed) {
+      if (
+        !isNowFullscreen &&
+        session &&
+        !session.completed &&
+        !isEndingRef.current
+      ) {
         addSuspicion(20, "Exited fullscreen");
         incrementWarning("You exited fullscreen mode!");
       }
@@ -502,6 +560,58 @@ IMPORTANT:
     );
   }
 
+  // Student ended interview early
+  if (isAbandoned) {
+    const avg = abandonSummary?.partial?.averageScore;
+    const answered = abandonSummary?.questionsAnswered ?? 0;
+    const total = abandonSummary?.totalQuestions ?? 20;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-[#202124] p-6">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="max-w-md w-full rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] shadow-lg p-8 text-center"
+        >
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            Interview ended
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            You stopped this session. Progress was saved to your interview history.
+          </p>
+          <div className="rounded-lg bg-gray-50 dark:bg-[#202124] p-4 mb-6 text-sm text-gray-700 dark:text-gray-300 space-y-1">
+            <p>
+              Questions answered:{" "}
+              <span className="font-medium">
+                {answered}/{total}
+              </span>
+            </p>
+            {avg != null && Number(answered) > 0 && (
+              <p>
+                Partial score: <span className="font-medium">{avg}/10</span>
+              </p>
+            )}
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              type="button"
+              onClick={() => navigate("/dashboard")}
+              className="px-5 py-2.5 rounded-lg bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 text-sm font-medium hover:opacity-90"
+            >
+              View history
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              className="px-5 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
+            >
+              Back to home
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
   // 🔒 DISMISSED SCREEN
   if (isDismissed) {
     return (
@@ -542,38 +652,66 @@ IMPORTANT:
       
       {/* 🔒 WEBCAM PROCTORING */}
       <WebcamProctor 
-        isActive={session && !session.completed && !isDismissed}
+        isActive={session && !session.completed && !isDismissed && !isAbandoned}
         onViolation={handleWebcamViolation}
       />
 
+      {proctorBanner && (
+        <div
+          role="alert"
+          className="flex-shrink-0 px-4 py-3 bg-amber-600 text-white text-sm font-medium border-b border-amber-700 dark:bg-amber-700 dark:border-amber-800"
+        >
+          Warning: {proctorBanner}
+        </div>
+      )}
+
       {/* Unified Header with Interview Info */}
-      <header className="flex-shrink-0 px-6 py-3 flex items-center justify-between border-b border-gray-200 bg-white">
+      <header className="flex-shrink-0 px-6 py-3 flex items-center justify-between border-b border-gray-200 bg-white dark:bg-[#292a2d] dark:border-gray-700">
         <div className="flex items-center gap-8">
           <button
-            onClick={() => window.location.href = "/"}
-            className="text-xl font-semibold text-gray-800 hover:text-blue-500 transition"
+            type="button"
+            onClick={() => {
+              if (session && !session.completed) {
+                handleEndInterview();
+              } else {
+                navigate("/");
+              }
+            }}
+            className="text-xl font-semibold text-gray-800 dark:text-gray-100 hover:text-blue-500 dark:hover:text-blue-400 transition"
           >
             MicroTrainer
           </button>
           <div>
-            <h1 className="text-lg font-normal text-gray-800">{subject} Interview</h1>
-            <p className="text-xs text-gray-500">
+            <h1 className="text-lg font-normal text-gray-800 dark:text-gray-100">
+              {subject} Interview
+            </h1>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               Question {session.currentQuestion || 1} of {session.totalQuestions || 20}
             </p>
+            {session && !session.completed && (
+              <button
+                type="button"
+                onClick={handleEndInterview}
+                disabled={loading}
+                className="mt-2 px-3 py-1.5 text-xs font-semibold rounded-lg border border-red-300 dark:border-red-800 text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-950/70 disabled:opacity-50"
+              >
+                End interview
+              </button>
+            )}
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 mr-52 sm:mr-56">
           {/* 🔒 ANTI-CHEAT INDICATORS */}
           <div className="flex items-center gap-2 text-xs">
-            <div className={`px-2 py-1 rounded ${warningCount === 0 ? 'bg-green-100 text-green-700' : warningCount === 1 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>
+            <div className={`px-2 py-1 rounded ${warningCount === 0 ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' : warningCount === 1 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300' : 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'}`}>
               ⚠️ {warningCount}/3
             </div>
-            <div className="px-2 py-1 rounded bg-gray-100 text-gray-700">
+            <div className="px-2 py-1 rounded bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
               Score: {suspicionScore}
             </div>
           </div>
           {session && !session.completed && (
-            <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
+            <div className="flex items-center gap-2 pl-2 border-l border-gray-200 dark:border-gray-700">
               <div className="flex flex-col items-end leading-tight">
                 <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-500">
                   {questionDifficulty}
@@ -625,6 +763,21 @@ IMPORTANT:
       {/* Composer pinned to bottom of interview panel (not below viewport) */}
       <div className="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] px-4 sm:px-6 py-3">
         <div className="max-w-3xl mx-auto">
+          {session && !session.completed && (
+            <div className="flex items-center justify-between gap-3 mb-2">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Need to leave? End the interview — progress is saved to your history.
+              </p>
+              <button
+                type="button"
+                onClick={handleEndInterview}
+                disabled={loading}
+                className="flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-lg border border-red-300 dark:border-red-800 text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-950/70 disabled:opacity-50"
+              >
+                End interview
+              </button>
+            </div>
+          )}
           <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#202124] shadow-sm transition-shadow">
             <div className="flex items-end gap-3 px-5 py-3">
               <textarea

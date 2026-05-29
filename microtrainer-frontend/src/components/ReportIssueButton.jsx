@@ -124,11 +124,19 @@ export default function ReportIssueButton() {
             />
             <button
               type="submit"
-              disabled={isSending}
+              disabled={isSending || !message.trim()}
               className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-60 transition shadow-sm"
             >
               <Send className="w-4 h-4" />
               {isSending ? "Sending…" : "Send report"}
+            </button>
+            <button
+              type="button"
+              disabled={isSending}
+              onClick={() => submit("(quick report — no extra details)")}
+              className="w-full py-2 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
+            >
+              Send without details (page info only)
             </button>
           </form>
         </div>
@@ -137,9 +145,9 @@ export default function ReportIssueButton() {
       <div className="flex items-center gap-0 rounded-2xl border border-slate-200/90 dark:border-slate-700/90 bg-white dark:bg-slate-900 shadow-xl shadow-slate-900/8 dark:shadow-black/30 overflow-hidden">
         <button
           type="button"
-          onClick={() => submit("")}
+          onClick={() => setOpen(true)}
           disabled={isSending}
-          title="Tell us if something feels broken"
+          title="Open form to report a problem"
           className="flex items-center gap-2.5 pl-4 pr-3 py-3 text-sm font-semibold text-slate-800 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-60 transition"
         >
           <span className="flex items-center justify-center w-8 h-8 rounded-xl bg-indigo-600 text-white shadow-sm">

@@ -5,6 +5,8 @@ const { generateFollowUp } = require("./adaptiveFollowupService"); // 🔥 ADAPT
 const { syncInterviewToCentral } = require("./centralPlatformSync"); // 🔄 SYNC
 
 const sessions = {};
+const { recordInterviewSession } = require("./interviewHistoryService");
+const antiCheatService = require("./antiCheatService");
 
 function secondsForDifficulty(difficulty) {
   const d = String(difficulty || "easy").toLowerCase();
@@ -41,6 +43,7 @@ async function createSession(subject, totalQuestions = 20, studentId) {
   sessions[sessionId] = {
     studentId,
     subject,
+    startedAt: new Date().toISOString(),
     currentQuestion: 0,
     totalQuestions,
     history: [
@@ -132,6 +135,26 @@ async function submitAnswer(sessionId, answer) {
     );
 
     // 🔄 SYNC TO CENTRAL PLATFORM (NEW)
+    const anticheat = antiCheatService.getSession(sessionId);
+    if (anticheat) {
+      antiCheatService.completeSession(sessionId);
+    }
+
+    recordInterviewSession({
+      sessionId,
+      studentId: session.studentId,
+      subject: session.subject,
+      status: "completed",
+      history: session.history,
+      final,
+      anticheat,
+      startedAt: session.startedAt,
+    });
+
+    const durationMs = session.startedAt
+      ? Date.now() - new Date(session.startedAt).getTime()
+      : 0;
+
     const syncData = {
       studentId: session.studentId,
       sessionId: sessionId,
@@ -139,16 +162,15 @@ async function submitAnswer(sessionId, answer) {
       history: session.history,
       final: final,
       coachReport: coachReport,
-      warningCount: 0, // TODO: Get from anti-cheat
-      suspicionScore: 0, // TODO: Get from anti-cheat
-      isDismissed: false, // TODO: Get from anti-cheat
+      warningCount: anticheat?.warningCount ?? 0,
+      suspicionScore: anticheat?.suspicionScore ?? 0,
+      isDismissed: false,
       totalQuestions: session.totalQuestions,
       completionRate: 100,
-      duration: 0 // TODO: Calculate duration
+      duration: Math.round(durationMs / 1000),
     };
-    
-    // Sync in background (don't wait)
-    syncInterviewToCentral(syncData).catch(err => {
+
+    syncInterviewToCentral(syncData).catch((err) => {
       console.error("Background sync error:", err.message);
     });
 
@@ -226,47 +248,82 @@ async function submitAnswer(sessionId, answer) {
 // 🔹 Final Evaluation
 // =======================================================
 function calculateFinal(history) {
-  const valid = history.filter(h => h.score !== undefined);
+  const valid = history.filter(
+    (h) => h.score !== undefined && h.answer != null && h.answer !== ""
+  );
 
-  const total = valid.reduce((sum, q) => sum + q.score, 0);
+  if (valid.length === 0) {
+    return {
+      averageScore: "0.00",
+      totalQuestions: 0,
+      verdict: "Not Selected",
+    };
+  }
+
+  const total = valid.reduce((sum, q) => sum + Number(q.score || 0), 0);
   const avg = total / valid.length;
 
-  const communicationScores = valid.map(q =>
-    q.communication === "Good" ? 3 :
-    q.communication === "Average" ? 2 : 1
-  );
-
-  const technicalScores = valid.map(q =>
-    q.technical === "Good" ? 3 :
-    q.technical === "Average" ? 2 : 1
-  );
-
-  const avgComm = communicationScores.reduce((a, b) => a + b, 0) / valid.length;
-  const avgTech = technicalScores.reduce((a, b) => a + b, 0) / valid.length;
-
-  let verdict;
-
-  if (avg >= 7 && avgTech >= 2.5) {
-    verdict = "Strongly Selected";
-  } else if (avg >= 6) {
-    verdict = "Selected";
-  } else if (avg >= 4) {
-    verdict = "Borderline";
-  } else {
-    verdict = "Not Selected";
-  }
+  const { verdictFromAverage } = require("./interviewHistoryService");
+  const verdict = verdictFromAverage(Number(avg.toFixed(2)));
 
   return {
     averageScore: avg.toFixed(2),
-    communicationScore: avgComm.toFixed(2),
-    technicalScore: avgTech.toFixed(2),
     totalQuestions: valid.length,
-    verdict
+    verdict,
   };
 }
 
+function getActiveSession(sessionId) {
+  return sessions[sessionId] || null;
+}
+
+function removeActiveSession(sessionId) {
+  delete sessions[sessionId];
+}
+
+function abandonSession(sessionId, reason = "Student ended interview") {
+  const session = sessions[sessionId];
+  if (!session) {
+    throw new Error("Invalid session ID");
+  }
+
+  const anticheat = antiCheatService.getSession(sessionId);
+  if (anticheat) {
+    antiCheatService.abandonSession(sessionId, reason);
+  }
+
+  const partial = calculateFinal(session.history);
+
+  recordInterviewSession({
+    sessionId,
+    studentId: session.studentId,
+    subject: session.subject,
+    status: "abandoned",
+    history: session.history,
+    final: partial.totalQuestions > 0 ? partial : null,
+    anticheat,
+    dismissalReason: reason,
+    startedAt: session.startedAt,
+  });
+
+  removeActiveSession(sessionId);
+
+  const questionsAnswered = session.history.filter(
+    (h) => h.answer != null && h.answer !== ""
+  ).length;
+
+  return {
+    abandoned: true,
+    questionsAnswered,
+    totalQuestions: session.totalQuestions,
+    partial,
+  };
+}
 
 module.exports = {
   createSession,
-  submitAnswer
+  submitAnswer,
+  getActiveSession,
+  removeActiveSession,
+  abandonSession,
 };

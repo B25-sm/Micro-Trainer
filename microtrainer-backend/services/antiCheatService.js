@@ -114,6 +114,25 @@ function dismissSession(sessionId, reason) {
 }
 
 // =======================================================
+// 🔹 Abandon Session (student ended early — not a violation)
+// =======================================================
+function abandonSession(sessionId, reason = "Student ended interview") {
+  const session = antiCheatSessions[sessionId];
+
+  if (!session) {
+    console.error("❌ Session not found:", sessionId);
+    return;
+  }
+
+  session.status = "abandoned";
+  session.endTime = new Date().toISOString();
+  session.abandonReason = reason;
+
+  logEvent(sessionId, "interview_abandoned", { reason });
+  console.log(`🛑 Session abandoned [${sessionId}]:`, reason);
+}
+
+// =======================================================
 // 🔹 Complete Session
 // =======================================================
 function completeSession(sessionId) {
@@ -173,6 +192,7 @@ module.exports = {
   updateSuspicionScore,
   incrementWarning,
   dismissSession,
+  abandonSession,
   completeSession,
   getSession,
   getAllSessions,

@@ -560,6 +560,25 @@ app.post("/interview/answer", async (req, res) => {
   }
 });
 
+app.post("/interview/abandon", async (req, res) => {
+  try {
+    const { sessionId, reason } = req.body;
+    if (!sessionId) {
+      return res.status(400).json({ error: "sessionId required" });
+    }
+    const { abandonSession } = require("./services/interviewSessionService");
+    const result = abandonSession(
+      sessionId,
+      reason || "Student ended interview"
+    );
+    return res.json(result);
+  } catch (error) {
+    console.error("ABANDON INTERVIEW ERROR:", error.message);
+    const status = error.message === "Invalid session ID" ? 404 : 500;
+    res.status(status).json({ error: error.message || "Failed to end interview" });
+  }
+});
+
 
 // =======================================================
 // 🔹 STUDENT APIs
@@ -610,6 +629,32 @@ app.get("/student/:studentId/analytics", studentSelfOrTrainer, async (req, res) 
 });
 
 // Memory (AI adaptation + dashboard stats)
+app.get("/student/:studentId/interviews", studentSelfOrTrainer, (req, res) => {
+  try {
+    const { getInterviewsByStudent } = require("./services/interviewHistoryService");
+    const limit = Math.min(parseInt(req.query.limit, 10) || 100, 200);
+    const interviews = getInterviewsByStudent(req.params.studentId, { limit });
+    res.json({ interviews, count: interviews.length });
+  } catch (error) {
+    console.error("GET INTERVIEW HISTORY ERROR:", error.message);
+    res.status(500).json({ error: "Failed to load interview history" });
+  }
+});
+
+app.get("/student/:studentId/interviews/:sessionId", studentSelfOrTrainer, (req, res) => {
+  try {
+    const { getInterviewBySessionId } = require("./services/interviewHistoryService");
+    const record = getInterviewBySessionId(req.params.sessionId);
+    if (!record || record.studentId !== req.params.studentId) {
+      return res.status(404).json({ error: "Interview not found" });
+    }
+    res.json(record);
+  } catch (error) {
+    console.error("GET INTERVIEW DETAIL ERROR:", error.message);
+    res.status(500).json({ error: "Failed to load interview" });
+  }
+});
+
 app.get("/student/:studentId/memory", studentSelfOrTrainer, async (req, res) => {
   try {
     const memory =
@@ -1162,12 +1207,38 @@ app.post("/anticheat/warning", (req, res) => {
 app.post("/anticheat/dismiss", (req, res) => {
   try {
     const { sessionId, reason } = req.body;
-    
+
     if (!sessionId) {
       return res.status(400).json({ error: "sessionId required" });
     }
-    
+
     antiCheatService.dismissSession(sessionId, reason || "");
+
+    const {
+      getActiveSession,
+      removeActiveSession,
+    } = require("./services/interviewSessionService");
+    const { recordInterviewSession } = require("./services/interviewHistoryService");
+
+    const anticheat = antiCheatService.getSession(sessionId);
+    const interview = getActiveSession(sessionId);
+
+    if (anticheat) {
+      recordInterviewSession({
+        sessionId,
+        studentId: anticheat.studentId,
+        subject: anticheat.subject,
+        status: "dismissed",
+        history: interview?.history || [],
+        anticheat,
+        dismissalReason: reason || anticheat.dismissalReason,
+        startedAt: interview?.startedAt || anticheat.startTime,
+      });
+      if (interview) {
+        removeActiveSession(sessionId);
+      }
+    }
+
     return res.json({ success: true });
   } catch (error) {
     console.error("DISMISS SESSION ERROR:", error.message);

@@ -4,6 +4,7 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import { ArrowLeft, TrendingUp, TrendingDown, Minus, Award, AlertCircle, CheckCircle } from "lucide-react";
 import { getTrainerHeaders } from "../utils/trainerAuth";
+import InterviewHistoryPanel from "../components/InterviewHistoryPanel";
 
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
@@ -69,8 +70,8 @@ const StudentDetailView = () => {
 
   const getScoreColor = (score) => {
     const numScore = parseFloat(score);
-    if (numScore >= 80) return "text-green-600";
-    if (numScore >= 60) return "text-yellow-600";
+    if (numScore >= 7) return "text-green-600";
+    if (numScore >= 5) return "text-yellow-600";
     return "text-red-600";
   };
 
@@ -233,11 +234,12 @@ const StudentDetailView = () => {
       </div>
 
       {/* SUBJECT SCORES */}
-      {profile?.technologyInterviews && profile.technologyInterviews.length > 0 && (
+      {profile?.technologyScores &&
+        Object.keys(profile.technologyScores).length > 0 && (
         <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] p-6 mb-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">Subject Performance</h2>
+          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Subject Performance</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {profile.technologyInterviews.map((tech, index) => (
+            {Object.entries(profile.technologyScores).map(([subject, tech], index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -245,11 +247,11 @@ const StudentDetailView = () => {
                 transition={{ delay: index * 0.05 }}
                 className="border border-gray-200 rounded-xl p-4"
               >
-                <div className="text-sm text-gray-500 mb-1 capitalize">{tech.subject}</div>
-                <div className={`text-2xl font-bold ${getScoreColor(tech.averageScore)}`}>
-                  {tech.averageScore}
+                <div className="text-sm text-gray-500 mb-1 capitalize">{subject}</div>
+                <div className={`text-2xl font-bold ${getScoreColor(tech.average)}`}>
+                  {tech.average}
                 </div>
-                <div className="text-xs text-gray-400">{tech.count} interviews</div>
+                <div className="text-xs text-gray-400">{tech.count} completed interviews</div>
               </motion.div>
             ))}
           </div>
@@ -388,6 +390,13 @@ const StudentDetailView = () => {
           </div>
         </div>
       )}
+
+      <div className="mb-6">
+        <InterviewHistoryPanel
+          studentId={studentId}
+          title="Interview history"
+        />
+      </div>
 
       {/* RECOMMENDATIONS */}
       <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#292a2d] p-6">

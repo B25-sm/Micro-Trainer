@@ -43,6 +43,9 @@ export const startInterview = (data) =>
 export const sendAnswer = (data) =>
   API.post("/interview/answer", data);
 
+export const abandonInterview = (data) =>
+  API.post("/interview/abandon", data);
+
 
 // =======================================================
 // 🔹 AI TEACHING MODE
@@ -75,6 +78,16 @@ export const getAnalytics = (id) =>
 // 🔥 AI memory (adaptive system)
 export const getMemory = (id) =>
   API.get(`/student/${id}/memory`, { headers: getStudentApiHeaders(id) });
+
+export const getInterviewHistory = (studentId) =>
+  API.get(`/student/${studentId}/interviews`, {
+    headers: getStudentApiHeaders(studentId),
+  });
+
+export const getInterviewHistoryDetail = (studentId, sessionId) =>
+  API.get(`/student/${studentId}/interviews/${sessionId}`, {
+    headers: getStudentApiHeaders(studentId),
+  });
 
 export const getCertificateEligibility = (id) =>
   API.get(`/api/certificate/eligibility/${id}`, {

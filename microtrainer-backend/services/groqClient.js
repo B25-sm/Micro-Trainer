@@ -30,7 +30,7 @@ function formatGroqError(err) {
     const status = err.response.status;
     const msg = err.response.data?.error?.message || err.message;
     if (status === 401) {
-      return "Invalid GROQ API key. Check microtrainer-backend/.env and restart.";
+      return "Invalid GROQ API key. Add GROQ_API_KEY to your backend host (Render → Environment), then redeploy. Local: microtrainer-backend/.env";
     }
     if (status === 429) {
       const waitSec = parseRetryAfterMs(err);
@@ -65,7 +65,7 @@ async function callGroq(payload, retries = 5) {
     const key = loadGroqKey();
     if (!key) {
       throw new Error(
-        "GROQ_API_KEY is missing. Add it to microtrainer-backend/.env and restart."
+        "GROQ_API_KEY is missing. Set it on your backend host (e.g. Render Environment) or in microtrainer-backend/.env for local dev, then restart."
       );
     }
 
