@@ -67,13 +67,13 @@ function SectionCard({ icon: Icon, title, children }) {
 function SettingRow({ label, description, children }) {
   return (
     <div className="flex items-center justify-between gap-4 py-3 border-b border-gray-100 dark:border-gray-700/80 last:border-0 last:pb-0 first:pt-0">
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1 pr-2">
         <div className="font-medium text-gray-900 dark:text-gray-100">{label}</div>
         {description && (
           <div className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{description}</div>
         )}
       </div>
-      {children}
+      <div className="relative z-10 shrink-0">{children}</div>
     </div>
   );
 }
@@ -94,8 +94,11 @@ export default function NotificationSettings() {
 
   const [preferences, setPreferences] = useState(DEFAULT_PREFERENCES);
   const [loading, setLoading] = useState(true);
-  const [saveStatus, setSaveStatus] = useState("idle"); // idle | saving | saved | error
-  const skipAutoSave = useRef(true);
+  const [saveStatus, setSaveStatus] = useState("idle");
+  const preferencesRef = useRef(preferences);
+  const readyForAutoSave = useRef(false);
+
+  preferencesRef.current = preferences;
 
   const updatePreferences = useCallback((updater) => {
     setPreferences((prev) =>
@@ -103,89 +106,95 @@ export default function NotificationSettings() {
     );
   }, []);
 
-  const savePreferences = useCallback(
-    async (prefs = preferences) => {
-      if (!hasUserKey) return false;
-      setSaveStatus("saving");
-      try {
-        const response = await fetch(
-          `${API_URL}/api/notifications/preferences/${encodeURIComponent(preferenceUserId)}`,
-          {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(prefs),
-          }
-        );
-        if (!response.ok) throw new Error("Save failed");
-        setSaveStatus("saved");
-        setTimeout(() => setSaveStatus("idle"), 2500);
-        return true;
-      } catch (error) {
-        console.error("Error saving preferences:", error);
-        setSaveStatus("error");
-        return false;
-      }
-    },
-    [hasUserKey, preferenceUserId, preferences]
-  );
+  const savePreferences = useCallback(async () => {
+    if (!hasUserKey) return false;
+    const prefs = preferencesRef.current;
+    setSaveStatus("saving");
+    try {
+      const response = await fetch(
+        `${API_URL}/api/notifications/preferences/${encodeURIComponent(preferenceUserId)}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(prefs),
+        }
+      );
+      if (!response.ok) throw new Error("Save failed");
+      setSaveStatus("saved");
+      setTimeout(() => setSaveStatus("idle"), 2500);
+      return true;
+    } catch (error) {
+      console.error("Error saving preferences:", error);
+      setSaveStatus("error");
+      return false;
+    }
+  }, [hasUserKey, preferenceUserId]);
 
   useEffect(() => {
+    readyForAutoSave.current = false;
+    const controller = new AbortController();
+
     async function load() {
       if (!hasUserKey) {
         setLoading(false);
-        skipAutoSave.current = false;
+        readyForAutoSave.current = true;
         return;
       }
       try {
         const response = await fetch(
-          `${API_URL}/api/notifications/preferences/${encodeURIComponent(preferenceUserId)}`
+          `${API_URL}/api/notifications/preferences/${encodeURIComponent(preferenceUserId)}`,
+          { signal: controller.signal }
         );
         if (response.ok) {
           const data = await response.json();
-          setPreferences(mergePreferences(data));
+          if (!controller.signal.aborted) {
+            setPreferences(mergePreferences(data));
+          }
         }
       } catch (error) {
-        console.error("Error loading preferences:", error);
+        if (error.name !== "AbortError") {
+          console.error("Error loading preferences:", error);
+        }
       } finally {
-        setLoading(false);
-        skipAutoSave.current = false;
+        if (!controller.signal.aborted) {
+          setLoading(false);
+          readyForAutoSave.current = true;
+        }
       }
     }
+
     load();
+    return () => controller.abort();
   }, [hasUserKey, preferenceUserId]);
 
   useEffect(() => {
+    if (!readyForAutoSave.current || loading || !hasUserKey) return;
+    const timer = setTimeout(() => {
+      savePreferences();
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [preferences, loading, hasUserKey, savePreferences]);
+
+  async function handleBrowserNotificationToggle(enabled) {
+    if (pushLoading) return;
+    try {
+      if (enabled) {
+        await requestPermission();
+      } else {
+        await unsubscribe();
+      }
+    } catch (error) {
+      console.error("Browser notification toggle error:", error);
+    }
+  }
+
+  useEffect(() => {
+    if (!readyForAutoSave.current) return;
     updatePreferences((prev) => ({
       ...prev,
       browserNotifications: isSubscribed,
     }));
   }, [isSubscribed, updatePreferences]);
-
-  useEffect(() => {
-    if (skipAutoSave.current || loading || !hasUserKey) return;
-    const timer = setTimeout(() => {
-      savePreferences(preferences);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [preferences, loading, hasUserKey, savePreferences]);
-
-  async function handleBrowserNotificationToggle() {
-    if (isSubscribed) {
-      await unsubscribe();
-    } else {
-      await requestPermission();
-    }
-  }
-
-  function handleNotificationTypeToggle(type) {
-    updatePreferences((prev) => ({
-      ...prev,
-      notificationTypes: {
-        ...prev.notificationTypes,
-        [type]: !prev.notificationTypes[type],
-      },
-    }));
-  }
 
   const notificationTypeOptions = {
     dailyReminders: {
@@ -295,8 +304,8 @@ export default function NotificationSettings() {
           <SettingSwitch
             label="Enable email notifications"
             checked={preferences.emailNotifications}
-            onChange={(on) =>
-              updatePreferences((p) => ({ ...p, emailNotifications: on }))
+            onChange={(enabled) =>
+              updatePreferences((p) => ({ ...p, emailNotifications: enabled }))
             }
           />
         </SettingRow>
@@ -334,7 +343,15 @@ export default function NotificationSettings() {
             <SettingSwitch
               label={label}
               checked={Boolean(preferences.notificationTypes[key])}
-              onChange={() => handleNotificationTypeToggle(key)}
+              onChange={(enabled) =>
+                updatePreferences((prev) => ({
+                  ...prev,
+                  notificationTypes: {
+                    ...prev.notificationTypes,
+                    [key]: enabled,
+                  },
+                }))
+              }
             />
           </SettingRow>
         ))}
@@ -348,8 +365,8 @@ export default function NotificationSettings() {
           <SettingSwitch
             label="Enable quiet hours"
             checked={preferences.quietHoursEnabled}
-            onChange={(on) =>
-              updatePreferences((p) => ({ ...p, quietHoursEnabled: on }))
+            onChange={(enabled) =>
+              updatePreferences((p) => ({ ...p, quietHoursEnabled: enabled }))
             }
           />
         </SettingRow>

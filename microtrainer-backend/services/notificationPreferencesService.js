@@ -73,6 +73,10 @@ function saveNotificationPreferences(studentId, preferences) {
   allPreferences[studentId] = {
     ...DEFAULT_PREFERENCES,
     ...preferences,
+    notificationTypes: {
+      ...DEFAULT_PREFERENCES.notificationTypes,
+      ...(preferences.notificationTypes || {}),
+    },
     updatedAt: new Date().toISOString()
   };
   savePreferences(allPreferences);
