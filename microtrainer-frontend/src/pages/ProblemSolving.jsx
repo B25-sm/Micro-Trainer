@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Code2, Lightbulb, Target, Trophy, ChevronRight } from 'lucide-react';
 import CodeEditor from '../components/CodeEditor';
 import { API_BASE } from '../api.js';
-import { btnPrimary, headingPage, textMuted } from '../lib/ui';
+import { btnPrimary, btnSecondary, headingPage, textMuted, card } from '../lib/ui';
 
 const ProblemSolving = () => {
   const [problems, setProblems] = useState([]);
@@ -80,22 +80,22 @@ const ProblemSolving = () => {
             </div>
 
             {stats && (
-              <div className="bg-white dark:bg-[#292a2d] rounded-lg p-4 border border-gray-200 dark:border-gray-700 shadow-sm">
+              <div className={`${card} p-4`}>
                 <div className="flex gap-6 text-center">
                   <div>
-                    <div className="text-2xl font-bold text-gray-800 dark:text-gray-100">{stats.total}</div>
+                    <div className="text-xl font-medium text-gray-900 dark:text-gray-100 tabular-nums">{stats.total}</div>
                     <div className="text-xs text-gray-500 dark:text-gray-400">Total</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-green-600">{stats.easy}</div>
+                    <div className="text-xl font-medium text-gray-700 dark:text-gray-300 tabular-nums">{stats.easy}</div>
                     <div className="text-xs text-gray-500 dark:text-gray-400">Easy</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-yellow-600">{stats.medium}</div>
+                    <div className="text-xl font-medium text-gray-700 dark:text-gray-300 tabular-nums">{stats.medium}</div>
                     <div className="text-xs text-gray-500 dark:text-gray-400">Medium</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-red-600">{stats.hard}</div>
+                    <div className="text-xl font-medium text-gray-700 dark:text-gray-300 tabular-nums">{stats.hard}</div>
                     <div className="text-xs text-gray-500 dark:text-gray-400">Hard</div>
                   </div>
                 </div>
@@ -109,10 +109,10 @@ const ProblemSolving = () => {
               <button
                 key={level}
                 onClick={() => setDifficulty(level)}
-                className={`px-6 py-2 rounded-lg font-semibold transition-all ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                   difficulty === level
-                    ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-700'
-                    : 'bg-white dark:bg-[#292a2d] text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                    ? 'border border-gray-400 dark:border-gray-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+                    : 'border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50'
                 }`}
               >
                 {level.charAt(0).toUpperCase() + level.slice(1)}
@@ -125,7 +125,7 @@ const ProblemSolving = () => {
               className={`ml-auto ${btnPrimary}`}
             >
               <Trophy className="w-4 h-4" />
-              Random Challenge
+              Random challenge
             </button>
           </div>
         </div>
@@ -134,8 +134,8 @@ const ProblemSolving = () => {
         <div className="grid min-h-0 flex-1 grid-cols-12 gap-6" style={{ minHeight: 'calc(100vh - 220px)' }}>
           {/* Problem List Sidebar */}
           <div className="col-span-3">
-            <div className="bg-white dark:bg-[#292a2d] rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
-              <h2 className="text-gray-800 dark:text-gray-100 font-semibold mb-4 flex items-center gap-2">
+            <div className={`${card} p-4`}>
+              <h2 className="text-gray-900 dark:text-gray-100 text-sm font-medium mb-4 flex items-center gap-2">
                 <Target className="w-5 h-5" />
                 Problems ({problems.length})
               </h2>
@@ -148,10 +148,10 @@ const ProblemSolving = () => {
                     <button
                       key={problem.id}
                       onClick={() => setSelectedProblem(problem)}
-                      className={`w-full text-left p-3 rounded-lg transition-all ${
+                      className={`w-full text-left p-3 rounded-lg transition border ${
                         selectedProblem?.id === problem.id
-                          ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-700'
-                          : 'bg-gray-50 dark:bg-[#202124] text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 border border-gray-200 dark:border-gray-700'
+                          ? 'bg-gray-100 dark:bg-gray-800/80 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600'
+                          : 'bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/40 border-transparent'
                       }`}
                     >
                       <div className="font-medium text-sm">{problem.title}</div>
@@ -170,29 +170,24 @@ const ProblemSolving = () => {
             {selectedProblem ? (
               <>
                 {/* Problem Description */}
-                <div className="max-h-[32vh] shrink-0 overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] p-6 shadow-sm">
-                  <div className="flex items-start justify-between mb-4">
+                <div className={`max-h-[32vh] shrink-0 overflow-y-auto ${card} p-6`}>
+                  <div className="flex items-start justify-between mb-4 gap-4">
                     <div>
-                      <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+                      <h2 className="text-xl font-medium text-gray-900 dark:text-gray-100 mb-2">
                         {selectedProblem.title}
                       </h2>
-                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
-                        difficulty === 'easy'
-                          ? 'bg-green-100 text-green-700'
-                          : difficulty === 'medium'
-                          ? 'bg-yellow-100 text-yellow-700'
-                          : 'bg-red-100 text-red-700'
-                      }`}>
-                        {difficulty.toUpperCase()}
+                      <span className="inline-block px-2 py-0.5 rounded-md text-xs font-medium border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+                        {difficulty}
                       </span>
                     </div>
 
                     <button
+                      type="button"
                       onClick={() => setShowHints(!showHints)}
-                      className="flex items-center gap-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition-colors"
+                      className={btnSecondary}
                     >
                       <Lightbulb className="w-4 h-4" />
-                      {showHints ? 'Hide' : 'Show'} Hints
+                      {showHints ? 'Hide hints' : 'Show hints'}
                     </button>
                   </div>
 
@@ -215,13 +210,13 @@ const ProblemSolving = () => {
                         <div className="text-sm space-y-2">
                           <div>
                             <span className="text-gray-600 dark:text-gray-300">Input:</span>
-                            <code className="ml-2 text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                            <code className="ml-2 font-mono text-xs text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded border border-gray-200 dark:border-gray-700">
                               {JSON.stringify(testCase.input)}
                             </code>
                           </div>
                           <div>
                             <span className="text-gray-600 dark:text-gray-300">Output:</span>
-                            <code className="ml-2 text-green-600 bg-green-50 px-2 py-1 rounded">
+                            <code className="ml-2 font-mono text-xs text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded border border-gray-200 dark:border-gray-700">
                               {JSON.stringify(testCase.output)}
                             </code>
                           </div>
@@ -238,15 +233,15 @@ const ProblemSolving = () => {
 
                   {/* Hints */}
                   {showHints && selectedProblem.hints && (
-                    <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                      <h3 className="text-yellow-700 font-semibold mb-3 flex items-center gap-2">
-                        <Lightbulb className="w-5 h-5" />
+                    <div className="mt-6 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#202124] p-4">
+                      <h3 className="text-gray-900 dark:text-gray-100 text-sm font-medium mb-3 flex items-center gap-2">
+                        <Lightbulb className="w-4 h-4 text-gray-500" />
                         Hints
                       </h3>
                       <ul className="space-y-2">
                         {selectedProblem.hints.map((hint, index) => (
-                          <li key={index} className="text-yellow-800 text-sm flex items-start gap-2">
-                            <span className="text-yellow-600 font-bold">{index + 1}.</span>
+                          <li key={index} className="text-gray-700 dark:text-gray-300 text-sm flex items-start gap-2">
+                            <span className="text-gray-400 dark:text-gray-500 tabular-nums">{index + 1}.</span>
                             {hint}
                           </li>
                         ))}

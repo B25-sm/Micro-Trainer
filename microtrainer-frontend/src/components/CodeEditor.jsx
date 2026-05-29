@@ -224,7 +224,7 @@ const CodeEditor = ({ problem, onSubmit, blockClipboard = true }) => {
       {/* Toolbar */}
       <div className="flex shrink-0 items-center justify-between border-b border-gray-700 bg-gray-800 px-4 py-3">
         <div className="flex items-center gap-3">
-          <Code className="h-5 w-5 text-blue-400" />
+          <Code className="h-5 w-5 text-gray-400" />
           <select
             value={language}
             onChange={(e) => handleLanguageChange(e.target.value)}
@@ -252,17 +252,17 @@ const CodeEditor = ({ problem, onSubmit, blockClipboard = true }) => {
             type="button"
             onClick={runCode}
             disabled={isRunning}
-            className="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex items-center gap-2 rounded-lg border border-gray-600 bg-gray-700 px-4 py-2 text-sm font-medium text-gray-100 hover:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isRunning ? <Loader className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
-            Run Code
+            Run
           </button>
           {problem && (
             <button
               type="button"
               onClick={submitSolution}
               disabled={isRunning}
-              className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex items-center gap-2 rounded-lg bg-[#8ab4f8] px-4 py-2 text-sm font-medium text-gray-900 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isRunning ? <Loader className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
               Submit
