@@ -16,6 +16,9 @@ export function applyDocumentClasses(dark, read) {
   const root = document.documentElement;
   root.classList.toggle("dark", dark);
   root.classList.toggle("read-mode", read);
+  root.dataset.theme = dark ? "dark" : "light";
+  root.dataset.readMode = read ? "on" : "off";
+  root.style.colorScheme = dark ? "dark" : "light";
 }
 
 export function initDisplayModeFromStorage() {

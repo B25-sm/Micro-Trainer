@@ -19,7 +19,11 @@ export default function DisplayModeToggle({ variant = "panel" }) {
         <ThemeSegment darkMode={darkMode} setDarkMode={setDarkMode} compact />
         <button
           type="button"
-          onClick={toggleReadMode}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleReadMode();
+          }}
           title="Read mode — warmer colors, easier on the eyes"
           aria-label="Toggle read mode"
           aria-pressed={readMode}
@@ -49,7 +53,11 @@ export default function DisplayModeToggle({ variant = "panel" }) {
         <ThemeSegment darkMode={darkMode} setDarkMode={setDarkMode} compact={false} />
         <button
           type="button"
-          onClick={toggleReadMode}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleReadMode();
+          }}
           title="Read mode"
           aria-pressed={readMode}
           className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-medium transition ${
@@ -106,15 +114,19 @@ function ThemeOption({ active, onClick, label, icon, compact }) {
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onClick();
+      }}
       aria-pressed={active}
       aria-label={`${label} theme`}
       className={`inline-flex items-center gap-1 rounded-md font-medium transition ${
         compact ? "px-2.5 py-1 text-xs" : "px-3 py-1.5 text-[11px]"
       } ${
         active
-          ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm"
-          : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+          ? "bg-[#1a73e8] text-white shadow-sm dark:bg-[#8ab4f8] dark:text-gray-900"
+          : "text-gray-600 dark:text-gray-400 hover:bg-gray-200/80 dark:hover:bg-gray-700/60"
       }`}
     >
       <span aria-hidden>{icon}</span>

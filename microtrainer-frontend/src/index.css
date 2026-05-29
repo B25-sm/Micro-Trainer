@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Manual Light/Dark toggle — without this, Tailwind v4 uses OS prefers-color-scheme only */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* =========================
    GEMINI-INSPIRED DESIGN TOKENS
 ========================= */
@@ -89,47 +92,6 @@
     0 8px 24px 4px rgba(0, 0, 0, 0.15);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Text Colors */
-    --text: #d1d5db;
-    --text-h: #f9fafb;
-    --text-secondary: #cbd5e1;
-    
-    /* Background Colors */
-    --bg: #202124;
-    --bg-secondary: #292a2d;
-    --bg-elevated: #292a2d;
-    --border: #3c4043;
-    --code-bg: #292a2d;
-
-    /* Accent Colors */
-    --accent: #8ab4f8;
-    --accent-hover: #aecbfa;
-    --accent-bg: rgba(138, 180, 248, 0.15);
-    --accent-border: rgba(138, 180, 248, 0.3);
-    
-    /* Status Colors */
-    --success: #81c995;
-    --success-bg: rgba(129, 201, 149, 0.15);
-    --warning: #fdd663;
-    --warning-bg: rgba(253, 214, 99, 0.15);
-    --error: #f28b82;
-    --error-bg: rgba(242, 139, 130, 0.15);
-
-    /* Shadows */
-    --shadow:
-      0 1px 2px 0 rgba(0, 0, 0, 0.3),
-      0 1px 3px 1px rgba(0, 0, 0, 0.15);
-    --shadow-md:
-      0 1px 3px 0 rgba(0, 0, 0, 0.3),
-      0 4px 8px 3px rgba(0, 0, 0, 0.15);
-    --shadow-lg:
-      0 2px 6px 2px rgba(0, 0, 0, 0.15),
-      0 8px 24px 4px rgba(0, 0, 0, 0.15);
-  }
-}
-
 /* Dark contrast safety net for legacy light-mode utility classes.
    Many existing screens use bg-white/text-gray-* without a dark:* pair. */
 .dark :where(.bg-white),
@@ -148,26 +110,6 @@
 
 .dark :where(.text-gray-700, .text-gray-600, .text-gray-500, .text-slate-700, .text-slate-600, .text-slate-500) {
   color: var(--text) !important;
-}
-
-@media (prefers-color-scheme: dark) {
-  :where(.bg-white),
-  :where(.bg-gray-50),
-  :where(.bg-slate-50) {
-    background-color: var(--bg-elevated) !important;
-  }
-
-  :where(.border-gray-100, .border-gray-200, .border-slate-100, .border-slate-200) {
-    border-color: var(--border) !important;
-  }
-
-  :where(.text-gray-900, .text-gray-800, .text-slate-900, .text-slate-800) {
-    color: var(--text-h) !important;
-  }
-
-  :where(.text-gray-700, .text-gray-600, .text-gray-500, .text-slate-700, .text-slate-600, .text-slate-500) {
-    color: var(--text) !important;
-  }
 }
 
 /* Callouts — paired background + text (fixes invisible title on pastel boxes) */
@@ -501,24 +443,6 @@ select optgroup,
   color: var(--read-text) !important;
 }
 
-@media (prefers-color-scheme: dark) {
-  html:not(.dark) select,
-  html:not(.dark) .app-select {
-    color-scheme: dark;
-    color: #e8eaed !important;
-    background-color: #292a2d !important;
-    border-color: #3c4043 !important;
-  }
-
-  html:not(.dark) select option,
-  html:not(.dark) select optgroup,
-  html:not(.dark) .app-select option,
-  html:not(.dark) .app-select optgroup {
-    background-color: #292a2d !important;
-    color: #e8eaed !important;
-  }
-}
-
 /* =========================
    FOCUS STYLES - ACCESSIBLE
 ========================= */
@@ -569,7 +493,7 @@ textarea:focus {
 }
 
 /* =========================
-   READ MODE — NIGHT STUDY
+   READ MODE — WARM / NIGHT STUDY
 ========================= */
 .read-mode {
   --read-surface: #f7f0e3;
@@ -578,6 +502,13 @@ textarea:focus {
   --read-text-heading: #2a231c;
   --read-border: #e8dcc8;
   --read-accent: #b45309;
+
+  --bg: var(--read-surface);
+  --bg-secondary: var(--read-surface);
+  --bg-elevated: var(--read-surface-elevated);
+  --text: var(--read-text);
+  --text-h: var(--read-text-heading);
+  --border: var(--read-border);
 }
 
 .read-mode.dark {
@@ -587,11 +518,37 @@ textarea:focus {
   --read-text-heading: #f5efe3;
   --read-border: #3d3629;
   --read-accent: #fbbf24;
+
+  --bg: var(--read-surface);
+  --bg-secondary: var(--read-surface);
+  --bg-elevated: var(--read-surface-elevated);
+  --text: var(--read-text);
+  --text-h: var(--read-text-heading);
+  --border: var(--read-border);
 }
 
-.read-mode body {
-  background-color: var(--read-surface);
-  color: var(--read-text);
+.read-mode body,
+.read-mode #root {
+  background-color: var(--read-surface) !important;
+  color: var(--read-text) !important;
+}
+
+.read-mode :where(.bg-white),
+.read-mode :where(.bg-gray-50),
+.read-mode :where(.bg-slate-50) {
+  background-color: var(--read-surface-elevated) !important;
+}
+
+.read-mode :where(.border-gray-100, .border-gray-200, .border-slate-100, .border-slate-200) {
+  border-color: var(--read-border) !important;
+}
+
+.read-mode :where(.text-gray-900, .text-gray-800, .text-slate-900, .text-slate-800) {
+  color: var(--read-text-heading) !important;
+}
+
+.read-mode :where(.text-gray-700, .text-gray-600, .text-gray-500, .text-slate-700, .text-slate-600, .text-slate-500) {
+  color: var(--read-text) !important;
 }
 
 .read-mode h1,
