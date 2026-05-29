@@ -1,0 +1,156 @@
+{
+  "technology": "Spring Boot",
+  "totalConcepts": 5,
+  "concepts": [
+    {
+      "id": "spring-1",
+      "order": 1,
+      "title": "Spring Boot Basics",
+      "description": "Learn Spring Boot fundamentals and project setup",
+      "objectives": [
+        "Understand Spring Boot",
+        "Create a Spring Boot project",
+        "Run a Spring Boot application"
+      ],
+      "teachingContent": {
+        "beginner": "**Spring Boot** is a Java framework for building production-ready applications quickly.\n\n**Creating a Project:**\nUse Spring Initializr (start.spring.io) or:\n```bash\nspring init --dependencies=web myapp\n```\n\n**Main Application:**\n```java\n@SpringBootApplication\npublic class MyApplication {\n    public static void main(String[] args) {\n        SpringApplication.run(MyApplication.class, args);\n    }\n}\n```\n\n**Key Features:**\n- Auto-configuration\n- Embedded server (Tomcat)\n- Production-ready features\n- No XML configuration needed",
+        "intermediate": "Spring Boot architecture and annotations:\n\n**Project Structure:**\n```\nsrc/main/java/\n├── com.example.myapp/\n│   ├── MyApplication.java\n│   ├── controller/\n│   ├── service/\n│   ├── repository/\n│   └── model/\n```\n\n**Application Properties:**\n```properties\n# application.properties\nserver.port=8080\nspring.application.name=myapp\n```\n\n**Key Annotations:**\n- `@SpringBootApplication`: Main class\n- `@RestController`: REST endpoints\n- `@Service`: Business logic\n- `@Repository`: Data access",
+        "advanced": "Advanced Spring Boot configuration:\n\n**Custom Configuration:**\n```java\n@Configuration\npublic class AppConfig {\n    @Bean\n    public RestTemplate restTemplate() {\n        return new RestTemplate();\n    }\n}\n```\n\n**Profiles:**\n```properties\n# application-dev.properties\nspring.datasource.url=jdbc:h2:mem:testdb\n\n# application-prod.properties\nspring.datasource.url=jdbc:postgresql://localhost/mydb\n```"
+      },
+      "crossQuestions": [
+        "What is Spring Boot?",
+        "What are the advantages of using Spring Boot?",
+        "How does Spring Boot differ from the Spring Framework?"
+      ]
+    },
+    {
+      "id": "spring-2",
+      "order": 2,
+      "title": "REST Controllers",
+      "description": "Learn to create RESTful APIs",
+      "objectives": [
+        "Create REST controllers",
+        "Handle HTTP methods",
+        "Return JSON responses"
+      ],
+      "teachingContent": {
+        "beginner": "**REST Controllers** handle HTTP requests.\n\n**Basic Controller:**\n```java\n@RestController\n@RequestMapping(\"/api\")\npublic class HelloController {\n    \n    @GetMapping(\"/hello\")\n    public String hello() {\n        return \"Hello, Spring Boot!\";\n    }\n    \n    @GetMapping(\"/user/{id}\")\n    public User getUser(@PathVariable Long id) {\n        return new User(id, \"John\");\n    }\n}\n```\n\n**HTTP Methods:**\n- `@GetMapping`: Read data\n- `@PostMapping`: Create data\n- `@PutMapping`: Update data\n- `@DeleteMapping`: Delete data",
+        "intermediate": "Advanced REST patterns:\n\n**Request Body:**\n```java\n@PostMapping(\"/users\")\npublic User createUser(@RequestBody User user) {\n    return userService.save(user);\n}\n```\n\n**Query Parameters:**\n```java\n@GetMapping(\"/users\")\npublic List<User> getUsers(\n    @RequestParam(required = false) String name,\n    @RequestParam(defaultValue = \"0\") int page\n) {\n    return userService.findAll(name, page);\n}\n```\n\n**Response Status:**\n```java\n@PostMapping(\"/users\")\n@ResponseStatus(HttpStatus.CREATED)\npublic User createUser(@RequestBody User user) {\n    return userService.save(user);\n}\n```",
+        "advanced": "Exception handling and validation:\n\n**Global Exception Handler:**\n```java\n@ControllerAdvice\npublic class GlobalExceptionHandler {\n    \n    @ExceptionHandler(ResourceNotFoundException.class)\n    @ResponseStatus(HttpStatus.NOT_FOUND)\n    public ErrorResponse handleNotFound(ResourceNotFoundException ex) {\n        return new ErrorResponse(ex.getMessage());\n    }\n}\n```\n\n**Validation:**\n```java\npublic class User {\n    @NotNull\n    @Size(min = 2, max = 50)\n    private String name;\n    \n    @Email\n    private String email;\n}\n\n@PostMapping(\"/users\")\npublic User createUser(@Valid @RequestBody User user) {\n    return userService.save(user);\n}\n```"
+      },
+      "crossQuestions": [
+        "What is a starter in Spring Boot?",
+        "What is the use of application.properties/application.yml file?",
+        "How do you run a Spring Boot application?",
+        "What is the default port of Spring Boot web application?",
+        "How do you change the default port in Spring Boot?"
+      ]
+    },
+    {
+      "id": "spring-3",
+      "order": 3,
+      "title": "Spring Data JPA",
+      "description": "Learn database operations with JPA",
+      "objectives": [
+        "Create JPA entities",
+        "Use Spring Data repositories",
+        "Perform CRUD operations"
+      ],
+      "teachingContent": {
+        "beginner": "**Spring Data JPA** simplifies database operations.\n\n**Entity:**\n```java\n@Entity\n@Table(name = \"users\")\npublic class User {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    \n    private String name;\n    private String email;\n    \n    // Getters and setters\n}\n```\n\n**Repository:**\n```java\npublic interface UserRepository extends JpaRepository<User, Long> {\n    // Spring generates implementation automatically!\n}\n```\n\n**Using Repository:**\n```java\n@Service\npublic class UserService {\n    @Autowired\n    private UserRepository userRepository;\n    \n    public List<User> findAll() {\n        return userRepository.findAll();\n    }\n}\n```",
+        "intermediate": "Custom queries and relationships:\n\n**Custom Queries:**\n```java\npublic interface UserRepository extends JpaRepository<User, Long> {\n    List<User> findByName(String name);\n    List<User> findByEmailContaining(String email);\n    \n    @Query(\"SELECT u FROM User u WHERE u.age > :age\")\n    List<User> findOlderThan(@Param(\"age\") int age);\n}\n```\n\n**Relationships:**\n```java\n@Entity\npublic class Post {\n    @Id\n    @GeneratedValue\n    private Long id;\n    \n    @ManyToOne\n    @JoinColumn(name = \"user_id\")\n    private User author;\n}\n```",
+        "advanced": "Advanced JPA features:\n\n**Pagination:**\n```java\npublic interface UserRepository extends JpaRepository<User, Long> {\n    Page<User> findByName(String name, Pageable pageable);\n}\n\n// Usage\nPageable pageable = PageRequest.of(0, 10, Sort.by(\"name\"));\nPage<User> users = userRepository.findByName(\"John\", pageable);\n```\n\n**Specifications:**\n```java\npublic class UserSpecifications {\n    public static Specification<User> hasName(String name) {\n        return (root, query, cb) -> \n            cb.equal(root.get(\"name\"), name);\n    }\n}\n```"
+      },
+      "crossQuestions": [
+        "What are Spring Boot annotations?",
+        "What is the purpose of @SpringBootApplication annotation?",
+        "How do you configure a database in Spring Boot?",
+        "What is auto-configuration in Spring Boot?",
+        "How do you enable auto-configuration in Spring Boot?",
+        "What is the purpose of @Component, @Service, @Repository?",
+        "What is the use of @RequestMapping and @GetMapping?",
+        "What are the differences between @RestController and @Controller?"
+      ]
+    },
+    {
+      "id": "spring-4",
+      "order": 4,
+      "title": "Dependency Injection",
+      "description": "Learn Spring's dependency injection",
+      "objectives": [
+        "Understand dependency injection",
+        "Use @Autowired",
+        "Create beans"
+      ],
+      "teachingContent": {
+        "beginner": "**Dependency Injection** lets Spring manage object creation.\n\n**Service Class:**\n```java\n@Service\npublic class UserService {\n    private final UserRepository userRepository;\n    \n    @Autowired\n    public UserService(UserRepository userRepository) {\n        this.userRepository = userRepository;\n    }\n    \n    public User findById(Long id) {\n        return userRepository.findById(id).orElse(null);\n    }\n}\n```\n\n**Using in Controller:**\n```java\n@RestController\npublic class UserController {\n    @Autowired\n    private UserService userService;\n    \n    @GetMapping(\"/users/{id}\")\n    public User getUser(@PathVariable Long id) {\n        return userService.findById(id);\n    }\n}\n```",
+        "intermediate": "Injection types and scopes:\n\n**Constructor Injection (Recommended):**\n```java\n@Service\npublic class UserService {\n    private final UserRepository userRepository;\n    \n    public UserService(UserRepository userRepository) {\n        this.userRepository = userRepository;\n    }\n}\n```\n\n**Bean Scopes:**\n```java\n@Service\n@Scope(\"singleton\")  // Default\npublic class UserService { }\n\n@Service\n@Scope(\"prototype\")  // New instance each time\npublic class TempService { }\n```",
+        "advanced": "Advanced DI patterns:\n\n**Qualifiers:**\n```java\n@Service\n@Qualifier(\"emailNotification\")\npublic class EmailNotificationService implements NotificationService { }\n\n@Service\npublic class UserService {\n    @Autowired\n    @Qualifier(\"emailNotification\")\n    private NotificationService notificationService;\n}\n```"
+      },
+      "crossQuestions": [
+        "How do you create a REST controller in Spring Boot?",
+        "How do you handle exceptions in Spring Boot?",
+        "What is Spring Boot DevTools?",
+        "What is actuator in Spring Boot?",
+        "How do you use JPA with Spring Boot?",
+        "What is the use of @Entity annotation?",
+        "What is the purpose of @EnableAutoConfiguration?",
+        "What is the difference between CrudRepository and JpaRepository?"
+      ]
+    },
+    {
+      "id": "spring-5",
+      "order": 5,
+      "title": "Spring Security",
+      "description": "Learn to secure your application",
+      "objectives": [
+        "Configure Spring Security",
+        "Implement authentication",
+        "Add authorization"
+      ],
+      "teachingContent": {
+        "beginner": "**Spring Security** protects your application.\n\n**Basic Configuration:**\n```java\n@Configuration\n@EnableWebSecurity\npublic class SecurityConfig {\n    \n    @Bean\n    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {\n        http\n            .authorizeHttpRequests(auth -> auth\n                .requestMatchers(\"/public/**\").permitAll()\n                .anyRequest().authenticated()\n            )\n            .formLogin();\n        return http.build();\n    }\n}\n```\n\n**In-Memory Users:**\n```java\n@Bean\npublic UserDetailsService users() {\n    UserDetails user = User.builder()\n        .username(\"user\")\n        .password(\"{noop}password\")\n        .roles(\"USER\")\n        .build();\n    return new InMemoryUserDetailsManager(user);\n}\n```",
+        "intermediate": "Authentication and authorization:\n\n**Custom UserDetailsService:**\n```java\n@Service\npublic class CustomUserDetailsService implements UserDetailsService {\n    @Autowired\n    private UserRepository userRepository;\n    \n    @Override\n    public UserDetails loadUserByUsername(String username) {\n        User user = userRepository.findByUsername(username);\n        return new org.springframework.security.core.userdetails.User(\n            user.getUsername(),\n            user.getPassword(),\n            getAuthorities(user)\n        );\n    }\n}\n```\n\n**Method Security:**\n```java\n@PreAuthorize(\"hasRole('ADMIN')\")\npublic void deleteUser(Long id) {\n    userRepository.deleteById(id);\n}\n```",
+        "advanced": "JWT authentication:\n\n**JWT Filter:**\n```java\npublic class JwtAuthenticationFilter extends OncePerRequestFilter {\n    @Override\n    protected void doFilterInternal(HttpServletRequest request,\n                                    HttpServletResponse response,\n                                    FilterChain filterChain) {\n        String token = extractToken(request);\n        if (token != null && jwtUtil.validateToken(token)) {\n            Authentication auth = jwtUtil.getAuthentication(token);\n            SecurityContextHolder.getContext().setAuthentication(auth);\n        }\n        filterChain.doFilter(request, response);\n    }\n}\n```"
+      },
+      "crossQuestions": [
+        "What is dependency injection in Spring Boot?",
+        "What is the use of @Autowired annotation?",
+        "What is the role of the embedded server in Spring Boot?",
+        "How do you secure a Spring Boot application?",
+        "What is Spring Security and how is it integrated with Spring Boot?",
+        "What is the use of CommandLineRunner in Spring Boot?",
+        "How to implement pagination and sorting in Spring Boot?",
+        "What is a custom exception and how do you create one in Spring Boot?",
+        "How do you configure CORS in Spring Boot?",
+        "What is the use of profiles in Spring Boot?",
+        "How can you externalize configuration in Spring Boot?",
+        "How do you schedule tasks in Spring Boot?",
+        "How do you create unit tests in Spring Boot?",
+        "How to load initial data on application startup?",
+        "What is the use of Spring Initializr?",
+        "How to use H2 database with Spring Boot?",
+        "How does Spring Boot manage dependencies?",
+        "How to implement microservices using Spring Boot?",
+        "What is Spring Cloud and how does it integrate with Spring Boot?",
+        "How do you use Eureka server with Spring Boot?",
+        "What is Hystrix and how is it used?",
+        "How do you monitor a Spring Boot application?",
+        "How do you deploy Spring Boot applications to production?",
+        "What is reactive programming in Spring Boot?",
+        "What is WebFlux in Spring Boot?",
+        "How do you implement logging in Spring Boot?",
+        "How to use custom starter in Spring Boot?",
+        "What are the best practices for Spring Boot development?",
+        "How do you tune performance in a Spring Boot app?",
+        "What is Flyway and how is it used in Spring Boot?",
+        "How to handle transactions in Spring Boot?",
+        "What is the role of AOP in Spring Boot?",
+        "How do you implement caching in Spring Boot?",
+        "What is the difference between synchronous and asynchronous controllers?",
+        "How does Spring Boot support Kafka integration?",
+        "How to configure Spring Boot in a Kubernetes environment?"
+      ]
+    }
+  ]
+}

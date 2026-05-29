@@ -1,0 +1,111 @@
+{
+  "technology": "MongoDB",
+  "totalConcepts": 5,
+  "concepts": [
+    {
+      "id": "mongo-1",
+      "order": 1,
+      "title": "Introduction to MongoDB",
+      "description": "Learn what MongoDB is and basic concepts",
+      "objectives": [
+        "Understand NoSQL databases",
+        "Learn MongoDB structure",
+        "Connect to MongoDB"
+      ],
+      "teachingContent": {
+        "beginner": "**MongoDB** is a NoSQL database that stores data in JSON-like documents.\n\n**Key Concepts:**\n- **Database**: Container for collections\n- **Collection**: Group of documents (like a table)\n- **Document**: A single record (like a row)\n\n**Document Example:**\n```json\n{\n  \"_id\": \"507f1f77bcf86cd799439011\",\n  \"name\": \"John Doe\",\n  \"age\": 25,\n  \"email\": \"john@example.com\"\n}\n```\n\n**Connecting:**\n```javascript\nconst { MongoClient } = require('mongodb');\nconst client = new MongoClient('mongodb://localhost:27017');\nawait client.connect();\n```",
+        "intermediate": "MongoDB structure and connection:\n\n**Database Operations:**\n```javascript\nconst db = client.db('myapp');\nconst users = db.collection('users');\n```\n\n**Why MongoDB?**\n- Flexible schema\n- Scales horizontally\n- Fast for read-heavy workloads\n- JSON-like documents",
+        "advanced": "MongoDB architecture:\n\n**Replica Sets:**\n- Primary node (writes)\n- Secondary nodes (reads)\n- Automatic failover\n\n**Sharding:**\n- Horizontal scaling\n- Data distribution\n- Query routing"
+      },
+      "crossQuestions": [
+        "What is MongoDB?",
+        "What's the difference between SQL and NoSQL?",
+        "What is a document in MongoDB?"
+      ]
+    },
+    {
+      "id": "mongo-2",
+      "order": 2,
+      "title": "CRUD Operations",
+      "description": "Learn Create, Read, Update, Delete operations",
+      "objectives": [
+        "Insert documents",
+        "Query documents",
+        "Update and delete documents"
+      ],
+      "teachingContent": {
+        "beginner": "**CRUD** = Create, Read, Update, Delete\n\n**Create (Insert):**\n```javascript\n// Insert one\nawait users.insertOne({\n  name: 'John',\n  age: 25\n});\n\n// Insert many\nawait users.insertMany([\n  { name: 'John', age: 25 },\n  { name: 'Jane', age: 30 }\n]);\n```\n\n**Read (Find):**\n```javascript\n// Find all\nconst allUsers = await users.find().toArray();\n\n// Find one\nconst user = await users.findOne({ name: 'John' });\n```",
+        "intermediate": "Advanced CRUD operations:\n\n**Update:**\n```javascript\n// Update one\nawait users.updateOne(\n  { name: 'John' },\n  { $set: { age: 26 } }\n);\n\n// Update many\nawait users.updateMany(\n  { age: { $lt: 18 } },\n  { $set: { minor: true } }\n);\n```\n\n**Delete:**\n```javascript\n// Delete one\nawait users.deleteOne({ name: 'John' });\n\n// Delete many\nawait users.deleteMany({ age: { $lt: 18 } });\n```",
+        "advanced": "Complex queries and operations:\n\n**Upsert:**\n```javascript\nawait users.updateOne(\n  { email: 'john@example.com' },\n  { $set: { name: 'John', age: 25 } },\n  { upsert: true }\n);\n```\n\n**Bulk Operations:**\n```javascript\nawait users.bulkWrite([\n  { insertOne: { document: { name: 'John' } } },\n  { updateOne: { filter: { name: 'Jane' }, update: { $set: { age: 31 } } } }\n]);\n```"
+      },
+      "crossQuestions": [
+        "How do you insert a document?",
+        "What's the difference between updateOne and updateMany?",
+        "How do you find all documents in a collection?"
+      ]
+    },
+    {
+      "id": "mongo-3",
+      "order": 3,
+      "title": "Query Operators",
+      "description": "Learn MongoDB query operators",
+      "objectives": [
+        "Use comparison operators",
+        "Use logical operators",
+        "Query arrays and nested documents"
+      ],
+      "teachingContent": {
+        "beginner": "**Query operators** let you filter data.\n\n**Comparison:**\n```javascript\n// Greater than\nawait users.find({ age: { $gt: 18 } });\n\n// Less than or equal\nawait users.find({ age: { $lte: 65 } });\n\n// Not equal\nawait users.find({ status: { $ne: 'inactive' } });\n```\n\n**Logical:**\n```javascript\n// AND\nawait users.find({\n  age: { $gte: 18 },\n  status: 'active'\n});\n\n// OR\nawait users.find({\n  $or: [\n    { age: { $lt: 18 } },\n    { age: { $gt: 65 } }\n  ]\n});\n```",
+        "intermediate": "Advanced query operators:\n\n**Array Operators:**\n```javascript\n// In array\nawait users.find({ role: { $in: ['admin', 'moderator'] } });\n\n// Array contains\nawait users.find({ tags: 'javascript' });\n\n// Array size\nawait users.find({ tags: { $size: 3 } });\n```\n\n**Element Operators:**\n```javascript\n// Field exists\nawait users.find({ email: { $exists: true } });\n\n// Type check\nawait users.find({ age: { $type: 'number' } });\n```",
+        "advanced": "Complex queries:\n\n**Regex:**\n```javascript\nawait users.find({\n  email: { $regex: /@gmail\\.com$/ }\n});\n```\n\n**Nested Documents:**\n```javascript\nawait users.find({\n  'address.city': 'New York'\n});\n```"
+      },
+      "crossQuestions": [
+        "What does $gt operator do?",
+        "How do you query for multiple values?",
+        "How do you check if a field exists?"
+      ]
+    },
+    {
+      "id": "mongo-4",
+      "order": 4,
+      "title": "Aggregation Pipeline",
+      "description": "Learn to process and transform data",
+      "objectives": [
+        "Use aggregation stages",
+        "Group and count data",
+        "Transform documents"
+      ],
+      "teachingContent": {
+        "beginner": "**Aggregation** processes data through stages.\n\n**Basic Pipeline:**\n```javascript\nawait users.aggregate([\n  { $match: { age: { $gte: 18 } } },\n  { $group: {\n    _id: '$city',\n    count: { $sum: 1 }\n  }}\n]);\n```\n\n**Common Stages:**\n- `$match`: Filter documents\n- `$group`: Group by field\n- `$sort`: Sort results\n- `$limit`: Limit results",
+        "intermediate": "Aggregation pipeline stages:\n\n**$project:**\n```javascript\n{ $project: {\n  name: 1,\n  age: 1,\n  isAdult: { $gte: ['$age', 18] }\n}}\n```\n\n**$lookup (Join):**\n```javascript\n{ $lookup: {\n  from: 'orders',\n  localField: '_id',\n  foreignField: 'userId',\n  as: 'orders'\n}}\n```",
+        "advanced": "Advanced aggregation:\n\n**$facet:**\n```javascript\n{ $facet: {\n  byAge: [\n    { $group: { _id: '$age', count: { $sum: 1 } } }\n  ],\n  byCity: [\n    { $group: { _id: '$city', count: { $sum: 1 } } }\n  ]\n}}\n```"
+      },
+      "crossQuestions": [
+        "What is aggregation?",
+        "What does $match do?",
+        "How do you group documents?"
+      ]
+    },
+    {
+      "id": "mongo-5",
+      "order": 5,
+      "title": "Indexes and Performance",
+      "description": "Learn to optimize queries with indexes",
+      "objectives": [
+        "Create indexes",
+        "Understand index types",
+        "Optimize queries"
+      ],
+      "teachingContent": {
+        "beginner": "**Indexes** make queries faster!\n\n**Create Index:**\n```javascript\n// Single field\nawait users.createIndex({ email: 1 });\n\n// Compound index\nawait users.createIndex({ city: 1, age: -1 });\n```\n\n**Why Indexes?**\n- Without index: Scans all documents\n- With index: Jumps directly to data\n- Like a book's index!",
+        "intermediate": "Index types and usage:\n\n**Unique Index:**\n```javascript\nawait users.createIndex(\n  { email: 1 },\n  { unique: true }\n);\n```\n\n**Text Index:**\n```javascript\nawait users.createIndex({ bio: 'text' });\n\n// Search\nawait users.find({ $text: { $search: 'developer' } });\n```",
+        "advanced": "Performance optimization:\n\n**Explain Query:**\n```javascript\nconst explain = await users\n  .find({ age: { $gt: 18 } })\n  .explain('executionStats');\n```\n\n**Index Strategies:**\n- Index frequently queried fields\n- Use compound indexes for multiple fields\n- Avoid over-indexing (slows writes)"
+      },
+      "crossQuestions": [
+        "What is an index?",
+        "How do you create an index?",
+        "Why do indexes improve performance?"
+      ]
+    }
+  ]
+}

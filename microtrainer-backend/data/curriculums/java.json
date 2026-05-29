@@ -1,0 +1,111 @@
+{
+  "technology": "Java",
+  "totalConcepts": 5,
+  "concepts": [
+    {
+      "id": "java-1",
+      "order": 1,
+      "title": "Java Basics and Syntax",
+      "description": "Learn Java fundamentals, variables, and data types",
+      "objectives": [
+        "Understand Java syntax",
+        "Declare variables and data types",
+        "Write your first Java program"
+      ],
+      "teachingContent": {
+        "beginner": "**Java** is a popular, object-oriented programming language.\n\n**First Java Program:**\n```java\npublic class HelloWorld {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, World!\");\n    }\n}\n```\n\n**Variables and Data Types:**\n```java\n// Primitive types\nint age = 25;\ndouble price = 19.99;\nboolean isActive = true;\nchar grade = 'A';\n\n// String (reference type)\nString name = \"John\";\n```\n\n**Key Points:**\n- Every Java program needs a `main` method\n- Java is **strongly typed** (must declare types)\n- Statements end with semicolon `;`\n- Case-sensitive: `Name` ≠ `name`",
+        "intermediate": "Java's type system and variable declarations:\n\n**Primitive Data Types:**\n```java\nbyte b = 127;           // 8-bit: -128 to 127\nshort s = 32000;        // 16-bit: -32,768 to 32,767\nint i = 2147483647;     // 32-bit: -2^31 to 2^31-1\nlong l = 9223372036854775807L; // 64-bit\n\nfloat f = 3.14f;        // 32-bit decimal\ndouble d = 3.14159;     // 64-bit decimal (default)\n\nboolean flag = true;    // true or false\nchar c = 'A';           // 16-bit Unicode character\n```\n\n**Type Casting:**\n```java\n// Implicit (widening)\nint num = 100;\ndouble d = num; // Automatic\n\n// Explicit (narrowing)\ndouble price = 19.99;\nint rounded = (int) price; // 19\n```\n\n**Constants:**\n```java\nfinal double PI = 3.14159;\nfinal int MAX_SIZE = 100;\n// Cannot be changed after initialization\n```",
+        "advanced": "Advanced type concepts and best practices:\n\n**Wrapper Classes:**\n```java\n// Primitive vs Wrapper\nint primitive = 10;\nInteger wrapper = 10; // Autoboxing\n\n// Useful methods\nInteger.parseInt(\"123\");    // String to int\nInteger.toString(123);      // int to String\nInteger.MAX_VALUE;          // 2147483647\n```\n\n**Type Inference (Java 10+):**\n```java\nvar name = \"John\";      // String\nvar age = 25;           // int\nvar price = 19.99;      // double\n// Type inferred from right side\n```\n\n**Best Practices:**\n- Use `int` for whole numbers (default)\n- Use `double` for decimals (default)\n- Use `final` for constants\n- Use meaningful variable names\n- Follow camelCase convention"
+      },
+      "crossQuestions": [
+        "What is the main method in Java?",
+        "What's the difference between int and Integer?",
+        "How do you declare a constant in Java?"
+      ]
+    },
+    {
+      "id": "java-2",
+      "order": 2,
+      "title": "Control Flow and Loops",
+      "description": "Learn if-else, switch, and loops",
+      "objectives": [
+        "Use conditional statements",
+        "Implement loops",
+        "Control program flow"
+      ],
+      "teachingContent": {
+        "beginner": "**Control flow** lets your program make decisions.\n\n**If-Else:**\n```java\nint age = 18;\n\nif (age >= 18) {\n    System.out.println(\"Adult\");\n} else {\n    System.out.println(\"Minor\");\n}\n```\n\n**For Loop:**\n```java\nfor (int i = 0; i < 5; i++) {\n    System.out.println(i);\n}\n// Output: 0 1 2 3 4\n```\n\n**While Loop:**\n```java\nint count = 0;\nwhile (count < 5) {\n    System.out.println(count);\n    count++;\n}\n```\n\n**Switch Statement:**\n```java\nint day = 1;\nswitch (day) {\n    case 1:\n        System.out.println(\"Monday\");\n        break;\n    case 2:\n        System.out.println(\"Tuesday\");\n        break;\n    default:\n        System.out.println(\"Other day\");\n}\n```",
+        "intermediate": "Advanced control flow patterns:\n\n**Enhanced For Loop:**\n```java\nint[] numbers = {1, 2, 3, 4, 5};\nfor (int num : numbers) {\n    System.out.println(num);\n}\n```\n\n**Do-While Loop:**\n```java\nint i = 0;\ndo {\n    System.out.println(i);\n    i++;\n} while (i < 5);\n// Executes at least once\n```\n\n**Break and Continue:**\n```java\nfor (int i = 0; i < 10; i++) {\n    if (i == 5) break;      // Exit loop\n    if (i % 2 == 0) continue; // Skip even\n    System.out.println(i);\n}\n```\n\n**Ternary Operator:**\n```java\nint age = 18;\nString status = (age >= 18) ? \"Adult\" : \"Minor\";\n```",
+        "advanced": "Modern Java control flow features:\n\n**Switch Expressions (Java 14+):**\n```java\nString day = switch (dayNum) {\n    case 1 -> \"Monday\";\n    case 2 -> \"Tuesday\";\n    case 3 -> \"Wednesday\";\n    default -> \"Other\";\n};\n```\n\n**Pattern Matching (Java 16+):**\n```java\nif (obj instanceof String s) {\n    System.out.println(s.toUpperCase());\n}\n```\n\n**Labeled Loops:**\n```java\nouter:\nfor (int i = 0; i < 3; i++) {\n    for (int j = 0; j < 3; j++) {\n        if (i == 1 && j == 1) break outer;\n    }\n}\n```"
+      },
+      "crossQuestions": [
+        "What's the difference between while and do-while?",
+        "When would you use a switch statement?",
+        "What does the break statement do?"
+      ]
+    },
+    {
+      "id": "java-3",
+      "order": 3,
+      "title": "Methods and Functions",
+      "description": "Learn to create and use methods",
+      "objectives": [
+        "Define methods",
+        "Use parameters and return values",
+        "Understand method overloading"
+      ],
+      "teachingContent": {
+        "beginner": "**Methods** are reusable blocks of code.\n\n**Basic Method:**\n```java\npublic class Calculator {\n    // Method definition\n    public static int add(int a, int b) {\n        return a + b;\n    }\n    \n    public static void main(String[] args) {\n        // Method call\n        int result = add(5, 3);\n        System.out.println(result); // 8\n    }\n}\n```\n\n**Method with No Return:**\n```java\npublic static void greet(String name) {\n    System.out.println(\"Hello, \" + name);\n}\n\ngreet(\"John\"); // Hello, John\n```\n\n**Method Parts:**\n- `public`: Access modifier\n- `static`: Can call without object\n- `int`: Return type\n- `add`: Method name\n- `(int a, int b)`: Parameters",
+        "intermediate": "Advanced method concepts:\n\n**Method Overloading:**\n```java\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n    \n    public static double add(double a, double b) {\n        return a + b;\n    }\n    \n    public static int add(int a, int b, int c) {\n        return a + b + c;\n    }\n}\n\nadd(5, 3);        // Calls first method\nadd(5.5, 3.2);    // Calls second method\nadd(1, 2, 3);     // Calls third method\n```\n\n**Variable Arguments (Varargs):**\n```java\npublic static int sum(int... numbers) {\n    int total = 0;\n    for (int num : numbers) {\n        total += num;\n    }\n    return total;\n}\n\nsum(1, 2, 3);       // 6\nsum(1, 2, 3, 4, 5); // 15\n```",
+        "advanced": "Advanced method features:\n\n**Recursion:**\n```java\npublic static int factorial(int n) {\n    if (n <= 1) return 1;\n    return n * factorial(n - 1);\n}\n\nfactorial(5); // 120\n```\n\n**Method References (Java 8+):**\n```java\n// Lambda\nlist.forEach(item -> System.out.println(item));\n\n// Method reference\nlist.forEach(System.out::println);\n```\n\n**Default Methods in Interfaces:**\n```java\ninterface Greeting {\n    default void sayHello() {\n        System.out.println(\"Hello!\");\n    }\n}\n```"
+      },
+      "crossQuestions": [
+        "What is method overloading?",
+        "What's the difference between parameters and arguments?",
+        "What does static mean in a method?"
+      ]
+    },
+    {
+      "id": "java-4",
+      "order": 4,
+      "title": "Object-Oriented Programming",
+      "description": "Learn classes, objects, and OOP principles",
+      "objectives": [
+        "Create classes and objects",
+        "Understand encapsulation",
+        "Use constructors"
+      ],
+      "teachingContent": {
+        "beginner": "**OOP** organizes code into objects.\n\n**Creating a Class:**\n```java\npublic class Person {\n    // Fields (attributes)\n    String name;\n    int age;\n    \n    // Constructor\n    public Person(String name, int age) {\n        this.name = name;\n        this.age = age;\n    }\n    \n    // Method\n    public void introduce() {\n        System.out.println(\"Hi, I'm \" + name);\n    }\n}\n```\n\n**Creating Objects:**\n```java\nPerson john = new Person(\"John\", 25);\njohn.introduce(); // Hi, I'm John\n\nPerson jane = new Person(\"Jane\", 30);\njane.introduce(); // Hi, I'm Jane\n```",
+        "intermediate": "OOP principles and encapsulation:\n\n**Encapsulation (Getters/Setters):**\n```java\npublic class BankAccount {\n    private double balance; // Private field\n    \n    public BankAccount(double initialBalance) {\n        this.balance = initialBalance;\n    }\n    \n    // Getter\n    public double getBalance() {\n        return balance;\n    }\n    \n    // Setter with validation\n    public void deposit(double amount) {\n        if (amount > 0) {\n            balance += amount;\n        }\n    }\n}\n```\n\n**Inheritance:**\n```java\npublic class Animal {\n    public void eat() {\n        System.out.println(\"Eating...\");\n    }\n}\n\npublic class Dog extends Animal {\n    public void bark() {\n        System.out.println(\"Woof!\");\n    }\n}\n\nDog dog = new Dog();\ndog.eat();  // Inherited\ndog.bark(); // Own method\n```",
+        "advanced": "Advanced OOP concepts:\n\n**Polymorphism:**\n```java\npublic class Animal {\n    public void makeSound() {\n        System.out.println(\"Some sound\");\n    }\n}\n\npublic class Dog extends Animal {\n    @Override\n    public void makeSound() {\n        System.out.println(\"Woof!\");\n    }\n}\n\nAnimal animal = new Dog();\nanimal.makeSound(); // Woof! (polymorphism)\n```\n\n**Abstract Classes:**\n```java\npublic abstract class Shape {\n    abstract double area();\n    \n    public void display() {\n        System.out.println(\"Area: \" + area());\n    }\n}\n\npublic class Circle extends Shape {\n    double radius;\n    \n    @Override\n    double area() {\n        return Math.PI * radius * radius;\n    }\n}\n```"
+      },
+      "crossQuestions": [
+        "What is encapsulation?",
+        "What's the difference between a class and an object?",
+        "What does the 'this' keyword refer to?"
+      ]
+    },
+    {
+      "id": "java-5",
+      "order": 5,
+      "title": "Arrays and Collections",
+      "description": "Learn to work with arrays and collections",
+      "objectives": [
+        "Create and use arrays",
+        "Work with ArrayList",
+        "Understand collections framework"
+      ],
+      "teachingContent": {
+        "beginner": "**Arrays** store multiple values of the same type.\n\n**Creating Arrays:**\n```java\n// Method 1\nint[] numbers = new int[5];\nnumbers[0] = 10;\nnumbers[1] = 20;\n\n// Method 2\nint[] scores = {90, 85, 95, 88, 92};\n\n// Access elements\nSystem.out.println(scores[0]); // 90\nSystem.out.println(scores.length); // 5\n```\n\n**Looping Through Arrays:**\n```java\nfor (int i = 0; i < scores.length; i++) {\n    System.out.println(scores[i]);\n}\n\n// Enhanced for loop\nfor (int score : scores) {\n    System.out.println(score);\n}\n```\n\n**ArrayList (Dynamic Array):**\n```java\nimport java.util.ArrayList;\n\nArrayList<String> names = new ArrayList<>();\nnames.add(\"John\");\nnames.add(\"Jane\");\nnames.add(\"Bob\");\n\nSystem.out.println(names.get(0)); // John\nSystem.out.println(names.size()); // 3\n```",
+        "intermediate": "Collections framework:\n\n**ArrayList Methods:**\n```java\nArrayList<Integer> numbers = new ArrayList<>();\nnumbers.add(10);           // Add element\nnumbers.add(0, 5);         // Add at index\nnumbers.remove(0);         // Remove by index\nnumbers.contains(10);      // Check if exists\nnumbers.clear();           // Remove all\n```\n\n**HashMap:**\n```java\nimport java.util.HashMap;\n\nHashMap<String, Integer> ages = new HashMap<>();\nages.put(\"John\", 25);\nages.put(\"Jane\", 30);\n\nSystem.out.println(ages.get(\"John\")); // 25\nages.remove(\"Jane\");\n```\n\n**2D Arrays:**\n```java\nint[][] matrix = {\n    {1, 2, 3},\n    {4, 5, 6},\n    {7, 8, 9}\n};\n\nSystem.out.println(matrix[1][2]); // 6\n```",
+        "advanced": "Advanced collections and streams:\n\n**Streams (Java 8+):**\n```java\nList<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);\n\n// Filter and map\nList<Integer> doubled = numbers.stream()\n    .filter(n -> n % 2 == 0)\n    .map(n -> n * 2)\n    .collect(Collectors.toList());\n// [4, 8]\n```\n\n**HashSet (Unique elements):**\n```java\nHashSet<String> set = new HashSet<>();\nset.add(\"Apple\");\nset.add(\"Banana\");\nset.add(\"Apple\"); // Duplicate ignored\nSystem.out.println(set.size()); // 2\n```\n\n**Sorting:**\n```java\nArrays.sort(numbers);              // Arrays\nCollections.sort(list);            // Lists\nlist.sort(Comparator.reverseOrder()); // Reverse\n```"
+      },
+      "crossQuestions": [
+        "What's the difference between an array and ArrayList?",
+        "How do you access an element in an array?",
+        "What is a HashMap used for?"
+      ]
+    }
+  ]
+}

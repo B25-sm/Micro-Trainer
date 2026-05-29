@@ -1,0 +1,111 @@
+{
+  "technology": "Python",
+  "totalConcepts": 5,
+  "concepts": [
+    {
+      "id": "py-1",
+      "order": 1,
+      "title": "Variables and Data Types",
+      "description": "Learn about Python variables and basic data types",
+      "objectives": [
+        "Declare variables in Python",
+        "Understand int, float, str, bool",
+        "Use type() function"
+      ],
+      "teachingContent": {
+        "beginner": "Variables in Python don't need type declaration. Python automatically figures out the type based on the value you assign.",
+        "intermediate": "Python is dynamically typed. Variables can change type during execution. Use type() to check types.",
+        "advanced": "Understanding Python's type system, duck typing, and the difference between mutable and immutable types."
+      },
+      "crossQuestions": [
+        "How do you create a variable in Python?",
+        "What are the basic data types in Python?",
+        "How do you check the type of a variable?"
+      ]
+    },
+    {
+      "id": "py-2",
+      "order": 2,
+      "title": "Lists and List Methods",
+      "description": "Work with Python lists and their methods",
+      "objectives": [
+        "Create and manipulate lists",
+        "Use list methods like append, remove, pop",
+        "Understand list slicing"
+      ],
+      "teachingContent": {
+        "beginner": "Lists are ordered collections that can store multiple items. You can add, remove, and access items easily.",
+        "intermediate": "Lists are mutable sequences. They support indexing, slicing, and have many built-in methods.",
+        "advanced": "Understanding list comprehensions, memory management, and when to use lists vs tuples vs sets."
+      },
+      "crossQuestions": [
+        "How do you add an item to a list?",
+        "What's the difference between append and extend?",
+        "How do you access the last item in a list?"
+      ]
+    },
+    {
+      "id": "py-3",
+      "order": 3,
+      "title": "Functions and Parameters",
+      "description": "Learn how to define and use functions in Python",
+      "objectives": [
+        "Define functions with def",
+        "Use parameters and return values",
+        "Understand default parameters"
+      ],
+      "teachingContent": {
+        "beginner": "Functions are reusable blocks of code. You define them with 'def' and call them by name.",
+        "intermediate": "Functions can have positional arguments, keyword arguments, default values, and *args/**kwargs.",
+        "advanced": "Understanding function scope, closures, decorators, and first-class functions."
+      },
+      "crossQuestions": [
+        "How do you define a function in Python?",
+        "What's the purpose of the return statement?",
+        "How do you set a default value for a parameter?"
+      ]
+    },
+    {
+      "id": "py-4",
+      "order": 4,
+      "title": "Dictionaries",
+      "description": "Learn about Python dictionaries and their methods",
+      "objectives": [
+        "Create and access dictionaries",
+        "Use dictionary methods",
+        "Understand key-value pairs"
+      ],
+      "teachingContent": {
+        "beginner": "Dictionaries store data in key-value pairs. You use keys to access values, like a real dictionary uses words to find definitions.",
+        "intermediate": "Dictionaries are mutable, unordered collections. They provide O(1) lookup time for keys.",
+        "advanced": "Understanding dictionary comprehensions, OrderedDict, defaultdict, and when to use dictionaries vs other data structures."
+      },
+      "crossQuestions": [
+        "How do you create a dictionary?",
+        "How do you access a value using a key?",
+        "What happens if you try to access a key that doesn't exist?"
+      ]
+    },
+    {
+      "id": "py-5",
+      "order": 5,
+      "title": "Loops - For and While",
+      "description": "Learn about iteration in Python",
+      "objectives": [
+        "Use for loops",
+        "Use while loops",
+        "Understand break and continue"
+      ],
+      "teachingContent": {
+        "beginner": "Loops let you repeat code multiple times. 'for' loops iterate over sequences, 'while' loops run until a condition is false.",
+        "intermediate": "Python's for loop works with any iterable. Use enumerate() for index-value pairs, zip() for parallel iteration.",
+        "advanced": "Understanding iterators, generators, and the iteration protocol. When to use list comprehensions vs loops."
+      },
+      "crossQuestions": [
+        "Write a for loop that prints numbers 1 to 5",
+        "What's the difference between for and while loops?",
+        "What does the break statement do?"
+      ]
+    }
+  ]
+}

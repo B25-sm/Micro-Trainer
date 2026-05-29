@@ -1,0 +1,111 @@
+{
+  "technology": "Node.js",
+  "totalConcepts": 5,
+  "concepts": [
+    {
+      "id": "node-1",
+      "order": 1,
+      "title": "Introduction to Node.js",
+      "description": "Learn what Node.js is and how to run JavaScript on the server",
+      "objectives": [
+        "Understand what Node.js is",
+        "Run JavaScript files with Node",
+        "Use the Node REPL"
+      ],
+      "teachingContent": {
+        "beginner": "**Node.js** lets you run JavaScript outside the browser - on servers!\n\n**What is Node.js?**\n- JavaScript runtime built on Chrome's V8 engine\n- Runs on servers, not browsers\n- Perfect for building APIs and web servers\n\n**Running a Node File:**\n```bash\n# Create a file: app.js\nconsole.log('Hello from Node!');\n\n# Run it:\nnode app.js\n```\n\n**Node REPL:**\n```bash\n# Start REPL\nnode\n\n> 2 + 2\n4\n> console.log('Hello')\nHello\n```",
+        "intermediate": "Node.js is a JavaScript runtime for server-side development:\n\n**Key Features:**\n- **Non-blocking I/O**: Handles many requests simultaneously\n- **Event-driven**: Uses callbacks and events\n- **NPM**: Huge package ecosystem\n\n**Simple Server:**\n```javascript\nconst http = require('http');\n\nconst server = http.createServer((req, res) => {\n  res.writeHead(200, { 'Content-Type': 'text/plain' });\n  res.end('Hello World!');\n});\n\nserver.listen(3000, () => {\n  console.log('Server running on port 3000');\n});\n```",
+        "advanced": "Understanding Node.js architecture and event loop:\n\n**Event Loop:**\n```javascript\nconsole.log('1');\n\nsetTimeout(() => {\n  console.log('2');\n}, 0);\n\nPromise.resolve().then(() => {\n  console.log('3');\n});\n\nconsole.log('4');\n// Output: 1, 4, 3, 2\n```\n\n**Non-blocking I/O:**\n```javascript\nconst fs = require('fs');\n\n// Blocking (synchronous)\nconst data = fs.readFileSync('file.txt', 'utf8');\n\n// Non-blocking (asynchronous)\nfs.readFile('file.txt', 'utf8', (err, data) => {\n  if (err) throw err;\n  console.log(data);\n});\n```"
+      },
+      "crossQuestions": [
+        "What is Node.js?",
+        "How do you run a JavaScript file with Node?",
+        "What's the difference between Node.js and browser JavaScript?"
+      ]
+    },
+    {
+      "id": "node-2",
+      "order": 2,
+      "title": "Modules and NPM",
+      "description": "Learn about Node modules and package management",
+      "objectives": [
+        "Use require and module.exports",
+        "Install packages with NPM",
+        "Understand package.json"
+      ],
+      "teachingContent": {
+        "beginner": "**Modules** let you split code into separate files.\n\n**Creating a Module:**\n```javascript\n// math.js\nfunction add(a, b) {\n  return a + b;\n}\n\nmodule.exports = { add };\n```\n\n**Using a Module:**\n```javascript\n// app.js\nconst math = require('./math');\nconsole.log(math.add(2, 3)); // 5\n```\n\n**Installing Packages:**\n```bash\nnpm install express\n```",
+        "intermediate": "Node.js uses CommonJS module system:\n\n**Module Patterns:**\n```javascript\n// Export single function\nmodule.exports = function() {};\n\n// Export multiple items\nmodule.exports = {\n  func1,\n  func2\n};\n\n// Named exports\nexports.func1 = () => {};\n```\n\n**NPM Commands:**\n```bash\nnpm init              # Create package.json\nnpm install express   # Install package\nnpm install -D jest   # Install dev dependency\nnpm start             # Run start script\n```",
+        "advanced": "Understanding module resolution and package management:\n\n**Module Resolution:**\n```javascript\n// Core modules\nconst fs = require('fs');\n\n// Local modules\nconst myModule = require('./myModule');\n\n// node_modules\nconst express = require('express');\n```\n\n**Package.json:**\n```json\n{\n  \"name\": \"my-app\",\n  \"version\": \"1.0.0\",\n  \"scripts\": {\n    \"start\": \"node app.js\",\n    \"dev\": \"nodemon app.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.0\"\n  }\n}\n```"
+      },
+      "crossQuestions": [
+        "How do you export a function from a module?",
+        "What command installs a package?",
+        "What is package.json used for?"
+      ]
+    },
+    {
+      "id": "node-3",
+      "order": 3,
+      "title": "File System Operations",
+      "description": "Learn how to read and write files",
+      "objectives": [
+        "Read files with fs module",
+        "Write files",
+        "Handle file errors"
+      ],
+      "teachingContent": {
+        "beginner": "The **fs** module lets you work with files.\n\n**Reading a File:**\n```javascript\nconst fs = require('fs');\n\nfs.readFile('data.txt', 'utf8', (err, data) => {\n  if (err) {\n    console.error(err);\n    return;\n  }\n  console.log(data);\n});\n```\n\n**Writing a File:**\n```javascript\nfs.writeFile('output.txt', 'Hello!', (err) => {\n  if (err) throw err;\n  console.log('File saved!');\n});\n```",
+        "intermediate": "File system operations with proper error handling:\n\n**Async/Await with fs.promises:**\n```javascript\nconst fs = require('fs').promises;\n\nasync function readData() {\n  try {\n    const data = await fs.readFile('data.txt', 'utf8');\n    console.log(data);\n  } catch (err) {\n    console.error('Error:', err);\n  }\n}\n```\n\n**Common Operations:**\n```javascript\n// Check if file exists\nfs.access('file.txt', (err) => {\n  if (err) console.log('File does not exist');\n});\n\n// Delete file\nfs.unlink('file.txt', (err) => {\n  if (err) throw err;\n});\n```",
+        "advanced": "Advanced file operations and streams:\n\n**Streams for Large Files:**\n```javascript\nconst fs = require('fs');\n\n// Reading large files\nconst readStream = fs.createReadStream('large.txt');\nreadStream.on('data', (chunk) => {\n  console.log('Chunk:', chunk);\n});\n\n// Piping streams\nconst readStream = fs.createReadStream('input.txt');\nconst writeStream = fs.createWriteStream('output.txt');\nreadStream.pipe(writeStream);\n```"
+      },
+      "crossQuestions": [
+        "How do you read a file in Node.js?",
+        "What's the difference between readFile and readFileSync?",
+        "How do you handle file errors?"
+      ]
+    },
+    {
+      "id": "node-4",
+      "order": 4,
+      "title": "Express.js Basics",
+      "description": "Learn to build web servers with Express",
+      "objectives": [
+        "Create an Express server",
+        "Define routes",
+        "Use middleware"
+      ],
+      "teachingContent": {
+        "beginner": "**Express** makes building web servers easy!\n\n**Basic Server:**\n```javascript\nconst express = require('express');\nconst app = express();\n\napp.get('/', (req, res) => {\n  res.send('Hello World!');\n});\n\napp.listen(3000, () => {\n  console.log('Server running on port 3000');\n});\n```\n\n**Routes:**\n```javascript\napp.get('/users', (req, res) => {\n  res.json([{ name: 'John' }]);\n});\n\napp.post('/users', (req, res) => {\n  res.json({ message: 'User created' });\n});\n```",
+        "intermediate": "Express.js for building RESTful APIs:\n\n**Middleware:**\n```javascript\nconst express = require('express');\nconst app = express();\n\n// Built-in middleware\napp.use(express.json());\n\n// Custom middleware\napp.use((req, res, next) => {\n  console.log(`${req.method} ${req.url}`);\n  next();\n});\n\n// Route handlers\napp.get('/api/users/:id', (req, res) => {\n  const { id } = req.params;\n  res.json({ id, name: 'John' });\n});\n```",
+        "advanced": "Advanced Express patterns and error handling:\n\n**Error Handling:**\n```javascript\n// Error handling middleware\napp.use((err, req, res, next) => {\n  console.error(err.stack);\n  res.status(500).json({ error: err.message });\n});\n\n// Async error handling\nconst asyncHandler = (fn) => (req, res, next) => {\n  Promise.resolve(fn(req, res, next)).catch(next);\n};\n\napp.get('/users', asyncHandler(async (req, res) => {\n  const users = await User.find();\n  res.json(users);\n}));\n```"
+      },
+      "crossQuestions": [
+        "How do you create a route in Express?",
+        "What is middleware?",
+        "How do you send JSON responses?"
+      ]
+    },
+    {
+      "id": "node-5",
+      "order": 5,
+      "title": "Async Programming",
+      "description": "Learn callbacks, promises, and async/await",
+      "objectives": [
+        "Understand callbacks",
+        "Use promises",
+        "Write async/await code"
+      ],
+      "teachingContent": {
+        "beginner": "Node.js uses **asynchronous** code to handle multiple tasks.\n\n**Callbacks:**\n```javascript\nfs.readFile('file.txt', (err, data) => {\n  if (err) throw err;\n  console.log(data);\n});\n```\n\n**Promises:**\n```javascript\nfs.promises.readFile('file.txt')\n  .then(data => console.log(data))\n  .catch(err => console.error(err));\n```\n\n**Async/Await:**\n```javascript\nasync function readData() {\n  const data = await fs.promises.readFile('file.txt');\n  console.log(data);\n}\n```",
+        "intermediate": "Modern async patterns in Node.js:\n\n**Promise Chaining:**\n```javascript\nfetchUser()\n  .then(user => fetchPosts(user.id))\n  .then(posts => console.log(posts))\n  .catch(err => console.error(err));\n```\n\n**Async/Await:**\n```javascript\nasync function getData() {\n  try {\n    const user = await fetchUser();\n    const posts = await fetchPosts(user.id);\n    return posts;\n  } catch (err) {\n    console.error(err);\n  }\n}\n```",
+        "advanced": "Advanced async patterns and error handling:\n\n**Promise.all:**\n```javascript\nconst [users, posts, comments] = await Promise.all([\n  fetchUsers(),\n  fetchPosts(),\n  fetchComments()\n]);\n```\n\n**Error Handling:**\n```javascript\ntry {\n  const data = await riskyOperation();\n} catch (err) {\n  if (err.code === 'ENOENT') {\n    // Handle file not found\n  } else {\n    throw err;\n  }\n}\n```"
+      },
+      "crossQuestions": [
+        "What's the difference between callbacks and promises?",
+        "How do you handle errors with async/await?",
+        "What does Promise.all do?"
+      ]
+    }
+  ]
+}

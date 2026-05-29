@@ -1,0 +1,196 @@
+{
+  "technology": "Django",
+  "totalConcepts": 5,
+  "concepts": [
+    {
+      "id": "django-1",
+      "order": 1,
+      "title": "Django Basics and Setup",
+      "description": "Learn Django framework fundamentals and project setup",
+      "objectives": [
+        "Understand Django architecture",
+        "Create a Django project",
+        "Run the development server"
+      ],
+      "teachingContent": {
+        "beginner": "**Django** is a high-level Python web framework for building web applications quickly.\n\n**Installing Django:**\n```bash\npip install django\n```\n\n**Creating a Project:**\n```bash\ndjango-admin startproject myproject\ncd myproject\npython manage.py runserver\n```\n\n**Project Structure:**\n```\nmyproject/\n├── manage.py          # Command-line utility\n├── myproject/\n│   ├── __init__.py\n│   ├── settings.py    # Configuration\n│   ├── urls.py        # URL routing\n│   └── wsgi.py        # Deployment\n```\n\n**Key Concepts:**\n- **MVT Pattern**: Model-View-Template\n- **Apps**: Modular components\n- **ORM**: Database abstraction",
+        "intermediate": "Django follows the MVT (Model-View-Template) pattern:\n\n**Creating an App:**\n```bash\npython manage.py startapp blog\n```\n\n**Register App in settings.py:**\n```python\nINSTALLED_APPS = [\n    'django.contrib.admin',\n    'django.contrib.auth',\n    # ...\n    'blog',  # Your app\n]\n```\n\n**Django Architecture:**\n- **Models**: Database structure\n- **Views**: Business logic\n- **Templates**: HTML presentation\n- **URLs**: Route mapping",
+        "advanced": "Understanding Django's request-response cycle:\n\n**Request Flow:**\n```\nBrowser → URLs → View → Model → Database\n                    ↓\n                Template → Response → Browser\n```\n\n**Settings Configuration:**\n```python\n# settings.py\nDEBUG = False  # Production\nALLOWED_HOSTS = ['yourdomain.com']\nDATABASES = {\n    'default': {\n        'ENGINE': 'django.db.backends.postgresql',\n        'NAME': 'mydb',\n    }\n}\n```"
+      },
+      "crossQuestions": [
+        "What is Django?",
+        "What are the key features of Django?",
+        "What are Django's project and app structure?",
+        "How do you create a Django project?",
+        "How do you create a Django app?",
+        "What is the role of manage.py?",
+        "What is settings.py used for?",
+        "What is urls.py used for?",
+        "What is views.py in Django?",
+        "What are Django templates?",
+        "How does Django's MVT architecture work?",
+        "What is the difference between MVC and MVT?",
+        "How do you run the development server in Django?"
+      ]
+    },
+    {
+      "id": "django-2",
+      "order": 2,
+      "title": "Models and Database",
+      "description": "Learn to define models and work with Django ORM",
+      "objectives": [
+        "Create Django models",
+        "Use Django ORM",
+        "Perform migrations"
+      ],
+      "teachingContent": {
+        "beginner": "**Models** define your database structure using Python classes.\n\n**Creating a Model:**\n```python\nfrom django.db import models\n\nclass Post(models.Model):\n    title = models.CharField(max_length=200)\n    content = models.TextField()\n    created_at = models.DateTimeField(auto_now_add=True)\n    \n    def __str__(self):\n        return self.title\n```\n\n**Migrations:**\n```bash\npython manage.py makemigrations  # Create migration files\npython manage.py migrate         # Apply to database\n```\n\n**Common Field Types:**\n- `CharField`: Short text\n- `TextField`: Long text\n- `IntegerField`: Numbers\n- `DateTimeField`: Date and time\n- `BooleanField`: True/False",
+        "intermediate": "Django ORM for database operations:\n\n**Creating Records:**\n```python\n# Create and save\npost = Post(title='Hello', content='World')\npost.save()\n\n# Or use create()\nPost.objects.create(title='Hello', content='World')\n```\n\n**Querying:**\n```python\n# Get all\nall_posts = Post.objects.all()\n\n# Filter\nrecent = Post.objects.filter(created_at__gte='2024-01-01')\n\n# Get one\npost = Post.objects.get(id=1)\n```\n\n**Relationships:**\n```python\nclass Comment(models.Model):\n    post = models.ForeignKey(Post, on_delete=models.CASCADE)\n    text = models.TextField()\n```",
+        "advanced": "Advanced ORM queries and optimization:\n\n**Complex Queries:**\n```python\nfrom django.db.models import Q, Count\n\n# OR queries\nPost.objects.filter(Q(title__contains='Django') | Q(content__contains='Python'))\n\n# Aggregation\nPost.objects.aggregate(Count('id'))\n\n# Prefetch related (avoid N+1)\nPost.objects.prefetch_related('comments')\n```\n\n**Custom Managers:**\n```python\nclass PublishedManager(models.Manager):\n    def get_queryset(self):\n        return super().get_queryset().filter(status='published')\n\nclass Post(models.Model):\n    # ...\n    objects = models.Manager()\n    published = PublishedManager()\n```"
+      },
+      "crossQuestions": [
+        "How do you map URLs to views?",
+        "What is the purpose of render() function?",
+        "What are Django's built-in template tags?",
+        "How can you use context variables in templates?",
+        "How do you pass data from views to templates?",
+        "What is the difference between static files and media files?",
+        "What is STATIC_URL and MEDIA_URL?",
+        "How do you serve static files in Django?",
+        "What is a model in Django?",
+        "How do you create a model?",
+        "What are model fields in Django?",
+        "How do you apply migrations in Django?",
+        "What is an ORM (Object-Relational Mapper)?",
+        "How do you make and apply migrations?",
+        "What does makemigrations do?",
+        "What does migrate do?",
+        "What is __str__() method used for in models?",
+        "What is the use of Meta class in a model?",
+        "What are model managers?",
+        "What is get() vs filter() in QuerySet?"
+      ]
+    },
+    {
+      "id": "django-3",
+      "order": 3,
+      "title": "Views and URLs",
+      "description": "Learn to create views and map URLs",
+      "objectives": [
+        "Create function-based views",
+        "Create class-based views",
+        "Configure URL routing"
+      ],
+      "teachingContent": {
+        "beginner": "**Views** handle requests and return responses.\n\n**Function-Based View:**\n```python\nfrom django.http import HttpResponse\n\ndef home(request):\n    return HttpResponse('Hello, Django!')\n```\n\n**URL Configuration (urls.py):**\n```python\nfrom django.urls import path\nfrom . import views\n\nurlpatterns = [\n    path('', views.home, name='home'),\n    path('about/', views.about, name='about'),\n]\n```\n\n**Rendering Templates:**\n```python\nfrom django.shortcuts import render\n\ndef home(request):\n    return render(request, 'home.html', {'title': 'Home'})\n```",
+        "intermediate": "Advanced view patterns:\n\n**Class-Based Views:**\n```python\nfrom django.views import View\nfrom django.views.generic import ListView\n\nclass PostListView(ListView):\n    model = Post\n    template_name = 'posts.html'\n    context_object_name = 'posts'\n```\n\n**URL Parameters:**\n```python\n# urls.py\npath('post/<int:pk>/', views.post_detail, name='post_detail')\n\n# views.py\ndef post_detail(request, pk):\n    post = Post.objects.get(pk=pk)\n    return render(request, 'post.html', {'post': post})\n```",
+        "advanced": "Advanced view patterns and mixins:\n\n**Generic Views:**\n```python\nfrom django.views.generic import (\n    ListView, DetailView, CreateView, UpdateView, DeleteView\n)\n\nclass PostCreateView(CreateView):\n    model = Post\n    fields = ['title', 'content']\n    success_url = '/posts/'\n```\n\n**Mixins:**\n```python\nfrom django.contrib.auth.mixins import LoginRequiredMixin\n\nclass PostCreateView(LoginRequiredMixin, CreateView):\n    model = Post\n    fields = ['title', 'content']\n```"
+      },
+      "crossQuestions": [
+        "How do you perform joins in Django ORM?",
+        "What is the difference between ForeignKey, OneToOneField, and ManyToManyField?",
+        "What are default model field types in Django?",
+        "How do you update and delete records in Django ORM?",
+        "How do you run custom queries in Django?",
+        "What is the difference between save() and update() in Django?",
+        "What is select_related() and prefetch_related()?",
+        "How do you use Django shell?",
+        "What is objects.all() in Django?",
+        "What is a migration file?",
+        "What is a primary key in Django?",
+        "Can you override the default primary key?",
+        "What is the difference between function-based and class-based views?",
+        "What are generic views in Django?",
+        "What is TemplateView, ListView, and DetailView?",
+        "What is the purpose of as_view()?"
+      ]
+    },
+    {
+      "id": "django-4",
+      "order": 4,
+      "title": "Templates",
+      "description": "Learn Django template language and rendering",
+      "objectives": [
+        "Use template syntax",
+        "Work with template tags",
+        "Create template inheritance"
+      ],
+      "teachingContent": {
+        "beginner": "**Templates** are HTML files with Django template language.\n\n**Basic Template (home.html):**\n```html\n<!DOCTYPE html>\n<html>\n<head>\n    <title>{{ title }}</title>\n</head>\n<body>\n    <h1>Welcome, {{ user.username }}!</h1>\n    <p>{{ content }}</p>\n</body>\n</html>\n```\n\n**Template Variables:**\n```html\n{{ variable }}           <!-- Output variable -->\n{{ user.username }}      <!-- Access attribute -->\n{{ items.0 }}           <!-- Access list item -->\n```\n\n**Template Tags:**\n```html\n{% if user.is_authenticated %}\n    <p>Hello, {{ user.username }}</p>\n{% else %}\n    <p>Please log in</p>\n{% endif %}\n```",
+        "intermediate": "Template inheritance and loops:\n\n**Base Template (base.html):**\n```html\n<!DOCTYPE html>\n<html>\n<head>\n    <title>{% block title %}My Site{% endblock %}</title>\n</head>\n<body>\n    {% block content %}{% endblock %}\n</body>\n</html>\n```\n\n**Child Template:**\n```html\n{% extends 'base.html' %}\n\n{% block title %}Home{% endblock %}\n\n{% block content %}\n    <h1>Welcome!</h1>\n{% endblock %}\n```\n\n**Loops:**\n```html\n{% for post in posts %}\n    <h2>{{ post.title }}</h2>\n    <p>{{ post.content }}</p>\n{% endfor %}\n```",
+        "advanced": "Advanced template features:\n\n**Template Filters:**\n```html\n{{ text|lower }}              <!-- Lowercase -->\n{{ date|date:\"Y-m-d\" }}       <!-- Format date -->\n{{ content|truncatewords:30 }} <!-- Truncate -->\n```\n\n**Custom Template Tags:**\n```python\nfrom django import template\n\nregister = template.Library()\n\n@register.filter\ndef custom_filter(value):\n    return value.upper()\n```"
+      },
+      "crossQuestions": [
+        "What is the use of forms in Django?",
+        "What is the difference between ModelForm and Form?",
+        "How do you validate a Django form?",
+        "How do you handle GET and POST in views?",
+        "What is CSRF token?",
+        "How do you display form errors in a template?",
+        "How do you render form fields manually?",
+        "What is form.cleaned_data?",
+        "What is form.save() used for?",
+        "What is reverse_lazy() in Django?",
+        "What are Django template filters?",
+        "What is context data in class-based views?",
+        "How do you include another template in a template?",
+        "What is template inheritance?",
+        "How do you write a custom template tag?",
+        "What is a 404 view in Django?"
+      ]
+    },
+    {
+      "id": "django-5",
+      "order": 5,
+      "title": "Forms and Authentication",
+      "description": "Learn to handle forms and user authentication",
+      "objectives": [
+        "Create Django forms",
+        "Handle form submissions",
+        "Implement user authentication"
+      ],
+      "teachingContent": {
+        "beginner": "**Forms** handle user input in Django.\n\n**Creating a Form:**\n```python\nfrom django import forms\n\nclass ContactForm(forms.Form):\n    name = forms.CharField(max_length=100)\n    email = forms.EmailField()\n    message = forms.CharField(widget=forms.Textarea)\n```\n\n**Using in View:**\n```python\ndef contact(request):\n    if request.method == 'POST':\n        form = ContactForm(request.POST)\n        if form.is_valid():\n            # Process form\n            name = form.cleaned_data['name']\n    else:\n        form = ContactForm()\n    return render(request, 'contact.html', {'form': form})\n```\n\n**Template:**\n```html\n<form method=\"post\">\n    {% csrf_token %}\n    {{ form.as_p }}\n    <button type=\"submit\">Submit</button>\n</form>\n```",
+        "intermediate": "ModelForms and authentication:\n\n**ModelForm:**\n```python\nfrom django.forms import ModelForm\n\nclass PostForm(ModelForm):\n    class Meta:\n        model = Post\n        fields = ['title', 'content']\n```\n\n**User Authentication:**\n```python\nfrom django.contrib.auth import authenticate, login, logout\n\ndef login_view(request):\n    if request.method == 'POST':\n        username = request.POST['username']\n        password = request.POST['password']\n        user = authenticate(request, username=username, password=password)\n        if user:\n            login(request, user)\n            return redirect('home')\n    return render(request, 'login.html')\n```",
+        "advanced": "Advanced forms and permissions:\n\n**Custom Validation:**\n```python\nclass PostForm(forms.ModelForm):\n    def clean_title(self):\n        title = self.cleaned_data['title']\n        if len(title) < 5:\n            raise forms.ValidationError('Title too short')\n        return title\n```\n\n**Permissions:**\n```python\nfrom django.contrib.auth.decorators import login_required, permission_required\n\n@login_required\n@permission_required('blog.add_post')\ndef create_post(request):\n    # Only authenticated users with permission\n    pass\n```"
+      },
+      "crossQuestions": [
+        "What is Django Admin?",
+        "How do you register a model in Django Admin?",
+        "How do you customize Django admin?",
+        "How do you add search functionality in admin?",
+        "How do you add filters in admin panel?",
+        "What is Django's authentication system?",
+        "How do you create a user in Django?",
+        "What is authenticate() and login() in Django?",
+        "What is logout() function?",
+        "How do you protect views with login required?",
+        "What are permissions in Django?",
+        "What is middleware in Django?",
+        "How do you create custom middleware?",
+        "What are built-in middlewares in Django?",
+        "How do you use sessions in Django?",
+        "What are messages in Django?",
+        "How do you use messages in views/templates?",
+        "What is the difference between session and cookies in Django?",
+        "What is @login_required decorator?",
+        "How do you redirect after login/logout?",
+        "What is Django REST Framework (DRF)?",
+        "How do you serialize data in DRF?",
+        "What is a ViewSet?",
+        "How do you create API endpoints?",
+        "What is CORS and how do you handle it in Django?",
+        "What is uWSGI and Gunicorn?",
+        "How do you deploy a Django project on Heroku?",
+        "How do you deploy on PythonAnywhere or DigitalOcean?",
+        "What is WSGI?",
+        "What is manage.py collectstatic used for?",
+        "How do you configure settings for production?",
+        "What is DEBUG = False in production?",
+        "How do you use .env files in Django?",
+        "What is caching in Django?",
+        "How do you use Celery with Django?"
+      ]
+    }
+  ]
+}

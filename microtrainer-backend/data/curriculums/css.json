@@ -1,0 +1,111 @@
+{
+  "technology": "CSS",
+  "totalConcepts": 5,
+  "concepts": [
+    {
+      "id": "css-1",
+      "order": 1,
+      "title": "CSS Basics and Selectors",
+      "description": "Learn CSS syntax, selectors, and how to apply styles",
+      "objectives": [
+        "Understand CSS syntax",
+        "Use CSS selectors",
+        "Apply styles to HTML"
+      ],
+      "teachingContent": {
+        "beginner": "**CSS** (Cascading Style Sheets) styles HTML elements.\n\n**CSS Syntax:**\n```css\nselector {\n    property: value;\n}\n```\n\n**Adding CSS:**\n```html\n<!-- Inline -->\n<p style=\"color: blue;\">Text</p>\n\n<!-- Internal -->\n<style>\n    p { color: blue; }\n</style>\n\n<!-- External (recommended) -->\n<link rel=\"stylesheet\" href=\"styles.css\">\n```\n\n**Basic Selectors:**\n```css\n/* Element */\np { color: blue; }\n\n/* Class */\n.button { background: red; }\n\n/* ID */\n#header { font-size: 24px; }\n```",
+        "intermediate": "Advanced selectors and specificity:\n\n**Combinators:**\n```css\n/* Descendant */\ndiv p { color: blue; }\n\n/* Child */\ndiv > p { color: red; }\n\n/* Adjacent sibling */\nh1 + p { margin-top: 0; }\n\n/* General sibling */\nh1 ~ p { color: gray; }\n```\n\n**Pseudo-classes:**\n```css\na:hover { color: red; }\na:visited { color: purple; }\ninput:focus { border: 2px solid blue; }\nli:first-child { font-weight: bold; }\nli:nth-child(2n) { background: #f0f0f0; }\n```\n\n**Specificity:**\n- Inline: 1000\n- ID: 100\n- Class: 10\n- Element: 1",
+        "advanced": "Advanced selectors:\n\n**Attribute Selectors:**\n```css\n[type=\"text\"] { border: 1px solid gray; }\n[href^=\"https\"] { color: green; }\n[href$=\".pdf\"] { color: red; }\n[class*=\"btn\"] { padding: 10px; }\n```\n\n**Pseudo-elements:**\n```css\np::first-line { font-weight: bold; }\np::first-letter { font-size: 2em; }\n.button::before { content: \"→ \"; }\n.button::after { content: \" ←\"; }\n```"
+      },
+      "crossQuestions": [
+        "What is CSS?",
+        "What's the difference between class and ID?",
+        "How do you select all paragraphs inside a div?"
+      ]
+    },
+    {
+      "id": "css-2",
+      "order": 2,
+      "title": "Box Model and Layout",
+      "description": "Learn the CSS box model and basic layout",
+      "objectives": [
+        "Understand the box model",
+        "Use margin and padding",
+        "Control element sizing"
+      ],
+      "teachingContent": {
+        "beginner": "**Box Model**: Every element is a box!\n\n**Box Model Parts:**\n```\n┌─────────────────────────┐\n│       Margin            │\n│  ┌──────────────────┐   │\n│  │    Border        │   │\n│  │  ┌───────────┐   │   │\n│  │  │  Padding  │   │   │\n│  │  │ ┌───────┐ │   │   │\n│  │  │ │Content│ │   │   │\n│  │  │ └───────┘ │   │   │\n│  │  └───────────┘   │   │\n│  └──────────────────┘   │\n└─────────────────────────┘\n```\n\n**CSS:**\n```css\n.box {\n    width: 200px;\n    height: 100px;\n    padding: 20px;\n    border: 2px solid black;\n    margin: 10px;\n}\n```",
+        "intermediate": "Box model properties:\n\n**Margin and Padding:**\n```css\n/* All sides */\nmargin: 10px;\n\n/* Top/Bottom, Left/Right */\nmargin: 10px 20px;\n\n/* Top, Right, Bottom, Left */\nmargin: 10px 20px 30px 40px;\n\n/* Individual sides */\nmargin-top: 10px;\nmargin-right: 20px;\n```\n\n**Box Sizing:**\n```css\n/* Default: width doesn't include padding/border */\nbox-sizing: content-box;\n\n/* Better: width includes padding/border */\nbox-sizing: border-box;\n\n/* Apply to all elements */\n* {\n    box-sizing: border-box;\n}\n```",
+        "advanced": "Advanced box model:\n\n**Margin Collapse:**\n```css\n/* Vertical margins collapse */\n.box1 { margin-bottom: 20px; }\n.box2 { margin-top: 30px; }\n/* Actual gap: 30px (not 50px) */\n```\n\n**Overflow:**\n```css\n.container {\n    overflow: hidden;  /* Hide overflow */\n    overflow: scroll;  /* Always show scrollbar */\n    overflow: auto;    /* Show scrollbar when needed */\n}\n```"
+      },
+      "crossQuestions": [
+        "What is the box model?",
+        "What's the difference between margin and padding?",
+        "What does box-sizing: border-box do?"
+      ]
+    },
+    {
+      "id": "css-3",
+      "order": 3,
+      "title": "Flexbox",
+      "description": "Learn CSS Flexbox for flexible layouts",
+      "objectives": [
+        "Create flex containers",
+        "Align flex items",
+        "Control flex direction and wrapping"
+      ],
+      "teachingContent": {
+        "beginner": "**Flexbox** makes layouts easy!\n\n**Basic Flexbox:**\n```css\n.container {\n    display: flex;\n}\n```\n\n**Flex Direction:**\n```css\n.row {\n    display: flex;\n    flex-direction: row;  /* Default: left to right */\n}\n\n.column {\n    display: flex;\n    flex-direction: column;  /* Top to bottom */\n}\n```\n\n**Justify Content (Main Axis):**\n```css\n.container {\n    display: flex;\n    justify-content: center;        /* Center */\n    justify-content: space-between; /* Space between items */\n    justify-content: space-around;  /* Space around items */\n}\n```",
+        "intermediate": "Advanced flexbox properties:\n\n**Align Items (Cross Axis):**\n```css\n.container {\n    display: flex;\n    align-items: center;      /* Center vertically */\n    align-items: flex-start;  /* Top */\n    align-items: flex-end;    /* Bottom */\n    align-items: stretch;     /* Stretch to fill */\n}\n```\n\n**Flex Items:**\n```css\n.item {\n    flex: 1;  /* Grow to fill space */\n    flex: 0 0 200px;  /* Don't grow/shrink, 200px wide */\n}\n\n/* Shorthand for: */\nflex-grow: 1;\nflex-shrink: 1;\nflex-basis: 0;\n```\n\n**Flex Wrap:**\n```css\n.container {\n    display: flex;\n    flex-wrap: wrap;  /* Wrap to next line */\n}\n```",
+        "advanced": "Advanced flexbox patterns:\n\n**Align Self:**\n```css\n.item {\n    align-self: flex-end;  /* Override container's align-items */\n}\n```\n\n**Order:**\n```css\n.item1 { order: 2; }\n.item2 { order: 1; }  /* Appears first */\n.item3 { order: 3; }\n```\n\n**Gap:**\n```css\n.container {\n    display: flex;\n    gap: 20px;  /* Space between items */\n    row-gap: 10px;\n    column-gap: 20px;\n}\n```"
+      },
+      "crossQuestions": [
+        "What is Flexbox?",
+        "What does justify-content do?",
+        "What's the difference between align-items and justify-content?"
+      ]
+    },
+    {
+      "id": "css-4",
+      "order": 4,
+      "title": "CSS Grid",
+      "description": "Learn CSS Grid for complex 2D layouts",
+      "objectives": [
+        "Create grid containers",
+        "Define grid columns and rows",
+        "Position grid items"
+      ],
+      "teachingContent": {
+        "beginner": "**CSS Grid** creates 2D layouts.\n\n**Basic Grid:**\n```css\n.container {\n    display: grid;\n    grid-template-columns: 200px 200px 200px;\n    grid-template-rows: 100px 100px;\n    gap: 20px;\n}\n```\n\n**Fractional Units (fr):**\n```css\n.container {\n    display: grid;\n    grid-template-columns: 1fr 2fr 1fr;\n    /* 1 part, 2 parts, 1 part */\n}\n```\n\n**Repeat:**\n```css\n.container {\n    display: grid;\n    grid-template-columns: repeat(3, 1fr);\n    /* Same as: 1fr 1fr 1fr */\n}\n```",
+        "intermediate": "Advanced grid features:\n\n**Grid Areas:**\n```css\n.container {\n    display: grid;\n    grid-template-areas:\n        \"header header header\"\n        \"sidebar main main\"\n        \"footer footer footer\";\n}\n\n.header { grid-area: header; }\n.sidebar { grid-area: sidebar; }\n.main { grid-area: main; }\n.footer { grid-area: footer; }\n```\n\n**Grid Lines:**\n```css\n.item {\n    grid-column: 1 / 3;  /* Span columns 1-3 */\n    grid-row: 1 / 2;     /* Span rows 1-2 */\n}\n\n/* Shorthand */\n.item {\n    grid-area: 1 / 1 / 2 / 3;\n    /* row-start / col-start / row-end / col-end */\n}\n```",
+        "advanced": "Advanced grid techniques:\n\n**Auto-fit and Auto-fill:**\n```css\n.container {\n    display: grid;\n    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n    /* Responsive grid without media queries! */\n}\n```\n\n**Grid Auto Flow:**\n```css\n.container {\n    display: grid;\n    grid-auto-flow: dense;  /* Fill gaps */\n}\n```\n\n**Implicit Grid:**\n```css\n.container {\n    display: grid;\n    grid-auto-rows: 100px;  /* Auto-created rows */\n}\n```"
+      },
+      "crossQuestions": [
+        "What is CSS Grid?",
+        "What does 1fr mean?",
+        "When would you use Grid vs Flexbox?"
+      ]
+    },
+    {
+      "id": "css-5",
+      "order": 5,
+      "title": "Responsive Design",
+      "description": "Learn to make websites responsive",
+      "objectives": [
+        "Use media queries",
+        "Create responsive layouts",
+        "Implement mobile-first design"
+      ],
+      "teachingContent": {
+        "beginner": "**Responsive Design** makes sites work on all devices.\n\n**Viewport Meta Tag:**\n```html\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n```\n\n**Media Queries:**\n```css\n/* Mobile first (default) */\n.container {\n    width: 100%;\n}\n\n/* Tablet */\n@media (min-width: 768px) {\n    .container {\n        width: 750px;\n    }\n}\n\n/* Desktop */\n@media (min-width: 1024px) {\n    .container {\n        width: 1000px;\n    }\n}\n```",
+        "intermediate": "Advanced responsive techniques:\n\n**Responsive Images:**\n```css\nimg {\n    max-width: 100%;\n    height: auto;\n}\n```\n\n**Responsive Typography:**\n```css\nhtml {\n    font-size: 16px;\n}\n\n@media (min-width: 768px) {\n    html {\n        font-size: 18px;\n    }\n}\n\n/* Or use clamp() */\nhtml {\n    font-size: clamp(14px, 2vw, 20px);\n}\n```\n\n**Breakpoints:**\n```css\n/* Mobile: < 768px */\n/* Tablet: 768px - 1024px */\n/* Desktop: > 1024px */\n```",
+        "advanced": "Modern responsive techniques:\n\n**Container Queries:**\n```css\n@container (min-width: 400px) {\n    .card {\n        display: grid;\n        grid-template-columns: 1fr 2fr;\n    }\n}\n```\n\n**Fluid Typography:**\n```css\nh1 {\n    font-size: calc(1.5rem + 2vw);\n}\n```\n\n**Aspect Ratio:**\n```css\n.video {\n    aspect-ratio: 16 / 9;\n}\n```"
+      },
+      "crossQuestions": [
+        "What are media queries?",
+        "What is mobile-first design?",
+        "How do you make images responsive?"
+      ]
+    }
+  ]
+}

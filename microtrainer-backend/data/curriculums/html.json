@@ -1,0 +1,111 @@
+{
+  "technology": "HTML",
+  "totalConcepts": 5,
+  "concepts": [
+    {
+      "id": "html-1",
+      "order": 1,
+      "title": "HTML Basics and Structure",
+      "description": "Learn HTML document structure and basic elements",
+      "objectives": [
+        "Understand HTML structure",
+        "Use basic HTML tags",
+        "Create a valid HTML document"
+      ],
+      "teachingContent": {
+        "beginner": "**HTML** (HyperText Markup Language) is the structure of web pages.\n\n**Basic HTML Document:**\n```html\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>My First Page</title>\n</head>\n<body>\n    <h1>Hello World!</h1>\n    <p>This is my first webpage.</p>\n</body>\n</html>\n```\n\n**Key Parts:**\n- `<!DOCTYPE html>`: Tells browser it's HTML5\n- `<html>`: Root element\n- `<head>`: Metadata (not visible)\n- `<body>`: Visible content",
+        "intermediate": "HTML document structure and metadata:\n\n**Head Elements:**\n```html\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"description\" content=\"My website\">\n    <meta name=\"keywords\" content=\"HTML, CSS, JavaScript\">\n    <meta name=\"author\" content=\"John Doe\">\n    <link rel=\"stylesheet\" href=\"styles.css\">\n    <script src=\"script.js\"></script>\n</head>\n```\n\n**Document Outline:**\n- Use proper heading hierarchy (h1 → h2 → h3)\n- One h1 per page\n- Logical content structure",
+        "advanced": "Advanced HTML features:\n\n**Meta Tags for SEO:**\n```html\n<meta property=\"og:title\" content=\"Page Title\">\n<meta property=\"og:description\" content=\"Description\">\n<meta property=\"og:image\" content=\"image.jpg\">\n<meta name=\"twitter:card\" content=\"summary\">\n```\n\n**Preloading Resources:**\n```html\n<link rel=\"preload\" href=\"font.woff2\" as=\"font\">\n<link rel=\"prefetch\" href=\"next-page.html\">\n```"
+      },
+      "crossQuestions": [
+        "What is HTML?",
+        "What goes in the <head> section?",
+        "What's the difference between <head> and <body>?"
+      ]
+    },
+    {
+      "id": "html-2",
+      "order": 2,
+      "title": "Text and Formatting",
+      "description": "Learn text elements and formatting tags",
+      "objectives": [
+        "Use headings and paragraphs",
+        "Format text",
+        "Create lists"
+      ],
+      "teachingContent": {
+        "beginner": "**Text Elements** structure your content.\n\n**Headings:**\n```html\n<h1>Main Heading</h1>\n<h2>Subheading</h2>\n<h3>Sub-subheading</h3>\n<!-- h1 to h6 -->\n```\n\n**Paragraphs:**\n```html\n<p>This is a paragraph of text.</p>\n<p>This is another paragraph.</p>\n```\n\n**Text Formatting:**\n```html\n<strong>Bold text</strong>\n<em>Italic text</em>\n<mark>Highlighted text</mark>\n<small>Small text</small>\n```\n\n**Lists:**\n```html\n<!-- Unordered list -->\n<ul>\n    <li>Item 1</li>\n    <li>Item 2</li>\n</ul>\n\n<!-- Ordered list -->\n<ol>\n    <li>First</li>\n    <li>Second</li>\n</ol>\n```",
+        "intermediate": "Advanced text formatting:\n\n**Semantic Text:**\n```html\n<abbr title=\"HyperText Markup Language\">HTML</abbr>\n<code>console.log('Hello')</code>\n<pre>Preformatted text</pre>\n<blockquote cite=\"source.com\">\n    Quote text\n</blockquote>\n```\n\n**Line Breaks:**\n```html\n<p>Line 1<br>Line 2</p>\n<hr> <!-- Horizontal rule -->\n```",
+        "advanced": "Advanced text elements:\n\n**Definition Lists:**\n```html\n<dl>\n    <dt>HTML</dt>\n    <dd>HyperText Markup Language</dd>\n    <dt>CSS</dt>\n    <dd>Cascading Style Sheets</dd>\n</dl>\n```\n\n**Ruby Annotations:**\n```html\n<ruby>\n    漢 <rt>kan</rt>\n    字 <rt>ji</rt>\n</ruby>\n```"
+      },
+      "crossQuestions": [
+        "What's the difference between <strong> and <b>?",
+        "How do you create a list?",
+        "What is semantic HTML?"
+      ]
+    },
+    {
+      "id": "html-3",
+      "order": 3,
+      "title": "Links and Images",
+      "description": "Learn to add links and images",
+      "objectives": [
+        "Create hyperlinks",
+        "Add images",
+        "Use image attributes"
+      ],
+      "teachingContent": {
+        "beginner": "**Links** connect pages, **Images** add visuals.\n\n**Links:**\n```html\n<!-- External link -->\n<a href=\"https://google.com\">Google</a>\n\n<!-- Internal link -->\n<a href=\"about.html\">About Us</a>\n\n<!-- Email link -->\n<a href=\"mailto:email@example.com\">Email Me</a>\n\n<!-- Phone link -->\n<a href=\"tel:+1234567890\">Call Us</a>\n```\n\n**Images:**\n```html\n<img src=\"photo.jpg\" alt=\"Description of photo\">\n```\n\n**Important:** Always include `alt` text for accessibility!",
+        "intermediate": "Advanced links and images:\n\n**Link Targets:**\n```html\n<!-- Open in new tab -->\n<a href=\"page.html\" target=\"_blank\" rel=\"noopener\">Link</a>\n\n<!-- Download link -->\n<a href=\"file.pdf\" download>Download PDF</a>\n```\n\n**Responsive Images:**\n```html\n<img \n    src=\"small.jpg\" \n    srcset=\"medium.jpg 768w, large.jpg 1200w\"\n    sizes=\"(max-width: 768px) 100vw, 50vw\"\n    alt=\"Responsive image\"\n>\n```\n\n**Figure and Caption:**\n```html\n<figure>\n    <img src=\"photo.jpg\" alt=\"Photo\">\n    <figcaption>Photo caption</figcaption>\n</figure>\n```",
+        "advanced": "Advanced image techniques:\n\n**Picture Element:**\n```html\n<picture>\n    <source media=\"(min-width: 1200px)\" srcset=\"large.jpg\">\n    <source media=\"(min-width: 768px)\" srcset=\"medium.jpg\">\n    <img src=\"small.jpg\" alt=\"Responsive\">\n</picture>\n```\n\n**Lazy Loading:**\n```html\n<img src=\"image.jpg\" loading=\"lazy\" alt=\"Lazy loaded\">\n```"
+      },
+      "crossQuestions": [
+        "How do you create a link?",
+        "What is the alt attribute for?",
+        "How do you open a link in a new tab?"
+      ]
+    },
+    {
+      "id": "html-4",
+      "order": 4,
+      "title": "Forms and Input",
+      "description": "Learn to create forms and handle user input",
+      "objectives": [
+        "Create forms",
+        "Use input types",
+        "Add form validation"
+      ],
+      "teachingContent": {
+        "beginner": "**Forms** collect user input.\n\n**Basic Form:**\n```html\n<form action=\"/submit\" method=\"POST\">\n    <label for=\"name\">Name:</label>\n    <input type=\"text\" id=\"name\" name=\"name\">\n    \n    <label for=\"email\">Email:</label>\n    <input type=\"email\" id=\"email\" name=\"email\">\n    \n    <button type=\"submit\">Submit</button>\n</form>\n```\n\n**Input Types:**\n```html\n<input type=\"text\">      <!-- Text -->\n<input type=\"email\">     <!-- Email -->\n<input type=\"password\">  <!-- Password -->\n<input type=\"number\">    <!-- Number -->\n<input type=\"date\">      <!-- Date picker -->\n<input type=\"checkbox\">  <!-- Checkbox -->\n<input type=\"radio\">     <!-- Radio button -->\n```",
+        "intermediate": "Advanced form elements:\n\n**Textarea and Select:**\n```html\n<textarea name=\"message\" rows=\"4\" cols=\"50\">\n    Default text\n</textarea>\n\n<select name=\"country\">\n    <option value=\"us\">United States</option>\n    <option value=\"uk\">United Kingdom</option>\n</select>\n```\n\n**Form Validation:**\n```html\n<input type=\"email\" required>\n<input type=\"text\" minlength=\"3\" maxlength=\"20\">\n<input type=\"number\" min=\"1\" max=\"100\">\n<input type=\"text\" pattern=\"[A-Za-z]{3}\">\n```",
+        "advanced": "Advanced form features:\n\n**Fieldset and Legend:**\n```html\n<fieldset>\n    <legend>Personal Information</legend>\n    <input type=\"text\" name=\"name\">\n    <input type=\"email\" name=\"email\">\n</fieldset>\n```\n\n**Datalist:**\n```html\n<input list=\"browsers\" name=\"browser\">\n<datalist id=\"browsers\">\n    <option value=\"Chrome\">\n    <option value=\"Firefox\">\n    <option value=\"Safari\">\n</datalist>\n```"
+      },
+      "crossQuestions": [
+        "What is a form?",
+        "How do you make an input required?",
+        "What's the difference between GET and POST?"
+      ]
+    },
+    {
+      "id": "html-5",
+      "order": 5,
+      "title": "Semantic HTML",
+      "description": "Learn semantic elements for better structure",
+      "objectives": [
+        "Use semantic elements",
+        "Create accessible HTML",
+        "Structure content properly"
+      ],
+      "teachingContent": {
+        "beginner": "**Semantic HTML** uses meaningful tags.\n\n**Semantic Elements:**\n```html\n<header>\n    <nav>\n        <a href=\"/\">Home</a>\n        <a href=\"/about\">About</a>\n    </nav>\n</header>\n\n<main>\n    <article>\n        <h1>Article Title</h1>\n        <p>Content...</p>\n    </article>\n    \n    <aside>\n        <h2>Related</h2>\n        <p>Sidebar content</p>\n    </aside>\n</main>\n\n<footer>\n    <p>&copy; 2024 My Site</p>\n</footer>\n```\n\n**Why Semantic HTML?**\n- Better SEO\n- Accessibility\n- Easier to maintain",
+        "intermediate": "Advanced semantic structure:\n\n**Article vs Section:**\n```html\n<!-- Article: Self-contained content -->\n<article>\n    <h2>Blog Post</h2>\n    <p>Content...</p>\n</article>\n\n<!-- Section: Thematic grouping -->\n<section>\n    <h2>Features</h2>\n    <p>Content...</p>\n</section>\n```\n\n**Time Element:**\n```html\n<time datetime=\"2024-01-15\">January 15, 2024</time>\n```",
+        "advanced": "Accessibility and ARIA:\n\n**ARIA Attributes:**\n```html\n<button aria-label=\"Close\" aria-pressed=\"false\">\n    ×\n</button>\n\n<nav aria-label=\"Main navigation\">\n    <ul role=\"menubar\">\n        <li role=\"menuitem\"><a href=\"/\">Home</a></li>\n    </ul>\n</nav>\n```\n\n**Skip Links:**\n```html\n<a href=\"#main-content\" class=\"skip-link\">\n    Skip to main content\n</a>\n```"
+      },
+      "crossQuestions": [
+        "What are semantic elements?",
+        "What's the difference between <div> and <section>?",
+        "Why is semantic HTML important?"
+      ]
+    }
+  ]
+}

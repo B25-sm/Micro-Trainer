@@ -1,0 +1,111 @@
+{
+  "technology": "TypeScript",
+  "totalConcepts": 5,
+  "concepts": [
+    {
+      "id": "ts-1",
+      "order": 1,
+      "title": "Basic Types",
+      "description": "Learn TypeScript's type system and basic types",
+      "objectives": [
+        "Understand type annotations",
+        "Use primitive types",
+        "Work with arrays and tuples"
+      ],
+      "teachingContent": {
+        "beginner": "**TypeScript** adds types to JavaScript for better code quality!\n\n**Basic Types:**\n```typescript\nlet name: string = 'John';\nlet age: number = 25;\nlet isActive: boolean = true;\n```\n\n**Arrays:**\n```typescript\nlet numbers: number[] = [1, 2, 3];\nlet names: Array<string> = ['John', 'Jane'];\n```\n\n**Type Inference:**\n```typescript\nlet message = 'Hello'; // TypeScript knows it's a string\n// message = 123; // ❌ Error!\n```",
+        "intermediate": "TypeScript's type system provides compile-time safety:\n\n**Union Types:**\n```typescript\nlet id: string | number;\nid = '123'; // ✅\nid = 123;   // ✅\n```\n\n**Type Aliases:**\n```typescript\ntype ID = string | number;\ntype User = {\n  id: ID;\n  name: string;\n  email: string;\n};\n```\n\n**Tuples:**\n```typescript\nlet point: [number, number] = [10, 20];\nlet user: [string, number] = ['John', 25];\n```",
+        "advanced": "Advanced type system features:\n\n**Literal Types:**\n```typescript\ntype Status = 'pending' | 'approved' | 'rejected';\nlet status: Status = 'pending';\n```\n\n**Type Guards:**\n```typescript\nfunction isString(value: unknown): value is string {\n  return typeof value === 'string';\n}\n```"
+      },
+      "crossQuestions": [
+        "How do you declare a variable with a type in TypeScript?",
+        "What's a union type?",
+        "What's the difference between type and interface?"
+      ]
+    },
+    {
+      "id": "ts-2",
+      "order": 2,
+      "title": "Interfaces",
+      "description": "Learn about interfaces and object types",
+      "objectives": [
+        "Define interfaces",
+        "Use optional properties",
+        "Extend interfaces"
+      ],
+      "teachingContent": {
+        "beginner": "**Interfaces** define the shape of objects.\n\n**Basic Interface:**\n```typescript\ninterface User {\n  name: string;\n  age: number;\n}\n\nconst user: User = {\n  name: 'John',\n  age: 25\n};\n```\n\n**Optional Properties:**\n```typescript\ninterface User {\n  name: string;\n  email?: string; // Optional\n}\n```",
+        "intermediate": "Interfaces for complex object structures:\n\n**Extending Interfaces:**\n```typescript\ninterface Person {\n  name: string;\n}\n\ninterface Employee extends Person {\n  employeeId: number;\n  department: string;\n}\n```\n\n**Function Types:**\n```typescript\ninterface Calculator {\n  add(a: number, b: number): number;\n  subtract(a: number, b: number): number;\n}\n```",
+        "advanced": "Advanced interface patterns:\n\n**Index Signatures:**\n```typescript\ninterface Dictionary {\n  [key: string]: string;\n}\n```\n\n**Hybrid Types:**\n```typescript\ninterface Counter {\n  (start: number): string;\n  interval: number;\n  reset(): void;\n}\n```"
+      },
+      "crossQuestions": [
+        "What is an interface?",
+        "How do you make a property optional?",
+        "How do you extend an interface?"
+      ]
+    },
+    {
+      "id": "ts-3",
+      "order": 3,
+      "title": "Functions",
+      "description": "Learn about typed functions and parameters",
+      "objectives": [
+        "Type function parameters",
+        "Type return values",
+        "Use optional parameters"
+      ],
+      "teachingContent": {
+        "beginner": "TypeScript lets you type function parameters and return values.\n\n**Basic Function:**\n```typescript\nfunction add(a: number, b: number): number {\n  return a + b;\n}\n```\n\n**Arrow Functions:**\n```typescript\nconst multiply = (a: number, b: number): number => {\n  return a * b;\n};\n```",
+        "intermediate": "Advanced function typing:\n\n**Optional Parameters:**\n```typescript\nfunction greet(name: string, greeting?: string): string {\n  return `${greeting || 'Hello'}, ${name}!`;\n}\n```\n\n**Default Parameters:**\n```typescript\nfunction createUser(name: string, role: string = 'user') {\n  return { name, role };\n}\n```",
+        "advanced": "Function overloads and generics:\n\n**Function Overloads:**\n```typescript\nfunction format(value: string): string;\nfunction format(value: number): string;\nfunction format(value: string | number): string {\n  return String(value);\n}\n```"
+      },
+      "crossQuestions": [
+        "How do you type function parameters?",
+        "What's an optional parameter?",
+        "How do you specify a return type?"
+      ]
+    },
+    {
+      "id": "ts-4",
+      "order": 4,
+      "title": "Generics",
+      "description": "Learn about generic types for reusable code",
+      "objectives": [
+        "Understand generics",
+        "Create generic functions",
+        "Use generic interfaces"
+      ],
+      "teachingContent": {
+        "beginner": "**Generics** let you write reusable code that works with any type.\n\n**Generic Function:**\n```typescript\nfunction identity<T>(value: T): T {\n  return value;\n}\n\nidentity<string>('hello');\nidentity<number>(123);\n```",
+        "intermediate": "Generics for type-safe reusable code:\n\n**Generic Interface:**\n```typescript\ninterface Box<T> {\n  value: T;\n}\n\nconst stringBox: Box<string> = { value: 'hello' };\nconst numberBox: Box<number> = { value: 123 };\n```",
+        "advanced": "Advanced generic patterns:\n\n**Generic Constraints:**\n```typescript\nfunction getProperty<T, K extends keyof T>(obj: T, key: K) {\n  return obj[key];\n}\n```"
+      },
+      "crossQuestions": [
+        "What are generics?",
+        "How do you create a generic function?",
+        "Why use generics instead of any?"
+      ]
+    },
+    {
+      "id": "ts-5",
+      "order": 5,
+      "title": "Classes",
+      "description": "Learn about TypeScript classes and access modifiers",
+      "objectives": [
+        "Create classes",
+        "Use access modifiers",
+        "Implement interfaces"
+      ],
+      "teachingContent": {
+        "beginner": "TypeScript classes add types to JavaScript classes.\n\n**Basic Class:**\n```typescript\nclass Person {\n  name: string;\n  age: number;\n  \n  constructor(name: string, age: number) {\n    this.name = name;\n    this.age = age;\n  }\n  \n  greet(): string {\n    return `Hello, I'm ${this.name}`;\n  }\n}\n```",
+        "intermediate": "Classes with access modifiers:\n\n**Access Modifiers:**\n```typescript\nclass BankAccount {\n  public accountNumber: string;\n  private balance: number;\n  protected owner: string;\n  \n  constructor(accountNumber: string, balance: number) {\n    this.accountNumber = accountNumber;\n    this.balance = balance;\n  }\n  \n  public getBalance(): number {\n    return this.balance;\n  }\n}\n```",
+        "advanced": "Advanced class patterns:\n\n**Abstract Classes:**\n```typescript\nabstract class Animal {\n  abstract makeSound(): void;\n  \n  move(): void {\n    console.log('Moving...');\n  }\n}\n```"
+      },
+      "crossQuestions": [
+        "What are access modifiers?",
+        "What's the difference between public and private?",
+        "How do you implement an interface in a class?"
+      ]
+    }
+  ]
+}

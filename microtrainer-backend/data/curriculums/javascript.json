@@ -1,0 +1,111 @@
+{
+  "technology": "JavaScript",
+  "totalConcepts": 5,
+  "concepts": [
+    {
+      "id": "js-1",
+      "order": 1,
+      "title": "Variables and Data Types",
+      "description": "Learn about var, let, const and primitive data types",
+      "objectives": [
+        "Understand variable declaration",
+        "Know the difference between var, let, and const",
+        "Identify primitive data types"
+      ],
+      "teachingContent": {
+        "beginner": "In JavaScript, we have three ways to declare variables: **var**, **let**, and **const**.\n\n**var** - The old way (function-scoped):\n```javascript\nvar name = 'John';\nvar age = 25;\n```\n\n**let** - Modern way for values that change (block-scoped):\n```javascript\nlet score = 0;\nscore = 10; // Can be changed\n```\n\n**const** - For values that should NOT change (block-scoped):\n```javascript\nconst PI = 3.14159;\nconst API_KEY = 'abc123';\n// PI = 3.14; // ❌ Error! Cannot reassign\n```\n\n**Key Differences:**\n- **var**: Function-scoped, can be redeclared, hoisted\n- **let**: Block-scoped, cannot be redeclared, not hoisted\n- **const**: Block-scoped, cannot be reassigned or redeclared\n\n**Best Practice:** Use `const` by default, use `let` when you need to reassign, avoid `var`.",
+        "intermediate": "JavaScript has three variable declaration keywords with important differences:\n\n**1. var (ES5 - Avoid in modern code)**\n- Function-scoped (not block-scoped)\n- Hoisted to top of function\n- Can be redeclared\n```javascript\nfunction example() {\n  var x = 1;\n  if (true) {\n    var x = 2; // Same variable!\n    console.log(x); // 2\n  }\n  console.log(x); // 2 (not 1!)\n}\n```\n\n**2. let (ES6 - Use for mutable values)**\n- Block-scoped\n- Not hoisted (temporal dead zone)\n- Cannot be redeclared in same scope\n```javascript\nlet count = 0;\ncount = 1; // ✅ OK\nlet count = 2; // ❌ Error\n\nif (true) {\n  let blockVar = 'inside';\n}\n// console.log(blockVar); // ❌ Error: not defined\n```\n\n**3. const (ES6 - Use by default)**\n- Block-scoped\n- Cannot be reassigned\n- Must be initialized\n```javascript\nconst MAX = 100;\n// MAX = 200; // ❌ Error\n\nconst user = { name: 'John' };\nuser.name = 'Jane'; // ✅ OK (object properties can change)\nuser = {}; // ❌ Error (cannot reassign)\n```\n\n**Primitive Data Types:**\n- `string`: 'hello', \"world\", \\`template\\`\n- `number`: 42, 3.14, NaN, Infinity\n- `boolean`: true, false\n- `undefined`: variable declared but not assigned\n- `null`: intentional absence of value\n- `symbol`: unique identifier (ES6)\n- `bigint`: large integers (ES2020)",
+        "advanced": "Understanding JavaScript's variable declaration mechanisms and type system:\n\n**Variable Hoisting & Temporal Dead Zone:**\n```javascript\n// var hoisting\nconsole.log(x); // undefined (hoisted)\nvar x = 5;\n\n// let/const temporal dead zone\nconsole.log(y); // ❌ ReferenceError\nlet y = 5;\n```\n\n**Scope Chain & Closures:**\n```javascript\nfunction outer() {\n  const outerVar = 'outer';\n  \n  function inner() {\n    const innerVar = 'inner';\n    console.log(outerVar); // ✅ Closure\n  }\n  \n  return inner;\n}\n```\n\n**const with Objects (Shallow Immutability):**\n```javascript\nconst obj = { a: 1 };\nobj.a = 2; // ✅ OK (property mutation)\nobj.b = 3; // ✅ OK (adding property)\nobj = {}; // ❌ Error (reassignment)\n\n// Deep immutability requires Object.freeze()\nconst frozen = Object.freeze({ a: 1 });\nfrozen.a = 2; // ❌ Fails silently (strict mode: Error)\n```\n\n**Type Coercion & Checking:**\n```javascript\n// Loose equality (type coercion)\n'5' == 5; // true\n0 == false; // true\n\n// Strict equality (no coercion)\n'5' === 5; // false\n0 === false; // false\n\n// Type checking\ntypeof 'hello'; // 'string'\ntypeof 42; // 'number'\ntypeof undefined; // 'undefined'\ntypeof null; // 'object' (historical bug!)\n```\n\n**Best Practices:**\n1. Use `const` by default\n2. Use `let` only when reassignment is needed\n3. Never use `var` in modern code\n4. Use strict equality (`===`) over loose (`==`)\n5. Understand the difference between `undefined` and `null`"
+      },
+      "crossQuestions": [
+        "What's the difference between let and const?",
+        "Give me an example of when to use const",
+        "What happens if you try to reassign a const variable?"
+      ]
+    },
+    {
+      "id": "js-2",
+      "order": 2,
+      "title": "Functions",
+      "description": "Learn about function declarations, expressions, and arrow functions",
+      "objectives": [
+        "Create and call functions",
+        "Understand function parameters and return values",
+        "Use arrow functions"
+      ],
+      "teachingContent": {
+        "beginner": "Functions are reusable blocks of code. You define them once and can call them many times.",
+        "intermediate": "JavaScript has multiple ways to create functions: function declarations, function expressions, and arrow functions. Each has different behavior with 'this' binding.",
+        "advanced": "Understanding closures, higher-order functions, and the differences in 'this' binding between regular and arrow functions is essential."
+      },
+      "crossQuestions": [
+        "Write a simple function that adds two numbers",
+        "What's the difference between a function declaration and arrow function?",
+        "What does a function return if there's no return statement?"
+      ]
+    },
+    {
+      "id": "js-3",
+      "order": 3,
+      "title": "Arrays and Array Methods",
+      "description": "Work with arrays and common array methods",
+      "objectives": [
+        "Create and manipulate arrays",
+        "Use map, filter, reduce",
+        "Understand array iteration"
+      ],
+      "teachingContent": {
+        "beginner": "Arrays are lists that can store multiple values. You can add, remove, and access items using methods.",
+        "intermediate": "JavaScript arrays have powerful methods like map (transform), filter (select), and reduce (accumulate) for functional programming.",
+        "advanced": "Master array methods, understand their time complexity, and know when to use forEach vs map vs for loops."
+      },
+      "crossQuestions": [
+        "How do you add an item to the end of an array?",
+        "What does the map method do?",
+        "Give me an example of using filter"
+      ]
+    },
+    {
+      "id": "js-4",
+      "order": 4,
+      "title": "Objects and Object Methods",
+      "description": "Learn about JavaScript objects and how to work with them",
+      "objectives": [
+        "Create and access object properties",
+        "Use object methods",
+        "Understand object destructuring"
+      ],
+      "teachingContent": {
+        "beginner": "Objects are collections of key-value pairs. They let you group related data together.",
+        "intermediate": "Objects can contain properties and methods. You can access them using dot notation or bracket notation.",
+        "advanced": "Understanding prototypes, property descriptors, and the difference between Object.create, object literals, and constructor functions."
+      },
+      "crossQuestions": [
+        "How do you access a property in an object?",
+        "What's the difference between dot notation and bracket notation?",
+        "How do you add a new property to an existing object?"
+      ]
+    },
+    {
+      "id": "js-5",
+      "order": 5,
+      "title": "Conditional Statements",
+      "description": "Learn if-else, switch, and ternary operators",
+      "objectives": [
+        "Use if-else statements",
+        "Understand switch statements",
+        "Use ternary operators"
+      ],
+      "teachingContent": {
+        "beginner": "Conditional statements let your code make decisions. If something is true, do this; otherwise, do that.",
+        "intermediate": "JavaScript has if-else, switch, and ternary operators for conditional logic. Each has its use case.",
+        "advanced": "Understanding truthy/falsy values, short-circuit evaluation, and when to use each conditional construct."
+      },
+      "crossQuestions": [
+        "Write an if-else statement that checks if a number is positive",
+        "When would you use a switch statement instead of if-else?",
+        "What is a ternary operator?"
+      ]
+    }
+  ]
+}

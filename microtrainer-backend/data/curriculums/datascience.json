@@ -1,0 +1,1326 @@
+{
+  "technology": "Data Science",
+  "totalConcepts": 35,
+  "sections": [
+    {
+      "id": "01",
+      "title": "Foundation & Data Literacy",
+      "moduleCount": 3
+    },
+    {
+      "id": "02",
+      "title": "Python Programming & Data Tools",
+      "moduleCount": 3
+    },
+    {
+      "id": "03",
+      "title": "Data Analysis & Visualization",
+      "moduleCount": 3
+    },
+    {
+      "id": "04",
+      "title": "Database & SQL Skills",
+      "moduleCount": 2
+    },
+    {
+      "id": "05",
+      "title": "Machine Learning Fundamentals",
+      "moduleCount": 5
+    },
+    {
+      "id": "06",
+      "title": "AI, Generative AI & Large Language Models",
+      "moduleCount": 7
+    },
+    {
+      "id": "07",
+      "title": "Advanced Topics & Specializations",
+      "moduleCount": 4
+    },
+    {
+      "id": "08",
+      "title": "Cloud & Deployment",
+      "moduleCount": 3
+    },
+    {
+      "id": "09",
+      "title": "Business Intelligence & Advanced Analytics",
+      "moduleCount": 2
+    },
+    {
+      "id": "10",
+      "title": "Portfolio & Career Preparation",
+      "moduleCount": 3
+    }
+  ],
+  "concepts": [
+    {
+      "id": "ds-1",
+      "order": 1,
+      "sectionId": "01",
+      "sectionTitle": "Foundation & Data Literacy",
+      "moduleNumber": 1,
+      "title": "Module 1: Data Science Landscape & Career Paths",
+      "description": "What is Data Science? Real-world impact and applications",
+      "topics": [
+        "What is Data Science? Real-world impact and applications",
+        "Career Paths: Data Scientist vs Data Analyst vs ML Engineer vs Data Engineer",
+        "Industry Applications: Healthcare, Finance, E-commerce, Sports, Social Media",
+        "Success Stories: Case studies of data-driven decisions",
+        "Setting Expectations: Salary ranges, skill requirements, job market"
+      ],
+      "project": null,
+      "objectives": [
+        "Define data science and explain how it differs from traditional IT or software roles",
+        "Compare Data Analyst, Data Scientist, ML Engineer, and Data Engineer — skills and daily work",
+        "Give real industry examples (healthcare, finance, e-commerce) where data drove decisions",
+        "Describe a realistic learning path and what employers expect at entry vs mid level",
+        "Set honest expectations on salary bands, tools, and job market demand"
+      ],
+      "teachingContent": {
+        "beginner": "Data science is how companies use numbers and code to make smarter decisions — not magic, not just Excel charts. You'll meet four common roles: Analyst (reports and SQL), Scientist (models and experiments), ML Engineer (ships models to production), and Data Engineer (builds data pipes). We'll walk through hospitals catching risky patients early, banks stopping fraud, stores recommending products, and apps ranking feeds — so you see where YOU might fit before writing a single line of Python.",
+        "intermediate": "Treat data science as a decision factory: ingest → clean → explore → model or metric → communicate. Analysts optimize clarity for stakeholders; scientists own hypothesis and model choice; ML engineers own latency, deployment, and drift; data engineers own reliable pipelines. Compare tool stacks (SQL + Python + BI vs PyTorch + Docker + feature stores). Discuss how the same company hires different profiles on one team.",
+        "advanced": "Frame the landscape around organizational maturity: reporting-only analytics teams vs experimentation culture vs ML platform teams. Contrast when to hire analysts vs scientists vs ML engineers. Cover career arbitrage (analyst → scientist → MLE), interview signals per role, and how GenAI shifted job descriptions. Include trade-offs: build vs buy models, centralized vs embedded data teams, and ethical boundaries when data drives high-stakes decisions."
+      },
+      "crossQuestions": [
+        "Data Analyst vs ML Engineer — what does each do on a typical Monday? Give a concrete example.",
+        "Pick one industry (healthcare, finance, or e-commerce) and explain a data-driven decision that saved money or lives.",
+        "What three skills would you learn first if you wanted an entry-level data role in 2026?",
+        "Why is 'data science' not the same job everywhere? Explain with two different company examples."
+      ],
+      "lessonBrief": "\nMODULE 1 DEEP BRIEF — Data Science Landscape & Career Paths\n\nWHAT IS DATA SCIENCE (teach clearly):\n- Interdisciplinary field: statistics + programming + domain knowledge + communication\n- Goal: turn raw data into decisions (not just charts) — prediction, optimization, automation\n- Real examples to mention: Netflix recommendations, fraud detection at banks, hospital readmission risk, inventory optimization at Amazon, sports analytics (player performance), social media feed ranking\n\nCAREER PATHS (must contrast all four):\n1. Data Analyst — SQL, Excel/Sheets, dashboards (Power BI/Tableau), KPIs, A/B test reports, stakeholders. Less model-building, more reporting and insights.\n2. Data Scientist — end-to-end: EDA, modeling, experimentation, sometimes deployment. Bridge between business and ML.\n3. ML Engineer — production ML: pipelines, APIs, scaling, monitoring, feature stores, MLOps. Strong software engineering + ML.\n4. Data Engineer — pipelines, warehouses, Spark, Airflow, data quality at scale. Builds the plumbing analysts/scientists use.\n\nINDUSTRY APPLICATIONS (one sentence each with outcome):\n- Healthcare: predict readmission → reduce costs\n- Finance: credit risk / fraud → save money\n- E-commerce: recommendation + churn → revenue\n- Sports: player metrics → team strategy\n- Social media: engagement ranking → retention\n\nSUCCESS STORIES (teach mindset):\n- How Target-style analytics or similar case studies show correlation vs causation carefully\n- How a simple dashboard saved hours vs how a model automated a decision\n\nEXPECTATIONS (be honest, not hype):\n- Entry roles often need Python + SQL + one viz tool + statistics basics\n- Salaries vary by region; mention growth in GenAI/LLM skills\n- Portfolio beats certificates; capstone projects matter\n\nLESSON TONE: Career mentor + technical coach. Use one consistent analogy (e.g. data team as a restaurant: raw ingredients=data, prep=kitchen/ETL, plate=dashboard, recipe=model).\nIn Real-time use case: pick LinkedIn job feed or Netflix homepage — user-visible vs internal ML/analytics.\n"
+    },
+    {
+      "id": "ds-2",
+      "order": 2,
+      "sectionId": "01",
+      "sectionTitle": "Foundation & Data Literacy",
+      "moduleNumber": 2,
+      "title": "Module 2: Data Fundamentals & Ethics",
+      "description": "Types of Data: Structured vs Unstructured, Quantitative vs Qualitative",
+      "topics": [
+        "Types of Data: Structured vs Unstructured, Quantitative vs Qualitative",
+        "Data Collection Methods: Surveys, APIs, Web scraping, Sensors",
+        "Data Quality: Accuracy, Completeness, Consistency, Timeliness",
+        "Data Ethics & Privacy: GDPR basics, Algorithmic bias, Responsible AI",
+        "Data Lifecycle: Collection → Storage → Processing → Analysis → Insights"
+      ],
+      "project": null,
+      "objectives": [
+        "Types of Data: Structured vs Unstructured, Quantitative vs Qualitative",
+        "Data Collection Methods: Surveys, APIs, Web scraping, Sensors",
+        "Data Quality: Accuracy, Completeness, Consistency, Timeliness",
+        "Data Ethics & Privacy: GDPR basics, Algorithmic bias, Responsible AI",
+        "Data Lifecycle: Collection → Storage → Processing → Analysis → Insights"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Data Fundamentals & Ethics. Types of Data: Structured vs Unstructured, Quantitative vs Qualitative; Data Collection Methods: Surveys, APIs, Web scraping, Sensors; Data Quality: Accuracy, Completeness, Consistency, Timeliness; Data Ethics & Privacy: GDPR basics, Algorithmic bias, Responsible AI. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Data Fundamentals & Ethics: Types of Data: Structured vs Unstructured, Quantitative vs Qualitative Data Collection Methods: Surveys, APIs, Web scraping, Sensors Data Quality: Accuracy, Completeness, Consistency, Timeliness Data Ethics & Privacy: GDPR basics, Algorithmic bias, Responsible AI Data Lifecycle: Collection → Storage → Processing → Analysis → Insights. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Data Fundamentals & Ethics. Types of Data: Structured vs Unstructured, Quantitative vs Qualitative Data Collection Methods: Surveys, APIs, Web scraping, Sensors Data Quality: Accuracy, Completeness, Consistency, Timeliness Data Ethics & Privacy: GDPR basics, Algorithmic bias, Responsible AI Data Lifecycle: Collection → Storage → Processing → Analysis → Insights. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Types of Data with a real-world data science example.",
+        "How would you apply Data Collection Methods in a practical project?",
+        "What is the most common mistake beginners make with Data Quality, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-3",
+      "order": 3,
+      "sectionId": "01",
+      "sectionTitle": "Foundation & Data Literacy",
+      "moduleNumber": 3,
+      "title": "Module 3: Excel/Google Sheets Mastery",
+      "description": "Core Functions: VLOOKUP, INDEX-MATCH, Conditional formatting",
+      "topics": [
+        "Core Functions: VLOOKUP, INDEX-MATCH, Conditional formatting",
+        "Pivot Tables & Charts: Dynamic reporting and visualization",
+        "Data Cleaning: Remove duplicates, handle errors, text-to-columns",
+        "Statistical Functions: AVERAGE, MEDIAN, STDEV, CORREL"
+      ],
+      "project": "Create a sales performance dashboard",
+      "objectives": [
+        "Core Functions: VLOOKUP, INDEX-MATCH, Conditional formatting",
+        "Pivot Tables & Charts: Dynamic reporting and visualization",
+        "Data Cleaning: Remove duplicates, handle errors, text-to-columns",
+        "Statistical Functions: AVERAGE, MEDIAN, STDEV, CORREL",
+        "Project: Create a sales performance dashboard"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Excel/Google Sheets Mastery. Core Functions: VLOOKUP, INDEX-MATCH, Conditional formatting; Pivot Tables & Charts: Dynamic reporting and visualization; Data Cleaning: Remove duplicates, handle errors, text-to-columns; Statistical Functions: AVERAGE, MEDIAN, STDEV, CORREL. Capstone project: Create a sales performance dashboard. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Excel/Google Sheets Mastery: Core Functions: VLOOKUP, INDEX-MATCH, Conditional formatting Pivot Tables & Charts: Dynamic reporting and visualization Data Cleaning: Remove duplicates, handle errors, text-to-columns Statistical Functions: AVERAGE, MEDIAN, STDEV, CORREL. Capstone project: Create a sales performance dashboard. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Excel/Google Sheets Mastery. Core Functions: VLOOKUP, INDEX-MATCH, Conditional formatting Pivot Tables & Charts: Dynamic reporting and visualization Data Cleaning: Remove duplicates, handle errors, text-to-columns Statistical Functions: AVERAGE, MEDIAN, STDEV, CORREL. Capstone project: Create a sales performance dashboard. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Core Functions with a real-world data science example.",
+        "How would you apply Pivot Tables & Charts in a practical project?",
+        "What is the most common mistake beginners make with Data Cleaning, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-4",
+      "order": 4,
+      "sectionId": "02",
+      "sectionTitle": "Python Programming & Data Tools",
+      "moduleNumber": 1,
+      "title": "Module 4: Python Programming Fundamentals",
+      "description": "Environment Setup: Anaconda, Jupyter Notebooks, VS Code",
+      "topics": [
+        "Environment Setup: Anaconda, Jupyter Notebooks, VS Code",
+        "Python Basics: Variables, data types, operators, input/output",
+        "Control Structures: Conditions, loops, nested logic",
+        "Functions: Definition, parameters, return values, scope",
+        "Data Structures: Lists, tuples, dictionaries, sets",
+        "File Handling: Reading/writing CSV, TXT, JSON files",
+        "Error Handling: Try-except blocks, debugging techniques"
+      ],
+      "project": "Build a student grade management system",
+      "objectives": [
+        "Environment Setup: Anaconda, Jupyter Notebooks, VS Code",
+        "Python Basics: Variables, data types, operators, input/output",
+        "Control Structures: Conditions, loops, nested logic",
+        "Functions: Definition, parameters, return values, scope",
+        "Data Structures: Lists, tuples, dictionaries, sets",
+        "File Handling: Reading/writing CSV, TXT, JSON files",
+        "Project: Build a student grade management system"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Python Programming Fundamentals. Environment Setup: Anaconda, Jupyter Notebooks, VS Code; Python Basics: Variables, data types, operators, input/output; Control Structures: Conditions, loops, nested logic; Functions: Definition, parameters, return values, scope. Capstone project: Build a student grade management system. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Python Programming Fundamentals: Environment Setup: Anaconda, Jupyter Notebooks, VS Code Python Basics: Variables, data types, operators, input/output Control Structures: Conditions, loops, nested logic Functions: Definition, parameters, return values, scope Data Structures: Lists, tuples, dictionaries, sets File Handling: Reading/writing CSV, TXT, JSON files Error Handling: Try-except blocks, debugging techniques. Capstone project: Build a student grade management system. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Python Programming Fundamentals. Environment Setup: Anaconda, Jupyter Notebooks, VS Code Python Basics: Variables, data types, operators, input/output Control Structures: Conditions, loops, nested logic Functions: Definition, parameters, return values, scope Data Structures: Lists, tuples, dictionaries, sets File Handling: Reading/writing CSV, TXT, JSON files Error Handling: Try-except blocks, debugging techniques. Capstone project: Build a student grade management system. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Environment Setup with a real-world data science example.",
+        "How would you apply Python Basics in a practical project?",
+        "What is the most common mistake beginners make with Control Structures, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-5",
+      "order": 5,
+      "sectionId": "02",
+      "sectionTitle": "Python Programming & Data Tools",
+      "moduleNumber": 2,
+      "title": "Module 5: Data Manipulation with Pandas",
+      "description": "Series & DataFrames: Creation, indexing, slicing",
+      "topics": [
+        "Series & DataFrames: Creation, indexing, slicing",
+        "Data Loading: CSV, Excel, JSON, SQL databases",
+        "Data Exploration: head(), info(), describe(), shape",
+        "Data Cleaning: Handle missing values, duplicates, data types",
+        "Data Transformation: Filtering, sorting, groupby, pivot tables",
+        "String Operations: Text cleaning, regex basics",
+        "Date/Time Handling: Parsing dates, time series basics"
+      ],
+      "project": "Clean and analyze a messy real-world dataset",
+      "objectives": [
+        "Series & DataFrames: Creation, indexing, slicing",
+        "Data Loading: CSV, Excel, JSON, SQL databases",
+        "Data Exploration: head(), info(), describe(), shape",
+        "Data Cleaning: Handle missing values, duplicates, data types",
+        "Data Transformation: Filtering, sorting, groupby, pivot tables",
+        "String Operations: Text cleaning, regex basics",
+        "Project: Clean and analyze a messy real-world dataset"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Data Manipulation with Pandas. Series & DataFrames: Creation, indexing, slicing; Data Loading: CSV, Excel, JSON, SQL databases; Data Exploration: head(), info(), describe(), shape; Data Cleaning: Handle missing values, duplicates, data types. Capstone project: Clean and analyze a messy real-world dataset. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Data Manipulation with Pandas: Series & DataFrames: Creation, indexing, slicing Data Loading: CSV, Excel, JSON, SQL databases Data Exploration: head(), info(), describe(), shape Data Cleaning: Handle missing values, duplicates, data types Data Transformation: Filtering, sorting, groupby, pivot tables String Operations: Text cleaning, regex basics Date/Time Handling: Parsing dates, time series basics. Capstone project: Clean and analyze a messy real-world dataset. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Data Manipulation with Pandas. Series & DataFrames: Creation, indexing, slicing Data Loading: CSV, Excel, JSON, SQL databases Data Exploration: head(), info(), describe(), shape Data Cleaning: Handle missing values, duplicates, data types Data Transformation: Filtering, sorting, groupby, pivot tables String Operations: Text cleaning, regex basics Date/Time Handling: Parsing dates, time series basics. Capstone project: Clean and analyze a messy real-world dataset. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Series & DataFrames with a real-world data science example.",
+        "How would you apply Data Loading in a practical project?",
+        "What is the most common mistake beginners make with Data Exploration, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-6",
+      "order": 6,
+      "sectionId": "02",
+      "sectionTitle": "Python Programming & Data Tools",
+      "moduleNumber": 3,
+      "title": "Module 6: Numerical Computing with NumPy",
+      "description": "Array Operations: Creation, indexing, slicing, reshaping",
+      "topics": [
+        "Array Operations: Creation, indexing, slicing, reshaping",
+        "Mathematical Functions: Statistics, linear algebra basics",
+        "Broadcasting: Efficient array operations",
+        "Integration with Pandas: When to use NumPy vs Pandas"
+      ],
+      "project": "Financial portfolio analysis with stock data",
+      "objectives": [
+        "Array Operations: Creation, indexing, slicing, reshaping",
+        "Mathematical Functions: Statistics, linear algebra basics",
+        "Broadcasting: Efficient array operations",
+        "Integration with Pandas: When to use NumPy vs Pandas",
+        "Project: Financial portfolio analysis with stock data"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Numerical Computing with NumPy. Array Operations: Creation, indexing, slicing, reshaping; Mathematical Functions: Statistics, linear algebra basics; Broadcasting: Efficient array operations; Integration with Pandas: When to use NumPy vs Pandas. Capstone project: Financial portfolio analysis with stock data. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Numerical Computing with NumPy: Array Operations: Creation, indexing, slicing, reshaping Mathematical Functions: Statistics, linear algebra basics Broadcasting: Efficient array operations Integration with Pandas: When to use NumPy vs Pandas. Capstone project: Financial portfolio analysis with stock data. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Numerical Computing with NumPy. Array Operations: Creation, indexing, slicing, reshaping Mathematical Functions: Statistics, linear algebra basics Broadcasting: Efficient array operations Integration with Pandas: When to use NumPy vs Pandas. Capstone project: Financial portfolio analysis with stock data. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Array Operations with a real-world data science example.",
+        "How would you apply Mathematical Functions in a practical project?",
+        "What is the most common mistake beginners make with Broadcasting, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-7",
+      "order": 7,
+      "sectionId": "03",
+      "sectionTitle": "Data Analysis & Visualization",
+      "moduleNumber": 1,
+      "title": "Module 7: Exploratory Data Analysis (EDA)",
+      "description": "Statistical Measures: Mean, median, mode, variance, standard deviation",
+      "topics": [
+        "Statistical Measures: Mean, median, mode, variance, standard deviation",
+        "Distribution Analysis: Histograms, box plots, skewness, kurtosis",
+        "Correlation Analysis: Pearson, Spearman correlation",
+        "Outlier Detection: IQR method, Z-score, visualization techniques",
+        "Data Profiling: Automated EDA tools (pandas-profiling)"
+      ],
+      "project": "Complete EDA on Titanic/House prices dataset",
+      "objectives": [
+        "Statistical Measures: Mean, median, mode, variance, standard deviation",
+        "Distribution Analysis: Histograms, box plots, skewness, kurtosis",
+        "Correlation Analysis: Pearson, Spearman correlation",
+        "Outlier Detection: IQR method, Z-score, visualization techniques",
+        "Data Profiling: Automated EDA tools (pandas-profiling)",
+        "Project: Complete EDA on Titanic/House prices dataset"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Exploratory Data Analysis (EDA). Statistical Measures: Mean, median, mode, variance, standard deviation; Distribution Analysis: Histograms, box plots, skewness, kurtosis; Correlation Analysis: Pearson, Spearman correlation; Outlier Detection: IQR method, Z-score, visualization techniques. Capstone project: Complete EDA on Titanic/House prices dataset. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Exploratory Data Analysis (EDA): Statistical Measures: Mean, median, mode, variance, standard deviation Distribution Analysis: Histograms, box plots, skewness, kurtosis Correlation Analysis: Pearson, Spearman correlation Outlier Detection: IQR method, Z-score, visualization techniques Data Profiling: Automated EDA tools (pandas-profiling). Capstone project: Complete EDA on Titanic/House prices dataset. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Exploratory Data Analysis (EDA). Statistical Measures: Mean, median, mode, variance, standard deviation Distribution Analysis: Histograms, box plots, skewness, kurtosis Correlation Analysis: Pearson, Spearman correlation Outlier Detection: IQR method, Z-score, visualization techniques Data Profiling: Automated EDA tools (pandas-profiling). Capstone project: Complete EDA on Titanic/House prices dataset. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Statistical Measures with a real-world data science example.",
+        "How would you apply Distribution Analysis in a practical project?",
+        "What is the most common mistake beginners make with Correlation Analysis, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-8",
+      "order": 8,
+      "sectionId": "03",
+      "sectionTitle": "Data Analysis & Visualization",
+      "moduleNumber": 2,
+      "title": "Module 8: Data Visualization Mastery",
+      "description": "Matplotlib Fundamentals: Plots, subplots, customization",
+      "topics": [
+        "Matplotlib Fundamentals: Plots, subplots, customization",
+        "Seaborn for Statistical Plots: Heatmaps, pair plots, regression plots",
+        "Plotly for Interactive Visualizations: Dynamic charts, dashboards",
+        "Chart Selection: When to use bar, line, scatter, histogram, etc.",
+        "Storytelling with Data: Design principles, color theory, annotations",
+        "Advanced Visualizations: Geographic plots, network graphs"
+      ],
+      "project": "Create an interactive dashboard for COVID-19 data",
+      "objectives": [
+        "Matplotlib Fundamentals: Plots, subplots, customization",
+        "Seaborn for Statistical Plots: Heatmaps, pair plots, regression plots",
+        "Plotly for Interactive Visualizations: Dynamic charts, dashboards",
+        "Chart Selection: When to use bar, line, scatter, histogram, etc.",
+        "Storytelling with Data: Design principles, color theory, annotations",
+        "Advanced Visualizations: Geographic plots, network graphs",
+        "Project: Create an interactive dashboard for COVID-19 data"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Data Visualization Mastery. Matplotlib Fundamentals: Plots, subplots, customization; Seaborn for Statistical Plots: Heatmaps, pair plots, regression plots; Plotly for Interactive Visualizations: Dynamic charts, dashboards; Chart Selection: When to use bar, line, scatter, histogram, etc.. Capstone project: Create an interactive dashboard for COVID-19 data. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Data Visualization Mastery: Matplotlib Fundamentals: Plots, subplots, customization Seaborn for Statistical Plots: Heatmaps, pair plots, regression plots Plotly for Interactive Visualizations: Dynamic charts, dashboards Chart Selection: When to use bar, line, scatter, histogram, etc. Storytelling with Data: Design principles, color theory, annotations Advanced Visualizations: Geographic plots, network graphs. Capstone project: Create an interactive dashboard for COVID-19 data. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Data Visualization Mastery. Matplotlib Fundamentals: Plots, subplots, customization Seaborn for Statistical Plots: Heatmaps, pair plots, regression plots Plotly for Interactive Visualizations: Dynamic charts, dashboards Chart Selection: When to use bar, line, scatter, histogram, etc. Storytelling with Data: Design principles, color theory, annotations Advanced Visualizations: Geographic plots, network graphs. Capstone project: Create an interactive dashboard for COVID-19 data. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Matplotlib Fundamentals with a real-world data science example.",
+        "How would you apply Seaborn for Statistical Plots in a practical project?",
+        "What is the most common mistake beginners make with Plotly for Interactive Visualizations, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-9",
+      "order": 9,
+      "sectionId": "03",
+      "sectionTitle": "Data Analysis & Visualization",
+      "moduleNumber": 3,
+      "title": "Module 9: Statistics for Data Science",
+      "description": "Descriptive Statistics: Measures of central tendency and spread",
+      "topics": [
+        "Descriptive Statistics: Measures of central tendency and spread",
+        "Probability Fundamentals: Basic probability, conditional probability",
+        "Probability Distributions: Normal, binomial, Poisson",
+        "Sampling & Sampling Distributions: Central limit theorem",
+        "Confidence Intervals: Interpretation and calculation",
+        "Hypothesis Testing: t-tests, chi-square tests, ANOVA",
+        "A/B Testing: Design, execution, interpretation"
+      ],
+      "project": "Design and analyze an A/B test for an e-commerce website",
+      "objectives": [
+        "Descriptive Statistics: Measures of central tendency and spread",
+        "Probability Fundamentals: Basic probability, conditional probability",
+        "Probability Distributions: Normal, binomial, Poisson",
+        "Sampling & Sampling Distributions: Central limit theorem",
+        "Confidence Intervals: Interpretation and calculation",
+        "Hypothesis Testing: t-tests, chi-square tests, ANOVA",
+        "Project: Design and analyze an A/B test for an e-commerce website"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Statistics for Data Science. Descriptive Statistics: Measures of central tendency and spread; Probability Fundamentals: Basic probability, conditional probability; Probability Distributions: Normal, binomial, Poisson; Sampling & Sampling Distributions: Central limit theorem. Capstone project: Design and analyze an A/B test for an e-commerce website. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Statistics for Data Science: Descriptive Statistics: Measures of central tendency and spread Probability Fundamentals: Basic probability, conditional probability Probability Distributions: Normal, binomial, Poisson Sampling & Sampling Distributions: Central limit theorem Confidence Intervals: Interpretation and calculation Hypothesis Testing: t-tests, chi-square tests, ANOVA A/B Testing: Design, execution, interpretation. Capstone project: Design and analyze an A/B test for an e-commerce website. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Statistics for Data Science. Descriptive Statistics: Measures of central tendency and spread Probability Fundamentals: Basic probability, conditional probability Probability Distributions: Normal, binomial, Poisson Sampling & Sampling Distributions: Central limit theorem Confidence Intervals: Interpretation and calculation Hypothesis Testing: t-tests, chi-square tests, ANOVA A/B Testing: Design, execution, interpretation. Capstone project: Design and analyze an A/B test for an e-commerce website. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Descriptive Statistics with a real-world data science example.",
+        "How would you apply Probability Fundamentals in a practical project?",
+        "What is the most common mistake beginners make with Probability Distributions, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-10",
+      "order": 10,
+      "sectionId": "04",
+      "sectionTitle": "Database & SQL Skills",
+      "moduleNumber": 1,
+      "title": "Module 10: SQL for Data Analysis",
+      "description": "Database Fundamentals: Tables, relationships, normalization",
+      "topics": [
+        "Database Fundamentals: Tables, relationships, normalization",
+        "Basic Queries: SELECT, WHERE, ORDER BY, LIMIT",
+        "Aggregation: GROUP BY, HAVING, COUNT, SUM, AVG",
+        "Joins: INNER, LEFT, RIGHT, FULL OUTER joins",
+        "Subqueries: Nested queries, correlated subqueries",
+        "Window Functions: ROW_NUMBER, RANK, LAG, LEAD",
+        "Date Functions: Date arithmetic, formatting, extraction",
+        "Python Integration: SQLite, pandas.read_sql()"
+      ],
+      "project": "Analyze sales data from multiple tables with complex queries",
+      "objectives": [
+        "Database Fundamentals: Tables, relationships, normalization",
+        "Basic Queries: SELECT, WHERE, ORDER BY, LIMIT",
+        "Aggregation: GROUP BY, HAVING, COUNT, SUM, AVG",
+        "Joins: INNER, LEFT, RIGHT, FULL OUTER joins",
+        "Subqueries: Nested queries, correlated subqueries",
+        "Window Functions: ROW_NUMBER, RANK, LAG, LEAD",
+        "Project: Analyze sales data from multiple tables with complex queries"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to SQL for Data Analysis. Database Fundamentals: Tables, relationships, normalization; Basic Queries: SELECT, WHERE, ORDER BY, LIMIT; Aggregation: GROUP BY, HAVING, COUNT, SUM, AVG; Joins: INNER, LEFT, RIGHT, FULL OUTER joins. Capstone project: Analyze sales data from multiple tables with complex queries. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "SQL for Data Analysis: Database Fundamentals: Tables, relationships, normalization Basic Queries: SELECT, WHERE, ORDER BY, LIMIT Aggregation: GROUP BY, HAVING, COUNT, SUM, AVG Joins: INNER, LEFT, RIGHT, FULL OUTER joins Subqueries: Nested queries, correlated subqueries Window Functions: ROW_NUMBER, RANK, LAG, LEAD Date Functions: Date arithmetic, formatting, extraction Python Integration: SQLite, pandas.read_sql(). Capstone project: Analyze sales data from multiple tables with complex queries. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into SQL for Data Analysis. Database Fundamentals: Tables, relationships, normalization Basic Queries: SELECT, WHERE, ORDER BY, LIMIT Aggregation: GROUP BY, HAVING, COUNT, SUM, AVG Joins: INNER, LEFT, RIGHT, FULL OUTER joins Subqueries: Nested queries, correlated subqueries Window Functions: ROW_NUMBER, RANK, LAG, LEAD Date Functions: Date arithmetic, formatting, extraction Python Integration: SQLite, pandas.read_sql(). Capstone project: Analyze sales data from multiple tables with complex queries. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Database Fundamentals with a real-world data science example.",
+        "How would you apply Basic Queries in a practical project?",
+        "What is the most common mistake beginners make with Aggregation, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-11",
+      "order": 11,
+      "sectionId": "04",
+      "sectionTitle": "Database & SQL Skills",
+      "moduleNumber": 2,
+      "title": "Module 11: Database Design & Advanced SQL",
+      "description": "Data Modeling: ER diagrams, primary/foreign keys",
+      "topics": [
+        "Data Modeling: ER diagrams, primary/foreign keys",
+        "Performance Optimization: Indexes, query optimization",
+        "Data Warehousing Concepts: OLTP vs OLAP, ETL basics",
+        "NoSQL Basics: When to use MongoDB, document databases"
+      ],
+      "project": "Design and implement a database for a library management system",
+      "objectives": [
+        "Data Modeling: ER diagrams, primary/foreign keys",
+        "Performance Optimization: Indexes, query optimization",
+        "Data Warehousing Concepts: OLTP vs OLAP, ETL basics",
+        "NoSQL Basics: When to use MongoDB, document databases",
+        "Project: Design and implement a database for a library management system"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Database Design & Advanced SQL. Data Modeling: ER diagrams, primary/foreign keys; Performance Optimization: Indexes, query optimization; Data Warehousing Concepts: OLTP vs OLAP, ETL basics; NoSQL Basics: When to use MongoDB, document databases. Capstone project: Design and implement a database for a library management system. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Database Design & Advanced SQL: Data Modeling: ER diagrams, primary/foreign keys Performance Optimization: Indexes, query optimization Data Warehousing Concepts: OLTP vs OLAP, ETL basics NoSQL Basics: When to use MongoDB, document databases. Capstone project: Design and implement a database for a library management system. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Database Design & Advanced SQL. Data Modeling: ER diagrams, primary/foreign keys Performance Optimization: Indexes, query optimization Data Warehousing Concepts: OLTP vs OLAP, ETL basics NoSQL Basics: When to use MongoDB, document databases. Capstone project: Design and implement a database for a library management system. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Data Modeling with a real-world data science example.",
+        "How would you apply Performance Optimization in a practical project?",
+        "What is the most common mistake beginners make with Data Warehousing Concepts, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-12",
+      "order": 12,
+      "sectionId": "05",
+      "sectionTitle": "Machine Learning Fundamentals",
+      "moduleNumber": 1,
+      "title": "Module 12: ML Foundations & Problem Framing",
+      "description": "What is Machine Learning? Types of learning, real-world applications",
+      "topics": [
+        "What is Machine Learning? Types of learning, real-world applications",
+        "Problem Types: Regression, classification, clustering, recommendation",
+        "ML Workflow: Problem definition → Data → Model → Evaluation → Deployment",
+        "Data Preparation: Feature engineering, scaling, encoding",
+        "Train-Test Split: Validation strategies, cross-validation",
+        "Overfitting vs Underfitting: Bias-variance tradeoff",
+        "Model Evaluation Metrics: Accuracy, precision, recall, F1-score, ROC-AUC"
+      ],
+      "project": null,
+      "objectives": [
+        "What is Machine Learning? Types of learning, real-world applications",
+        "Problem Types: Regression, classification, clustering, recommendation",
+        "ML Workflow: Problem definition → Data → Model → Evaluation → Deployment",
+        "Data Preparation: Feature engineering, scaling, encoding",
+        "Train-Test Split: Validation strategies, cross-validation",
+        "Overfitting vs Underfitting: Bias-variance tradeoff"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to ML Foundations & Problem Framing. What is Machine Learning? Types of learning, real-world applications; Problem Types: Regression, classification, clustering, recommendation; ML Workflow: Problem definition → Data → Model → Evaluation → Deployment; Data Preparation: Feature engineering, scaling, encoding. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "ML Foundations & Problem Framing: What is Machine Learning? Types of learning, real-world applications Problem Types: Regression, classification, clustering, recommendation ML Workflow: Problem definition → Data → Model → Evaluation → Deployment Data Preparation: Feature engineering, scaling, encoding Train-Test Split: Validation strategies, cross-validation Overfitting vs Underfitting: Bias-variance tradeoff Model Evaluation Metrics: Accuracy, precision, recall, F1-score, ROC-AUC. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into ML Foundations & Problem Framing. What is Machine Learning? Types of learning, real-world applications Problem Types: Regression, classification, clustering, recommendation ML Workflow: Problem definition → Data → Model → Evaluation → Deployment Data Preparation: Feature engineering, scaling, encoding Train-Test Split: Validation strategies, cross-validation Overfitting vs Underfitting: Bias-variance tradeoff Model Evaluation Metrics: Accuracy, precision, recall, F1-score, ROC-AUC. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain What is Machine Learning? Types of learning, real-world applications with a real-world data science example.",
+        "How would you apply Problem Types in a practical project?",
+        "What is the most common mistake beginners make with ML Workflow, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-13",
+      "order": 13,
+      "sectionId": "05",
+      "sectionTitle": "Machine Learning Fundamentals",
+      "moduleNumber": 2,
+      "title": "Module 13: Supervised Learning - Regression",
+      "description": "Linear Regression: Simple and multiple regression",
+      "topics": [
+        "Linear Regression: Simple and multiple regression",
+        "Polynomial Regression: Non-linear relationships",
+        "Regularization: Ridge, Lasso, Elastic Net",
+        "Model Evaluation: R², MAE, MSE, RMSE",
+        "Feature Selection: Correlation, statistical tests, recursive elimination"
+      ],
+      "project": "Predict house prices with comprehensive feature engineering",
+      "objectives": [
+        "Linear Regression: Simple and multiple regression",
+        "Polynomial Regression: Non-linear relationships",
+        "Regularization: Ridge, Lasso, Elastic Net",
+        "Model Evaluation: R², MAE, MSE, RMSE",
+        "Feature Selection: Correlation, statistical tests, recursive elimination",
+        "Project: Predict house prices with comprehensive feature engineering"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Supervised Learning - Regression. Linear Regression: Simple and multiple regression; Polynomial Regression: Non-linear relationships; Regularization: Ridge, Lasso, Elastic Net; Model Evaluation: R², MAE, MSE, RMSE. Capstone project: Predict house prices with comprehensive feature engineering. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Supervised Learning - Regression: Linear Regression: Simple and multiple regression Polynomial Regression: Non-linear relationships Regularization: Ridge, Lasso, Elastic Net Model Evaluation: R², MAE, MSE, RMSE Feature Selection: Correlation, statistical tests, recursive elimination. Capstone project: Predict house prices with comprehensive feature engineering. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Supervised Learning - Regression. Linear Regression: Simple and multiple regression Polynomial Regression: Non-linear relationships Regularization: Ridge, Lasso, Elastic Net Model Evaluation: R², MAE, MSE, RMSE Feature Selection: Correlation, statistical tests, recursive elimination. Capstone project: Predict house prices with comprehensive feature engineering. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Linear Regression with a real-world data science example.",
+        "How would you apply Polynomial Regression in a practical project?",
+        "What is the most common mistake beginners make with Regularization, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-14",
+      "order": 14,
+      "sectionId": "05",
+      "sectionTitle": "Machine Learning Fundamentals",
+      "moduleNumber": 3,
+      "title": "Module 14: Supervised Learning - Classification",
+      "description": "Logistic Regression: Binary and multiclass classification",
+      "topics": [
+        "Logistic Regression: Binary and multiclass classification",
+        "Decision Trees: Splitting criteria, pruning, interpretation",
+        "k-Nearest Neighbors (k-NN): Distance metrics, choosing k",
+        "Naive Bayes: Gaussian, multinomial, Bernoulli",
+        "Support Vector Machines: Linear and non-linear kernels",
+        "Model Evaluation: Confusion matrix, classification report",
+        "Handling Imbalanced Data: SMOTE, class weights, sampling techniques"
+      ],
+      "project": "Build a customer churn prediction model",
+      "objectives": [
+        "Logistic Regression: Binary and multiclass classification",
+        "Decision Trees: Splitting criteria, pruning, interpretation",
+        "k-Nearest Neighbors (k-NN): Distance metrics, choosing k",
+        "Naive Bayes: Gaussian, multinomial, Bernoulli",
+        "Support Vector Machines: Linear and non-linear kernels",
+        "Model Evaluation: Confusion matrix, classification report",
+        "Project: Build a customer churn prediction model"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Supervised Learning - Classification. Logistic Regression: Binary and multiclass classification; Decision Trees: Splitting criteria, pruning, interpretation; k-Nearest Neighbors (k-NN): Distance metrics, choosing k; Naive Bayes: Gaussian, multinomial, Bernoulli. Capstone project: Build a customer churn prediction model. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Supervised Learning - Classification: Logistic Regression: Binary and multiclass classification Decision Trees: Splitting criteria, pruning, interpretation k-Nearest Neighbors (k-NN): Distance metrics, choosing k Naive Bayes: Gaussian, multinomial, Bernoulli Support Vector Machines: Linear and non-linear kernels Model Evaluation: Confusion matrix, classification report Handling Imbalanced Data: SMOTE, class weights, sampling techniques. Capstone project: Build a customer churn prediction model. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Supervised Learning - Classification. Logistic Regression: Binary and multiclass classification Decision Trees: Splitting criteria, pruning, interpretation k-Nearest Neighbors (k-NN): Distance metrics, choosing k Naive Bayes: Gaussian, multinomial, Bernoulli Support Vector Machines: Linear and non-linear kernels Model Evaluation: Confusion matrix, classification report Handling Imbalanced Data: SMOTE, class weights, sampling techniques. Capstone project: Build a customer churn prediction model. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Logistic Regression with a real-world data science example.",
+        "How would you apply Decision Trees in a practical project?",
+        "What is the most common mistake beginners make with k-Nearest Neighbors (k-NN), and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-15",
+      "order": 15,
+      "sectionId": "05",
+      "sectionTitle": "Machine Learning Fundamentals",
+      "moduleNumber": 4,
+      "title": "Module 15: Ensemble Methods & Model Optimization",
+      "description": "Bagging: Random Forest, Extra Trees",
+      "topics": [
+        "Bagging: Random Forest, Extra Trees",
+        "Boosting: AdaBoost, Gradient Boosting, XGBoost, LightGBM",
+        "Stacking: Meta-learning approaches",
+        "Hyperparameter Tuning: Grid search, random search, Bayesian optimization",
+        "Feature Importance: Tree-based importance, permutation importance",
+        "Model Selection: Comparing multiple algorithms"
+      ],
+      "project": "Kaggle-style competition with ensemble methods",
+      "objectives": [
+        "Bagging: Random Forest, Extra Trees",
+        "Boosting: AdaBoost, Gradient Boosting, XGBoost, LightGBM",
+        "Stacking: Meta-learning approaches",
+        "Hyperparameter Tuning: Grid search, random search, Bayesian optimization",
+        "Feature Importance: Tree-based importance, permutation importance",
+        "Model Selection: Comparing multiple algorithms",
+        "Project: Kaggle-style competition with ensemble methods"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Ensemble Methods & Model Optimization. Bagging: Random Forest, Extra Trees; Boosting: AdaBoost, Gradient Boosting, XGBoost, LightGBM; Stacking: Meta-learning approaches; Hyperparameter Tuning: Grid search, random search, Bayesian optimization. Capstone project: Kaggle-style competition with ensemble methods. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Ensemble Methods & Model Optimization: Bagging: Random Forest, Extra Trees Boosting: AdaBoost, Gradient Boosting, XGBoost, LightGBM Stacking: Meta-learning approaches Hyperparameter Tuning: Grid search, random search, Bayesian optimization Feature Importance: Tree-based importance, permutation importance Model Selection: Comparing multiple algorithms. Capstone project: Kaggle-style competition with ensemble methods. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Ensemble Methods & Model Optimization. Bagging: Random Forest, Extra Trees Boosting: AdaBoost, Gradient Boosting, XGBoost, LightGBM Stacking: Meta-learning approaches Hyperparameter Tuning: Grid search, random search, Bayesian optimization Feature Importance: Tree-based importance, permutation importance Model Selection: Comparing multiple algorithms. Capstone project: Kaggle-style competition with ensemble methods. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Bagging with a real-world data science example.",
+        "How would you apply Boosting in a practical project?",
+        "What is the most common mistake beginners make with Stacking, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-16",
+      "order": 16,
+      "sectionId": "05",
+      "sectionTitle": "Machine Learning Fundamentals",
+      "moduleNumber": 5,
+      "title": "Module 16: Unsupervised Learning",
+      "description": "Clustering: K-means, hierarchical clustering, DBSCAN",
+      "topics": [
+        "Clustering: K-means, hierarchical clustering, DBSCAN",
+        "Dimensionality Reduction: PCA, t-SNE, UMAP",
+        "Association Rules: Market basket analysis, Apriori algorithm",
+        "Anomaly Detection: Isolation Forest, One-class SVM",
+        "Evaluation: Silhouette score, elbow method, cluster interpretation"
+      ],
+      "project": "Customer segmentation for marketing strategy",
+      "objectives": [
+        "Clustering: K-means, hierarchical clustering, DBSCAN",
+        "Dimensionality Reduction: PCA, t-SNE, UMAP",
+        "Association Rules: Market basket analysis, Apriori algorithm",
+        "Anomaly Detection: Isolation Forest, One-class SVM",
+        "Evaluation: Silhouette score, elbow method, cluster interpretation",
+        "Project: Customer segmentation for marketing strategy"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Unsupervised Learning. Clustering: K-means, hierarchical clustering, DBSCAN; Dimensionality Reduction: PCA, t-SNE, UMAP; Association Rules: Market basket analysis, Apriori algorithm; Anomaly Detection: Isolation Forest, One-class SVM. Capstone project: Customer segmentation for marketing strategy. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Unsupervised Learning: Clustering: K-means, hierarchical clustering, DBSCAN Dimensionality Reduction: PCA, t-SNE, UMAP Association Rules: Market basket analysis, Apriori algorithm Anomaly Detection: Isolation Forest, One-class SVM Evaluation: Silhouette score, elbow method, cluster interpretation. Capstone project: Customer segmentation for marketing strategy. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Unsupervised Learning. Clustering: K-means, hierarchical clustering, DBSCAN Dimensionality Reduction: PCA, t-SNE, UMAP Association Rules: Market basket analysis, Apriori algorithm Anomaly Detection: Isolation Forest, One-class SVM Evaluation: Silhouette score, elbow method, cluster interpretation. Capstone project: Customer segmentation for marketing strategy. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Clustering with a real-world data science example.",
+        "How would you apply Dimensionality Reduction in a practical project?",
+        "What is the most common mistake beginners make with Association Rules, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-17",
+      "order": 17,
+      "sectionId": "06",
+      "sectionTitle": "AI, Generative AI & Large Language Models",
+      "moduleNumber": 1,
+      "title": "Module 17: Introduction to Artificial Intelligence & Generative AI",
+      "description": "AI vs ML vs Deep Learning: Understanding the hierarchy",
+      "topics": [
+        "AI vs ML vs Deep Learning: Understanding the hierarchy",
+        "Evolution of AI: From rule-based systems to neural networks",
+        "What is Generative AI? Text, image, video, and audio generation",
+        "Generative Models: GANs, VAEs, Transformers, Diffusion models",
+        "AI Ethics & Bias: Responsible AI development and deployment",
+        "Current AI Landscape: Major players, models, and applications"
+      ],
+      "project": "Compare different AI model outputs for creative tasks",
+      "objectives": [
+        "AI vs ML vs Deep Learning: Understanding the hierarchy",
+        "Evolution of AI: From rule-based systems to neural networks",
+        "What is Generative AI? Text, image, video, and audio generation",
+        "Generative Models: GANs, VAEs, Transformers, Diffusion models",
+        "AI Ethics & Bias: Responsible AI development and deployment",
+        "Current AI Landscape: Major players, models, and applications",
+        "Project: Compare different AI model outputs for creative tasks"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Introduction to Artificial Intelligence & Generative AI. AI vs ML vs Deep Learning: Understanding the hierarchy; Evolution of AI: From rule-based systems to neural networks; What is Generative AI? Text, image, video, and audio generation; Generative Models: GANs, VAEs, Transformers, Diffusion models. Capstone project: Compare different AI model outputs for creative tasks. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Introduction to Artificial Intelligence & Generative AI: AI vs ML vs Deep Learning: Understanding the hierarchy Evolution of AI: From rule-based systems to neural networks What is Generative AI? Text, image, video, and audio generation Generative Models: GANs, VAEs, Transformers, Diffusion models AI Ethics & Bias: Responsible AI development and deployment Current AI Landscape: Major players, models, and applications. Capstone project: Compare different AI model outputs for creative tasks. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Introduction to Artificial Intelligence & Generative AI. AI vs ML vs Deep Learning: Understanding the hierarchy Evolution of AI: From rule-based systems to neural networks What is Generative AI? Text, image, video, and audio generation Generative Models: GANs, VAEs, Transformers, Diffusion models AI Ethics & Bias: Responsible AI development and deployment Current AI Landscape: Major players, models, and applications. Capstone project: Compare different AI model outputs for creative tasks. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain AI vs ML vs Deep Learning with a real-world data science example.",
+        "How would you apply Evolution of AI in a practical project?",
+        "What is the most common mistake beginners make with What is Generative AI? Text, image, video, and audio generation, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-18",
+      "order": 18,
+      "sectionId": "06",
+      "sectionTitle": "AI, Generative AI & Large Language Models",
+      "moduleNumber": 2,
+      "title": "Module 18: LLM Fundamentals",
+      "description": "What are LLMs? Architecture and training process",
+      "topics": [
+        "What are LLMs? Architecture and training process",
+        "Transformer Architecture: Attention mechanisms, encoders, decoders",
+        "Pre-training vs Fine-tuning: Understanding the training paradigm",
+        "Popular LLMs: GPT series, BERT, T5, PaLM, Claude, Gemini",
+        "Tokenization: How text is processed by LLMs",
+        "Context Windows: Understanding input limitations"
+      ],
+      "project": "Build a simple text generation application",
+      "objectives": [
+        "What are LLMs? Architecture and training process",
+        "Transformer Architecture: Attention mechanisms, encoders, decoders",
+        "Pre-training vs Fine-tuning: Understanding the training paradigm",
+        "Popular LLMs: GPT series, BERT, T5, PaLM, Claude, Gemini",
+        "Tokenization: How text is processed by LLMs",
+        "Context Windows: Understanding input limitations",
+        "Project: Build a simple text generation application"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to LLM Fundamentals. What are LLMs? Architecture and training process; Transformer Architecture: Attention mechanisms, encoders, decoders; Pre-training vs Fine-tuning: Understanding the training paradigm; Popular LLMs: GPT series, BERT, T5, PaLM, Claude, Gemini. Capstone project: Build a simple text generation application. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "LLM Fundamentals: What are LLMs? Architecture and training process Transformer Architecture: Attention mechanisms, encoders, decoders Pre-training vs Fine-tuning: Understanding the training paradigm Popular LLMs: GPT series, BERT, T5, PaLM, Claude, Gemini Tokenization: How text is processed by LLMs Context Windows: Understanding input limitations. Capstone project: Build a simple text generation application. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into LLM Fundamentals. What are LLMs? Architecture and training process Transformer Architecture: Attention mechanisms, encoders, decoders Pre-training vs Fine-tuning: Understanding the training paradigm Popular LLMs: GPT series, BERT, T5, PaLM, Claude, Gemini Tokenization: How text is processed by LLMs Context Windows: Understanding input limitations. Capstone project: Build a simple text generation application. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain What are LLMs? Architecture and training process with a real-world data science example.",
+        "How would you apply Transformer Architecture in a practical project?",
+        "What is the most common mistake beginners make with Pre-training vs Fine-tuning, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-19",
+      "order": 19,
+      "sectionId": "06",
+      "sectionTitle": "AI, Generative AI & Large Language Models",
+      "moduleNumber": 3,
+      "title": "Module 19: Working with LLM APIs",
+      "description": "OpenAI API: GPT-3.5, GPT-4, function calling",
+      "topics": [
+        "OpenAI API: GPT-3.5, GPT-4, function calling",
+        "Google AI APIs: Gemini, PaLM integration",
+        "Anthropic Claude API: Constitutional AI principles",
+        "Hugging Face Transformers: Open-source model access",
+        "API Best Practices: Rate limiting, error handling, cost optimization",
+        "Prompt Engineering: Crafting effective prompts"
+      ],
+      "project": "Create a multi-LLM comparison tool",
+      "objectives": [
+        "OpenAI API: GPT-3.5, GPT-4, function calling",
+        "Google AI APIs: Gemini, PaLM integration",
+        "Anthropic Claude API: Constitutional AI principles",
+        "Hugging Face Transformers: Open-source model access",
+        "API Best Practices: Rate limiting, error handling, cost optimization",
+        "Prompt Engineering: Crafting effective prompts",
+        "Project: Create a multi-LLM comparison tool"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Working with LLM APIs. OpenAI API: GPT-3.5, GPT-4, function calling; Google AI APIs: Gemini, PaLM integration; Anthropic Claude API: Constitutional AI principles; Hugging Face Transformers: Open-source model access. Capstone project: Create a multi-LLM comparison tool. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Working with LLM APIs: OpenAI API: GPT-3.5, GPT-4, function calling Google AI APIs: Gemini, PaLM integration Anthropic Claude API: Constitutional AI principles Hugging Face Transformers: Open-source model access API Best Practices: Rate limiting, error handling, cost optimization Prompt Engineering: Crafting effective prompts. Capstone project: Create a multi-LLM comparison tool. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Working with LLM APIs. OpenAI API: GPT-3.5, GPT-4, function calling Google AI APIs: Gemini, PaLM integration Anthropic Claude API: Constitutional AI principles Hugging Face Transformers: Open-source model access API Best Practices: Rate limiting, error handling, cost optimization Prompt Engineering: Crafting effective prompts. Capstone project: Create a multi-LLM comparison tool. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain OpenAI API with a real-world data science example.",
+        "How would you apply Google AI APIs in a practical project?",
+        "What is the most common mistake beginners make with Anthropic Claude API, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-20",
+      "order": 20,
+      "sectionId": "06",
+      "sectionTitle": "AI, Generative AI & Large Language Models",
+      "moduleNumber": 4,
+      "title": "Module 20: Prompt Engineering & LLM Applications",
+      "description": "Prompt Design Principles: Clear instructions, examples, context",
+      "topics": [
+        "Prompt Design Principles: Clear instructions, examples, context",
+        "Advanced Techniques: Few-shot learning, chain-of-thought, tree-of-thought",
+        "Prompt Templates: Reusable patterns for different tasks",
+        "LLM Use Cases: Content generation, summarization, translation, coding",
+        "RAG (Retrieval-Augmented Generation): Combining LLMs with knowledge bases",
+        "Function Calling: Integrating LLMs with external tools"
+      ],
+      "project": "Build a RAG-based question-answering system",
+      "objectives": [
+        "Prompt Design Principles: Clear instructions, examples, context",
+        "Advanced Techniques: Few-shot learning, chain-of-thought, tree-of-thought",
+        "Prompt Templates: Reusable patterns for different tasks",
+        "LLM Use Cases: Content generation, summarization, translation, coding",
+        "RAG (Retrieval-Augmented Generation): Combining LLMs with knowledge bases",
+        "Function Calling: Integrating LLMs with external tools",
+        "Project: Build a RAG-based question-answering system"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Prompt Engineering & LLM Applications. Prompt Design Principles: Clear instructions, examples, context; Advanced Techniques: Few-shot learning, chain-of-thought, tree-of-thought; Prompt Templates: Reusable patterns for different tasks; LLM Use Cases: Content generation, summarization, translation, coding. Capstone project: Build a RAG-based question-answering system. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Prompt Engineering & LLM Applications: Prompt Design Principles: Clear instructions, examples, context Advanced Techniques: Few-shot learning, chain-of-thought, tree-of-thought Prompt Templates: Reusable patterns for different tasks LLM Use Cases: Content generation, summarization, translation, coding RAG (Retrieval-Augmented Generation): Combining LLMs with knowledge bases Function Calling: Integrating LLMs with external tools. Capstone project: Build a RAG-based question-answering system. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Prompt Engineering & LLM Applications. Prompt Design Principles: Clear instructions, examples, context Advanced Techniques: Few-shot learning, chain-of-thought, tree-of-thought Prompt Templates: Reusable patterns for different tasks LLM Use Cases: Content generation, summarization, translation, coding RAG (Retrieval-Augmented Generation): Combining LLMs with knowledge bases Function Calling: Integrating LLMs with external tools. Capstone project: Build a RAG-based question-answering system. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Prompt Design Principles with a real-world data science example.",
+        "How would you apply Advanced Techniques in a practical project?",
+        "What is the most common mistake beginners make with Prompt Templates, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-21",
+      "order": 21,
+      "sectionId": "06",
+      "sectionTitle": "AI, Generative AI & Large Language Models",
+      "moduleNumber": 5,
+      "title": "Module 21: Vector Databases & Embeddings",
+      "description": "Text Embeddings: Word2Vec, GloVe, BERT embeddings",
+      "topics": [
+        "Text Embeddings: Word2Vec, GloVe, BERT embeddings",
+        "Sentence Transformers: Creating semantic embeddings",
+        "Vector Similarity: Cosine similarity, Euclidean distance",
+        "Vector Databases: Pinecone, Weaviate, Chroma, FAISS",
+        "Embedding Applications: Semantic search, recommendation systems",
+        "Chunking Strategies: Optimal text splitting for embeddings"
+      ],
+      "project": "Build a semantic search engine for documents",
+      "objectives": [
+        "Text Embeddings: Word2Vec, GloVe, BERT embeddings",
+        "Sentence Transformers: Creating semantic embeddings",
+        "Vector Similarity: Cosine similarity, Euclidean distance",
+        "Vector Databases: Pinecone, Weaviate, Chroma, FAISS",
+        "Embedding Applications: Semantic search, recommendation systems",
+        "Chunking Strategies: Optimal text splitting for embeddings",
+        "Project: Build a semantic search engine for documents"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Vector Databases & Embeddings. Text Embeddings: Word2Vec, GloVe, BERT embeddings; Sentence Transformers: Creating semantic embeddings; Vector Similarity: Cosine similarity, Euclidean distance; Vector Databases: Pinecone, Weaviate, Chroma, FAISS. Capstone project: Build a semantic search engine for documents. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Vector Databases & Embeddings: Text Embeddings: Word2Vec, GloVe, BERT embeddings Sentence Transformers: Creating semantic embeddings Vector Similarity: Cosine similarity, Euclidean distance Vector Databases: Pinecone, Weaviate, Chroma, FAISS Embedding Applications: Semantic search, recommendation systems Chunking Strategies: Optimal text splitting for embeddings. Capstone project: Build a semantic search engine for documents. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Vector Databases & Embeddings. Text Embeddings: Word2Vec, GloVe, BERT embeddings Sentence Transformers: Creating semantic embeddings Vector Similarity: Cosine similarity, Euclidean distance Vector Databases: Pinecone, Weaviate, Chroma, FAISS Embedding Applications: Semantic search, recommendation systems Chunking Strategies: Optimal text splitting for embeddings. Capstone project: Build a semantic search engine for documents. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Text Embeddings with a real-world data science example.",
+        "How would you apply Sentence Transformers in a practical project?",
+        "What is the most common mistake beginners make with Vector Similarity, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-22",
+      "order": 22,
+      "sectionId": "06",
+      "sectionTitle": "AI, Generative AI & Large Language Models",
+      "moduleNumber": 6,
+      "title": "Module 22: Fine-tuning & Model Customization",
+      "description": "When to Fine-tune: Use cases and considerations",
+      "topics": [
+        "When to Fine-tune: Use cases and considerations",
+        "Fine-tuning Approaches: Full fine-tuning vs LoRA vs QLoRA",
+        "Dataset Preparation: Formatting data for fine-tuning",
+        "Training Process: Hyperparameters, evaluation metrics",
+        "Model Evaluation: Benchmarking custom models",
+        "Deployment Considerations: Serving fine-tuned models"
+      ],
+      "project": "Fine-tune a model for domain-specific tasks",
+      "objectives": [
+        "When to Fine-tune: Use cases and considerations",
+        "Fine-tuning Approaches: Full fine-tuning vs LoRA vs QLoRA",
+        "Dataset Preparation: Formatting data for fine-tuning",
+        "Training Process: Hyperparameters, evaluation metrics",
+        "Model Evaluation: Benchmarking custom models",
+        "Deployment Considerations: Serving fine-tuned models",
+        "Project: Fine-tune a model for domain-specific tasks"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Fine-tuning & Model Customization. When to Fine-tune: Use cases and considerations; Fine-tuning Approaches: Full fine-tuning vs LoRA vs QLoRA; Dataset Preparation: Formatting data for fine-tuning; Training Process: Hyperparameters, evaluation metrics. Capstone project: Fine-tune a model for domain-specific tasks. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Fine-tuning & Model Customization: When to Fine-tune: Use cases and considerations Fine-tuning Approaches: Full fine-tuning vs LoRA vs QLoRA Dataset Preparation: Formatting data for fine-tuning Training Process: Hyperparameters, evaluation metrics Model Evaluation: Benchmarking custom models Deployment Considerations: Serving fine-tuned models. Capstone project: Fine-tune a model for domain-specific tasks. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Fine-tuning & Model Customization. When to Fine-tune: Use cases and considerations Fine-tuning Approaches: Full fine-tuning vs LoRA vs QLoRA Dataset Preparation: Formatting data for fine-tuning Training Process: Hyperparameters, evaluation metrics Model Evaluation: Benchmarking custom models Deployment Considerations: Serving fine-tuned models. Capstone project: Fine-tune a model for domain-specific tasks. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain When to Fine-tune with a real-world data science example.",
+        "How would you apply Fine-tuning Approaches in a practical project?",
+        "What is the most common mistake beginners make with Dataset Preparation, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-23",
+      "order": 23,
+      "sectionId": "06",
+      "sectionTitle": "AI, Generative AI & Large Language Models",
+      "moduleNumber": 7,
+      "title": "Module 23: Multi-modal AI & Advanced Applications",
+      "description": "Multi-modal Models: CLIP, DALL-E, GPT-4V, Gemini Vision",
+      "topics": [
+        "Multi-modal Models: CLIP, DALL-E, GPT-4V, Gemini Vision",
+        "Image Generation: Stable Diffusion, Midjourney concepts",
+        "Voice AI: Speech-to-text, text-to-speech integration",
+        "AI Agents: Building autonomous AI systems",
+        "LangChain & LlamaIndex: Frameworks for LLM applications",
+        "AI Safety: Alignment, hallucination detection, content filtering"
+      ],
+      "project": "Build a multi-modal AI assistant",
+      "objectives": [
+        "Multi-modal Models: CLIP, DALL-E, GPT-4V, Gemini Vision",
+        "Image Generation: Stable Diffusion, Midjourney concepts",
+        "Voice AI: Speech-to-text, text-to-speech integration",
+        "AI Agents: Building autonomous AI systems",
+        "LangChain & LlamaIndex: Frameworks for LLM applications",
+        "AI Safety: Alignment, hallucination detection, content filtering",
+        "Project: Build a multi-modal AI assistant"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Multi-modal AI & Advanced Applications. Multi-modal Models: CLIP, DALL-E, GPT-4V, Gemini Vision; Image Generation: Stable Diffusion, Midjourney concepts; Voice AI: Speech-to-text, text-to-speech integration; AI Agents: Building autonomous AI systems. Capstone project: Build a multi-modal AI assistant. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Multi-modal AI & Advanced Applications: Multi-modal Models: CLIP, DALL-E, GPT-4V, Gemini Vision Image Generation: Stable Diffusion, Midjourney concepts Voice AI: Speech-to-text, text-to-speech integration AI Agents: Building autonomous AI systems LangChain & LlamaIndex: Frameworks for LLM applications AI Safety: Alignment, hallucination detection, content filtering. Capstone project: Build a multi-modal AI assistant. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Multi-modal AI & Advanced Applications. Multi-modal Models: CLIP, DALL-E, GPT-4V, Gemini Vision Image Generation: Stable Diffusion, Midjourney concepts Voice AI: Speech-to-text, text-to-speech integration AI Agents: Building autonomous AI systems LangChain & LlamaIndex: Frameworks for LLM applications AI Safety: Alignment, hallucination detection, content filtering. Capstone project: Build a multi-modal AI assistant. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Multi-modal Models with a real-world data science example.",
+        "How would you apply Image Generation in a practical project?",
+        "What is the most common mistake beginners make with Voice AI, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-24",
+      "order": 24,
+      "sectionId": "07",
+      "sectionTitle": "Advanced Topics & Specializations",
+      "moduleNumber": 1,
+      "title": "Module 24: Natural Language Processing (NLP)",
+      "description": "Text Preprocessing: Cleaning, tokenization, stemming, lemmatization",
+      "topics": [
+        "Text Preprocessing: Cleaning, tokenization, stemming, lemmatization",
+        "Feature Extraction: Bag of words, TF-IDF, n-grams",
+        "Sentiment Analysis: Rule-based and ML approaches",
+        "Text Classification: Spam detection, topic classification",
+        "Named Entity Recognition: Extracting information from text",
+        "Word Embeddings: Word2Vec, GloVe basics"
+      ],
+      "project": "Build a movie review sentiment analyzer",
+      "objectives": [
+        "Text Preprocessing: Cleaning, tokenization, stemming, lemmatization",
+        "Feature Extraction: Bag of words, TF-IDF, n-grams",
+        "Sentiment Analysis: Rule-based and ML approaches",
+        "Text Classification: Spam detection, topic classification",
+        "Named Entity Recognition: Extracting information from text",
+        "Word Embeddings: Word2Vec, GloVe basics",
+        "Project: Build a movie review sentiment analyzer"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Natural Language Processing (NLP). Text Preprocessing: Cleaning, tokenization, stemming, lemmatization; Feature Extraction: Bag of words, TF-IDF, n-grams; Sentiment Analysis: Rule-based and ML approaches; Text Classification: Spam detection, topic classification. Capstone project: Build a movie review sentiment analyzer. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Natural Language Processing (NLP): Text Preprocessing: Cleaning, tokenization, stemming, lemmatization Feature Extraction: Bag of words, TF-IDF, n-grams Sentiment Analysis: Rule-based and ML approaches Text Classification: Spam detection, topic classification Named Entity Recognition: Extracting information from text Word Embeddings: Word2Vec, GloVe basics. Capstone project: Build a movie review sentiment analyzer. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Natural Language Processing (NLP). Text Preprocessing: Cleaning, tokenization, stemming, lemmatization Feature Extraction: Bag of words, TF-IDF, n-grams Sentiment Analysis: Rule-based and ML approaches Text Classification: Spam detection, topic classification Named Entity Recognition: Extracting information from text Word Embeddings: Word2Vec, GloVe basics. Capstone project: Build a movie review sentiment analyzer. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Text Preprocessing with a real-world data science example.",
+        "How would you apply Feature Extraction in a practical project?",
+        "What is the most common mistake beginners make with Sentiment Analysis, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-25",
+      "order": 25,
+      "sectionId": "07",
+      "sectionTitle": "Advanced Topics & Specializations",
+      "moduleNumber": 2,
+      "title": "Module 25: Time Series Analysis",
+      "description": "Time Series Components: Trend, seasonality, noise",
+      "topics": [
+        "Time Series Components: Trend, seasonality, noise",
+        "Stationarity: Tests and transformations",
+        "Moving Averages: Simple and exponential smoothing",
+        "ARIMA Models: Autoregression, differencing, moving averages",
+        "Seasonal Decomposition: STL decomposition",
+        "Forecasting Evaluation: MAE, MAPE, forecast accuracy"
+      ],
+      "project": "Stock price prediction or sales forecasting",
+      "objectives": [
+        "Time Series Components: Trend, seasonality, noise",
+        "Stationarity: Tests and transformations",
+        "Moving Averages: Simple and exponential smoothing",
+        "ARIMA Models: Autoregression, differencing, moving averages",
+        "Seasonal Decomposition: STL decomposition",
+        "Forecasting Evaluation: MAE, MAPE, forecast accuracy",
+        "Project: Stock price prediction or sales forecasting"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Time Series Analysis. Time Series Components: Trend, seasonality, noise; Stationarity: Tests and transformations; Moving Averages: Simple and exponential smoothing; ARIMA Models: Autoregression, differencing, moving averages. Capstone project: Stock price prediction or sales forecasting. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Time Series Analysis: Time Series Components: Trend, seasonality, noise Stationarity: Tests and transformations Moving Averages: Simple and exponential smoothing ARIMA Models: Autoregression, differencing, moving averages Seasonal Decomposition: STL decomposition Forecasting Evaluation: MAE, MAPE, forecast accuracy. Capstone project: Stock price prediction or sales forecasting. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Time Series Analysis. Time Series Components: Trend, seasonality, noise Stationarity: Tests and transformations Moving Averages: Simple and exponential smoothing ARIMA Models: Autoregression, differencing, moving averages Seasonal Decomposition: STL decomposition Forecasting Evaluation: MAE, MAPE, forecast accuracy. Capstone project: Stock price prediction or sales forecasting. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Time Series Components with a real-world data science example.",
+        "How would you apply Stationarity in a practical project?",
+        "What is the most common mistake beginners make with Moving Averages, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-26",
+      "order": 26,
+      "sectionId": "07",
+      "sectionTitle": "Advanced Topics & Specializations",
+      "moduleNumber": 3,
+      "title": "Module 26: Introduction to Deep Learning",
+      "description": "Neural Network Fundamentals: Perceptron, multi-layer networks",
+      "topics": [
+        "Neural Network Fundamentals: Perceptron, multi-layer networks",
+        "TensorFlow/Keras Basics: Building simple neural networks",
+        "Activation Functions: ReLU, sigmoid, tanh",
+        "Loss Functions & Optimizers: SGD, Adam, learning rate",
+        "Image Classification: CNN basics with MNIST/CIFAR-10",
+        "Transfer Learning: Using pre-trained models"
+      ],
+      "project": "Build an image classifier for everyday objects",
+      "objectives": [
+        "Neural Network Fundamentals: Perceptron, multi-layer networks",
+        "TensorFlow/Keras Basics: Building simple neural networks",
+        "Activation Functions: ReLU, sigmoid, tanh",
+        "Loss Functions & Optimizers: SGD, Adam, learning rate",
+        "Image Classification: CNN basics with MNIST/CIFAR-10",
+        "Transfer Learning: Using pre-trained models",
+        "Project: Build an image classifier for everyday objects"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Introduction to Deep Learning. Neural Network Fundamentals: Perceptron, multi-layer networks; TensorFlow/Keras Basics: Building simple neural networks; Activation Functions: ReLU, sigmoid, tanh; Loss Functions & Optimizers: SGD, Adam, learning rate. Capstone project: Build an image classifier for everyday objects. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Introduction to Deep Learning: Neural Network Fundamentals: Perceptron, multi-layer networks TensorFlow/Keras Basics: Building simple neural networks Activation Functions: ReLU, sigmoid, tanh Loss Functions & Optimizers: SGD, Adam, learning rate Image Classification: CNN basics with MNIST/CIFAR-10 Transfer Learning: Using pre-trained models. Capstone project: Build an image classifier for everyday objects. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Introduction to Deep Learning. Neural Network Fundamentals: Perceptron, multi-layer networks TensorFlow/Keras Basics: Building simple neural networks Activation Functions: ReLU, sigmoid, tanh Loss Functions & Optimizers: SGD, Adam, learning rate Image Classification: CNN basics with MNIST/CIFAR-10 Transfer Learning: Using pre-trained models. Capstone project: Build an image classifier for everyday objects. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Neural Network Fundamentals with a real-world data science example.",
+        "How would you apply TensorFlow/Keras Basics in a practical project?",
+        "What is the most common mistake beginners make with Activation Functions, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-27",
+      "order": 27,
+      "sectionId": "07",
+      "sectionTitle": "Advanced Topics & Specializations",
+      "moduleNumber": 4,
+      "title": "Module 27: Computer Vision Basics",
+      "description": "Image Processing: OpenCV fundamentals",
+      "topics": [
+        "Image Processing: OpenCV fundamentals",
+        "Feature Detection: Edges, corners, contours",
+        "Image Classification: CNN architectures",
+        "Object Detection: YOLO concepts",
+        "Face Recognition: Basic implementations"
+      ],
+      "project": "Build a face mask detection system",
+      "objectives": [
+        "Image Processing: OpenCV fundamentals",
+        "Feature Detection: Edges, corners, contours",
+        "Image Classification: CNN architectures",
+        "Object Detection: YOLO concepts",
+        "Face Recognition: Basic implementations",
+        "Project: Build a face mask detection system"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Computer Vision Basics. Image Processing: OpenCV fundamentals; Feature Detection: Edges, corners, contours; Image Classification: CNN architectures; Object Detection: YOLO concepts. Capstone project: Build a face mask detection system. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Computer Vision Basics: Image Processing: OpenCV fundamentals Feature Detection: Edges, corners, contours Image Classification: CNN architectures Object Detection: YOLO concepts Face Recognition: Basic implementations. Capstone project: Build a face mask detection system. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Computer Vision Basics. Image Processing: OpenCV fundamentals Feature Detection: Edges, corners, contours Image Classification: CNN architectures Object Detection: YOLO concepts Face Recognition: Basic implementations. Capstone project: Build a face mask detection system. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Image Processing with a real-world data science example.",
+        "How would you apply Feature Detection in a practical project?",
+        "What is the most common mistake beginners make with Image Classification, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-28",
+      "order": 28,
+      "sectionId": "08",
+      "sectionTitle": "Cloud & Deployment",
+      "moduleNumber": 1,
+      "title": "Module 28: Cloud Computing Fundamentals",
+      "description": "Cloud Platforms: AWS, Google Cloud, Azure overview",
+      "topics": [
+        "Cloud Platforms: AWS, Google Cloud, Azure overview",
+        "Cloud Storage: S3, Google Cloud Storage",
+        "Compute Services: EC2, Google Compute Engine",
+        "Managed Services: AWS SageMaker, Google AI Platform",
+        "Cost Management: Understanding pricing, optimization"
+      ],
+      "project": "Deploy a model on cloud platform",
+      "objectives": [
+        "Cloud Platforms: AWS, Google Cloud, Azure overview",
+        "Cloud Storage: S3, Google Cloud Storage",
+        "Compute Services: EC2, Google Compute Engine",
+        "Managed Services: AWS SageMaker, Google AI Platform",
+        "Cost Management: Understanding pricing, optimization",
+        "Project: Deploy a model on cloud platform"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Cloud Computing Fundamentals. Cloud Platforms: AWS, Google Cloud, Azure overview; Cloud Storage: S3, Google Cloud Storage; Compute Services: EC2, Google Compute Engine; Managed Services: AWS SageMaker, Google AI Platform. Capstone project: Deploy a model on cloud platform. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Cloud Computing Fundamentals: Cloud Platforms: AWS, Google Cloud, Azure overview Cloud Storage: S3, Google Cloud Storage Compute Services: EC2, Google Compute Engine Managed Services: AWS SageMaker, Google AI Platform Cost Management: Understanding pricing, optimization. Capstone project: Deploy a model on cloud platform. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Cloud Computing Fundamentals. Cloud Platforms: AWS, Google Cloud, Azure overview Cloud Storage: S3, Google Cloud Storage Compute Services: EC2, Google Compute Engine Managed Services: AWS SageMaker, Google AI Platform Cost Management: Understanding pricing, optimization. Capstone project: Deploy a model on cloud platform. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Cloud Platforms with a real-world data science example.",
+        "How would you apply Cloud Storage in a practical project?",
+        "What is the most common mistake beginners make with Compute Services, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-29",
+      "order": 29,
+      "sectionId": "08",
+      "sectionTitle": "Cloud & Deployment",
+      "moduleNumber": 2,
+      "title": "Module 29: Model Deployment & MLOps",
+      "description": "Model Serialization: Pickle, joblib, ONNX",
+      "topics": [
+        "Model Serialization: Pickle, joblib, ONNX",
+        "API Development: Flask, FastAPI for model serving",
+        "Containerization: Docker basics for ML applications",
+        "Model Monitoring: Performance tracking, drift detection",
+        "Version Control: Git for code, DVC for data and models",
+        "CI/CD for ML: Automated testing and deployment"
+      ],
+      "project": "End-to-end ML pipeline with monitoring",
+      "objectives": [
+        "Model Serialization: Pickle, joblib, ONNX",
+        "API Development: Flask, FastAPI for model serving",
+        "Containerization: Docker basics for ML applications",
+        "Model Monitoring: Performance tracking, drift detection",
+        "Version Control: Git for code, DVC for data and models",
+        "CI/CD for ML: Automated testing and deployment",
+        "Project: End-to-end ML pipeline with monitoring"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Model Deployment & MLOps. Model Serialization: Pickle, joblib, ONNX; API Development: Flask, FastAPI for model serving; Containerization: Docker basics for ML applications; Model Monitoring: Performance tracking, drift detection. Capstone project: End-to-end ML pipeline with monitoring. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Model Deployment & MLOps: Model Serialization: Pickle, joblib, ONNX API Development: Flask, FastAPI for model serving Containerization: Docker basics for ML applications Model Monitoring: Performance tracking, drift detection Version Control: Git for code, DVC for data and models CI/CD for ML: Automated testing and deployment. Capstone project: End-to-end ML pipeline with monitoring. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Model Deployment & MLOps. Model Serialization: Pickle, joblib, ONNX API Development: Flask, FastAPI for model serving Containerization: Docker basics for ML applications Model Monitoring: Performance tracking, drift detection Version Control: Git for code, DVC for data and models CI/CD for ML: Automated testing and deployment. Capstone project: End-to-end ML pipeline with monitoring. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Model Serialization with a real-world data science example.",
+        "How would you apply API Development in a practical project?",
+        "What is the most common mistake beginners make with Containerization, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-30",
+      "order": 30,
+      "sectionId": "08",
+      "sectionTitle": "Cloud & Deployment",
+      "moduleNumber": 3,
+      "title": "Module 30: Web Applications for Data Science",
+      "description": "Streamlit: Interactive web apps for ML models",
+      "topics": [
+        "Streamlit: Interactive web apps for ML models",
+        "Dash/Plotly: Complex interactive dashboards",
+        "Gradio: Quick ML demos and interfaces",
+        "Heroku Deployment: Free hosting for prototypes",
+        "User Authentication: Basic security concepts"
+      ],
+      "project": "Deploy a complete ML web application",
+      "objectives": [
+        "Streamlit: Interactive web apps for ML models",
+        "Dash/Plotly: Complex interactive dashboards",
+        "Gradio: Quick ML demos and interfaces",
+        "Heroku Deployment: Free hosting for prototypes",
+        "User Authentication: Basic security concepts",
+        "Project: Deploy a complete ML web application"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Web Applications for Data Science. Streamlit: Interactive web apps for ML models; Dash/Plotly: Complex interactive dashboards; Gradio: Quick ML demos and interfaces; Heroku Deployment: Free hosting for prototypes. Capstone project: Deploy a complete ML web application. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Web Applications for Data Science: Streamlit: Interactive web apps for ML models Dash/Plotly: Complex interactive dashboards Gradio: Quick ML demos and interfaces Heroku Deployment: Free hosting for prototypes User Authentication: Basic security concepts. Capstone project: Deploy a complete ML web application. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Web Applications for Data Science. Streamlit: Interactive web apps for ML models Dash/Plotly: Complex interactive dashboards Gradio: Quick ML demos and interfaces Heroku Deployment: Free hosting for prototypes User Authentication: Basic security concepts. Capstone project: Deploy a complete ML web application. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Streamlit with a real-world data science example.",
+        "How would you apply Dash/Plotly in a practical project?",
+        "What is the most common mistake beginners make with Gradio, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-31",
+      "order": 31,
+      "sectionId": "09",
+      "sectionTitle": "Business Intelligence & Advanced Analytics",
+      "moduleNumber": 1,
+      "title": "Module 31: Business Intelligence Tools",
+      "description": "Power BI: Connecting data sources, DAX formulas",
+      "topics": [
+        "Power BI: Connecting data sources, DAX formulas",
+        "Tableau: Advanced visualizations, calculated fields",
+        "Google Data Studio: Free BI tool mastery",
+        "Dashboard Design: KPIs, drill-downs, interactivity",
+        "Data Storytelling: Executive presentations"
+      ],
+      "project": "Create comprehensive business dashboard",
+      "objectives": [
+        "Power BI: Connecting data sources, DAX formulas",
+        "Tableau: Advanced visualizations, calculated fields",
+        "Google Data Studio: Free BI tool mastery",
+        "Dashboard Design: KPIs, drill-downs, interactivity",
+        "Data Storytelling: Executive presentations",
+        "Project: Create comprehensive business dashboard"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Business Intelligence Tools. Power BI: Connecting data sources, DAX formulas; Tableau: Advanced visualizations, calculated fields; Google Data Studio: Free BI tool mastery; Dashboard Design: KPIs, drill-downs, interactivity. Capstone project: Create comprehensive business dashboard. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Business Intelligence Tools: Power BI: Connecting data sources, DAX formulas Tableau: Advanced visualizations, calculated fields Google Data Studio: Free BI tool mastery Dashboard Design: KPIs, drill-downs, interactivity Data Storytelling: Executive presentations. Capstone project: Create comprehensive business dashboard. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Business Intelligence Tools. Power BI: Connecting data sources, DAX formulas Tableau: Advanced visualizations, calculated fields Google Data Studio: Free BI tool mastery Dashboard Design: KPIs, drill-downs, interactivity Data Storytelling: Executive presentations. Capstone project: Create comprehensive business dashboard. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Power BI with a real-world data science example.",
+        "How would you apply Tableau in a practical project?",
+        "What is the most common mistake beginners make with Google Data Studio, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-32",
+      "order": 32,
+      "sectionId": "09",
+      "sectionTitle": "Business Intelligence & Advanced Analytics",
+      "moduleNumber": 2,
+      "title": "Module 32: Advanced Analytics & Optimization",
+      "description": "Statistical Modeling: Advanced regression techniques",
+      "topics": [
+        "Statistical Modeling: Advanced regression techniques",
+        "Optimization: Linear programming, constraint optimization",
+        "Simulation: Monte Carlo methods",
+        "Causal Inference: Understanding causation vs correlation",
+        "Experimental Design: A/B testing, factorial designs"
+      ],
+      "project": "Business optimization case study",
+      "objectives": [
+        "Statistical Modeling: Advanced regression techniques",
+        "Optimization: Linear programming, constraint optimization",
+        "Simulation: Monte Carlo methods",
+        "Causal Inference: Understanding causation vs correlation",
+        "Experimental Design: A/B testing, factorial designs",
+        "Project: Business optimization case study"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Advanced Analytics & Optimization. Statistical Modeling: Advanced regression techniques; Optimization: Linear programming, constraint optimization; Simulation: Monte Carlo methods; Causal Inference: Understanding causation vs correlation. Capstone project: Business optimization case study. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Advanced Analytics & Optimization: Statistical Modeling: Advanced regression techniques Optimization: Linear programming, constraint optimization Simulation: Monte Carlo methods Causal Inference: Understanding causation vs correlation Experimental Design: A/B testing, factorial designs. Capstone project: Business optimization case study. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Advanced Analytics & Optimization. Statistical Modeling: Advanced regression techniques Optimization: Linear programming, constraint optimization Simulation: Monte Carlo methods Causal Inference: Understanding causation vs correlation Experimental Design: A/B testing, factorial designs. Capstone project: Business optimization case study. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Statistical Modeling with a real-world data science example.",
+        "How would you apply Optimization in a practical project?",
+        "What is the most common mistake beginners make with Simulation, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-33",
+      "order": 33,
+      "sectionId": "10",
+      "sectionTitle": "Portfolio & Career Preparation",
+      "moduleNumber": 1,
+      "title": "Module 33: Portfolio Development",
+      "description": "Profile: Professional setup, README files",
+      "topics": [
+        "Profile: Professional setup, README files",
+        "Project Documentation: Clear explanations, code comments",
+        "Jupyter Notebooks: Best practices, storytelling",
+        "Portfolio Website: Showcase projects and skills",
+        "Resume Building: ATS-friendly data science resumes",
+        "LinkedIn Optimization: Professional networking"
+      ],
+      "project": null,
+      "objectives": [
+        "Profile: Professional setup, README files",
+        "Project Documentation: Clear explanations, code comments",
+        "Jupyter Notebooks: Best practices, storytelling",
+        "Portfolio Website: Showcase projects and skills",
+        "Resume Building: ATS-friendly data science resumes",
+        "LinkedIn Optimization: Professional networking"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Portfolio Development. Profile: Professional setup, README files; Project Documentation: Clear explanations, code comments; Jupyter Notebooks: Best practices, storytelling; Portfolio Website: Showcase projects and skills. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Portfolio Development: Profile: Professional setup, README files Project Documentation: Clear explanations, code comments Jupyter Notebooks: Best practices, storytelling Portfolio Website: Showcase projects and skills Resume Building: ATS-friendly data science resumes LinkedIn Optimization: Professional networking. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Portfolio Development. Profile: Professional setup, README files Project Documentation: Clear explanations, code comments Jupyter Notebooks: Best practices, storytelling Portfolio Website: Showcase projects and skills Resume Building: ATS-friendly data science resumes LinkedIn Optimization: Professional networking. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Profile with a real-world data science example.",
+        "How would you apply Project Documentation in a practical project?",
+        "What is the most common mistake beginners make with Jupyter Notebooks, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-34",
+      "order": 34,
+      "sectionId": "10",
+      "sectionTitle": "Portfolio & Career Preparation",
+      "moduleNumber": 2,
+      "title": "Module 34: Capstone Project Options",
+      "description": "E-commerce Recommendation System",
+      "topics": [
+        "E-commerce Recommendation System",
+        "Healthcare Predictive Analytics",
+        "Financial Risk Assessment Model",
+        "Social Media Sentiment Analysis Platform",
+        "Supply Chain Optimization",
+        "Real Estate Price Prediction App",
+        "Requirements: Data collection/cleaning, EDA, multiple ML models, deployment, business presentation"
+      ],
+      "project": "Choose and complete one comprehensive capstone project",
+      "objectives": [
+        "E-commerce Recommendation System",
+        "Healthcare Predictive Analytics",
+        "Financial Risk Assessment Model",
+        "Social Media Sentiment Analysis Platform",
+        "Supply Chain Optimization",
+        "Real Estate Price Prediction App",
+        "Project: Choose and complete one comprehensive capstone project"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Capstone Project Options. E-commerce Recommendation System; Healthcare Predictive Analytics; Financial Risk Assessment Model; Social Media Sentiment Analysis Platform. Capstone project: Choose and complete one comprehensive capstone project. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Capstone Project Options: E-commerce Recommendation System Healthcare Predictive Analytics Financial Risk Assessment Model Social Media Sentiment Analysis Platform Supply Chain Optimization Real Estate Price Prediction App Requirements: Data collection/cleaning, EDA, multiple ML models, deployment, business presentation. Capstone project: Choose and complete one comprehensive capstone project. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Capstone Project Options. E-commerce Recommendation System Healthcare Predictive Analytics Financial Risk Assessment Model Social Media Sentiment Analysis Platform Supply Chain Optimization Real Estate Price Prediction App Requirements: Data collection/cleaning, EDA, multiple ML models, deployment, business presentation. Capstone project: Choose and complete one comprehensive capstone project. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain E-commerce Recommendation System with a real-world data science example.",
+        "How would you apply Healthcare Predictive Analytics in a practical project?",
+        "What is the most common mistake beginners make with Financial Risk Assessment Model, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ds-35",
+      "order": 35,
+      "sectionId": "10",
+      "sectionTitle": "Portfolio & Career Preparation",
+      "moduleNumber": 3,
+      "title": "Module 35: Interview Preparation & Job Search",
+      "description": "Technical Interview Prep: Coding challenges, ML concepts",
+      "topics": [
+        "Technical Interview Prep: Coding challenges, ML concepts",
+        "Case Study Practice: Business problem solving",
+        "Behavioral Interviews: STAR method, data science scenarios",
+        "Salary Negotiation: Market research, negotiation tactics",
+        "Job Search Strategy: Where to apply, networking tips",
+        "Mock Interviews: Practice with feedback"
+      ],
+      "project": null,
+      "objectives": [
+        "Technical Interview Prep: Coding challenges, ML concepts",
+        "Case Study Practice: Business problem solving",
+        "Behavioral Interviews: STAR method, data science scenarios",
+        "Salary Negotiation: Market research, negotiation tactics",
+        "Job Search Strategy: Where to apply, networking tips",
+        "Mock Interviews: Practice with feedback"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Interview Preparation & Job Search. Technical Interview Prep: Coding challenges, ML concepts; Case Study Practice: Business problem solving; Behavioral Interviews: STAR method, data science scenarios; Salary Negotiation: Market research, negotiation tactics. Focus on intuition, real-world examples, and why each topic matters for data professionals.",
+        "intermediate": "Interview Preparation & Job Search: Technical Interview Prep: Coding challenges, ML concepts Case Study Practice: Business problem solving Behavioral Interviews: STAR method, data science scenarios Salary Negotiation: Market research, negotiation tactics Job Search Strategy: Where to apply, networking tips Mock Interviews: Practice with feedback. Connect theory to hands-on practice with datasets, code snippets, and industry scenarios.",
+        "advanced": "Deep dive into Interview Preparation & Job Search. Technical Interview Prep: Coding challenges, ML concepts Case Study Practice: Business problem solving Behavioral Interviews: STAR method, data science scenarios Salary Negotiation: Market research, negotiation tactics Job Search Strategy: Where to apply, networking tips Mock Interviews: Practice with feedback. Cover edge cases, trade-offs, tooling choices, and how teams apply this in production data science workflows."
+      },
+      "crossQuestions": [
+        "Explain Technical Interview Prep with a real-world data science example.",
+        "How would you apply Case Study Practice in a practical project?",
+        "What is the most common mistake beginners make with Behavioral Interviews, and how do you avoid it?"
+      ]
+    }
+  ]
+}
