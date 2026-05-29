@@ -8,6 +8,51 @@ console.log('🧠 Micro Trainer: Content script loaded');
 const DEFAULT_FRONTEND_URL = 'https://micro-trainer.vercel.app';
 const PANEL_PATH = '/extension';
 
+const SETUP_HOST_PATTERNS = [
+  'micro-trainer-1.onrender.com',
+  'setup.microtrainer.com',
+];
+
+function isSetupOrLicensePage() {
+  const host = window.location.hostname;
+  const path = window.location.pathname || '';
+  if (SETUP_HOST_PATTERNS.some((pattern) => host.includes(pattern))) return true;
+  if (path.startsWith('/setup')) return true;
+  return false;
+}
+
+if (isSetupOrLicensePage()) {
+  console.log('ℹ️ Micro Trainer: Setup/license page — extension panel skipped');
+} else {
+
+let lastSavedFrontendUrl = null;
+let connectWriteTimer = null;
+
+function saveFrontendUrl(frontendUrl, iframe) {
+  if (!frontendUrl || frontendUrl === lastSavedFrontendUrl) return;
+
+  if (connectWriteTimer) clearTimeout(connectWriteTimer);
+  connectWriteTimer = setTimeout(() => {
+    chrome.storage.sync.get(['frontendUrl'], (data) => {
+      if (data.frontendUrl === frontendUrl) {
+        lastSavedFrontendUrl = frontendUrl;
+        if (iframe) iframe.src = buildAppUrl(frontendUrl);
+        return;
+      }
+
+      chrome.storage.sync.set({ frontendUrl }, () => {
+        if (chrome.runtime.lastError) {
+          console.warn('Micro Trainer: storage sync skipped:', chrome.runtime.lastError.message);
+          return;
+        }
+        lastSavedFrontendUrl = frontendUrl;
+        if (iframe) iframe.src = buildAppUrl(frontendUrl);
+        console.log('✅ Micro Trainer: Official app connected', frontendUrl);
+      });
+    });
+  }, 500);
+}
+
 function buildAppUrl(frontendUrl, path = PANEL_PATH) {
   try {
     const url = new URL(frontendUrl || DEFAULT_FRONTEND_URL);
@@ -85,10 +130,7 @@ function injectPanel() {
 
     try {
       const frontendUrl = new URL(message.frontendUrl).origin;
-      chrome.storage.sync.set({ frontendUrl }, () => {
-        iframe.src = buildAppUrl(frontendUrl);
-        console.log('✅ Micro Trainer: Official app connected', frontendUrl);
-      });
+      saveFrontendUrl(frontendUrl, iframe);
     } catch (error) {
       console.error('Invalid MicroTrainer frontend URL:', error);
     }
@@ -138,6 +180,7 @@ function injectPanel() {
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', injectPanel);
 } else {
-  // DOM is already ready
   injectPanel();
+}
+
 }
