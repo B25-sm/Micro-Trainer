@@ -2,11 +2,45 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import {
+  RefreshCw,
+  Download,
+  SlidersHorizontal,
+  Mic,
+  BookOpen,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  X,
+} from "lucide-react";
+import AppSelect from "../components/AppSelect";
+import { getTrainerHeaders } from "../utils/trainerAuth";
 
 const BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-import { getTrainerHeaders } from "../utils/trainerAuth";
+const btnSecondary =
+  "inline-flex items-center gap-2 px-3.5 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#292a2d] text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/40 transition disabled:opacity-50 disabled:cursor-not-allowed";
+
+const btnPrimary =
+  "inline-flex items-center gap-2 px-3.5 py-2 text-sm font-medium rounded-lg bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed";
+
+function TabButton({ active, onClick, icon: Icon, children }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition -mb-px ${
+        active
+          ? "border-[#1a73e8] dark:border-[#8ab4f8] text-gray-900 dark:text-gray-100"
+          : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+      }`}
+    >
+      <Icon className="w-4 h-4 shrink-0 opacity-80" strokeWidth={2} />
+      {children}
+    </button>
+  );
+}
 
 const TrainerDashboard = () => {
   const navigate = useNavigate();
@@ -159,12 +193,12 @@ const TrainerDashboard = () => {
       const res = await axios.post(url, {}, { headers: getTrainerHeaders() });
 
       setExportMessage(
-        `✅ Exported ${res.data.studentsExported} students to Google Sheets!`
+        `Exported ${res.data.studentsExported} students to Google Sheets.`
       );
       setTimeout(() => setExportMessage(""), 5000);
     } catch (err) {
       console.error("Export error:", err);
-      setExportMessage("❌ Export failed. Please try again.");
+      setExportMessage("Export failed. Please try again.");
       setTimeout(() => setExportMessage(""), 5000);
     } finally {
       setExporting(false);
@@ -180,13 +214,13 @@ const TrainerDashboard = () => {
         {},
         { headers: getTrainerHeaders() }
       );
-      setExportMessage(`✅ ${res.data.message}`);
+      setExportMessage(res.data.message || "Course progress synced.");
       await fetchLearningProgress();
       setTimeout(() => setExportMessage(""), 5000);
     } catch (err) {
       console.error("Learning sync error:", err);
       setExportMessage(
-        "❌ Learning progress sync failed. Check Google Sheets credentials."
+        "Sync failed. Check Google Sheets credentials on the server."
       );
       setTimeout(() => setExportMessage(""), 5000);
     } finally {
@@ -194,30 +228,45 @@ const TrainerDashboard = () => {
     }
   };
 
-  const getTrendIcon = (trend) => {
-    if (trend === "improving") return "↗️";
-    if (trend === "declining") return "↘️";
-    return "→";
-  };
-
-  const getTrendColor = (trend) => {
-    if (trend === "improving") return "text-green-600";
-    if (trend === "declining") return "text-red-600";
-    return "text-gray-500";
+  const getTrendDisplay = (trend) => {
+    if (trend === "improving") {
+      return {
+        Icon: TrendingUp,
+        className: "text-green-600 dark:text-green-400",
+        label: "Improving",
+      };
+    }
+    if (trend === "declining") {
+      return {
+        Icon: TrendingDown,
+        className: "text-red-600 dark:text-red-400",
+        label: "Declining",
+      };
+    }
+    return {
+      Icon: Minus,
+      className: "text-gray-500 dark:text-gray-400",
+      label: trend || "Stable",
+    };
   };
 
   const getLevelBadge = (level) => {
     if (!level) return null;
 
-    const colors = {
-      advanced: "bg-purple-100 text-purple-700 border-purple-300",
-      intermediate: "bg-blue-100 text-blue-700 border-blue-300",
-      beginner: "bg-green-100 text-green-700 border-green-300",
+    const styles = {
+      advanced:
+        "bg-gray-100 dark:bg-gray-700/60 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-600",
+      intermediate:
+        "bg-gray-100 dark:bg-gray-700/60 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600",
+      beginner:
+        "bg-gray-50 dark:bg-gray-800/80 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700",
     };
 
     return (
       <span
-        className={`px-2 py-0.5 rounded-lg text-xs font-medium border ${colors[level] || colors.beginner}`}
+        className={`px-2 py-0.5 rounded-md text-xs font-medium border ${
+          styles[level] || styles.beginner
+        }`}
       >
         {level.charAt(0).toUpperCase() + level.slice(1)}
       </span>
@@ -225,10 +274,10 @@ const TrainerDashboard = () => {
   };
 
   const getProgressColor = (pct) => {
-    if (pct >= 80) return "text-green-600";
-    if (pct >= 40) return "text-yellow-600";
-    if (pct > 0) return "text-blue-600";
-    return "text-gray-400";
+    if (pct >= 80) return "text-green-600 dark:text-green-400";
+    if (pct >= 40) return "text-amber-600 dark:text-amber-400";
+    if (pct > 0) return "text-gray-700 dark:text-gray-300";
+    return "text-gray-400 dark:text-gray-500";
   };
 
   const formatSyncLabel = (syncStatus) => {
@@ -240,14 +289,14 @@ const TrainerDashboard = () => {
     const connected = syncStatus?.officialBenefitsEnabled;
     return (
       <span
-        className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold ${
+        className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium border ${
           connected
-            ? "bg-emerald-100 text-emerald-700"
-            : "bg-amber-100 text-amber-800"
+            ? "bg-gray-50 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600"
+            : "bg-gray-50 dark:bg-gray-800/80 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700"
         }`}
         title={syncStatus?.message || "Official sync status unknown"}
       >
-        {connected ? "Synced" : "No official sync"}
+        {connected ? "Synced" : "Not synced"}
       </span>
     );
   };
@@ -267,170 +316,179 @@ const TrainerDashboard = () => {
   const interviewRows =
     studentsWithProgress.length > 0 ? studentsWithProgress : students;
 
+  const exportOk = exportMessage && !exportMessage.toLowerCase().includes("fail");
+
   return (
-    <div className="min-h-screen p-6 bg-white">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">Trainer Dashboard</h1>
-          <p className="text-gray-500 text-sm">
-            Interview rankings & guided course progress (synced to Google Sheets)
-          </p>
-        </div>
+    <div className="min-h-screen pb-10">
+      <header className="mb-8">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <h1 className="text-2xl font-medium text-gray-900 dark:text-gray-100 tracking-tight">
+              Trainer dashboard
+            </h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 max-w-xl">
+              Interview rankings and guided course progress. Data syncs to Google
+              Sheets when configured.
+            </p>
+          </div>
 
-        <div className="flex flex-wrap gap-3 items-center justify-end">
-          <button
-            onClick={handleSyncLearningProgress}
-            disabled={syncingLearning || learningLoading}
-            className={`px-4 py-2 rounded-xl font-medium transition ${
-              syncingLearning
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-gradient-to-r from-emerald-500 to-teal-600 text-white hover:from-emerald-600 hover:to-teal-700"
-            }`}
-          >
-            {syncingLearning ? "Syncing..." : "📚 Sync Course Progress"}
-          </button>
+          <div className="flex flex-wrap gap-2 items-center">
+            <button
+              type="button"
+              onClick={handleSyncLearningProgress}
+              disabled={syncingLearning || learningLoading}
+              className={btnSecondary}
+            >
+              <RefreshCw
+                className={`w-4 h-4 ${syncingLearning ? "animate-spin" : ""}`}
+              />
+              {syncingLearning ? "Syncing…" : "Sync course progress"}
+            </button>
 
-          <button
-            onClick={handleExportToSheets}
-            disabled={exporting || loading}
-            className={`px-4 py-2 rounded-xl font-medium transition ${
-              exporting
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700"
-            }`}
-          >
-            {exporting ? "Exporting..." : "📊 Export Interviews"}
-          </button>
+            <button
+              type="button"
+              onClick={handleExportToSheets}
+              disabled={exporting || loading}
+              className={btnPrimary}
+            >
+              <Download className="w-4 h-4" />
+              {exporting ? "Exporting…" : "Export interviews"}
+            </button>
 
-          {activeTab === "interviews" && (
-            <>
-              <button
-                onClick={() => {
-                  setShowMultiSelect(!showMultiSelect);
-                  if (showMultiSelect) clearMultiSelect();
-                }}
-                className={`px-4 py-2 rounded-xl font-medium transition ${
-                  showMultiSelect
-                    ? "bg-purple-500 text-white"
-                    : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50"
-                }`}
-              >
-                {showMultiSelect ? "✓ Multi-Select" : "🎯 Multi-Select"}
-              </button>
-
-              {!showMultiSelect && (
-                <select
-                  value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
-                  className="app-select p-2 rounded-xl min-w-[140px]"
+            {activeTab === "interviews" && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowMultiSelect(!showMultiSelect);
+                    if (showMultiSelect) clearMultiSelect();
+                  }}
+                  className={`${btnSecondary} ${
+                    showMultiSelect
+                      ? "border-[#1a73e8] dark:border-[#8ab4f8] text-[#1a73e8] dark:text-[#8ab4f8]"
+                      : ""
+                  }`}
                 >
-                  <option value="fullstack">Fullstack</option>
-                  <option value="react">React</option>
-                  <option value="java">Java</option>
-                  <option value="python">Python</option>
-                  <option value="javascript">JavaScript</option>
-                  <option value="nodejs">Node.js</option>
-                </select>
-              )}
-            </>
-          )}
-        </div>
-      </div>
+                  <SlidersHorizontal className="w-4 h-4" />
+                  {showMultiSelect ? "Close filters" : "Compare subjects"}
+                </button>
 
-      {/* Tabs */}
-      <div className="flex gap-2 mb-6">
-        <button
-          onClick={() => setActiveTab("interviews")}
-          className={`px-4 py-2 rounded-xl font-medium transition ${
-            activeTab === "interviews"
-              ? "bg-blue-600 text-white"
-              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-          }`}
+                {!showMultiSelect && (
+                  <AppSelect
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    className="min-w-[140px] py-2 text-sm rounded-lg"
+                  >
+                    <option value="fullstack">Fullstack</option>
+                    <option value="react">React</option>
+                    <option value="java">Java</option>
+                    <option value="python">Python</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="nodejs">Node.js</option>
+                  </AppSelect>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+
+        <nav
+          className="mt-8 flex gap-1 border-b border-gray-200 dark:border-gray-700"
+          aria-label="Dashboard sections"
         >
-          🎤 Interview Leaderboard
-        </button>
-        <button
-          onClick={() => setActiveTab("learning")}
-          className={`px-4 py-2 rounded-xl font-medium transition ${
-            activeTab === "learning"
-              ? "bg-emerald-600 text-white"
-              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-          }`}
-        >
-          📚 Guided Course Progress
-        </button>
-      </div>
+          <TabButton
+            active={activeTab === "interviews"}
+            onClick={() => setActiveTab("interviews")}
+            icon={Mic}
+          >
+            Interview leaderboard
+          </TabButton>
+          <TabButton
+            active={activeTab === "learning"}
+            onClick={() => setActiveTab("learning")}
+            icon={BookOpen}
+          >
+            Guided course progress
+          </TabButton>
+        </nav>
+      </header>
 
       {showMultiSelect && activeTab === "interviews" && (
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl p-4 mb-6 border border-purple-200"
+          className="mb-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#292a2d] p-4"
         >
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-3 gap-3">
             <div>
-              <h3 className="font-semibold text-gray-800">
-                Select Technologies to Compare
+              <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                Compare technologies
               </h3>
-              <p className="text-sm text-gray-600">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                 {selectedSubjects.length === 0
-                  ? "Choose 2 or more technologies to see combined rankings"
-                  : `Selected: ${selectedSubjects.length} technologies`}
+                  ? "Select two or more to rank by average score"
+                  : `${selectedSubjects.length} selected`}
               </p>
             </div>
             {selectedSubjects.length > 0 && (
               <button
+                type="button"
                 onClick={clearMultiSelect}
-                className="px-3 py-1 bg-white rounded-lg text-sm text-gray-600 hover:bg-gray-100 transition"
+                className="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
               >
-                Clear All
+                <X className="w-3.5 h-3.5" />
+                Clear
               </button>
             )}
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {availableSubjects.map((subj) => (
-              <button
-                key={subj}
-                onClick={() => toggleSubjectSelection(subj)}
-                className={`px-4 py-2 rounded-xl font-medium transition ${
-                  selectedSubjects.includes(subj)
-                    ? "bg-purple-500 text-white shadow-md"
-                    : "bg-white text-gray-700 border border-gray-200 hover:border-purple-300"
-                }`}
-              >
-                {selectedSubjects.includes(subj) && "✓ "}
-                {subj.charAt(0).toUpperCase() + subj.slice(1)}
-              </button>
-            ))}
+            {availableSubjects.map((subj) => {
+              const selected = selectedSubjects.includes(subj);
+              return (
+                <button
+                  key={subj}
+                  type="button"
+                  onClick={() => toggleSubjectSelection(subj)}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition ${
+                    selected
+                      ? "border-[#1a73e8] dark:border-[#8ab4f8] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                      : "border-gray-200 dark:border-gray-600 bg-white dark:bg-[#202124] text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-500"
+                  }`}
+                >
+                  {subj.charAt(0).toUpperCase() + subj.slice(1)}
+                </button>
+              );
+            })}
           </div>
         </motion.div>
       )}
 
       {exportMessage && (
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: 1, y: 0 }}
-          className={`mb-4 p-3 rounded-xl ${
-            exportMessage.includes("✅")
-              ? "bg-green-50 text-green-700 border border-green-200"
-              : "bg-red-50 text-red-700 border border-red-200"
+          className={`mb-4 px-4 py-3 rounded-lg text-sm border ${
+            exportOk
+              ? "bg-gray-50 dark:bg-gray-800/50 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-700"
+              : "bg-red-50 dark:bg-red-950/30 text-red-800 dark:text-red-200 border-red-200 dark:border-red-900"
           }`}
+          role="status"
         >
           {exportMessage}
         </motion.div>
       )}
 
       {bugReports.length > 0 && (
-        <div className="mb-6 rounded-2xl border border-indigo-100 bg-indigo-50/50 dark:bg-indigo-950/20 dark:border-indigo-900/40 p-4">
+        <div className="mb-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] p-4">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-              Recent bug reports
+            <h2 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+              Recent feedback
             </h2>
             <button
               type="button"
               onClick={fetchBugReports}
-              className="text-xs font-medium text-indigo-600 hover:text-indigo-800"
+              className="text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
             >
               Refresh
             </button>
@@ -439,31 +497,29 @@ const TrainerDashboard = () => {
             {bugReports.map((r, i) => (
               <li
                 key={`${r.timestamp}-${i}`}
-                className="text-sm bg-white dark:bg-slate-900 rounded-xl px-3 py-2 border border-slate-100 dark:border-slate-800"
+                className="text-sm rounded-lg px-3 py-2 border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-[#202124]"
               >
-                <div className="flex justify-between gap-2 text-xs text-slate-500">
+                <div className="flex justify-between gap-2 text-xs text-gray-500 dark:text-gray-400">
                   <span>{r.name || r.email || r.studentId}</span>
                   <span>{new Date(r.timestamp).toLocaleString()}</span>
                 </div>
-                <p className="text-slate-800 dark:text-slate-200 mt-1 line-clamp-2">
+                <p className="text-gray-800 dark:text-gray-200 mt-1 line-clamp-2">
                   {r.message}
                 </p>
-                <p className="text-xs text-slate-400 mt-0.5 font-mono">{r.pagePath}</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 font-mono">
+                  {r.pagePath}
+                </p>
               </li>
             ))}
           </ul>
-          <p className="text-xs text-slate-500 mt-2">
-            Also logged to Google Sheet tab &quot;BugReports&quot; and server console when running.
-          </p>
         </div>
       )}
 
-      {/* Interview table */}
       {activeTab === "interviews" && (
-        <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
-          <div className="grid grid-cols-6 p-4 border-b border-gray-200 text-sm text-gray-500 font-medium">
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] overflow-hidden">
+          <div className="grid grid-cols-6 gap-2 px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
             <span>Rank</span>
-            <span>Student ID</span>
+            <span>Student</span>
             <span>Score</span>
             <span>Level</span>
             <span>Trend</span>
@@ -471,171 +527,179 @@ const TrainerDashboard = () => {
           </div>
 
           {loading && (
-            <div className="p-4 text-gray-500 text-sm">Loading leaderboard...</div>
+            <div className="px-4 py-8 text-sm text-gray-500 dark:text-gray-400 text-center">
+              Loading leaderboard…
+            </div>
           )}
 
           {!loading &&
-            interviewRows.map((student, index) => (
-              <motion.div
-                key={student.studentId}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                onClick={() =>
-                  navigate(`/trainer/student/${student.studentId}`)
-                }
-                className={`grid grid-cols-6 p-4 border-b border-gray-200 transition cursor-pointer ${
-                  index < 3 ? "bg-blue-50 hover:bg-blue-100" : "hover:bg-gray-50"
-                }`}
-              >
-                <span className="font-semibold text-gray-800 flex items-center">
-                  #{student.rank}
-                  {index === 0 && <span className="ml-2">🥇</span>}
-                  {index === 1 && <span className="ml-2">🥈</span>}
-                  {index === 2 && <span className="ml-2">🥉</span>}
-                </span>
-                <span className="text-gray-700 font-medium">
-                  {student.studentId}
-                </span>
-                <span
-                  className={`font-bold ${
-                    parseFloat(student.score) >= 80
-                      ? "text-green-600"
-                      : parseFloat(student.score) >= 60
-                        ? "text-yellow-600"
-                        : "text-red-600"
+            interviewRows.map((student, index) => {
+              const trend = getTrendDisplay(student.memory?.trend);
+              const TrendIcon = trend.Icon;
+              return (
+                <motion.div
+                  key={student.studentId}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  onClick={() =>
+                    navigate(`/trainer/student/${student.studentId}`)
+                  }
+                  className={`grid grid-cols-6 gap-2 px-4 py-3 border-b border-gray-100 dark:border-gray-700/80 text-sm cursor-pointer transition ${
+                    index < 3
+                      ? "bg-gray-50/80 dark:bg-gray-800/30 hover:bg-gray-100 dark:hover:bg-gray-800/50"
+                      : "hover:bg-gray-50 dark:hover:bg-gray-800/30"
                   }`}
                 >
-                  {student.score}
-                </span>
-                <div className="flex items-center">
-                  {student.memory?.level ? (
-                    getLevelBadge(student.memory.level)
-                  ) : (
-                    <span className="text-gray-400 text-xs">N/A</span>
-                  )}
-                </div>
-                <div className="flex items-center gap-1">
-                  {student.memory?.trend ? (
-                    <>
-                      <span
-                        className={`text-lg ${getTrendColor(student.memory.trend)}`}
-                      >
-                        {getTrendIcon(student.memory.trend)}
+                  <span className="font-medium text-gray-800 dark:text-gray-200 tabular-nums">
+                    {student.rank}
+                  </span>
+                  <span className="text-gray-700 dark:text-gray-300 font-medium truncate">
+                    {student.studentId}
+                  </span>
+                  <span
+                    className={`font-medium tabular-nums ${
+                      parseFloat(student.score) >= 80
+                        ? "text-green-600 dark:text-green-400"
+                        : parseFloat(student.score) >= 60
+                          ? "text-amber-600 dark:text-amber-400"
+                          : "text-gray-600 dark:text-gray-400"
+                    }`}
+                  >
+                    {student.score}
+                  </span>
+                  <div className="flex items-center">
+                    {student.memory?.level ? (
+                      getLevelBadge(student.memory.level)
+                    ) : (
+                      <span className="text-gray-400 dark:text-gray-500 text-xs">
+                        —
                       </span>
-                      <span
-                        className={`text-xs ${getTrendColor(student.memory.trend)} capitalize`}
-                      >
-                        {student.memory.trend}
+                    )}
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    {student.memory?.trend ? (
+                      <>
+                        <TrendIcon
+                          className={`w-4 h-4 shrink-0 ${trend.className}`}
+                        />
+                        <span className={`text-xs capitalize ${trend.className}`}>
+                          {trend.label}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-gray-400 dark:text-gray-500 text-xs">
+                        —
                       </span>
-                    </>
-                  ) : (
-                    <span className="text-gray-400 text-xs">N/A</span>
-                  )}
-                </div>
-                <span className="text-sm text-gray-500 truncate">
-                  {subject === "fullstack"
-                    ? Object.entries(student.subjects || {})
-                        .slice(0, 3)
-                        .map(([k, v]) => `${k}: ${v}`)
-                        .join(" | ")
-                    : student.subjects?.[subject]
-                      ? `${subject}: ${student.subjects[subject]}`
-                      : "N/A"}
-                </span>
-              </motion.div>
-            ))}
+                    )}
+                  </div>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    {subject === "fullstack"
+                      ? Object.entries(student.subjects || {})
+                          .slice(0, 3)
+                          .map(([k, v]) => `${k}: ${v}`)
+                          .join(" · ")
+                      : student.subjects?.[subject]
+                        ? `${subject}: ${student.subjects[subject]}`
+                        : "—"}
+                  </span>
+                </motion.div>
+              );
+            })}
 
           {!loading && students.length === 0 && (
-            <div className="p-4 text-gray-500 text-sm">No interview data available</div>
+            <div className="px-4 py-8 text-sm text-gray-500 dark:text-gray-400 text-center">
+              No interview data yet. Scores appear after students complete mock
+              interviews.
+            </div>
           )}
         </div>
       )}
 
-      {/* Guided course progress table */}
       {activeTab === "learning" && (
-        <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
-          <div className="p-4 border-b border-gray-100 bg-emerald-50">
-            <p className="text-sm text-emerald-800">
-              Progress updates when students pass a lesson quiz (≥60%). Data is
-              stored on the server and synced to the <strong>Learning_Progress</strong> tab
-              in Google Sheets. Use <strong>Sync Course Progress</strong> to push all
-              on-server records to Sheets.
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] overflow-hidden">
+          <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#202124]/50">
+            <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+              Progress updates when students pass a lesson quiz (60% or higher).
+              Use <span className="font-medium">Sync course progress</span> to push
+              records to the Learning_Progress sheet.
             </p>
           </div>
 
-          <div className="grid grid-cols-9 p-4 border-b border-gray-200 text-sm text-gray-500 font-medium">
+          <div className="grid grid-cols-9 gap-2 px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
             <span className="col-span-2">Name</span>
             <span>Initial</span>
             <span>Batch</span>
             <span>Course %</span>
-            <span>Current lesson</span>
-            <span>Concepts done</span>
-            <span>Official sync</span>
-            <span>Technologies</span>
+            <span>Lesson</span>
+            <span>Done</span>
+            <span>Sync</span>
+            <span>Tech</span>
           </div>
 
           {learningLoading && (
-            <div className="p-4 text-gray-500 text-sm">Loading course progress...</div>
+            <div className="px-4 py-8 text-sm text-gray-500 dark:text-gray-400 text-center">
+              Loading course progress…
+            </div>
           )}
 
           {!learningLoading &&
             learningStudents.map((student, index) => (
               <motion.div
                 key={student.studentId}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
                 onClick={() =>
                   navigate(`/trainer/student/${student.studentId}`)
                 }
-                className={`grid grid-cols-9 p-4 border-b border-gray-200 transition cursor-pointer ${
+                className={`grid grid-cols-9 gap-2 px-4 py-3 border-b border-gray-100 dark:border-gray-700/80 text-sm cursor-pointer transition ${
                   index < 3
-                    ? "bg-emerald-50 hover:bg-emerald-100"
-                    : "hover:bg-gray-50"
+                    ? "bg-gray-50/80 dark:bg-gray-800/30 hover:bg-gray-100 dark:hover:bg-gray-800/50"
+                    : "hover:bg-gray-50 dark:hover:bg-gray-800/30"
                 }`}
               >
-                <span className="col-span-2 text-gray-800 font-medium truncate">
+                <span className="col-span-2 text-gray-800 dark:text-gray-200 font-medium truncate">
                   {student.name || student.displayName || student.studentId}
                 </span>
-                <span className="text-gray-700 font-semibold">
+                <span className="text-gray-700 dark:text-gray-300 tabular-nums">
                   {student.initial || "—"}
                 </span>
-                <span className="text-gray-600 text-sm truncate">
+                <span className="text-gray-600 dark:text-gray-400 text-xs truncate">
                   {student.batch || "—"}
                 </span>
                 <span
-                  className={`font-bold ${getProgressColor(student.learningProgress)}`}
+                  className={`font-medium tabular-nums ${getProgressColor(student.learningProgress)}`}
                 >
                   {student.learningProgress ?? 0}%
                 </span>
-                <span className="text-sm text-gray-600">
+                <span className="text-xs text-gray-600 dark:text-gray-400 truncate">
                   {student.currentTechnology
                     ? `${student.currentTechnology} — ${student.currentLesson || "—"}`
                     : "Not started"}
                 </span>
-                <span className="text-sm text-gray-600">
+                <span className="text-gray-600 dark:text-gray-400 tabular-nums">
                   {student.conceptsCompleted ?? 0}
                 </span>
-                <span className="text-sm text-gray-600">
+                <span className="text-xs">
                   {getSyncBadge(student.syncStatus)}
-                  <span className="block text-xs text-gray-400 mt-1">
+                  <span className="block text-gray-400 dark:text-gray-500 mt-0.5">
                     {formatSyncLabel(student.syncStatus)}
                   </span>
                 </span>
-                <span className="text-sm text-gray-500 truncate">
+                <span className="text-xs text-gray-500 dark:text-gray-400 truncate">
                   {(student.technologies || [])
                     .map(
                       (t) =>
                         `${t.technology}: ${t.overallProgress}% (${t.completedCount}/${t.totalConcepts})`
                     )
-                    .join(" | ") || "—"}
+                    .join(" · ") || "—"}
                 </span>
               </motion.div>
             ))}
 
           {!learningLoading && learningStudents.length === 0 && (
-            <div className="p-6 text-center text-gray-500 text-sm">
-              No guided course progress yet. Students appear here after they complete
-              at least one lesson quiz, or after you run Sync Course Progress.
+            <div className="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
+              No guided course progress yet. Students appear after they complete a
+              lesson quiz, or after you sync from the server.
             </div>
           )}
         </div>
