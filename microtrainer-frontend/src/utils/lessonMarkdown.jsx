@@ -50,26 +50,31 @@ export function normalizeLessonMarkdown(content) {
   return text.trim();
 }
 
+const CAST_LINE_CLASS =
+  "lesson-cast-line mb-2 pl-3 border-l-4 border-indigo-400 bg-indigo-50 rounded-r-lg py-2.5 pr-3 list-none ml-0 text-[15px] text-gray-900 " +
+  "dark:border-indigo-500 dark:bg-indigo-950/70 dark:text-slate-100 " +
+  "read-mode:border-[var(--read-border)] read-mode:bg-[var(--read-callout-bg)] read-mode:text-[var(--read-text)]";
+
 export function createLessonMarkdownComponents() {
   return {
     code: ({ inline, children, ...props }) =>
       inline ? (
         <code
-          className="bg-gray-200 px-1.5 py-0.5 rounded text-xs font-mono text-gray-800"
+          className="bg-gray-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-xs font-mono text-gray-900 dark:text-slate-100 read-mode:bg-[var(--read-surface)] read-mode:text-[var(--read-text)]"
           {...props}
         >
           {children}
         </code>
       ) : (
         <code
-          className="block bg-gray-800 text-gray-100 p-3 rounded-lg text-xs font-mono overflow-x-auto my-3"
+          className="block bg-gray-800 text-gray-100 dark:bg-slate-950 dark:text-slate-100 p-3 rounded-lg text-xs font-mono overflow-x-auto my-3"
           {...props}
         >
           {children}
         </code>
       ),
     p: ({ children }) => (
-      <p className="mb-3 last:mb-0 leading-relaxed text-[15px] text-gray-800">
+      <p className="mb-3 last:mb-0 leading-relaxed text-[15px] text-gray-800 dark:text-slate-200 read-mode:text-[var(--read-text)]">
         {children}
       </p>
     ),
@@ -83,8 +88,8 @@ export function createLessonMarkdownComponents() {
         <li
           className={
             isCastMapping
-              ? "mb-2 pl-1 border-l-2 border-indigo-300 bg-indigo-50/70 rounded-r py-2 pr-3 list-none ml-0 text-[15px] text-gray-800"
-              : "mb-1.5 text-gray-800 leading-relaxed"
+              ? CAST_LINE_CLASS
+              : "mb-1.5 text-gray-800 dark:text-slate-200 leading-relaxed read-mode:text-[var(--read-text)]"
           }
         >
           {children}
@@ -95,7 +100,9 @@ export function createLessonMarkdownComponents() {
       <ul className="mb-4 space-y-1 pl-1 list-none">{children}</ul>
     ),
     ol: ({ children }) => (
-      <ol className="mb-4 space-y-1.5 pl-5 list-decimal text-gray-800">{children}</ol>
+      <ol className="mb-4 space-y-1.5 pl-5 list-decimal text-gray-800 dark:text-slate-200 read-mode:text-[var(--read-text)]">
+        {children}
+      </ol>
     ),
     strong: ({ children }) => {
       const label = String(children).trim();
@@ -112,19 +119,23 @@ export function createLessonMarkdownComponents() {
 
       if (SECTION_HEADERS.includes(label)) {
         return (
-          <strong className="block text-blue-700 font-bold text-base mt-6 mb-2 first:mt-0">
+          <strong className="lesson-section-heading block text-blue-800 dark:text-blue-300 font-bold text-base mt-6 mb-2 first:mt-0 read-mode:text-[var(--read-text-heading)]">
             {children}
           </strong>
         );
       }
       if (isRealtimeSub) {
         return (
-          <strong className="block text-indigo-700 font-semibold text-sm mt-4 mb-1.5">
+          <strong className="block text-indigo-800 dark:text-indigo-300 font-semibold text-sm mt-4 mb-1.5 read-mode:text-[var(--read-text-heading)]">
             {children}
           </strong>
         );
       }
-      return <strong className="font-semibold text-gray-900">{children}</strong>;
+      return (
+        <strong className="font-semibold text-gray-900 dark:text-slate-100 read-mode:text-[var(--read-text-heading)]">
+          {children}
+        </strong>
+      );
     },
   };
 }

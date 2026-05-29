@@ -175,6 +175,30 @@ html.dark .mt-callout--danger,
   color: inherit;
 }
 
+/* Learn lesson — analogy / cast lines readable in dark + read mode (all subjects) */
+html.dark .lesson-prose .lesson-cast-line,
+.dark .lesson-prose .lesson-cast-line {
+  background-color: rgb(30 27 75 / 0.75) !important;
+  border-left-color: rgb(129 140 248) !important;
+  color: rgb(241 245 249) !important;
+}
+
+html.dark .lesson-prose .lesson-cast-line :where(strong, p, span, em),
+.dark .lesson-prose .lesson-cast-line :where(strong, p, span, em) {
+  color: inherit !important;
+}
+
+html.dark .lesson-prose .lesson-section-heading,
+.dark .lesson-prose .lesson-section-heading {
+  color: rgb(147 197 253) !important;
+}
+
+/* Tailwind prose plugin can wash out custom li colors in dark mode */
+html.dark .lesson-prose :where(p, li, ol, ul):not(.lesson-cast-line),
+.dark .lesson-prose :where(p, li, ol, ul):not(.lesson-cast-line) {
+  color: rgb(226 232 240);
+}
+
 /* Legacy pastel Tailwind boxes — fix bg + text together */
 .dark :where(.bg-yellow-50, .bg-amber-50) {
   background-color: #422006 !important;

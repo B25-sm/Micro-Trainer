@@ -782,7 +782,7 @@ const StructuredTeaching = ({
                   />
                 ) : (
                   <motion.div className="bg-gray-50 dark:bg-slate-800/80 border border-gray-200 dark:border-slate-600 read-mode:bg-[var(--read-surface-elevated)] read-mode:border-[var(--read-border)] rounded-2xl px-5 py-4 w-full">
-                    <motion.div className="lesson-prose prose prose-base max-w-none text-gray-800 dark:text-slate-200 read-mode:text-[var(--read-text)]">
+                    <motion.div className="lesson-prose prose prose-base prose-neutral max-w-none text-gray-800 dark:text-slate-200 read-mode:text-[var(--read-text)]">
                       <ReactMarkdown>{message.content}</ReactMarkdown>
                     </motion.div>
                   </motion.div>
