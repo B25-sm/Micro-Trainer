@@ -1,155 +1,1120 @@
 {
   "technology": "Spring Boot",
-  "totalConcepts": 5,
+  "totalConcepts": 30,
+  "sections": [
+    {
+      "id": "01",
+      "title": "Spring Boot Foundations",
+      "moduleCount": 3
+    },
+    {
+      "id": "02",
+      "title": "REST APIs",
+      "moduleCount": 3
+    },
+    {
+      "id": "03",
+      "title": "Data Access",
+      "moduleCount": 3
+    },
+    {
+      "id": "04",
+      "title": "Security",
+      "moduleCount": 3
+    },
+    {
+      "id": "05",
+      "title": "Microservices",
+      "moduleCount": 3
+    },
+    {
+      "id": "06",
+      "title": "Observability & Ops",
+      "moduleCount": 2
+    },
+    {
+      "id": "07",
+      "title": "Capstone",
+      "moduleCount": 2
+    },
+    {
+      "id": "08",
+      "title": "Integration & Messaging",
+      "moduleCount": 2
+    },
+    {
+      "id": "09",
+      "title": "Cloud Native",
+      "moduleCount": 2
+    },
+    {
+      "id": "10",
+      "title": "Testing & Quality",
+      "moduleCount": 2
+    },
+    {
+      "id": "11",
+      "title": "Career",
+      "moduleCount": 1
+    },
+    {
+      "id": "12",
+      "title": "Spring Plus",
+      "moduleCount": 4
+    }
+  ],
   "concepts": [
     {
-      "id": "spring-1",
+      "id": "sb-1",
       "order": 1,
-      "title": "Spring Boot Basics",
-      "description": "Learn Spring Boot fundamentals and project setup",
+      "sectionId": "01",
+      "sectionTitle": "Spring Boot Foundations",
+      "moduleNumber": 1,
+      "title": "Module 1: Spring Ecosystem",
+      "description": "Spring vs Spring Boot",
+      "topics": [
+        "Spring vs Spring Boot",
+        "Auto-configuration",
+        "Starter dependencies",
+        "Spring Initializr",
+        "Enterprise Java careers"
+      ],
+      "project": null,
       "objectives": [
-        "Understand Spring Boot",
-        "Create a Spring Boot project",
-        "Run a Spring Boot application"
+        "Spring vs Spring Boot",
+        "Auto-configuration",
+        "Starter dependencies",
+        "Spring Initializr",
+        "Enterprise Java careers"
       ],
       "teachingContent": {
-        "beginner": "**Spring Boot** is a Java framework for building production-ready applications quickly.\n\n**Creating a Project:**\nUse Spring Initializr (start.spring.io) or:\n```bash\nspring init --dependencies=web myapp\n```\n\n**Main Application:**\n```java\n@SpringBootApplication\npublic class MyApplication {\n    public static void main(String[] args) {\n        SpringApplication.run(MyApplication.class, args);\n    }\n}\n```\n\n**Key Features:**\n- Auto-configuration\n- Embedded server (Tomcat)\n- Production-ready features\n- No XML configuration needed",
-        "intermediate": "Spring Boot architecture and annotations:\n\n**Project Structure:**\n```\nsrc/main/java/\n├── com.example.myapp/\n│   ├── MyApplication.java\n│   ├── controller/\n│   ├── service/\n│   ├── repository/\n│   └── model/\n```\n\n**Application Properties:**\n```properties\n# application.properties\nserver.port=8080\nspring.application.name=myapp\n```\n\n**Key Annotations:**\n- `@SpringBootApplication`: Main class\n- `@RestController`: REST endpoints\n- `@Service`: Business logic\n- `@Repository`: Data access",
-        "advanced": "Advanced Spring Boot configuration:\n\n**Custom Configuration:**\n```java\n@Configuration\npublic class AppConfig {\n    @Bean\n    public RestTemplate restTemplate() {\n        return new RestTemplate();\n    }\n}\n```\n\n**Profiles:**\n```properties\n# application-dev.properties\nspring.datasource.url=jdbc:h2:mem:testdb\n\n# application-prod.properties\nspring.datasource.url=jdbc:postgresql://localhost/mydb\n```"
+        "beginner": "Introduction to Spring Ecosystem. Spring vs Spring Boot; Auto-configuration; Starter dependencies; Spring Initializr. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Spring Ecosystem: Spring vs Spring Boot Auto-configuration Starter dependencies Spring Initializr Enterprise Java careers. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Spring Ecosystem. Spring vs Spring Boot Auto-configuration Starter dependencies Spring Initializr Enterprise Java careers. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — Spring Ecosystem\n\nTOPICS TO COVER (in order):\n- Spring vs Spring Boot\n- Auto-configuration\n- Starter dependencies\n- Spring Initializr\n- Enterprise Java careers\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "What is Spring Boot?",
-        "What are the advantages of using Spring Boot?",
-        "How does Spring Boot differ from the Spring Framework?"
+        "Explain Spring vs Spring Boot with a concrete example.",
+        "How would you apply Auto-configuration in a real project?",
+        "What is a common beginner mistake with Starter dependencies, and how do you avoid it?"
       ]
     },
     {
-      "id": "spring-2",
+      "id": "sb-2",
       "order": 2,
-      "title": "REST Controllers",
-      "description": "Learn to create RESTful APIs",
+      "sectionId": "01",
+      "sectionTitle": "Spring Boot Foundations",
+      "moduleNumber": 2,
+      "title": "Module 2: First Application",
+      "description": "@SpringBootApplication",
+      "topics": [
+        "@SpringBootApplication",
+        "Embedded Tomcat",
+        "application.properties",
+        "Running JAR",
+        "Actuator health intro"
+      ],
+      "project": "Hello REST endpoint",
       "objectives": [
-        "Create REST controllers",
-        "Handle HTTP methods",
-        "Return JSON responses"
+        "@SpringBootApplication",
+        "Embedded Tomcat",
+        "application.properties",
+        "Running JAR",
+        "Actuator health intro",
+        "Project: Hello REST endpoint"
       ],
       "teachingContent": {
-        "beginner": "**REST Controllers** handle HTTP requests.\n\n**Basic Controller:**\n```java\n@RestController\n@RequestMapping(\"/api\")\npublic class HelloController {\n    \n    @GetMapping(\"/hello\")\n    public String hello() {\n        return \"Hello, Spring Boot!\";\n    }\n    \n    @GetMapping(\"/user/{id}\")\n    public User getUser(@PathVariable Long id) {\n        return new User(id, \"John\");\n    }\n}\n```\n\n**HTTP Methods:**\n- `@GetMapping`: Read data\n- `@PostMapping`: Create data\n- `@PutMapping`: Update data\n- `@DeleteMapping`: Delete data",
-        "intermediate": "Advanced REST patterns:\n\n**Request Body:**\n```java\n@PostMapping(\"/users\")\npublic User createUser(@RequestBody User user) {\n    return userService.save(user);\n}\n```\n\n**Query Parameters:**\n```java\n@GetMapping(\"/users\")\npublic List<User> getUsers(\n    @RequestParam(required = false) String name,\n    @RequestParam(defaultValue = \"0\") int page\n) {\n    return userService.findAll(name, page);\n}\n```\n\n**Response Status:**\n```java\n@PostMapping(\"/users\")\n@ResponseStatus(HttpStatus.CREATED)\npublic User createUser(@RequestBody User user) {\n    return userService.save(user);\n}\n```",
-        "advanced": "Exception handling and validation:\n\n**Global Exception Handler:**\n```java\n@ControllerAdvice\npublic class GlobalExceptionHandler {\n    \n    @ExceptionHandler(ResourceNotFoundException.class)\n    @ResponseStatus(HttpStatus.NOT_FOUND)\n    public ErrorResponse handleNotFound(ResourceNotFoundException ex) {\n        return new ErrorResponse(ex.getMessage());\n    }\n}\n```\n\n**Validation:**\n```java\npublic class User {\n    @NotNull\n    @Size(min = 2, max = 50)\n    private String name;\n    \n    @Email\n    private String email;\n}\n\n@PostMapping(\"/users\")\npublic User createUser(@Valid @RequestBody User user) {\n    return userService.save(user);\n}\n```"
+        "beginner": "Introduction to First Application. @SpringBootApplication; Embedded Tomcat; application.properties; Running JAR. Project: Hello REST endpoint. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "First Application: @SpringBootApplication Embedded Tomcat application.properties Running JAR Actuator health intro. Project: Hello REST endpoint. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: First Application. @SpringBootApplication Embedded Tomcat application.properties Running JAR Actuator health intro. Project: Hello REST endpoint. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — First Application\n\nTOPICS TO COVER (in order):\n- @SpringBootApplication\n- Embedded Tomcat\n- application.properties\n- Running JAR\n- Actuator health intro\n\nHANDS-ON PROJECT: Hello REST endpoint\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "What is a starter in Spring Boot?",
-        "What is the use of application.properties/application.yml file?",
-        "How do you run a Spring Boot application?",
-        "What is the default port of Spring Boot web application?",
-        "How do you change the default port in Spring Boot?"
+        "Explain @SpringBootApplication with a concrete example.",
+        "How would you apply Embedded Tomcat in a real project?",
+        "What is a common beginner mistake with application.properties, and how do you avoid it?"
       ]
     },
     {
-      "id": "spring-3",
+      "id": "sb-3",
       "order": 3,
-      "title": "Spring Data JPA",
-      "description": "Learn database operations with JPA",
+      "sectionId": "01",
+      "sectionTitle": "Spring Boot Foundations",
+      "moduleNumber": 3,
+      "title": "Module 3: Dependency Injection",
+      "description": "@Component, @Service, @Repository",
+      "topics": [
+        "@Component, @Service, @Repository",
+        "@Autowired",
+        "Constructor injection",
+        "ApplicationContext",
+        "Bean scopes"
+      ],
+      "project": null,
       "objectives": [
-        "Create JPA entities",
-        "Use Spring Data repositories",
-        "Perform CRUD operations"
+        "@Component, @Service, @Repository",
+        "@Autowired",
+        "Constructor injection",
+        "ApplicationContext",
+        "Bean scopes"
       ],
       "teachingContent": {
-        "beginner": "**Spring Data JPA** simplifies database operations.\n\n**Entity:**\n```java\n@Entity\n@Table(name = \"users\")\npublic class User {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    \n    private String name;\n    private String email;\n    \n    // Getters and setters\n}\n```\n\n**Repository:**\n```java\npublic interface UserRepository extends JpaRepository<User, Long> {\n    // Spring generates implementation automatically!\n}\n```\n\n**Using Repository:**\n```java\n@Service\npublic class UserService {\n    @Autowired\n    private UserRepository userRepository;\n    \n    public List<User> findAll() {\n        return userRepository.findAll();\n    }\n}\n```",
-        "intermediate": "Custom queries and relationships:\n\n**Custom Queries:**\n```java\npublic interface UserRepository extends JpaRepository<User, Long> {\n    List<User> findByName(String name);\n    List<User> findByEmailContaining(String email);\n    \n    @Query(\"SELECT u FROM User u WHERE u.age > :age\")\n    List<User> findOlderThan(@Param(\"age\") int age);\n}\n```\n\n**Relationships:**\n```java\n@Entity\npublic class Post {\n    @Id\n    @GeneratedValue\n    private Long id;\n    \n    @ManyToOne\n    @JoinColumn(name = \"user_id\")\n    private User author;\n}\n```",
-        "advanced": "Advanced JPA features:\n\n**Pagination:**\n```java\npublic interface UserRepository extends JpaRepository<User, Long> {\n    Page<User> findByName(String name, Pageable pageable);\n}\n\n// Usage\nPageable pageable = PageRequest.of(0, 10, Sort.by(\"name\"));\nPage<User> users = userRepository.findByName(\"John\", pageable);\n```\n\n**Specifications:**\n```java\npublic class UserSpecifications {\n    public static Specification<User> hasName(String name) {\n        return (root, query, cb) -> \n            cb.equal(root.get(\"name\"), name);\n    }\n}\n```"
+        "beginner": "Introduction to Dependency Injection. @Component, @Service, @Repository; @Autowired; Constructor injection; ApplicationContext. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Dependency Injection: @Component, @Service, @Repository @Autowired Constructor injection ApplicationContext Bean scopes. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Dependency Injection. @Component, @Service, @Repository @Autowired Constructor injection ApplicationContext Bean scopes. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — Dependency Injection\n\nTOPICS TO COVER (in order):\n- @Component, @Service, @Repository\n- @Autowired\n- Constructor injection\n- ApplicationContext\n- Bean scopes\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "What are Spring Boot annotations?",
-        "What is the purpose of @SpringBootApplication annotation?",
-        "How do you configure a database in Spring Boot?",
-        "What is auto-configuration in Spring Boot?",
-        "How do you enable auto-configuration in Spring Boot?",
-        "What is the purpose of @Component, @Service, @Repository?",
-        "What is the use of @RequestMapping and @GetMapping?",
-        "What are the differences between @RestController and @Controller?"
+        "Explain @Component, @Service, @Repository with a concrete example.",
+        "How would you apply @Autowired in a real project?",
+        "What is a common beginner mistake with Constructor injection, and how do you avoid it?"
       ]
     },
     {
-      "id": "spring-4",
+      "id": "sb-4",
       "order": 4,
-      "title": "Dependency Injection",
-      "description": "Learn Spring's dependency injection",
+      "sectionId": "02",
+      "sectionTitle": "REST APIs",
+      "moduleNumber": 1,
+      "title": "Module 4: REST Controllers",
+      "description": "@RestController",
+      "topics": [
+        "@RestController",
+        "@GetMapping, PostMapping",
+        "RequestBody and ResponseEntity",
+        "PathVariable, RequestParam",
+        "HTTP status codes"
+      ],
+      "project": null,
       "objectives": [
-        "Understand dependency injection",
-        "Use @Autowired",
-        "Create beans"
+        "@RestController",
+        "@GetMapping, PostMapping",
+        "RequestBody and ResponseEntity",
+        "PathVariable, RequestParam",
+        "HTTP status codes"
       ],
       "teachingContent": {
-        "beginner": "**Dependency Injection** lets Spring manage object creation.\n\n**Service Class:**\n```java\n@Service\npublic class UserService {\n    private final UserRepository userRepository;\n    \n    @Autowired\n    public UserService(UserRepository userRepository) {\n        this.userRepository = userRepository;\n    }\n    \n    public User findById(Long id) {\n        return userRepository.findById(id).orElse(null);\n    }\n}\n```\n\n**Using in Controller:**\n```java\n@RestController\npublic class UserController {\n    @Autowired\n    private UserService userService;\n    \n    @GetMapping(\"/users/{id}\")\n    public User getUser(@PathVariable Long id) {\n        return userService.findById(id);\n    }\n}\n```",
-        "intermediate": "Injection types and scopes:\n\n**Constructor Injection (Recommended):**\n```java\n@Service\npublic class UserService {\n    private final UserRepository userRepository;\n    \n    public UserService(UserRepository userRepository) {\n        this.userRepository = userRepository;\n    }\n}\n```\n\n**Bean Scopes:**\n```java\n@Service\n@Scope(\"singleton\")  // Default\npublic class UserService { }\n\n@Service\n@Scope(\"prototype\")  // New instance each time\npublic class TempService { }\n```",
-        "advanced": "Advanced DI patterns:\n\n**Qualifiers:**\n```java\n@Service\n@Qualifier(\"emailNotification\")\npublic class EmailNotificationService implements NotificationService { }\n\n@Service\npublic class UserService {\n    @Autowired\n    @Qualifier(\"emailNotification\")\n    private NotificationService notificationService;\n}\n```"
+        "beginner": "Introduction to REST Controllers. @RestController; @GetMapping, PostMapping; RequestBody and ResponseEntity; PathVariable, RequestParam. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "REST Controllers: @RestController @GetMapping, PostMapping RequestBody and ResponseEntity PathVariable, RequestParam HTTP status codes. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: REST Controllers. @RestController @GetMapping, PostMapping RequestBody and ResponseEntity PathVariable, RequestParam HTTP status codes. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — REST Controllers\n\nTOPICS TO COVER (in order):\n- @RestController\n- @GetMapping, PostMapping\n- RequestBody and ResponseEntity\n- PathVariable, RequestParam\n- HTTP status codes\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "How do you create a REST controller in Spring Boot?",
-        "How do you handle exceptions in Spring Boot?",
-        "What is Spring Boot DevTools?",
-        "What is actuator in Spring Boot?",
-        "How do you use JPA with Spring Boot?",
-        "What is the use of @Entity annotation?",
-        "What is the purpose of @EnableAutoConfiguration?",
-        "What is the difference between CrudRepository and JpaRepository?"
+        "Explain @RestController with a concrete example.",
+        "How would you apply @GetMapping, PostMapping in a real project?",
+        "What is a common beginner mistake with RequestBody and ResponseEntity, and how do you avoid it?"
       ]
     },
     {
-      "id": "spring-5",
+      "id": "sb-5",
       "order": 5,
-      "title": "Spring Security",
-      "description": "Learn to secure your application",
+      "sectionId": "02",
+      "sectionTitle": "REST APIs",
+      "moduleNumber": 2,
+      "title": "Module 5: Validation & DTOs",
+      "description": "@Valid and Bean Validation",
+      "topics": [
+        "@Valid and Bean Validation",
+        "DTO pattern",
+        "Exception handling @ControllerAdvice",
+        "Error response format",
+        "API documentation with Springdoc"
+      ],
+      "project": "CRUD REST API for Product",
       "objectives": [
-        "Configure Spring Security",
-        "Implement authentication",
-        "Add authorization"
+        "@Valid and Bean Validation",
+        "DTO pattern",
+        "Exception handling @ControllerAdvice",
+        "Error response format",
+        "API documentation with Springdoc",
+        "Project: CRUD REST API for Product"
       ],
       "teachingContent": {
-        "beginner": "**Spring Security** protects your application.\n\n**Basic Configuration:**\n```java\n@Configuration\n@EnableWebSecurity\npublic class SecurityConfig {\n    \n    @Bean\n    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {\n        http\n            .authorizeHttpRequests(auth -> auth\n                .requestMatchers(\"/public/**\").permitAll()\n                .anyRequest().authenticated()\n            )\n            .formLogin();\n        return http.build();\n    }\n}\n```\n\n**In-Memory Users:**\n```java\n@Bean\npublic UserDetailsService users() {\n    UserDetails user = User.builder()\n        .username(\"user\")\n        .password(\"{noop}password\")\n        .roles(\"USER\")\n        .build();\n    return new InMemoryUserDetailsManager(user);\n}\n```",
-        "intermediate": "Authentication and authorization:\n\n**Custom UserDetailsService:**\n```java\n@Service\npublic class CustomUserDetailsService implements UserDetailsService {\n    @Autowired\n    private UserRepository userRepository;\n    \n    @Override\n    public UserDetails loadUserByUsername(String username) {\n        User user = userRepository.findByUsername(username);\n        return new org.springframework.security.core.userdetails.User(\n            user.getUsername(),\n            user.getPassword(),\n            getAuthorities(user)\n        );\n    }\n}\n```\n\n**Method Security:**\n```java\n@PreAuthorize(\"hasRole('ADMIN')\")\npublic void deleteUser(Long id) {\n    userRepository.deleteById(id);\n}\n```",
-        "advanced": "JWT authentication:\n\n**JWT Filter:**\n```java\npublic class JwtAuthenticationFilter extends OncePerRequestFilter {\n    @Override\n    protected void doFilterInternal(HttpServletRequest request,\n                                    HttpServletResponse response,\n                                    FilterChain filterChain) {\n        String token = extractToken(request);\n        if (token != null && jwtUtil.validateToken(token)) {\n            Authentication auth = jwtUtil.getAuthentication(token);\n            SecurityContextHolder.getContext().setAuthentication(auth);\n        }\n        filterChain.doFilter(request, response);\n    }\n}\n```"
+        "beginner": "Introduction to Validation & DTOs. @Valid and Bean Validation; DTO pattern; Exception handling @ControllerAdvice; Error response format. Project: CRUD REST API for Product. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Validation & DTOs: @Valid and Bean Validation DTO pattern Exception handling @ControllerAdvice Error response format API documentation with Springdoc. Project: CRUD REST API for Product. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Validation & DTOs. @Valid and Bean Validation DTO pattern Exception handling @ControllerAdvice Error response format API documentation with Springdoc. Project: CRUD REST API for Product. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — Validation & DTOs\n\nTOPICS TO COVER (in order):\n- @Valid and Bean Validation\n- DTO pattern\n- Exception handling @ControllerAdvice\n- Error response format\n- API documentation with Springdoc\n\nHANDS-ON PROJECT: CRUD REST API for Product\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "What is dependency injection in Spring Boot?",
-        "What is the use of @Autowired annotation?",
-        "What is the role of the embedded server in Spring Boot?",
-        "How do you secure a Spring Boot application?",
-        "What is Spring Security and how is it integrated with Spring Boot?",
-        "What is the use of CommandLineRunner in Spring Boot?",
-        "How to implement pagination and sorting in Spring Boot?",
-        "What is a custom exception and how do you create one in Spring Boot?",
-        "How do you configure CORS in Spring Boot?",
-        "What is the use of profiles in Spring Boot?",
-        "How can you externalize configuration in Spring Boot?",
-        "How do you schedule tasks in Spring Boot?",
-        "How do you create unit tests in Spring Boot?",
-        "How to load initial data on application startup?",
-        "What is the use of Spring Initializr?",
-        "How to use H2 database with Spring Boot?",
-        "How does Spring Boot manage dependencies?",
-        "How to implement microservices using Spring Boot?",
-        "What is Spring Cloud and how does it integrate with Spring Boot?",
-        "How do you use Eureka server with Spring Boot?",
-        "What is Hystrix and how is it used?",
-        "How do you monitor a Spring Boot application?",
-        "How do you deploy Spring Boot applications to production?",
-        "What is reactive programming in Spring Boot?",
-        "What is WebFlux in Spring Boot?",
-        "How do you implement logging in Spring Boot?",
-        "How to use custom starter in Spring Boot?",
-        "What are the best practices for Spring Boot development?",
-        "How do you tune performance in a Spring Boot app?",
-        "What is Flyway and how is it used in Spring Boot?",
-        "How to handle transactions in Spring Boot?",
-        "What is the role of AOP in Spring Boot?",
-        "How do you implement caching in Spring Boot?",
-        "What is the difference between synchronous and asynchronous controllers?",
-        "How does Spring Boot support Kafka integration?",
-        "How to configure Spring Boot in a Kubernetes environment?"
+        "Explain @Valid and Bean Validation with a concrete example.",
+        "How would you apply DTO pattern in a real project?",
+        "What is a common beginner mistake with Exception handling @ControllerAdvice, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-6",
+      "order": 6,
+      "sectionId": "02",
+      "sectionTitle": "REST APIs",
+      "moduleNumber": 3,
+      "title": "Module 6: Testing Controllers",
+      "description": "@WebMvcTest",
+      "topics": [
+        "@WebMvcTest",
+        "MockMvc",
+        "Integration tests @SpringBootTest",
+        "Testcontainers intro",
+        "Test profiles"
+      ],
+      "project": null,
+      "objectives": [
+        "@WebMvcTest",
+        "MockMvc",
+        "Integration tests @SpringBootTest",
+        "Testcontainers intro",
+        "Test profiles"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Testing Controllers. @WebMvcTest; MockMvc; Integration tests @SpringBootTest; Testcontainers intro. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Testing Controllers: @WebMvcTest MockMvc Integration tests @SpringBootTest Testcontainers intro Test profiles. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Testing Controllers. @WebMvcTest MockMvc Integration tests @SpringBootTest Testcontainers intro Test profiles. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Testing Controllers\n\nTOPICS TO COVER (in order):\n- @WebMvcTest\n- MockMvc\n- Integration tests @SpringBootTest\n- Testcontainers intro\n- Test profiles\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain @WebMvcTest with a concrete example.",
+        "How would you apply MockMvc in a real project?",
+        "What is a common beginner mistake with Integration tests @SpringBootTest, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-7",
+      "order": 7,
+      "sectionId": "03",
+      "sectionTitle": "Data Access",
+      "moduleNumber": 1,
+      "title": "Module 7: Spring Data JPA",
+      "description": "Entity and @Id",
+      "topics": [
+        "Entity and @Id",
+        "JpaRepository",
+        "Query methods",
+        "Relationships @OneToMany",
+        "Transactions @Transactional"
+      ],
+      "project": null,
+      "objectives": [
+        "Entity and @Id",
+        "JpaRepository",
+        "Query methods",
+        "Relationships @OneToMany",
+        "Transactions @Transactional"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Spring Data JPA. Entity and @Id; JpaRepository; Query methods; Relationships @OneToMany. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Spring Data JPA: Entity and @Id JpaRepository Query methods Relationships @OneToMany Transactions @Transactional. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Spring Data JPA. Entity and @Id JpaRepository Query methods Relationships @OneToMany Transactions @Transactional. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Spring Data JPA\n\nTOPICS TO COVER (in order):\n- Entity and @Id\n- JpaRepository\n- Query methods\n- Relationships @OneToMany\n- Transactions @Transactional\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Entity and @Id with a concrete example.",
+        "How would you apply JpaRepository in a real project?",
+        "What is a common beginner mistake with Query methods, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-8",
+      "order": 8,
+      "sectionId": "03",
+      "sectionTitle": "Data Access",
+      "moduleNumber": 2,
+      "title": "Module 8: Database Configuration",
+      "description": "H2 dev vs PostgreSQL prod",
+      "topics": [
+        "H2 dev vs PostgreSQL prod",
+        "Flyway/Liquibase migrations",
+        "Connection pooling",
+        "Lazy loading pitfalls",
+        "N+1 solutions"
+      ],
+      "project": null,
+      "objectives": [
+        "H2 dev vs PostgreSQL prod",
+        "Flyway/Liquibase migrations",
+        "Connection pooling",
+        "Lazy loading pitfalls",
+        "N+1 solutions"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Database Configuration. H2 dev vs PostgreSQL prod; Flyway/Liquibase migrations; Connection pooling; Lazy loading pitfalls. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Database Configuration: H2 dev vs PostgreSQL prod Flyway/Liquibase migrations Connection pooling Lazy loading pitfalls N+1 solutions. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Database Configuration. H2 dev vs PostgreSQL prod Flyway/Liquibase migrations Connection pooling Lazy loading pitfalls N+1 solutions. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Database Configuration\n\nTOPICS TO COVER (in order):\n- H2 dev vs PostgreSQL prod\n- Flyway/Liquibase migrations\n- Connection pooling\n- Lazy loading pitfalls\n- N+1 solutions\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain H2 dev vs PostgreSQL prod with a concrete example.",
+        "How would you apply Flyway/Liquibase migrations in a real project?",
+        "What is a common beginner mistake with Connection pooling, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-9",
+      "order": 9,
+      "sectionId": "03",
+      "sectionTitle": "Data Access",
+      "moduleNumber": 3,
+      "title": "Module 9: Advanced JPA",
+      "description": "JPQL and @Query",
+      "topics": [
+        "JPQL and @Query",
+        "Specifications",
+        "Pagination Pageable",
+        "Auditing",
+        "Projections"
+      ],
+      "project": null,
+      "objectives": [
+        "JPQL and @Query",
+        "Specifications",
+        "Pagination Pageable",
+        "Auditing",
+        "Projections"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Advanced JPA. JPQL and @Query; Specifications; Pagination Pageable; Auditing. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Advanced JPA: JPQL and @Query Specifications Pagination Pageable Auditing Projections. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Advanced JPA. JPQL and @Query Specifications Pagination Pageable Auditing Projections. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Advanced JPA\n\nTOPICS TO COVER (in order):\n- JPQL and @Query\n- Specifications\n- Pagination Pageable\n- Auditing\n- Projections\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain JPQL and @Query with a concrete example.",
+        "How would you apply Specifications in a real project?",
+        "What is a common beginner mistake with Pagination Pageable, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-10",
+      "order": 10,
+      "sectionId": "04",
+      "sectionTitle": "Security",
+      "moduleNumber": 1,
+      "title": "Module 10: Spring Security Basics",
+      "description": "SecurityFilterChain",
+      "topics": [
+        "SecurityFilterChain",
+        "In-memory auth demo",
+        "PasswordEncoder BCrypt",
+        "Form login vs API",
+        "CSRF for APIs"
+      ],
+      "project": null,
+      "objectives": [
+        "SecurityFilterChain",
+        "In-memory auth demo",
+        "PasswordEncoder BCrypt",
+        "Form login vs API",
+        "CSRF for APIs"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Spring Security Basics. SecurityFilterChain; In-memory auth demo; PasswordEncoder BCrypt; Form login vs API. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Spring Security Basics: SecurityFilterChain In-memory auth demo PasswordEncoder BCrypt Form login vs API CSRF for APIs. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Spring Security Basics. SecurityFilterChain In-memory auth demo PasswordEncoder BCrypt Form login vs API CSRF for APIs. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Spring Security Basics\n\nTOPICS TO COVER (in order):\n- SecurityFilterChain\n- In-memory auth demo\n- PasswordEncoder BCrypt\n- Form login vs API\n- CSRF for APIs\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain SecurityFilterChain with a concrete example.",
+        "How would you apply In-memory auth demo in a real project?",
+        "What is a common beginner mistake with PasswordEncoder BCrypt, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-11",
+      "order": 11,
+      "sectionId": "04",
+      "sectionTitle": "Security",
+      "moduleNumber": 2,
+      "title": "Module 11: JWT Authentication",
+      "description": "Stateless APIs",
+      "topics": [
+        "Stateless APIs",
+        "JWT generation and validation",
+        "Filter chain for JWT",
+        "Role-based access @PreAuthorize",
+        "Refresh token pattern"
+      ],
+      "project": null,
+      "objectives": [
+        "Stateless APIs",
+        "JWT generation and validation",
+        "Filter chain for JWT",
+        "Role-based access @PreAuthorize",
+        "Refresh token pattern"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to JWT Authentication. Stateless APIs; JWT generation and validation; Filter chain for JWT; Role-based access @PreAuthorize. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "JWT Authentication: Stateless APIs JWT generation and validation Filter chain for JWT Role-based access @PreAuthorize Refresh token pattern. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: JWT Authentication. Stateless APIs JWT generation and validation Filter chain for JWT Role-based access @PreAuthorize Refresh token pattern. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — JWT Authentication\n\nTOPICS TO COVER (in order):\n- Stateless APIs\n- JWT generation and validation\n- Filter chain for JWT\n- Role-based access @PreAuthorize\n- Refresh token pattern\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Stateless APIs with a concrete example.",
+        "How would you apply JWT generation and validation in a real project?",
+        "What is a common beginner mistake with Filter chain for JWT, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-12",
+      "order": 12,
+      "sectionId": "04",
+      "sectionTitle": "Security",
+      "moduleNumber": 3,
+      "title": "Module 12: OAuth2 Overview",
+      "description": "OAuth2 flows",
+      "topics": [
+        "OAuth2 flows",
+        "Spring Authorization Server awareness",
+        "Social login",
+        "Resource server",
+        "Enterprise SSO intro"
+      ],
+      "project": null,
+      "objectives": [
+        "OAuth2 flows",
+        "Spring Authorization Server awareness",
+        "Social login",
+        "Resource server",
+        "Enterprise SSO intro"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to OAuth2 Overview. OAuth2 flows; Spring Authorization Server awareness; Social login; Resource server. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "OAuth2 Overview: OAuth2 flows Spring Authorization Server awareness Social login Resource server Enterprise SSO intro. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: OAuth2 Overview. OAuth2 flows Spring Authorization Server awareness Social login Resource server Enterprise SSO intro. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — OAuth2 Overview\n\nTOPICS TO COVER (in order):\n- OAuth2 flows\n- Spring Authorization Server awareness\n- Social login\n- Resource server\n- Enterprise SSO intro\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain OAuth2 flows with a concrete example.",
+        "How would you apply Spring Authorization Server awareness in a real project?",
+        "What is a common beginner mistake with Social login, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-13",
+      "order": 13,
+      "sectionId": "05",
+      "sectionTitle": "Microservices",
+      "moduleNumber": 1,
+      "title": "Module 13: Configuration",
+      "description": "application.yml profiles",
+      "topics": [
+        "application.yml profiles",
+        "Externalized config",
+        "@ConfigurationProperties",
+        "Secrets management",
+        "12-factor config"
+      ],
+      "project": null,
+      "objectives": [
+        "application.yml profiles",
+        "Externalized config",
+        "@ConfigurationProperties",
+        "Secrets management",
+        "12-factor config"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Configuration. application.yml profiles; Externalized config; @ConfigurationProperties; Secrets management. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Configuration: application.yml profiles Externalized config @ConfigurationProperties Secrets management 12-factor config. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Configuration. application.yml profiles Externalized config @ConfigurationProperties Secrets management 12-factor config. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Configuration\n\nTOPICS TO COVER (in order):\n- application.yml profiles\n- Externalized config\n- @ConfigurationProperties\n- Secrets management\n- 12-factor config\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain application.yml profiles with a concrete example.",
+        "How would you apply Externalized config in a real project?",
+        "What is a common beginner mistake with @ConfigurationProperties, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-14",
+      "order": 14,
+      "sectionId": "05",
+      "sectionTitle": "Microservices",
+      "moduleNumber": 2,
+      "title": "Module 14: OpenFeign & REST Client",
+      "description": "Service-to-service calls",
+      "topics": [
+        "Service-to-service calls",
+        "Resilience4j circuit breaker",
+        "Timeouts and retries",
+        "Service discovery intro",
+        "API gateway awareness"
+      ],
+      "project": null,
+      "objectives": [
+        "Service-to-service calls",
+        "Resilience4j circuit breaker",
+        "Timeouts and retries",
+        "Service discovery intro",
+        "API gateway awareness"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to OpenFeign & REST Client. Service-to-service calls; Resilience4j circuit breaker; Timeouts and retries; Service discovery intro. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "OpenFeign & REST Client: Service-to-service calls Resilience4j circuit breaker Timeouts and retries Service discovery intro API gateway awareness. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: OpenFeign & REST Client. Service-to-service calls Resilience4j circuit breaker Timeouts and retries Service discovery intro API gateway awareness. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — OpenFeign & REST Client\n\nTOPICS TO COVER (in order):\n- Service-to-service calls\n- Resilience4j circuit breaker\n- Timeouts and retries\n- Service discovery intro\n- API gateway awareness\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Service-to-service calls with a concrete example.",
+        "How would you apply Resilience4j circuit breaker in a real project?",
+        "What is a common beginner mistake with Timeouts and retries, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-15",
+      "order": 15,
+      "sectionId": "05",
+      "sectionTitle": "Microservices",
+      "moduleNumber": 3,
+      "title": "Module 15: Messaging",
+      "description": "Spring Kafka/Rabbit intro",
+      "topics": [
+        "Spring Kafka/Rabbit intro",
+        "Event-driven design",
+        "Idempotent consumers",
+        "Saga pattern awareness",
+        "When messaging fits"
+      ],
+      "project": null,
+      "objectives": [
+        "Spring Kafka/Rabbit intro",
+        "Event-driven design",
+        "Idempotent consumers",
+        "Saga pattern awareness",
+        "When messaging fits"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Messaging. Spring Kafka/Rabbit intro; Event-driven design; Idempotent consumers; Saga pattern awareness. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Messaging: Spring Kafka/Rabbit intro Event-driven design Idempotent consumers Saga pattern awareness When messaging fits. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Messaging. Spring Kafka/Rabbit intro Event-driven design Idempotent consumers Saga pattern awareness When messaging fits. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Messaging\n\nTOPICS TO COVER (in order):\n- Spring Kafka/Rabbit intro\n- Event-driven design\n- Idempotent consumers\n- Saga pattern awareness\n- When messaging fits\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Spring Kafka/Rabbit intro with a concrete example.",
+        "How would you apply Event-driven design in a real project?",
+        "What is a common beginner mistake with Idempotent consumers, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-16",
+      "order": 16,
+      "sectionId": "06",
+      "sectionTitle": "Observability & Ops",
+      "moduleNumber": 1,
+      "title": "Module 16: Actuator & Metrics",
+      "description": "Health, info endpoints",
+      "topics": [
+        "Health, info endpoints",
+        "Micrometer metrics",
+        "Prometheus/Grafana intro",
+        "Distributed tracing",
+        "Structured logging"
+      ],
+      "project": null,
+      "objectives": [
+        "Health, info endpoints",
+        "Micrometer metrics",
+        "Prometheus/Grafana intro",
+        "Distributed tracing",
+        "Structured logging"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Actuator & Metrics. Health, info endpoints; Micrometer metrics; Prometheus/Grafana intro; Distributed tracing. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Actuator & Metrics: Health, info endpoints Micrometer metrics Prometheus/Grafana intro Distributed tracing Structured logging. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Actuator & Metrics. Health, info endpoints Micrometer metrics Prometheus/Grafana intro Distributed tracing Structured logging. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Actuator & Metrics\n\nTOPICS TO COVER (in order):\n- Health, info endpoints\n- Micrometer metrics\n- Prometheus/Grafana intro\n- Distributed tracing\n- Structured logging\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Health, info endpoints with a concrete example.",
+        "How would you apply Micrometer metrics in a real project?",
+        "What is a common beginner mistake with Prometheus/Grafana intro, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-17",
+      "order": 17,
+      "sectionId": "06",
+      "sectionTitle": "Observability & Ops",
+      "moduleNumber": 2,
+      "title": "Module 17: Docker & Kubernetes Intro",
+      "description": "Dockerfile for Spring Boot",
+      "topics": [
+        "Dockerfile for Spring Boot",
+        "K8s deployment overview",
+        "Liveness/readiness probes",
+        "ConfigMaps",
+        "Cloud-native patterns"
+      ],
+      "project": null,
+      "objectives": [
+        "Dockerfile for Spring Boot",
+        "K8s deployment overview",
+        "Liveness/readiness probes",
+        "ConfigMaps",
+        "Cloud-native patterns"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Docker & Kubernetes Intro. Dockerfile for Spring Boot; K8s deployment overview; Liveness/readiness probes; ConfigMaps. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Docker & Kubernetes Intro: Dockerfile for Spring Boot K8s deployment overview Liveness/readiness probes ConfigMaps Cloud-native patterns. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Docker & Kubernetes Intro. Dockerfile for Spring Boot K8s deployment overview Liveness/readiness probes ConfigMaps Cloud-native patterns. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Docker & Kubernetes Intro\n\nTOPICS TO COVER (in order):\n- Dockerfile for Spring Boot\n- K8s deployment overview\n- Liveness/readiness probes\n- ConfigMaps\n- Cloud-native patterns\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Dockerfile for Spring Boot with a concrete example.",
+        "How would you apply K8s deployment overview in a real project?",
+        "What is a common beginner mistake with Liveness/readiness probes, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-18",
+      "order": 18,
+      "sectionId": "07",
+      "sectionTitle": "Capstone",
+      "moduleNumber": 1,
+      "title": "Module 18: Capstone Microservice",
+      "description": "Domain design",
+      "topics": [
+        "Domain design",
+        "JPA entities",
+        "Secured REST API",
+        "Tests and docs",
+        "Docker deploy"
+      ],
+      "project": "E-commerce or library API service",
+      "objectives": [
+        "Domain design",
+        "JPA entities",
+        "Secured REST API",
+        "Tests and docs",
+        "Docker deploy",
+        "Project: E-commerce or library API service"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Capstone Microservice. Domain design; JPA entities; Secured REST API; Tests and docs. Project: E-commerce or library API service. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Capstone Microservice: Domain design JPA entities Secured REST API Tests and docs Docker deploy. Project: E-commerce or library API service. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Capstone Microservice. Domain design JPA entities Secured REST API Tests and docs Docker deploy. Project: E-commerce or library API service. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Capstone Microservice\n\nTOPICS TO COVER (in order):\n- Domain design\n- JPA entities\n- Secured REST API\n- Tests and docs\n- Docker deploy\n\nHANDS-ON PROJECT: E-commerce or library API service\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Domain design with a concrete example.",
+        "How would you apply JPA entities in a real project?",
+        "What is a common beginner mistake with Secured REST API, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-19",
+      "order": 19,
+      "sectionId": "07",
+      "sectionTitle": "Capstone",
+      "moduleNumber": 2,
+      "title": "Module 19: Interview Prep",
+      "description": "Bean lifecycle",
+      "topics": [
+        "Bean lifecycle",
+        "Transaction propagation",
+        "Security filter order",
+        "JPA vs JDBC",
+        "System design Java"
+      ],
+      "project": null,
+      "objectives": [
+        "Bean lifecycle",
+        "Transaction propagation",
+        "Security filter order",
+        "JPA vs JDBC",
+        "System design Java"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Interview Prep. Bean lifecycle; Transaction propagation; Security filter order; JPA vs JDBC. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Interview Prep: Bean lifecycle Transaction propagation Security filter order JPA vs JDBC System design Java. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Interview Prep. Bean lifecycle Transaction propagation Security filter order JPA vs JDBC System design Java. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Interview Prep\n\nTOPICS TO COVER (in order):\n- Bean lifecycle\n- Transaction propagation\n- Security filter order\n- JPA vs JDBC\n- System design Java\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Bean lifecycle with a concrete example.",
+        "How would you apply Transaction propagation in a real project?",
+        "What is a common beginner mistake with Security filter order, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-20",
+      "order": 20,
+      "sectionId": "08",
+      "sectionTitle": "Integration & Messaging",
+      "moduleNumber": 1,
+      "title": "Module 20: Spring Integration",
+      "description": "@Scheduled tasks",
+      "topics": [
+        "@Scheduled tasks",
+        "Email with JavaMailSender",
+        "File processing batches",
+        "Retry with Spring Retry",
+        "Idempotent consumers"
+      ],
+      "project": null,
+      "objectives": [
+        "@Scheduled tasks",
+        "Email with JavaMailSender",
+        "File processing batches",
+        "Retry with Spring Retry",
+        "Idempotent consumers"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Spring Integration. @Scheduled tasks; Email with JavaMailSender; File processing batches; Retry with Spring Retry. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Spring Integration: @Scheduled tasks Email with JavaMailSender File processing batches Retry with Spring Retry Idempotent consumers. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Spring Integration. @Scheduled tasks Email with JavaMailSender File processing batches Retry with Spring Retry Idempotent consumers. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Spring Integration\n\nTOPICS TO COVER (in order):\n- @Scheduled tasks\n- Email with JavaMailSender\n- File processing batches\n- Retry with Spring Retry\n- Idempotent consumers\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain @Scheduled tasks with a concrete example.",
+        "How would you apply Email with JavaMailSender in a real project?",
+        "What is a common beginner mistake with File processing batches, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-21",
+      "order": 21,
+      "sectionId": "08",
+      "sectionTitle": "Integration & Messaging",
+      "moduleNumber": 2,
+      "title": "Module 21: Caching",
+      "description": "@Cacheable",
+      "topics": [
+        "@Cacheable",
+        "Redis cache manager",
+        "Cache eviction",
+        "Performance testing",
+        "Cache pitfalls"
+      ],
+      "project": null,
+      "objectives": [
+        "@Cacheable",
+        "Redis cache manager",
+        "Cache eviction",
+        "Performance testing",
+        "Cache pitfalls"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Caching. @Cacheable; Redis cache manager; Cache eviction; Performance testing. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Caching: @Cacheable Redis cache manager Cache eviction Performance testing Cache pitfalls. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Caching. @Cacheable Redis cache manager Cache eviction Performance testing Cache pitfalls. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Caching\n\nTOPICS TO COVER (in order):\n- @Cacheable\n- Redis cache manager\n- Cache eviction\n- Performance testing\n- Cache pitfalls\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain @Cacheable with a concrete example.",
+        "How would you apply Redis cache manager in a real project?",
+        "What is a common beginner mistake with Cache eviction, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-22",
+      "order": 22,
+      "sectionId": "09",
+      "sectionTitle": "Cloud Native",
+      "moduleNumber": 1,
+      "title": "Module 22: Spring Cloud Config",
+      "description": "Centralized configuration",
+      "topics": [
+        "Centralized configuration",
+        "Refresh scope",
+        "Secrets in cloud",
+        "Profiles per env",
+        "Git-backed config"
+      ],
+      "project": null,
+      "objectives": [
+        "Centralized configuration",
+        "Refresh scope",
+        "Secrets in cloud",
+        "Profiles per env",
+        "Git-backed config"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Spring Cloud Config. Centralized configuration; Refresh scope; Secrets in cloud; Profiles per env. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Spring Cloud Config: Centralized configuration Refresh scope Secrets in cloud Profiles per env Git-backed config. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Spring Cloud Config. Centralized configuration Refresh scope Secrets in cloud Profiles per env Git-backed config. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Spring Cloud Config\n\nTOPICS TO COVER (in order):\n- Centralized configuration\n- Refresh scope\n- Secrets in cloud\n- Profiles per env\n- Git-backed config\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Centralized configuration with a concrete example.",
+        "How would you apply Refresh scope in a real project?",
+        "What is a common beginner mistake with Secrets in cloud, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-23",
+      "order": 23,
+      "sectionId": "09",
+      "sectionTitle": "Cloud Native",
+      "moduleNumber": 2,
+      "title": "Module 23: Resilience Patterns",
+      "description": "Circuit breaker deep dive",
+      "topics": [
+        "Circuit breaker deep dive",
+        "Bulkhead",
+        "Rate limiter",
+        "Timeout configuration",
+        "Chaos testing intro"
+      ],
+      "project": null,
+      "objectives": [
+        "Circuit breaker deep dive",
+        "Bulkhead",
+        "Rate limiter",
+        "Timeout configuration",
+        "Chaos testing intro"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Resilience Patterns. Circuit breaker deep dive; Bulkhead; Rate limiter; Timeout configuration. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Resilience Patterns: Circuit breaker deep dive Bulkhead Rate limiter Timeout configuration Chaos testing intro. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Resilience Patterns. Circuit breaker deep dive Bulkhead Rate limiter Timeout configuration Chaos testing intro. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Resilience Patterns\n\nTOPICS TO COVER (in order):\n- Circuit breaker deep dive\n- Bulkhead\n- Rate limiter\n- Timeout configuration\n- Chaos testing intro\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Circuit breaker deep dive with a concrete example.",
+        "How would you apply Bulkhead in a real project?",
+        "What is a common beginner mistake with Rate limiter, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-24",
+      "order": 24,
+      "sectionId": "10",
+      "sectionTitle": "Testing & Quality",
+      "moduleNumber": 1,
+      "title": "Module 24: Contract Testing",
+      "description": "Consumer-driven contracts",
+      "topics": [
+        "Consumer-driven contracts",
+        "Spring Cloud Contract intro",
+        "API compatibility",
+        "CI pipelines",
+        "Versioning services"
+      ],
+      "project": null,
+      "objectives": [
+        "Consumer-driven contracts",
+        "Spring Cloud Contract intro",
+        "API compatibility",
+        "CI pipelines",
+        "Versioning services"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Contract Testing. Consumer-driven contracts; Spring Cloud Contract intro; API compatibility; CI pipelines. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Contract Testing: Consumer-driven contracts Spring Cloud Contract intro API compatibility CI pipelines Versioning services. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Contract Testing. Consumer-driven contracts Spring Cloud Contract intro API compatibility CI pipelines Versioning services. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Contract Testing\n\nTOPICS TO COVER (in order):\n- Consumer-driven contracts\n- Spring Cloud Contract intro\n- API compatibility\n- CI pipelines\n- Versioning services\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Consumer-driven contracts with a concrete example.",
+        "How would you apply Spring Cloud Contract intro in a real project?",
+        "What is a common beginner mistake with API compatibility, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-25",
+      "order": 25,
+      "sectionId": "10",
+      "sectionTitle": "Testing & Quality",
+      "moduleNumber": 2,
+      "title": "Module 25: Performance Testing",
+      "description": "JMeter/Gatling intro",
+      "topics": [
+        "JMeter/Gatling intro",
+        "Load test Spring Boot",
+        "Connection pool tuning",
+        "GC awareness",
+        "Profiling tools"
+      ],
+      "project": null,
+      "objectives": [
+        "JMeter/Gatling intro",
+        "Load test Spring Boot",
+        "Connection pool tuning",
+        "GC awareness",
+        "Profiling tools"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Performance Testing. JMeter/Gatling intro; Load test Spring Boot; Connection pool tuning; GC awareness. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Performance Testing: JMeter/Gatling intro Load test Spring Boot Connection pool tuning GC awareness Profiling tools. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Performance Testing. JMeter/Gatling intro Load test Spring Boot Connection pool tuning GC awareness Profiling tools. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Performance Testing\n\nTOPICS TO COVER (in order):\n- JMeter/Gatling intro\n- Load test Spring Boot\n- Connection pool tuning\n- GC awareness\n- Profiling tools\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain JMeter/Gatling intro with a concrete example.",
+        "How would you apply Load test Spring Boot in a real project?",
+        "What is a common beginner mistake with Connection pool tuning, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-26",
+      "order": 26,
+      "sectionId": "11",
+      "sectionTitle": "Career",
+      "moduleNumber": 1,
+      "title": "Module 26: Enterprise Patterns",
+      "description": "DDD bounded contexts",
+      "topics": [
+        "DDD bounded contexts",
+        "Hexagonal architecture",
+        "Event sourcing intro",
+        "CQRS awareness",
+        "Interview architecture questions"
+      ],
+      "project": null,
+      "objectives": [
+        "DDD bounded contexts",
+        "Hexagonal architecture",
+        "Event sourcing intro",
+        "CQRS awareness",
+        "Interview architecture questions"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Enterprise Patterns. DDD bounded contexts; Hexagonal architecture; Event sourcing intro; CQRS awareness. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Enterprise Patterns: DDD bounded contexts Hexagonal architecture Event sourcing intro CQRS awareness Interview architecture questions. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Enterprise Patterns. DDD bounded contexts Hexagonal architecture Event sourcing intro CQRS awareness Interview architecture questions. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Enterprise Patterns\n\nTOPICS TO COVER (in order):\n- DDD bounded contexts\n- Hexagonal architecture\n- Event sourcing intro\n- CQRS awareness\n- Interview architecture questions\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain DDD bounded contexts with a concrete example.",
+        "How would you apply Hexagonal architecture in a real project?",
+        "What is a common beginner mistake with Event sourcing intro, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-27",
+      "order": 27,
+      "sectionId": "12",
+      "sectionTitle": "Spring Plus",
+      "moduleNumber": 1,
+      "title": "Module 27: Batch Processing",
+      "description": "Spring Batch jobs",
+      "topics": [
+        "Spring Batch jobs",
+        "Chunk-oriented processing",
+        "Scheduling",
+        "Error skip policies",
+        "Large file imports"
+      ],
+      "project": null,
+      "objectives": [
+        "Spring Batch jobs",
+        "Chunk-oriented processing",
+        "Scheduling",
+        "Error skip policies",
+        "Large file imports"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Batch Processing. Spring Batch jobs; Chunk-oriented processing; Scheduling; Error skip policies. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Batch Processing: Spring Batch jobs Chunk-oriented processing Scheduling Error skip policies Large file imports. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Batch Processing. Spring Batch jobs Chunk-oriented processing Scheduling Error skip policies Large file imports. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Batch Processing\n\nTOPICS TO COVER (in order):\n- Spring Batch jobs\n- Chunk-oriented processing\n- Scheduling\n- Error skip policies\n- Large file imports\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Spring Batch jobs with a concrete example.",
+        "How would you apply Chunk-oriented processing in a real project?",
+        "What is a common beginner mistake with Scheduling, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-28",
+      "order": 28,
+      "sectionId": "12",
+      "sectionTitle": "Spring Plus",
+      "moduleNumber": 2,
+      "title": "Module 28: GraphQL Java",
+      "description": "Spring GraphQL",
+      "topics": [
+        "Spring GraphQL",
+        "Schema mapping",
+        "Data fetchers",
+        "vs REST controllers",
+        "When GraphQL in Java"
+      ],
+      "project": null,
+      "objectives": [
+        "Spring GraphQL",
+        "Schema mapping",
+        "Data fetchers",
+        "vs REST controllers",
+        "When GraphQL in Java"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to GraphQL Java. Spring GraphQL; Schema mapping; Data fetchers; vs REST controllers. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "GraphQL Java: Spring GraphQL Schema mapping Data fetchers vs REST controllers When GraphQL in Java. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: GraphQL Java. Spring GraphQL Schema mapping Data fetchers vs REST controllers When GraphQL in Java. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — GraphQL Java\n\nTOPICS TO COVER (in order):\n- Spring GraphQL\n- Schema mapping\n- Data fetchers\n- vs REST controllers\n- When GraphQL in Java\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Spring GraphQL with a concrete example.",
+        "How would you apply Schema mapping in a real project?",
+        "What is a common beginner mistake with Data fetchers, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-29",
+      "order": 29,
+      "sectionId": "12",
+      "sectionTitle": "Spring Plus",
+      "moduleNumber": 3,
+      "title": "Module 29: Kotlin Interop",
+      "description": "Kotlin with Spring",
+      "topics": [
+        "Kotlin with Spring",
+        "Data classes",
+        "Coroutines awareness",
+        "Mixed projects",
+        "Team adoption"
+      ],
+      "project": null,
+      "objectives": [
+        "Kotlin with Spring",
+        "Data classes",
+        "Coroutines awareness",
+        "Mixed projects",
+        "Team adoption"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Kotlin Interop. Kotlin with Spring; Data classes; Coroutines awareness; Mixed projects. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Kotlin Interop: Kotlin with Spring Data classes Coroutines awareness Mixed projects Team adoption. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Kotlin Interop. Kotlin with Spring Data classes Coroutines awareness Mixed projects Team adoption. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Kotlin Interop\n\nTOPICS TO COVER (in order):\n- Kotlin with Spring\n- Data classes\n- Coroutines awareness\n- Mixed projects\n- Team adoption\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Kotlin with Spring with a concrete example.",
+        "How would you apply Data classes in a real project?",
+        "What is a common beginner mistake with Coroutines awareness, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "sb-30",
+      "order": 30,
+      "sectionId": "12",
+      "sectionTitle": "Spring Plus",
+      "moduleNumber": 4,
+      "title": "Module 30: Native Images & GraalVM",
+      "description": "AOT compilation intro",
+      "topics": [
+        "AOT compilation intro",
+        "Startup time benefits",
+        "Reflection config",
+        "Trade-offs vs JVM",
+        "When teams adopt native"
+      ],
+      "project": null,
+      "objectives": [
+        "AOT compilation intro",
+        "Startup time benefits",
+        "Reflection config",
+        "Trade-offs vs JVM",
+        "When teams adopt native"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Native Images & GraalVM. AOT compilation intro; Startup time benefits; Reflection config; Trade-offs vs JVM. Use clear, runnable examples in Spring Boot 3 microservices and enterprise Java APIs.",
+        "intermediate": "Native Images & GraalVM: AOT compilation intro Startup time benefits Reflection config Trade-offs vs JVM When teams adopt native. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Native Images & GraalVM. AOT compilation intro Startup time benefits Reflection config Trade-offs vs JVM When teams adopt native. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Native Images & GraalVM\n\nTOPICS TO COVER (in order):\n- AOT compilation intro\n- Startup time benefits\n- Reflection config\n- Trade-offs vs JVM\n- When teams adopt native\n\nTEACHING STYLE: Practical mentor for Spring Boot 3 microservices and enterprise Java APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain AOT compilation intro with a concrete example.",
+        "How would you apply Startup time benefits in a real project?",
+        "What is a common beginner mistake with Reflection config, and how do you avoid it?"
       ]
     }
   ]

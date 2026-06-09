@@ -149,6 +149,11 @@ const Home = () => {
               subtitle="Full-stack DS: Python, stats, ML & analytics"
               onClick={() => navigate("/interview?subject=Data Science")}
             />
+            <SuggestionChip
+              text="AI / ML Master"
+              subtitle="535 questions · Python, ML, LLMs, RAG, Agents, MLOps"
+              onClick={() => navigate("/interview?subject=AI/ML Master")}
+            />
           </div>
         </div>
 
@@ -203,6 +208,11 @@ const Home = () => {
 
         {/* Other Options */}
         <div className="w-full space-y-3 mb-8">
+          <SuggestionChip
+            text="Personal Schedule"
+            subtitle="Skill check → your day-by-day interview prep plan"
+            onClick={() => navigate("/schedule")}
+          />
           <SuggestionChip
             text="Guided course"
             subtitle="Adaptive teaching that matches your level"

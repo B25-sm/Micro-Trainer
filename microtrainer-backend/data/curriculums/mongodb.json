@@ -1,110 +1,1121 @@
 {
   "technology": "MongoDB",
-  "totalConcepts": 5,
+  "totalConcepts": 30,
+  "sections": [
+    {
+      "id": "01",
+      "title": "MongoDB Foundations",
+      "moduleCount": 3
+    },
+    {
+      "id": "02",
+      "title": "Querying Data",
+      "moduleCount": 3
+    },
+    {
+      "id": "03",
+      "title": "Data Modeling",
+      "moduleCount": 3
+    },
+    {
+      "id": "04",
+      "title": "Performance & Admin",
+      "moduleCount": 3
+    },
+    {
+      "id": "05",
+      "title": "Drivers & Apps",
+      "moduleCount": 3
+    },
+    {
+      "id": "06",
+      "title": "Security & Ops",
+      "moduleCount": 2
+    },
+    {
+      "id": "07",
+      "title": "Capstone",
+      "moduleCount": 2
+    },
+    {
+      "id": "08",
+      "title": "Atlas & Search",
+      "moduleCount": 2
+    },
+    {
+      "id": "09",
+      "title": "Transactions & Consistency",
+      "moduleCount": 2
+    },
+    {
+      "id": "10",
+      "title": "Migration & Ops",
+      "moduleCount": 2
+    },
+    {
+      "id": "11",
+      "title": "Career",
+      "moduleCount": 1
+    },
+    {
+      "id": "12",
+      "title": "MongoDB Plus",
+      "moduleCount": 4
+    }
+  ],
   "concepts": [
     {
       "id": "mongo-1",
       "order": 1,
-      "title": "Introduction to MongoDB",
-      "description": "Learn what MongoDB is and basic concepts",
+      "sectionId": "01",
+      "sectionTitle": "MongoDB Foundations",
+      "moduleNumber": 1,
+      "title": "Module 1: NoSQL & MongoDB Landscape",
+      "description": "Document model vs relational",
+      "topics": [
+        "Document model vs relational",
+        "When to choose MongoDB",
+        "Atlas vs self-hosted",
+        "Roles: DBA, backend dev",
+        "CAP theorem intro"
+      ],
+      "project": null,
       "objectives": [
-        "Understand NoSQL databases",
-        "Learn MongoDB structure",
-        "Connect to MongoDB"
+        "Document model vs relational",
+        "When to choose MongoDB",
+        "Atlas vs self-hosted",
+        "Roles: DBA, backend dev",
+        "CAP theorem intro"
       ],
       "teachingContent": {
-        "beginner": "**MongoDB** is a NoSQL database that stores data in JSON-like documents.\n\n**Key Concepts:**\n- **Database**: Container for collections\n- **Collection**: Group of documents (like a table)\n- **Document**: A single record (like a row)\n\n**Document Example:**\n```json\n{\n  \"_id\": \"507f1f77bcf86cd799439011\",\n  \"name\": \"John Doe\",\n  \"age\": 25,\n  \"email\": \"john@example.com\"\n}\n```\n\n**Connecting:**\n```javascript\nconst { MongoClient } = require('mongodb');\nconst client = new MongoClient('mongodb://localhost:27017');\nawait client.connect();\n```",
-        "intermediate": "MongoDB structure and connection:\n\n**Database Operations:**\n```javascript\nconst db = client.db('myapp');\nconst users = db.collection('users');\n```\n\n**Why MongoDB?**\n- Flexible schema\n- Scales horizontally\n- Fast for read-heavy workloads\n- JSON-like documents",
-        "advanced": "MongoDB architecture:\n\n**Replica Sets:**\n- Primary node (writes)\n- Secondary nodes (reads)\n- Automatic failover\n\n**Sharding:**\n- Horizontal scaling\n- Data distribution\n- Query routing"
+        "beginner": "Introduction to NoSQL & MongoDB Landscape. Document model vs relational; When to choose MongoDB; Atlas vs self-hosted; Roles: DBA, backend dev. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "NoSQL & MongoDB Landscape: Document model vs relational When to choose MongoDB Atlas vs self-hosted Roles: DBA, backend dev CAP theorem intro. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: NoSQL & MongoDB Landscape. Document model vs relational When to choose MongoDB Atlas vs self-hosted Roles: DBA, backend dev CAP theorem intro. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — NoSQL & MongoDB Landscape\n\nTOPICS TO COVER (in order):\n- Document model vs relational\n- When to choose MongoDB\n- Atlas vs self-hosted\n- Roles: DBA, backend dev\n- CAP theorem intro\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "What is MongoDB?",
-        "What's the difference between SQL and NoSQL?",
-        "What is a document in MongoDB?"
+        "Explain Document model vs relational with a concrete example.",
+        "How would you apply When to choose MongoDB in a real project?",
+        "What is a common beginner mistake with Atlas vs self-hosted, and how do you avoid it?"
       ]
     },
     {
       "id": "mongo-2",
       "order": 2,
-      "title": "CRUD Operations",
-      "description": "Learn Create, Read, Update, Delete operations",
+      "sectionId": "01",
+      "sectionTitle": "MongoDB Foundations",
+      "moduleNumber": 2,
+      "title": "Module 2: Installation & mongosh",
+      "description": "Atlas cluster setup",
+      "topics": [
+        "Atlas cluster setup",
+        "mongosh shell",
+        "databases and collections",
+        "insert, find basics",
+        "BSON types overview"
+      ],
+      "project": "Insert and query sample documents",
       "objectives": [
-        "Insert documents",
-        "Query documents",
-        "Update and delete documents"
+        "Atlas cluster setup",
+        "mongosh shell",
+        "databases and collections",
+        "insert, find basics",
+        "BSON types overview",
+        "Project: Insert and query sample documents"
       ],
       "teachingContent": {
-        "beginner": "**CRUD** = Create, Read, Update, Delete\n\n**Create (Insert):**\n```javascript\n// Insert one\nawait users.insertOne({\n  name: 'John',\n  age: 25\n});\n\n// Insert many\nawait users.insertMany([\n  { name: 'John', age: 25 },\n  { name: 'Jane', age: 30 }\n]);\n```\n\n**Read (Find):**\n```javascript\n// Find all\nconst allUsers = await users.find().toArray();\n\n// Find one\nconst user = await users.findOne({ name: 'John' });\n```",
-        "intermediate": "Advanced CRUD operations:\n\n**Update:**\n```javascript\n// Update one\nawait users.updateOne(\n  { name: 'John' },\n  { $set: { age: 26 } }\n);\n\n// Update many\nawait users.updateMany(\n  { age: { $lt: 18 } },\n  { $set: { minor: true } }\n);\n```\n\n**Delete:**\n```javascript\n// Delete one\nawait users.deleteOne({ name: 'John' });\n\n// Delete many\nawait users.deleteMany({ age: { $lt: 18 } });\n```",
-        "advanced": "Complex queries and operations:\n\n**Upsert:**\n```javascript\nawait users.updateOne(\n  { email: 'john@example.com' },\n  { $set: { name: 'John', age: 25 } },\n  { upsert: true }\n);\n```\n\n**Bulk Operations:**\n```javascript\nawait users.bulkWrite([\n  { insertOne: { document: { name: 'John' } } },\n  { updateOne: { filter: { name: 'Jane' }, update: { $set: { age: 31 } } } }\n]);\n```"
+        "beginner": "Introduction to Installation & mongosh. Atlas cluster setup; mongosh shell; databases and collections; insert, find basics. Project: Insert and query sample documents. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Installation & mongosh: Atlas cluster setup mongosh shell databases and collections insert, find basics BSON types overview. Project: Insert and query sample documents. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Installation & mongosh. Atlas cluster setup mongosh shell databases and collections insert, find basics BSON types overview. Project: Insert and query sample documents. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — Installation & mongosh\n\nTOPICS TO COVER (in order):\n- Atlas cluster setup\n- mongosh shell\n- databases and collections\n- insert, find basics\n- BSON types overview\n\nHANDS-ON PROJECT: Insert and query sample documents\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "How do you insert a document?",
-        "What's the difference between updateOne and updateMany?",
-        "How do you find all documents in a collection?"
+        "Explain Atlas cluster setup with a concrete example.",
+        "How would you apply mongosh shell in a real project?",
+        "What is a common beginner mistake with databases and collections, and how do you avoid it?"
       ]
     },
     {
       "id": "mongo-3",
       "order": 3,
-      "title": "Query Operators",
-      "description": "Learn MongoDB query operators",
+      "sectionId": "01",
+      "sectionTitle": "MongoDB Foundations",
+      "moduleNumber": 3,
+      "title": "Module 3: CRUD Operations",
+      "description": "insertOne/Many",
+      "topics": [
+        "insertOne/Many",
+        "find with filters",
+        "update operators $set, $inc",
+        "delete operations",
+        "upsert behavior"
+      ],
+      "project": null,
       "objectives": [
-        "Use comparison operators",
-        "Use logical operators",
-        "Query arrays and nested documents"
+        "insertOne/Many",
+        "find with filters",
+        "update operators $set, $inc",
+        "delete operations",
+        "upsert behavior"
       ],
       "teachingContent": {
-        "beginner": "**Query operators** let you filter data.\n\n**Comparison:**\n```javascript\n// Greater than\nawait users.find({ age: { $gt: 18 } });\n\n// Less than or equal\nawait users.find({ age: { $lte: 65 } });\n\n// Not equal\nawait users.find({ status: { $ne: 'inactive' } });\n```\n\n**Logical:**\n```javascript\n// AND\nawait users.find({\n  age: { $gte: 18 },\n  status: 'active'\n});\n\n// OR\nawait users.find({\n  $or: [\n    { age: { $lt: 18 } },\n    { age: { $gt: 65 } }\n  ]\n});\n```",
-        "intermediate": "Advanced query operators:\n\n**Array Operators:**\n```javascript\n// In array\nawait users.find({ role: { $in: ['admin', 'moderator'] } });\n\n// Array contains\nawait users.find({ tags: 'javascript' });\n\n// Array size\nawait users.find({ tags: { $size: 3 } });\n```\n\n**Element Operators:**\n```javascript\n// Field exists\nawait users.find({ email: { $exists: true } });\n\n// Type check\nawait users.find({ age: { $type: 'number' } });\n```",
-        "advanced": "Complex queries:\n\n**Regex:**\n```javascript\nawait users.find({\n  email: { $regex: /@gmail\\.com$/ }\n});\n```\n\n**Nested Documents:**\n```javascript\nawait users.find({\n  'address.city': 'New York'\n});\n```"
+        "beginner": "Introduction to CRUD Operations. insertOne/Many; find with filters; update operators $set, $inc; delete operations. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "CRUD Operations: insertOne/Many find with filters update operators $set, $inc delete operations upsert behavior. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: CRUD Operations. insertOne/Many find with filters update operators $set, $inc delete operations upsert behavior. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — CRUD Operations\n\nTOPICS TO COVER (in order):\n- insertOne/Many\n- find with filters\n- update operators $set, $inc\n- delete operations\n- upsert behavior\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "What does $gt operator do?",
-        "How do you query for multiple values?",
-        "How do you check if a field exists?"
+        "Explain insertOne/Many with a concrete example.",
+        "How would you apply find with filters in a real project?",
+        "What is a common beginner mistake with update operators $set, $inc, and how do you avoid it?"
       ]
     },
     {
       "id": "mongo-4",
       "order": 4,
-      "title": "Aggregation Pipeline",
-      "description": "Learn to process and transform data",
+      "sectionId": "02",
+      "sectionTitle": "Querying Data",
+      "moduleNumber": 1,
+      "title": "Module 4: Query Operators",
+      "description": "Comparison: $gt, $in",
+      "topics": [
+        "Comparison: $gt, $in",
+        "Logical: $and, $or",
+        "Element: $exists",
+        "Array operators",
+        "Regex queries"
+      ],
+      "project": null,
       "objectives": [
-        "Use aggregation stages",
-        "Group and count data",
-        "Transform documents"
+        "Comparison: $gt, $in",
+        "Logical: $and, $or",
+        "Element: $exists",
+        "Array operators",
+        "Regex queries"
       ],
       "teachingContent": {
-        "beginner": "**Aggregation** processes data through stages.\n\n**Basic Pipeline:**\n```javascript\nawait users.aggregate([\n  { $match: { age: { $gte: 18 } } },\n  { $group: {\n    _id: '$city',\n    count: { $sum: 1 }\n  }}\n]);\n```\n\n**Common Stages:**\n- `$match`: Filter documents\n- `$group`: Group by field\n- `$sort`: Sort results\n- `$limit`: Limit results",
-        "intermediate": "Aggregation pipeline stages:\n\n**$project:**\n```javascript\n{ $project: {\n  name: 1,\n  age: 1,\n  isAdult: { $gte: ['$age', 18] }\n}}\n```\n\n**$lookup (Join):**\n```javascript\n{ $lookup: {\n  from: 'orders',\n  localField: '_id',\n  foreignField: 'userId',\n  as: 'orders'\n}}\n```",
-        "advanced": "Advanced aggregation:\n\n**$facet:**\n```javascript\n{ $facet: {\n  byAge: [\n    { $group: { _id: '$age', count: { $sum: 1 } } }\n  ],\n  byCity: [\n    { $group: { _id: '$city', count: { $sum: 1 } } }\n  ]\n}}\n```"
+        "beginner": "Introduction to Query Operators. Comparison: $gt, $in; Logical: $and, $or; Element: $exists; Array operators. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Query Operators: Comparison: $gt, $in Logical: $and, $or Element: $exists Array operators Regex queries. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Query Operators. Comparison: $gt, $in Logical: $and, $or Element: $exists Array operators Regex queries. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — Query Operators\n\nTOPICS TO COVER (in order):\n- Comparison: $gt, $in\n- Logical: $and, $or\n- Element: $exists\n- Array operators\n- Regex queries\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "What is aggregation?",
-        "What does $match do?",
-        "How do you group documents?"
+        "Explain Comparison with a concrete example.",
+        "How would you apply Logical in a real project?",
+        "What is a common beginner mistake with Element, and how do you avoid it?"
       ]
     },
     {
       "id": "mongo-5",
       "order": 5,
-      "title": "Indexes and Performance",
-      "description": "Learn to optimize queries with indexes",
+      "sectionId": "02",
+      "sectionTitle": "Querying Data",
+      "moduleNumber": 2,
+      "title": "Module 5: Projection & Sorting",
+      "description": "Projection inclusion/exclusion",
+      "topics": [
+        "Projection inclusion/exclusion",
+        "sort, limit, skip",
+        "Covered queries intro",
+        "Cursor batching",
+        "Explain plans"
+      ],
+      "project": null,
       "objectives": [
-        "Create indexes",
-        "Understand index types",
-        "Optimize queries"
+        "Projection inclusion/exclusion",
+        "sort, limit, skip",
+        "Covered queries intro",
+        "Cursor batching",
+        "Explain plans"
       ],
       "teachingContent": {
-        "beginner": "**Indexes** make queries faster!\n\n**Create Index:**\n```javascript\n// Single field\nawait users.createIndex({ email: 1 });\n\n// Compound index\nawait users.createIndex({ city: 1, age: -1 });\n```\n\n**Why Indexes?**\n- Without index: Scans all documents\n- With index: Jumps directly to data\n- Like a book's index!",
-        "intermediate": "Index types and usage:\n\n**Unique Index:**\n```javascript\nawait users.createIndex(\n  { email: 1 },\n  { unique: true }\n);\n```\n\n**Text Index:**\n```javascript\nawait users.createIndex({ bio: 'text' });\n\n// Search\nawait users.find({ $text: { $search: 'developer' } });\n```",
-        "advanced": "Performance optimization:\n\n**Explain Query:**\n```javascript\nconst explain = await users\n  .find({ age: { $gt: 18 } })\n  .explain('executionStats');\n```\n\n**Index Strategies:**\n- Index frequently queried fields\n- Use compound indexes for multiple fields\n- Avoid over-indexing (slows writes)"
+        "beginner": "Introduction to Projection & Sorting. Projection inclusion/exclusion; sort, limit, skip; Covered queries intro; Cursor batching. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Projection & Sorting: Projection inclusion/exclusion sort, limit, skip Covered queries intro Cursor batching Explain plans. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Projection & Sorting. Projection inclusion/exclusion sort, limit, skip Covered queries intro Cursor batching Explain plans. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — Projection & Sorting\n\nTOPICS TO COVER (in order):\n- Projection inclusion/exclusion\n- sort, limit, skip\n- Covered queries intro\n- Cursor batching\n- Explain plans\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "What is an index?",
-        "How do you create an index?",
-        "Why do indexes improve performance?"
+        "Explain Projection inclusion/exclusion with a concrete example.",
+        "How would you apply sort, limit, skip in a real project?",
+        "What is a common beginner mistake with Covered queries intro, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-6",
+      "order": 6,
+      "sectionId": "02",
+      "sectionTitle": "Querying Data",
+      "moduleNumber": 3,
+      "title": "Module 6: Aggregation Pipeline",
+      "description": "$match, $group, $project",
+      "topics": [
+        "$match, $group, $project",
+        "$lookup join",
+        "$unwind",
+        "$sort, $limit",
+        "Pipeline optimization"
+      ],
+      "project": "Analytics aggregation report",
+      "objectives": [
+        "$match, $group, $project",
+        "$lookup join",
+        "$unwind",
+        "$sort, $limit",
+        "Pipeline optimization",
+        "Project: Analytics aggregation report"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Aggregation Pipeline. $match, $group, $project; $lookup join; $unwind; $sort, $limit. Project: Analytics aggregation report. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Aggregation Pipeline: $match, $group, $project $lookup join $unwind $sort, $limit Pipeline optimization. Project: Analytics aggregation report. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Aggregation Pipeline. $match, $group, $project $lookup join $unwind $sort, $limit Pipeline optimization. Project: Analytics aggregation report. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Aggregation Pipeline\n\nTOPICS TO COVER (in order):\n- $match, $group, $project\n- $lookup join\n- $unwind\n- $sort, $limit\n- Pipeline optimization\n\nHANDS-ON PROJECT: Analytics aggregation report\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain $match, $group, $project with a concrete example.",
+        "How would you apply $lookup join in a real project?",
+        "What is a common beginner mistake with $unwind, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-7",
+      "order": 7,
+      "sectionId": "03",
+      "sectionTitle": "Data Modeling",
+      "moduleNumber": 1,
+      "title": "Module 7: Schema Design Patterns",
+      "description": "Embedding vs referencing",
+      "topics": [
+        "Embedding vs referencing",
+        "One-to-many patterns",
+        "Many-to-many",
+        "Bucket pattern intro",
+        "Anti-patterns"
+      ],
+      "project": null,
+      "objectives": [
+        "Embedding vs referencing",
+        "One-to-many patterns",
+        "Many-to-many",
+        "Bucket pattern intro",
+        "Anti-patterns"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Schema Design Patterns. Embedding vs referencing; One-to-many patterns; Many-to-many; Bucket pattern intro. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Schema Design Patterns: Embedding vs referencing One-to-many patterns Many-to-many Bucket pattern intro Anti-patterns. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Schema Design Patterns. Embedding vs referencing One-to-many patterns Many-to-many Bucket pattern intro Anti-patterns. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Schema Design Patterns\n\nTOPICS TO COVER (in order):\n- Embedding vs referencing\n- One-to-many patterns\n- Many-to-many\n- Bucket pattern intro\n- Anti-patterns\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Embedding vs referencing with a concrete example.",
+        "How would you apply One-to-many patterns in a real project?",
+        "What is a common beginner mistake with Many-to-many, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-8",
+      "order": 8,
+      "sectionId": "03",
+      "sectionTitle": "Data Modeling",
+      "moduleNumber": 2,
+      "title": "Module 8: Validation & Schema",
+      "description": "JSON Schema validation",
+      "topics": [
+        "JSON Schema validation",
+        "Required fields",
+        "Enum validation",
+        "Migration strategies",
+        "Flexible schema trade-offs"
+      ],
+      "project": null,
+      "objectives": [
+        "JSON Schema validation",
+        "Required fields",
+        "Enum validation",
+        "Migration strategies",
+        "Flexible schema trade-offs"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Validation & Schema. JSON Schema validation; Required fields; Enum validation; Migration strategies. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Validation & Schema: JSON Schema validation Required fields Enum validation Migration strategies Flexible schema trade-offs. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Validation & Schema. JSON Schema validation Required fields Enum validation Migration strategies Flexible schema trade-offs. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Validation & Schema\n\nTOPICS TO COVER (in order):\n- JSON Schema validation\n- Required fields\n- Enum validation\n- Migration strategies\n- Flexible schema trade-offs\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain JSON Schema validation with a concrete example.",
+        "How would you apply Required fields in a real project?",
+        "What is a common beginner mistake with Enum validation, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-9",
+      "order": 9,
+      "sectionId": "03",
+      "sectionTitle": "Data Modeling",
+      "moduleNumber": 3,
+      "title": "Module 9: Indexes",
+      "description": "single and compound indexes",
+      "topics": [
+        "single and compound indexes",
+        "Multikey indexes",
+        "Text indexes",
+        "Index selectivity",
+        "explain() for indexes"
+      ],
+      "project": null,
+      "objectives": [
+        "single and compound indexes",
+        "Multikey indexes",
+        "Text indexes",
+        "Index selectivity",
+        "explain() for indexes"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Indexes. single and compound indexes; Multikey indexes; Text indexes; Index selectivity. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Indexes: single and compound indexes Multikey indexes Text indexes Index selectivity explain() for indexes. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Indexes. single and compound indexes Multikey indexes Text indexes Index selectivity explain() for indexes. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Indexes\n\nTOPICS TO COVER (in order):\n- single and compound indexes\n- Multikey indexes\n- Text indexes\n- Index selectivity\n- explain() for indexes\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain single and compound indexes with a concrete example.",
+        "How would you apply Multikey indexes in a real project?",
+        "What is a common beginner mistake with Text indexes, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-10",
+      "order": 10,
+      "sectionId": "04",
+      "sectionTitle": "Performance & Admin",
+      "moduleNumber": 1,
+      "title": "Module 10: Performance Tuning",
+      "description": "Working set",
+      "topics": [
+        "Working set",
+        "Write concern, read preference",
+        "Connection pooling",
+        "Profiling slow queries",
+        "Sharding intro"
+      ],
+      "project": null,
+      "objectives": [
+        "Working set",
+        "Write concern, read preference",
+        "Connection pooling",
+        "Profiling slow queries",
+        "Sharding intro"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Performance Tuning. Working set; Write concern, read preference; Connection pooling; Profiling slow queries. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Performance Tuning: Working set Write concern, read preference Connection pooling Profiling slow queries Sharding intro. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Performance Tuning. Working set Write concern, read preference Connection pooling Profiling slow queries Sharding intro. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Performance Tuning\n\nTOPICS TO COVER (in order):\n- Working set\n- Write concern, read preference\n- Connection pooling\n- Profiling slow queries\n- Sharding intro\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Working set with a concrete example.",
+        "How would you apply Write concern, read preference in a real project?",
+        "What is a common beginner mistake with Connection pooling, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-11",
+      "order": 11,
+      "sectionId": "04",
+      "sectionTitle": "Performance & Admin",
+      "moduleNumber": 2,
+      "title": "Module 11: Replication",
+      "description": "Replica set architecture",
+      "topics": [
+        "Replica set architecture",
+        "Primary/secondary elections",
+        "Read preferences",
+        "Failover",
+        "Backup strategies"
+      ],
+      "project": null,
+      "objectives": [
+        "Replica set architecture",
+        "Primary/secondary elections",
+        "Read preferences",
+        "Failover",
+        "Backup strategies"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Replication. Replica set architecture; Primary/secondary elections; Read preferences; Failover. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Replication: Replica set architecture Primary/secondary elections Read preferences Failover Backup strategies. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Replication. Replica set architecture Primary/secondary elections Read preferences Failover Backup strategies. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Replication\n\nTOPICS TO COVER (in order):\n- Replica set architecture\n- Primary/secondary elections\n- Read preferences\n- Failover\n- Backup strategies\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Replica set architecture with a concrete example.",
+        "How would you apply Primary/secondary elections in a real project?",
+        "What is a common beginner mistake with Read preferences, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-12",
+      "order": 12,
+      "sectionId": "04",
+      "sectionTitle": "Performance & Admin",
+      "moduleNumber": 3,
+      "title": "Module 12: Sharding",
+      "description": "Shard key selection",
+      "topics": [
+        "Shard key selection",
+        "Chunks and balancer",
+        "When to shard",
+        "Global clusters awareness",
+        "Atlas sharding"
+      ],
+      "project": null,
+      "objectives": [
+        "Shard key selection",
+        "Chunks and balancer",
+        "When to shard",
+        "Global clusters awareness",
+        "Atlas sharding"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Sharding. Shard key selection; Chunks and balancer; When to shard; Global clusters awareness. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Sharding: Shard key selection Chunks and balancer When to shard Global clusters awareness Atlas sharding. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Sharding. Shard key selection Chunks and balancer When to shard Global clusters awareness Atlas sharding. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Sharding\n\nTOPICS TO COVER (in order):\n- Shard key selection\n- Chunks and balancer\n- When to shard\n- Global clusters awareness\n- Atlas sharding\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Shard key selection with a concrete example.",
+        "How would you apply Chunks and balancer in a real project?",
+        "What is a common beginner mistake with When to shard, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-13",
+      "order": 13,
+      "sectionId": "05",
+      "sectionTitle": "Drivers & Apps",
+      "moduleNumber": 1,
+      "title": "Module 13: Node.js Driver",
+      "description": "MongoClient connection",
+      "topics": [
+        "MongoClient connection",
+        "CRUD with driver",
+        "Sessions and transactions",
+        "Change streams intro",
+        "Error handling"
+      ],
+      "project": null,
+      "objectives": [
+        "MongoClient connection",
+        "CRUD with driver",
+        "Sessions and transactions",
+        "Change streams intro",
+        "Error handling"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Node.js Driver. MongoClient connection; CRUD with driver; Sessions and transactions; Change streams intro. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Node.js Driver: MongoClient connection CRUD with driver Sessions and transactions Change streams intro Error handling. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Node.js Driver. MongoClient connection CRUD with driver Sessions and transactions Change streams intro Error handling. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Node.js Driver\n\nTOPICS TO COVER (in order):\n- MongoClient connection\n- CRUD with driver\n- Sessions and transactions\n- Change streams intro\n- Error handling\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain MongoClient connection with a concrete example.",
+        "How would you apply CRUD with driver in a real project?",
+        "What is a common beginner mistake with Sessions and transactions, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-14",
+      "order": 14,
+      "sectionId": "05",
+      "sectionTitle": "Drivers & Apps",
+      "moduleNumber": 2,
+      "title": "Module 14: Mongoose ODM",
+      "description": "Schemas and models",
+      "topics": [
+        "Schemas and models",
+        "Middleware hooks",
+        "Virtuals and methods",
+        "Population",
+        "Validation in Mongoose"
+      ],
+      "project": "Express API with Mongoose",
+      "objectives": [
+        "Schemas and models",
+        "Middleware hooks",
+        "Virtuals and methods",
+        "Population",
+        "Validation in Mongoose",
+        "Project: Express API with Mongoose"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Mongoose ODM. Schemas and models; Middleware hooks; Virtuals and methods; Population. Project: Express API with Mongoose. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Mongoose ODM: Schemas and models Middleware hooks Virtuals and methods Population Validation in Mongoose. Project: Express API with Mongoose. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Mongoose ODM. Schemas and models Middleware hooks Virtuals and methods Population Validation in Mongoose. Project: Express API with Mongoose. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Mongoose ODM\n\nTOPICS TO COVER (in order):\n- Schemas and models\n- Middleware hooks\n- Virtuals and methods\n- Population\n- Validation in Mongoose\n\nHANDS-ON PROJECT: Express API with Mongoose\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Schemas and models with a concrete example.",
+        "How would you apply Middleware hooks in a real project?",
+        "What is a common beginner mistake with Virtuals and methods, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-15",
+      "order": 15,
+      "sectionId": "05",
+      "sectionTitle": "Drivers & Apps",
+      "moduleNumber": 3,
+      "title": "Module 15: Python PyMongo",
+      "description": "Connection strings",
+      "topics": [
+        "Connection strings",
+        "CRUD in Python",
+        "Aggregation in PyMongo",
+        "pandas integration intro",
+        "Choosing driver"
+      ],
+      "project": null,
+      "objectives": [
+        "Connection strings",
+        "CRUD in Python",
+        "Aggregation in PyMongo",
+        "pandas integration intro",
+        "Choosing driver"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Python PyMongo. Connection strings; CRUD in Python; Aggregation in PyMongo; pandas integration intro. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Python PyMongo: Connection strings CRUD in Python Aggregation in PyMongo pandas integration intro Choosing driver. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Python PyMongo. Connection strings CRUD in Python Aggregation in PyMongo pandas integration intro Choosing driver. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Python PyMongo\n\nTOPICS TO COVER (in order):\n- Connection strings\n- CRUD in Python\n- Aggregation in PyMongo\n- pandas integration intro\n- Choosing driver\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Connection strings with a concrete example.",
+        "How would you apply CRUD in Python in a real project?",
+        "What is a common beginner mistake with Aggregation in PyMongo, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-16",
+      "order": 16,
+      "sectionId": "06",
+      "sectionTitle": "Security & Ops",
+      "moduleNumber": 1,
+      "title": "Module 16: Authentication & RBAC",
+      "description": "Users and roles",
+      "topics": [
+        "Users and roles",
+        "Least privilege",
+        "Network security IP whitelist",
+        "TLS connections",
+        "Auditing"
+      ],
+      "project": null,
+      "objectives": [
+        "Users and roles",
+        "Least privilege",
+        "Network security IP whitelist",
+        "TLS connections",
+        "Auditing"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Authentication & RBAC. Users and roles; Least privilege; Network security IP whitelist; TLS connections. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Authentication & RBAC: Users and roles Least privilege Network security IP whitelist TLS connections Auditing. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Authentication & RBAC. Users and roles Least privilege Network security IP whitelist TLS connections Auditing. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Authentication & RBAC\n\nTOPICS TO COVER (in order):\n- Users and roles\n- Least privilege\n- Network security IP whitelist\n- TLS connections\n- Auditing\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Users and roles with a concrete example.",
+        "How would you apply Least privilege in a real project?",
+        "What is a common beginner mistake with Network security IP whitelist, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-17",
+      "order": 17,
+      "sectionId": "06",
+      "sectionTitle": "Security & Ops",
+      "moduleNumber": 2,
+      "title": "Module 17: Atlas Operations",
+      "description": "Backups and restores",
+      "topics": [
+        "Backups and restores",
+        "Monitoring alerts",
+        "Performance advisor",
+        "Data explorer",
+        "Triggers/functions intro"
+      ],
+      "project": null,
+      "objectives": [
+        "Backups and restores",
+        "Monitoring alerts",
+        "Performance advisor",
+        "Data explorer",
+        "Triggers/functions intro"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Atlas Operations. Backups and restores; Monitoring alerts; Performance advisor; Data explorer. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Atlas Operations: Backups and restores Monitoring alerts Performance advisor Data explorer Triggers/functions intro. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Atlas Operations. Backups and restores Monitoring alerts Performance advisor Data explorer Triggers/functions intro. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Atlas Operations\n\nTOPICS TO COVER (in order):\n- Backups and restores\n- Monitoring alerts\n- Performance advisor\n- Data explorer\n- Triggers/functions intro\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Backups and restores with a concrete example.",
+        "How would you apply Monitoring alerts in a real project?",
+        "What is a common beginner mistake with Performance advisor, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-18",
+      "order": 18,
+      "sectionId": "07",
+      "sectionTitle": "Capstone",
+      "moduleNumber": 1,
+      "title": "Module 18: Capstone Database Design",
+      "description": "Domain modeling exercise",
+      "topics": [
+        "Domain modeling exercise",
+        "Indexes for queries",
+        "Aggregation reports",
+        "API integration",
+        "Documentation"
+      ],
+      "project": "Design DB for e-commerce or LMS",
+      "objectives": [
+        "Domain modeling exercise",
+        "Indexes for queries",
+        "Aggregation reports",
+        "API integration",
+        "Documentation",
+        "Project: Design DB for e-commerce or LMS"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Capstone Database Design. Domain modeling exercise; Indexes for queries; Aggregation reports; API integration. Project: Design DB for e-commerce or LMS. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Capstone Database Design: Domain modeling exercise Indexes for queries Aggregation reports API integration Documentation. Project: Design DB for e-commerce or LMS. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Capstone Database Design. Domain modeling exercise Indexes for queries Aggregation reports API integration Documentation. Project: Design DB for e-commerce or LMS. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Capstone Database Design\n\nTOPICS TO COVER (in order):\n- Domain modeling exercise\n- Indexes for queries\n- Aggregation reports\n- API integration\n- Documentation\n\nHANDS-ON PROJECT: Design DB for e-commerce or LMS\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Domain modeling exercise with a concrete example.",
+        "How would you apply Indexes for queries in a real project?",
+        "What is a common beginner mistake with Aggregation reports, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-19",
+      "order": 19,
+      "sectionId": "07",
+      "sectionTitle": "Capstone",
+      "moduleNumber": 2,
+      "title": "Module 19: Interview Prep",
+      "description": "Embedding vs reference",
+      "topics": [
+        "Embedding vs reference",
+        "Index strategies",
+        "Aggregation interview tasks",
+        "Consistency models",
+        "Comparison with SQL"
+      ],
+      "project": null,
+      "objectives": [
+        "Embedding vs reference",
+        "Index strategies",
+        "Aggregation interview tasks",
+        "Consistency models",
+        "Comparison with SQL"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Interview Prep. Embedding vs reference; Index strategies; Aggregation interview tasks; Consistency models. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Interview Prep: Embedding vs reference Index strategies Aggregation interview tasks Consistency models Comparison with SQL. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Interview Prep. Embedding vs reference Index strategies Aggregation interview tasks Consistency models Comparison with SQL. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Interview Prep\n\nTOPICS TO COVER (in order):\n- Embedding vs reference\n- Index strategies\n- Aggregation interview tasks\n- Consistency models\n- Comparison with SQL\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Embedding vs reference with a concrete example.",
+        "How would you apply Index strategies in a real project?",
+        "What is a common beginner mistake with Aggregation interview tasks, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-20",
+      "order": 20,
+      "sectionId": "08",
+      "sectionTitle": "Atlas & Search",
+      "moduleNumber": 1,
+      "title": "Module 20: Atlas Search",
+      "description": "Search indexes",
+      "topics": [
+        "Search indexes",
+        "Autocomplete",
+        "Facets",
+        "Relevance tuning",
+        "Comparison with Elasticsearch"
+      ],
+      "project": null,
+      "objectives": [
+        "Search indexes",
+        "Autocomplete",
+        "Facets",
+        "Relevance tuning",
+        "Comparison with Elasticsearch"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Atlas Search. Search indexes; Autocomplete; Facets; Relevance tuning. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Atlas Search: Search indexes Autocomplete Facets Relevance tuning Comparison with Elasticsearch. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Atlas Search. Search indexes Autocomplete Facets Relevance tuning Comparison with Elasticsearch. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Atlas Search\n\nTOPICS TO COVER (in order):\n- Search indexes\n- Autocomplete\n- Facets\n- Relevance tuning\n- Comparison with Elasticsearch\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Search indexes with a concrete example.",
+        "How would you apply Autocomplete in a real project?",
+        "What is a common beginner mistake with Facets, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-21",
+      "order": 21,
+      "sectionId": "08",
+      "sectionTitle": "Atlas & Search",
+      "moduleNumber": 2,
+      "title": "Module 21: Atlas Data Federation",
+      "description": "Query across S3",
+      "topics": [
+        "Query across S3",
+        "Analytics nodes",
+        "Data lake use cases",
+        "Cost awareness",
+        "When to use"
+      ],
+      "project": null,
+      "objectives": [
+        "Query across S3",
+        "Analytics nodes",
+        "Data lake use cases",
+        "Cost awareness",
+        "When to use"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Atlas Data Federation. Query across S3; Analytics nodes; Data lake use cases; Cost awareness. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Atlas Data Federation: Query across S3 Analytics nodes Data lake use cases Cost awareness When to use. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Atlas Data Federation. Query across S3 Analytics nodes Data lake use cases Cost awareness When to use. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Atlas Data Federation\n\nTOPICS TO COVER (in order):\n- Query across S3\n- Analytics nodes\n- Data lake use cases\n- Cost awareness\n- When to use\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Query across S3 with a concrete example.",
+        "How would you apply Analytics nodes in a real project?",
+        "What is a common beginner mistake with Data lake use cases, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-22",
+      "order": 22,
+      "sectionId": "09",
+      "sectionTitle": "Transactions & Consistency",
+      "moduleNumber": 1,
+      "title": "Module 22: Multi-Document ACID",
+      "description": "Sessions API",
+      "topics": [
+        "Sessions API",
+        "Transaction limits",
+        "Retry logic",
+        "Write concern levels",
+        "Design for consistency"
+      ],
+      "project": null,
+      "objectives": [
+        "Sessions API",
+        "Transaction limits",
+        "Retry logic",
+        "Write concern levels",
+        "Design for consistency"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Multi-Document ACID. Sessions API; Transaction limits; Retry logic; Write concern levels. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Multi-Document ACID: Sessions API Transaction limits Retry logic Write concern levels Design for consistency. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Multi-Document ACID. Sessions API Transaction limits Retry logic Write concern levels Design for consistency. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Multi-Document ACID\n\nTOPICS TO COVER (in order):\n- Sessions API\n- Transaction limits\n- Retry logic\n- Write concern levels\n- Design for consistency\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Sessions API with a concrete example.",
+        "How would you apply Transaction limits in a real project?",
+        "What is a common beginner mistake with Retry logic, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-23",
+      "order": 23,
+      "sectionId": "09",
+      "sectionTitle": "Transactions & Consistency",
+      "moduleNumber": 2,
+      "title": "Module 23: Change Streams & Events",
+      "description": "Watching collections",
+      "topics": [
+        "Watching collections",
+        "Resume tokens",
+        "Event-driven architectures",
+        "Outbox with Mongo",
+        "Integration patterns"
+      ],
+      "project": null,
+      "objectives": [
+        "Watching collections",
+        "Resume tokens",
+        "Event-driven architectures",
+        "Outbox with Mongo",
+        "Integration patterns"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Change Streams & Events. Watching collections; Resume tokens; Event-driven architectures; Outbox with Mongo. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Change Streams & Events: Watching collections Resume tokens Event-driven architectures Outbox with Mongo Integration patterns. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Change Streams & Events. Watching collections Resume tokens Event-driven architectures Outbox with Mongo Integration patterns. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Change Streams & Events\n\nTOPICS TO COVER (in order):\n- Watching collections\n- Resume tokens\n- Event-driven architectures\n- Outbox with Mongo\n- Integration patterns\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Watching collections with a concrete example.",
+        "How would you apply Resume tokens in a real project?",
+        "What is a common beginner mistake with Event-driven architectures, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-24",
+      "order": 24,
+      "sectionId": "10",
+      "sectionTitle": "Migration & Ops",
+      "moduleNumber": 1,
+      "title": "Module 24: SQL to Mongo Migration",
+      "description": "Schema mapping",
+      "topics": [
+        "Schema mapping",
+        "ETL tools",
+        "Dual-write period",
+        "Validation",
+        "Rollback planning"
+      ],
+      "project": null,
+      "objectives": [
+        "Schema mapping",
+        "ETL tools",
+        "Dual-write period",
+        "Validation",
+        "Rollback planning"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to SQL to Mongo Migration. Schema mapping; ETL tools; Dual-write period; Validation. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "SQL to Mongo Migration: Schema mapping ETL tools Dual-write period Validation Rollback planning. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: SQL to Mongo Migration. Schema mapping ETL tools Dual-write period Validation Rollback planning. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — SQL to Mongo Migration\n\nTOPICS TO COVER (in order):\n- Schema mapping\n- ETL tools\n- Dual-write period\n- Validation\n- Rollback planning\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Schema mapping with a concrete example.",
+        "How would you apply ETL tools in a real project?",
+        "What is a common beginner mistake with Dual-write period, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-25",
+      "order": 25,
+      "sectionId": "10",
+      "sectionTitle": "Migration & Ops",
+      "moduleNumber": 2,
+      "title": "Module 25: Backup & Disaster Recovery",
+      "description": "Point-in-time recovery",
+      "topics": [
+        "Point-in-time recovery",
+        "Cross-region backups",
+        "Restore drills",
+        "RPO/RTO",
+        "Compliance"
+      ],
+      "project": null,
+      "objectives": [
+        "Point-in-time recovery",
+        "Cross-region backups",
+        "Restore drills",
+        "RPO/RTO",
+        "Compliance"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Backup & Disaster Recovery. Point-in-time recovery; Cross-region backups; Restore drills; RPO/RTO. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Backup & Disaster Recovery: Point-in-time recovery Cross-region backups Restore drills RPO/RTO Compliance. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Backup & Disaster Recovery. Point-in-time recovery Cross-region backups Restore drills RPO/RTO Compliance. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Backup & Disaster Recovery\n\nTOPICS TO COVER (in order):\n- Point-in-time recovery\n- Cross-region backups\n- Restore drills\n- RPO/RTO\n- Compliance\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Point-in-time recovery with a concrete example.",
+        "How would you apply Cross-region backups in a real project?",
+        "What is a common beginner mistake with Restore drills, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-26",
+      "order": 26,
+      "sectionId": "11",
+      "sectionTitle": "Career",
+      "moduleNumber": 1,
+      "title": "Module 26: MongoDB Certifications",
+      "description": "Associate DBA path",
+      "topics": [
+        "Associate DBA path",
+        "Study resources",
+        "Hands-on labs",
+        "Production war stories",
+        "Interview whiteboard tasks"
+      ],
+      "project": null,
+      "objectives": [
+        "Associate DBA path",
+        "Study resources",
+        "Hands-on labs",
+        "Production war stories",
+        "Interview whiteboard tasks"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to MongoDB Certifications. Associate DBA path; Study resources; Hands-on labs; Production war stories. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "MongoDB Certifications: Associate DBA path Study resources Hands-on labs Production war stories Interview whiteboard tasks. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: MongoDB Certifications. Associate DBA path Study resources Hands-on labs Production war stories Interview whiteboard tasks. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — MongoDB Certifications\n\nTOPICS TO COVER (in order):\n- Associate DBA path\n- Study resources\n- Hands-on labs\n- Production war stories\n- Interview whiteboard tasks\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Associate DBA path with a concrete example.",
+        "How would you apply Study resources in a real project?",
+        "What is a common beginner mistake with Hands-on labs, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-27",
+      "order": 27,
+      "sectionId": "12",
+      "sectionTitle": "MongoDB Plus",
+      "moduleNumber": 1,
+      "title": "Module 27: Time Series Collections",
+      "description": "timeField and metaField",
+      "topics": [
+        "timeField and metaField",
+        "Retention policies",
+        "IoT metrics use case",
+        "Query patterns",
+        "vs regular collections"
+      ],
+      "project": null,
+      "objectives": [
+        "timeField and metaField",
+        "Retention policies",
+        "IoT metrics use case",
+        "Query patterns",
+        "vs regular collections"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Time Series Collections. timeField and metaField; Retention policies; IoT metrics use case; Query patterns. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Time Series Collections: timeField and metaField Retention policies IoT metrics use case Query patterns vs regular collections. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Time Series Collections. timeField and metaField Retention policies IoT metrics use case Query patterns vs regular collections. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Time Series Collections\n\nTOPICS TO COVER (in order):\n- timeField and metaField\n- Retention policies\n- IoT metrics use case\n- Query patterns\n- vs regular collections\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain timeField and metaField with a concrete example.",
+        "How would you apply Retention policies in a real project?",
+        "What is a common beginner mistake with IoT metrics use case, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-28",
+      "order": 28,
+      "sectionId": "12",
+      "sectionTitle": "MongoDB Plus",
+      "moduleNumber": 2,
+      "title": "Module 28: Atlas Triggers & Functions",
+      "description": "Database triggers",
+      "topics": [
+        "Database triggers",
+        "Serverless functions",
+        "Event bridges",
+        "Limits and costs",
+        "Integration examples"
+      ],
+      "project": null,
+      "objectives": [
+        "Database triggers",
+        "Serverless functions",
+        "Event bridges",
+        "Limits and costs",
+        "Integration examples"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Atlas Triggers & Functions. Database triggers; Serverless functions; Event bridges; Limits and costs. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Atlas Triggers & Functions: Database triggers Serverless functions Event bridges Limits and costs Integration examples. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Atlas Triggers & Functions. Database triggers Serverless functions Event bridges Limits and costs Integration examples. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Atlas Triggers & Functions\n\nTOPICS TO COVER (in order):\n- Database triggers\n- Serverless functions\n- Event bridges\n- Limits and costs\n- Integration examples\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Database triggers with a concrete example.",
+        "How would you apply Serverless functions in a real project?",
+        "What is a common beginner mistake with Event bridges, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-29",
+      "order": 29,
+      "sectionId": "12",
+      "sectionTitle": "MongoDB Plus",
+      "moduleNumber": 3,
+      "title": "Module 29: Compass & Data Tools",
+      "description": "Schema analysis",
+      "topics": [
+        "Schema analysis",
+        "Index suggestions",
+        "Aggregation builder",
+        "Import/export",
+        "Team collaboration"
+      ],
+      "project": null,
+      "objectives": [
+        "Schema analysis",
+        "Index suggestions",
+        "Aggregation builder",
+        "Import/export",
+        "Team collaboration"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Compass & Data Tools. Schema analysis; Index suggestions; Aggregation builder; Import/export. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Compass & Data Tools: Schema analysis Index suggestions Aggregation builder Import/export Team collaboration. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Compass & Data Tools. Schema analysis Index suggestions Aggregation builder Import/export Team collaboration. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Compass & Data Tools\n\nTOPICS TO COVER (in order):\n- Schema analysis\n- Index suggestions\n- Aggregation builder\n- Import/export\n- Team collaboration\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Schema analysis with a concrete example.",
+        "How would you apply Index suggestions in a real project?",
+        "What is a common beginner mistake with Aggregation builder, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "mongo-30",
+      "order": 30,
+      "sectionId": "12",
+      "sectionTitle": "MongoDB Plus",
+      "moduleNumber": 4,
+      "title": "Module 30: Polyglot Persistence",
+      "description": "MongoDB with PostgreSQL",
+      "topics": [
+        "MongoDB with PostgreSQL",
+        "CQRS read models",
+        "Sync strategies",
+        "Choosing document vs relational",
+        "Hybrid architectures"
+      ],
+      "project": null,
+      "objectives": [
+        "MongoDB with PostgreSQL",
+        "CQRS read models",
+        "Sync strategies",
+        "Choosing document vs relational",
+        "Hybrid architectures"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Polyglot Persistence. MongoDB with PostgreSQL; CQRS read models; Sync strategies; Choosing document vs relational. Use clear, runnable examples in MongoDB document database design and operations.",
+        "intermediate": "Polyglot Persistence: MongoDB with PostgreSQL CQRS read models Sync strategies Choosing document vs relational Hybrid architectures. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Polyglot Persistence. MongoDB with PostgreSQL CQRS read models Sync strategies Choosing document vs relational Hybrid architectures. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Polyglot Persistence\n\nTOPICS TO COVER (in order):\n- MongoDB with PostgreSQL\n- CQRS read models\n- Sync strategies\n- Choosing document vs relational\n- Hybrid architectures\n\nTEACHING STYLE: Practical mentor for MongoDB document database design and operations.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain MongoDB with PostgreSQL with a concrete example.",
+        "How would you apply CQRS read models in a real project?",
+        "What is a common beginner mistake with Sync strategies, and how do you avoid it?"
       ]
     }
   ]

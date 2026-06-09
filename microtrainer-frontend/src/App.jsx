@@ -20,6 +20,7 @@ import Learn from "./pages/Learn.jsx";
 import EngagementDashboard from "./pages/EngagementDashboard.jsx";
 import AdminEngagementDashboard from "./pages/AdminEngagementDashboard.jsx";
 import NotificationSettings from "./pages/NotificationSettings.jsx";
+import PersonalSchedule from "./pages/PersonalSchedule.jsx";
 import ExtensionPanel from "./pages/ExtensionPanel.jsx";
 
 // Protected Route Component
@@ -173,6 +174,18 @@ function App() {
               <RequireAuth>
                 <MainLayout>
                   <Learn />
+                </MainLayout>
+              </RequireAuth>
+            }
+          />
+
+          {/* Personal Schedule - Interview roadmap */}
+          <Route
+            path="/schedule"
+            element={
+              <RequireAuth>
+                <MainLayout>
+                  <PersonalSchedule />
                 </MainLayout>
               </RequireAuth>
             }

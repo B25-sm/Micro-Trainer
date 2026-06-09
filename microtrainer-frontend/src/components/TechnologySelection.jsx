@@ -92,20 +92,26 @@ const TechnologySelection = ({ studentId: studentIdProp, onTechnologySelect }) =
     return map[techId] || techId.slice(0, 2).toUpperCase();
   };
 
-  const getProgressInfo = (techId) => {
+  const getProgressInfo = (techId, totalConcepts = 5) => {
     const progress = studentProgress[techId];
     if (!progress) {
-      return { completed: 0, percentage: 0, status: "not-started" };
+      return { completed: 0, percentage: 0, status: "not-started", total: totalConcepts };
     }
 
+    const total = progress.totalConcepts || totalConcepts;
     const completed = progress.completedConcepts?.length || 0;
-    const percentage = progress.overallProgress || 0;
+    const percentage =
+      progress.overallProgress != null
+        ? progress.overallProgress
+        : total > 0
+          ? Math.round((completed / total) * 100)
+          : 0;
 
     let status = "not-started";
-    if (percentage === 100) status = "completed";
-    else if (percentage > 0) status = "in-progress";
+    if (percentage >= 100) status = "completed";
+    else if (completed > 0 || (progress.currentConceptOrder || 1) > 1) status = "in-progress";
 
-    return { completed, percentage, status };
+    return { completed, percentage, status, total };
   };
 
   if (isLoading) {
@@ -165,7 +171,7 @@ const TechnologySelection = ({ studentId: studentIdProp, onTechnologySelect }) =
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
         {technologies.map((tech) => {
-          const progressInfo = getProgressInfo(tech.id);
+          const progressInfo = getProgressInfo(tech.id, tech.totalConcepts);
 
           return (
             <motion.button
@@ -202,28 +208,37 @@ const TechnologySelection = ({ studentId: studentIdProp, onTechnologySelect }) =
                 </div>
               </div>
 
-              {progressInfo.percentage > 0 && (
-                <div className="mb-3">
-                  <div className="flex items-center justify-between text-sm mb-2">
-                    <span className="text-gray-700 dark:text-gray-300 font-medium">
-                      Progress: {progressInfo.percentage}%
-                    </span>
-                    <span className="text-gray-600 dark:text-gray-400">
-                      {progressInfo.completed}/{tech.totalConcepts} concepts
-                    </span>
-                  </div>
-                  <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${progressInfo.percentage}%` }}
-                      transition={{ duration: 0.5, ease: "easeOut" }}
-                      className={`h-full rounded-full ${
-                        progressInfo.status === "completed" ? "bg-green-500" : "bg-blue-500"
-                      }`}
-                    />
-                  </div>
+              <div className="mb-3">
+                <div className="flex items-center justify-between text-sm mb-2">
+                  <span className="text-gray-700 dark:text-gray-200 font-medium">
+                    {progressInfo.percentage}% complete
+                  </span>
+                  <span className="text-gray-600 dark:text-gray-300">
+                    {progressInfo.completed}/{progressInfo.total} concepts
+                  </span>
                 </div>
-              )}
+                <div
+                  className="w-full h-2.5 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden"
+                  role="progressbar"
+                  aria-valuenow={progressInfo.percentage}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label={`${tech.name} learning progress`}
+                >
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${Math.max(progressInfo.percentage, 0)}%` }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className={`h-full rounded-full ${
+                      progressInfo.status === "completed"
+                        ? "bg-green-500"
+                        : progressInfo.percentage > 0
+                          ? "bg-blue-500"
+                          : "bg-gray-400 dark:bg-gray-500"
+                    }`}
+                  />
+                </div>
+              </div>
 
               <div className="flex items-center gap-2 mt-4">
                 {progressInfo.status === "not-started" && (

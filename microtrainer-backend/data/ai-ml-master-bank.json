@@ -1,0 +1,4947 @@
+{
+  "meta": {
+    "title": "AI / ML Master Interview Bank",
+    "subtitle": "For AI Engineer | ML Engineer | Data Scientist | GenAI Engineer | Applied Scientist | Research Engineer",
+    "totalQuestions": 535,
+    "sectionCount": 13,
+    "studyTiers": {
+      "1": {
+        "label": "Must Know (2–3 weeks)",
+        "topics": [
+          "Python",
+          "Statistics",
+          "ML Fundamentals",
+          "Transformers",
+          "LLMs",
+          "RAG",
+          "Embeddings",
+          "Vector DBs",
+          "FastAPI",
+          "MCP",
+          "Tool Calling",
+          "Agents",
+          "OCR/PDF Processing",
+          "MLOps Basics"
+        ]
+      },
+      "2": {
+        "label": "High Value",
+        "topics": [
+          "CNN",
+          "RNN",
+          "XGBoost/LightGBM",
+          "Recommendation Systems",
+          "Deep Learning Optimization",
+          "System Design"
+        ]
+      },
+      "3": {
+        "label": "Advanced",
+        "topics": [
+          "Graph RAG",
+          "Multi-Agent Systems",
+          "RLHF Internals",
+          "Research-Level DL",
+          "Advanced MLOps"
+        ]
+      }
+    }
+  },
+  "sections": [
+    {
+      "id": 1,
+      "name": "Python & Coding",
+      "defaultTier": 1,
+      "questionCount": 70
+    },
+    {
+      "id": 2,
+      "name": "Statistics & Probability",
+      "defaultTier": 1,
+      "questionCount": 42
+    },
+    {
+      "id": 3,
+      "name": "Classical Machine Learning",
+      "defaultTier": 1,
+      "questionCount": 66
+    },
+    {
+      "id": 4,
+      "name": "Deep Learning",
+      "defaultTier": 2,
+      "questionCount": 68
+    },
+    {
+      "id": 5,
+      "name": "NLP & Large Language Models",
+      "defaultTier": 1,
+      "questionCount": 69
+    },
+    {
+      "id": 6,
+      "name": "RAG (Retrieval-Augmented Generation)",
+      "defaultTier": 1,
+      "questionCount": 47
+    },
+    {
+      "id": 7,
+      "name": "Generative AI & Agents",
+      "defaultTier": 1,
+      "questionCount": 33
+    },
+    {
+      "id": 8,
+      "name": "AI Engineering & Infrastructure",
+      "defaultTier": 1,
+      "questionCount": 24
+    },
+    {
+      "id": 9,
+      "name": "Document AI, OCR & PDF",
+      "defaultTier": 1,
+      "questionCount": 24
+    },
+    {
+      "id": 10,
+      "name": "MLOps & Production ML",
+      "defaultTier": 1,
+      "questionCount": 23
+    },
+    {
+      "id": 11,
+      "name": "System Design (MNC-Level)",
+      "defaultTier": 2,
+      "questionCount": 35
+    },
+    {
+      "id": 12,
+      "name": "Behavioral Questions",
+      "defaultTier": 1,
+      "questionCount": 14
+    },
+    {
+      "id": 13,
+      "name": "Priority Tiers & Study Plan",
+      "defaultTier": 1,
+      "questionCount": 20
+    }
+  ],
+  "questions": [
+    {
+      "id": 1,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Python Fundamentals",
+      "text": "List vs Tuple — mutability, use cases, performance",
+      "difficulty": "easy"
+    },
+    {
+      "id": 2,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Python Fundamentals",
+      "text": "Deep Copy vs Shallow Copy",
+      "difficulty": "easy"
+    },
+    {
+      "id": 3,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Python Fundamentals",
+      "text": "*args vs **kwargs",
+      "difficulty": "easy"
+    },
+    {
+      "id": 4,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Python Fundamentals",
+      "text": "Generators — yield, lazy evaluation",
+      "difficulty": "medium"
+    },
+    {
+      "id": 5,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Python Fundamentals",
+      "text": "Iterators vs Iterables — __iter__ and __next__",
+      "difficulty": "easy"
+    },
+    {
+      "id": 6,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Python Fundamentals",
+      "text": "Decorators — function wrappers, @property, @staticmethod",
+      "difficulty": "medium"
+    },
+    {
+      "id": 7,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Python Fundamentals",
+      "text": "Context Managers — with statement, __enter__ / __exit__",
+      "difficulty": "medium"
+    },
+    {
+      "id": 8,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Python Fundamentals",
+      "text": "GIL (Global Interpreter Lock) — impact on threading",
+      "difficulty": "medium"
+    },
+    {
+      "id": 9,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Python Fundamentals",
+      "text": "Multithreading vs Multiprocessing — when to use each",
+      "difficulty": "easy"
+    },
+    {
+      "id": 10,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Python Fundamentals",
+      "text": "Asyncio — async/await, event loop, coroutines",
+      "difficulty": "medium"
+    },
+    {
+      "id": 11,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Python Fundamentals",
+      "text": "List Comprehensions vs Generator Expressions",
+      "difficulty": "easy"
+    },
+    {
+      "id": 12,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Python Fundamentals",
+      "text": "Lambda Functions — use cases and limitations",
+      "difficulty": "medium"
+    },
+    {
+      "id": 13,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Python Fundamentals",
+      "text": "map(), filter(), reduce()",
+      "difficulty": "medium"
+    },
+    {
+      "id": 14,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Python Fundamentals",
+      "text": "Exception Handling — try/except/finally best practices",
+      "difficulty": "medium"
+    },
+    {
+      "id": 15,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Python Fundamentals",
+      "text": "Python Memory Management — garbage collection, reference counting",
+      "difficulty": "medium"
+    },
+    {
+      "id": 16,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "Two Sum — hash map O(n) approach",
+      "difficulty": "medium"
+    },
+    {
+      "id": 17,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "Top K Elements — heap-based solution",
+      "difficulty": "medium"
+    },
+    {
+      "id": 18,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "Sliding Window — variable & fixed size",
+      "difficulty": "medium"
+    },
+    {
+      "id": 19,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "Binary Search & variants (rotated array, first/last occurrence)",
+      "difficulty": "medium"
+    },
+    {
+      "id": 20,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "BFS — shortest path, level-order traversal",
+      "difficulty": "medium"
+    },
+    {
+      "id": 21,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "DFS — tree/graph traversal, backtracking",
+      "difficulty": "medium"
+    },
+    {
+      "id": 22,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "Graph Traversal — directed, undirected, weighted graphs",
+      "difficulty": "medium"
+    },
+    {
+      "id": 23,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "Union Find (Disjoint Set) — path compression, union by rank",
+      "difficulty": "medium"
+    },
+    {
+      "id": 24,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "Trie — insert, search, prefix matching",
+      "difficulty": "medium"
+    },
+    {
+      "id": 25,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "Heap / Priority Queue — min-heap, max-heap, heapify",
+      "difficulty": "medium"
+    },
+    {
+      "id": 26,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "Next Greater Element — monotonic stack",
+      "difficulty": "medium"
+    },
+    {
+      "id": 27,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "Matrix Prefix Sum — 2D range queries",
+      "difficulty": "medium"
+    },
+    {
+      "id": 28,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "Array Intersection — two-pointer / hash set",
+      "difficulty": "medium"
+    },
+    {
+      "id": 29,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "Flatten Nested List — recursion / stack",
+      "difficulty": "medium"
+    },
+    {
+      "id": 30,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "LRU Cache — doubly linked list + hash map",
+      "difficulty": "medium"
+    },
+    {
+      "id": 31,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "BFS Shortest Path (unweighted graph)",
+      "difficulty": "medium"
+    },
+    {
+      "id": 32,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "Knight Shortest Distance — BFS on chessboard",
+      "difficulty": "medium"
+    },
+    {
+      "id": 33,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "Merge Intervals — sort + greedy",
+      "difficulty": "medium"
+    },
+    {
+      "id": 34,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "Longest Substring Without Repeating Characters",
+      "difficulty": "medium"
+    },
+    {
+      "id": 35,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "K Closest Points to Origin — quickselect / heap",
+      "difficulty": "medium"
+    },
+    {
+      "id": 36,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "Sliding Window Problems (general pattern)",
+      "difficulty": "medium"
+    },
+    {
+      "id": 37,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "Dynamic Programming Basics — memoization, tabulation",
+      "difficulty": "medium"
+    },
+    {
+      "id": 38,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "Heap Problems — kth largest, median of stream",
+      "difficulty": "medium"
+    },
+    {
+      "id": 39,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "Hash Table Design — collision handling, load factor",
+      "difficulty": "medium"
+    },
+    {
+      "id": 40,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "DSA — Frequently Asked",
+      "text": "Rate Limiter Implementation — token bucket, sliding window log",
+      "difficulty": "medium"
+    },
+    {
+      "id": 41,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "AI Engineer Coding",
+      "text": "Chunk Large Text — fixed-size with overlap, recursive",
+      "difficulty": "medium"
+    },
+    {
+      "id": 42,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "AI Engineer Coding",
+      "text": "Token Counter — using tiktoken / transformers",
+      "difficulty": "medium"
+    },
+    {
+      "id": 43,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "AI Engineer Coding",
+      "text": "Build Vector Search — cosine similarity, brute-force",
+      "difficulty": "medium"
+    },
+    {
+      "id": 44,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "AI Engineer Coding",
+      "text": "Cosine Similarity — from scratch in NumPy",
+      "difficulty": "hard"
+    },
+    {
+      "id": 45,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "AI Engineer Coding",
+      "text": "Text Deduplication — MinHash, exact match, semantic dedup",
+      "difficulty": "medium"
+    },
+    {
+      "id": 46,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "AI Engineer Coding",
+      "text": "Log Parser — regex-based structured extraction",
+      "difficulty": "medium"
+    },
+    {
+      "id": 47,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "AI Engineer Coding",
+      "text": "Streaming API — SSE / WebSocket response handling",
+      "difficulty": "medium"
+    },
+    {
+      "id": 48,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "AI Engineer Coding",
+      "text": "Build Embedding Service — batch inference, caching",
+      "difficulty": "medium"
+    },
+    {
+      "id": 49,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "AI Engineer Coding",
+      "text": "Build a Chat Endpoint — stateless + stateful with history",
+      "difficulty": "medium"
+    },
+    {
+      "id": 50,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "AI Engineer Coding",
+      "text": "Stream Tokens from LLM — SSE pattern in FastAPI",
+      "difficulty": "medium"
+    },
+    {
+      "id": 51,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "ML Coding from Scratch",
+      "text": "Linear Regression from Scratch — gradient descent",
+      "difficulty": "hard"
+    },
+    {
+      "id": 52,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "ML Coding from Scratch",
+      "text": "Logistic Regression from Scratch — sigmoid, BCE loss",
+      "difficulty": "hard"
+    },
+    {
+      "id": 53,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "ML Coding from Scratch",
+      "text": "KNN from Scratch — distance metrics, brute-force search",
+      "difficulty": "hard"
+    },
+    {
+      "id": 54,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "ML Coding from Scratch",
+      "text": "Decision Tree from Scratch — Gini split, recursion",
+      "difficulty": "hard"
+    },
+    {
+      "id": 55,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "ML Coding from Scratch",
+      "text": "K-Means from Scratch — centroid update loop",
+      "difficulty": "hard"
+    },
+    {
+      "id": 56,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "ML Coding from Scratch",
+      "text": "PCA from Scratch — eigen decomposition via SVD",
+      "difficulty": "hard"
+    },
+    {
+      "id": 57,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "ML Coding from Scratch",
+      "text": "Gradient Descent — batch, stochastic, mini-batch",
+      "difficulty": "medium"
+    },
+    {
+      "id": 58,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "ML Coding from Scratch",
+      "text": "Train-Test Split — stratified, random",
+      "difficulty": "medium"
+    },
+    {
+      "id": 59,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "ML Coding from Scratch",
+      "text": "Stratified Split — preserving class proportions",
+      "difficulty": "medium"
+    },
+    {
+      "id": 60,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "ML Coding from Scratch",
+      "text": "Evaluation Metrics — accuracy, precision, recall, F1, AUC",
+      "difficulty": "medium"
+    },
+    {
+      "id": 61,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Production / FastAPI Coding",
+      "text": "FastAPI CRUD — REST endpoints with Pydantic models",
+      "difficulty": "medium"
+    },
+    {
+      "id": 62,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Production / FastAPI Coding",
+      "text": "Async FastAPI — async def, background tasks",
+      "difficulty": "medium"
+    },
+    {
+      "id": 63,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Production / FastAPI Coding",
+      "text": "Background Tasks — Celery, FastAPI BackgroundTasks",
+      "difficulty": "medium"
+    },
+    {
+      "id": 64,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Production / FastAPI Coding",
+      "text": "Streaming Response — StreamingResponse in FastAPI",
+      "difficulty": "medium"
+    },
+    {
+      "id": 65,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Production / FastAPI Coding",
+      "text": "File Upload API — multipart form, UploadFile",
+      "difficulty": "medium"
+    },
+    {
+      "id": 66,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Production / FastAPI Coding",
+      "text": "PDF Extraction API — endpoint wrapping PyPDF / PDFPlumber",
+      "difficulty": "medium"
+    },
+    {
+      "id": 67,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Production / FastAPI Coding",
+      "text": "OCR API — endpoint wrapping Tesseract / EasyOCR",
+      "difficulty": "medium"
+    },
+    {
+      "id": 68,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Production / FastAPI Coding",
+      "text": "ChromaDB Integration — collection creation, upsert, query",
+      "difficulty": "medium"
+    },
+    {
+      "id": 69,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Production / FastAPI Coding",
+      "text": "Redis Caching — cache-aside pattern, TTL",
+      "difficulty": "medium"
+    },
+    {
+      "id": 70,
+      "sectionId": 1,
+      "sectionName": "Python & Coding",
+      "tier": 1,
+      "topic": "Production / FastAPI Coding",
+      "text": "Dockerized API — Dockerfile, docker-compose for AI service",
+      "difficulty": "medium"
+    },
+    {
+      "id": 71,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Descriptive Statistics",
+      "text": "Mean vs Median vs Mode — when each is preferred",
+      "difficulty": "easy"
+    },
+    {
+      "id": 72,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Descriptive Statistics",
+      "text": "Variance and Standard Deviation",
+      "difficulty": "medium"
+    },
+    {
+      "id": 73,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Descriptive Statistics",
+      "text": "Covariance — definition and interpretation",
+      "difficulty": "medium"
+    },
+    {
+      "id": 74,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Descriptive Statistics",
+      "text": "Correlation vs Covariance — normalized vs unnormalized",
+      "difficulty": "easy"
+    },
+    {
+      "id": 75,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Descriptive Statistics",
+      "text": "Z-score — standardization, outlier detection",
+      "difficulty": "medium"
+    },
+    {
+      "id": 76,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Descriptive Statistics",
+      "text": "MinMax Scaling vs Standardization",
+      "difficulty": "easy"
+    },
+    {
+      "id": 77,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Descriptive Statistics",
+      "text": "Skewness and Kurtosis",
+      "difficulty": "medium"
+    },
+    {
+      "id": 78,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Descriptive Statistics",
+      "text": "Percentiles and Quartiles",
+      "difficulty": "medium"
+    },
+    {
+      "id": 79,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Probability",
+      "text": "Bayes Theorem — derivation and intuition",
+      "difficulty": "medium"
+    },
+    {
+      "id": 80,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Probability",
+      "text": "Conditional Probability",
+      "difficulty": "medium"
+    },
+    {
+      "id": 81,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Probability",
+      "text": "Probability Distributions — Gaussian, Bernoulli, Poisson, Binomial",
+      "difficulty": "medium"
+    },
+    {
+      "id": 82,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Probability",
+      "text": "PDF vs CDF",
+      "difficulty": "easy"
+    },
+    {
+      "id": 83,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Probability",
+      "text": "Central Limit Theorem — why it matters in ML",
+      "difficulty": "medium"
+    },
+    {
+      "id": 84,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Probability",
+      "text": "Sampling Techniques — random, stratified, cluster",
+      "difficulty": "medium"
+    },
+    {
+      "id": 85,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Probability",
+      "text": "Bootstrapping — resampling with replacement",
+      "difficulty": "medium"
+    },
+    {
+      "id": 86,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Probability",
+      "text": "Monte Carlo Simulation",
+      "difficulty": "medium"
+    },
+    {
+      "id": 87,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Probability",
+      "text": "Law of Large Numbers",
+      "difficulty": "medium"
+    },
+    {
+      "id": 88,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Probability",
+      "text": "Jensen–Shannon Divergence",
+      "difficulty": "medium"
+    },
+    {
+      "id": 89,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Probability",
+      "text": "KL Divergence",
+      "difficulty": "medium"
+    },
+    {
+      "id": 90,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Probability",
+      "text": "Cross Entropy — relation to KL divergence",
+      "difficulty": "medium"
+    },
+    {
+      "id": 91,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Probability",
+      "text": "Entropy — Shannon entropy",
+      "difficulty": "medium"
+    },
+    {
+      "id": 92,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Probability",
+      "text": "Information Gain",
+      "difficulty": "medium"
+    },
+    {
+      "id": 93,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Probability",
+      "text": "Gini Index",
+      "difficulty": "medium"
+    },
+    {
+      "id": 94,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Hypothesis Testing & Inference",
+      "text": "Hypothesis Testing — null vs alternative hypothesis",
+      "difficulty": "easy"
+    },
+    {
+      "id": 95,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Hypothesis Testing & Inference",
+      "text": "P-value — interpretation and common misuse",
+      "difficulty": "medium"
+    },
+    {
+      "id": 96,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Hypothesis Testing & Inference",
+      "text": "Type I vs Type II Error — α, β, power",
+      "difficulty": "easy"
+    },
+    {
+      "id": 97,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Hypothesis Testing & Inference",
+      "text": "Confidence Interval — construction and interpretation",
+      "difficulty": "medium"
+    },
+    {
+      "id": 98,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Hypothesis Testing & Inference",
+      "text": "Statistical Significance vs Practical Significance",
+      "difficulty": "easy"
+    },
+    {
+      "id": 99,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Hypothesis Testing & Inference",
+      "text": "A/B Testing — design, duration, metric selection",
+      "difficulty": "medium"
+    },
+    {
+      "id": 100,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Hypothesis Testing & Inference",
+      "text": "Sample Size Calculation — power analysis",
+      "difficulty": "medium"
+    },
+    {
+      "id": 101,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Hypothesis Testing & Inference",
+      "text": "T-test, Chi-square test, ANOVA — when to use each",
+      "difficulty": "medium"
+    },
+    {
+      "id": 102,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Advanced Statistics for ML",
+      "text": "Multicollinearity — causes and detection",
+      "difficulty": "medium"
+    },
+    {
+      "id": 103,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Advanced Statistics for ML",
+      "text": "Variance Inflation Factor (VIF)",
+      "difficulty": "medium"
+    },
+    {
+      "id": 104,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Advanced Statistics for ML",
+      "text": "Covariate Shift — train/test distribution mismatch",
+      "difficulty": "medium"
+    },
+    {
+      "id": 105,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Advanced Statistics for ML",
+      "text": "Data Leakage — target leakage vs train-test leakage",
+      "difficulty": "easy"
+    },
+    {
+      "id": 106,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Advanced Statistics for ML",
+      "text": "Feature Leakage",
+      "difficulty": "medium"
+    },
+    {
+      "id": 107,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Advanced Statistics for ML",
+      "text": "Eigenvalues and Eigenvectors — geometric intuition",
+      "difficulty": "medium"
+    },
+    {
+      "id": 108,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Advanced Statistics for ML",
+      "text": "SVD (Singular Value Decomposition) — matrix factorization",
+      "difficulty": "medium"
+    },
+    {
+      "id": 109,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Advanced Statistics for ML",
+      "text": "PCA Statistics — variance explained, scree plot",
+      "difficulty": "medium"
+    },
+    {
+      "id": 110,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Advanced Statistics for ML",
+      "text": "Matrix Factorization — NMF, collaborative filtering",
+      "difficulty": "medium"
+    },
+    {
+      "id": 111,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Advanced Statistics for ML",
+      "text": "Maximum Likelihood Estimation (MLE)",
+      "difficulty": "medium"
+    },
+    {
+      "id": 112,
+      "sectionId": 2,
+      "sectionName": "Statistics & Probability",
+      "tier": 1,
+      "topic": "Advanced Statistics for ML",
+      "text": "Maximum A Posteriori (MAP) Estimation",
+      "difficulty": "medium"
+    },
+    {
+      "id": 113,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Core Concepts",
+      "text": "Bias vs Variance Tradeoff",
+      "difficulty": "easy"
+    },
+    {
+      "id": 114,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Core Concepts",
+      "text": "Overfitting — causes, symptoms, remedies",
+      "difficulty": "medium"
+    },
+    {
+      "id": 115,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Core Concepts",
+      "text": "Underfitting — causes, symptoms",
+      "difficulty": "medium"
+    },
+    {
+      "id": 116,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Core Concepts",
+      "text": "Cross Validation — purpose and mechanics",
+      "difficulty": "medium"
+    },
+    {
+      "id": 117,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Core Concepts",
+      "text": "K-Fold Cross Validation",
+      "difficulty": "medium"
+    },
+    {
+      "id": 118,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Core Concepts",
+      "text": "Stratified K-Fold",
+      "difficulty": "medium"
+    },
+    {
+      "id": 119,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Core Concepts",
+      "text": "Leave-One-Out Cross Validation",
+      "difficulty": "medium"
+    },
+    {
+      "id": 120,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Core Concepts",
+      "text": "Data Leakage in Cross Validation",
+      "difficulty": "medium"
+    },
+    {
+      "id": 121,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Core Concepts",
+      "text": "Classification vs Regression — output types, loss functions",
+      "difficulty": "easy"
+    },
+    {
+      "id": 122,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Core Concepts",
+      "text": "Parametric vs Non-Parametric Models",
+      "difficulty": "easy"
+    },
+    {
+      "id": 123,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Core Concepts",
+      "text": "Curse of Dimensionality",
+      "difficulty": "medium"
+    },
+    {
+      "id": 124,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Core Concepts",
+      "text": "Feature Engineering — encoding, binning, interaction terms",
+      "difficulty": "medium"
+    },
+    {
+      "id": 125,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Core Concepts",
+      "text": "Feature Selection — filter, wrapper, embedded methods",
+      "difficulty": "medium"
+    },
+    {
+      "id": 126,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Evaluation Metrics",
+      "text": "Precision, Recall, F1 Score",
+      "difficulty": "medium"
+    },
+    {
+      "id": 127,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Evaluation Metrics",
+      "text": "When to use Precision vs Recall",
+      "difficulty": "easy"
+    },
+    {
+      "id": 128,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Evaluation Metrics",
+      "text": "ROC Curve and AUC",
+      "difficulty": "medium"
+    },
+    {
+      "id": 129,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Evaluation Metrics",
+      "text": "Precision-Recall Curve — imbalanced class preference",
+      "difficulty": "medium"
+    },
+    {
+      "id": 130,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Evaluation Metrics",
+      "text": "Confusion Matrix",
+      "difficulty": "medium"
+    },
+    {
+      "id": 131,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Evaluation Metrics",
+      "text": "Class Imbalance — SMOTE, class weights, threshold tuning",
+      "difficulty": "medium"
+    },
+    {
+      "id": 132,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Evaluation Metrics",
+      "text": "RMSE, MAE, MAPE — regression metrics",
+      "difficulty": "medium"
+    },
+    {
+      "id": 133,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Evaluation Metrics",
+      "text": "R² Score — coefficient of determination",
+      "difficulty": "medium"
+    },
+    {
+      "id": 134,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Evaluation Metrics",
+      "text": "Log Loss (Binary Cross Entropy)",
+      "difficulty": "medium"
+    },
+    {
+      "id": 135,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Evaluation Metrics",
+      "text": "Cohen's Kappa — inter-rater agreement",
+      "difficulty": "medium"
+    },
+    {
+      "id": 136,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Regression Algorithms",
+      "text": "Linear Regression — OLS, assumptions",
+      "difficulty": "medium"
+    },
+    {
+      "id": 137,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Regression Algorithms",
+      "text": "Assumptions of Linear Regression (LINE)",
+      "difficulty": "medium"
+    },
+    {
+      "id": 138,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Regression Algorithms",
+      "text": "Ridge Regression (L2 Regularization)",
+      "difficulty": "medium"
+    },
+    {
+      "id": 139,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Regression Algorithms",
+      "text": "Lasso Regression (L1 Regularization)",
+      "difficulty": "medium"
+    },
+    {
+      "id": 140,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Regression Algorithms",
+      "text": "ElasticNet — L1 + L2 combined",
+      "difficulty": "medium"
+    },
+    {
+      "id": 141,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Regression Algorithms",
+      "text": "Polynomial Regression",
+      "difficulty": "medium"
+    },
+    {
+      "id": 142,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Regression Algorithms",
+      "text": "Logistic Regression — why it's called regression",
+      "difficulty": "medium"
+    },
+    {
+      "id": 143,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Regression Algorithms",
+      "text": "Multinomial Logistic Regression",
+      "difficulty": "medium"
+    },
+    {
+      "id": 144,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 2,
+      "topic": "Tree-Based Models",
+      "text": "Decision Trees — splitting criteria, pruning",
+      "difficulty": "medium"
+    },
+    {
+      "id": 145,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 2,
+      "topic": "Tree-Based Models",
+      "text": "Random Forest — bagging, feature subsampling",
+      "difficulty": "medium"
+    },
+    {
+      "id": 146,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 2,
+      "topic": "Tree-Based Models",
+      "text": "Why Random Forest reduces overfitting",
+      "difficulty": "medium"
+    },
+    {
+      "id": 147,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 2,
+      "topic": "Tree-Based Models",
+      "text": "Extra Trees — difference from Random Forest",
+      "difficulty": "medium"
+    },
+    {
+      "id": 148,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 2,
+      "topic": "Tree-Based Models",
+      "text": "Gradient Boosting — sequential residual fitting",
+      "difficulty": "medium"
+    },
+    {
+      "id": 149,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 2,
+      "topic": "Tree-Based Models",
+      "text": "XGBoost — regularization, column subsampling, tree pruning",
+      "difficulty": "medium"
+    },
+    {
+      "id": 150,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 2,
+      "topic": "Tree-Based Models",
+      "text": "LightGBM — leaf-wise growth, histogram binning",
+      "difficulty": "medium"
+    },
+    {
+      "id": 151,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 2,
+      "topic": "Tree-Based Models",
+      "text": "CatBoost — native categorical encoding, symmetric trees",
+      "difficulty": "medium"
+    },
+    {
+      "id": 152,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 2,
+      "topic": "Tree-Based Models",
+      "text": "XGBoost vs LightGBM vs CatBoost comparison",
+      "difficulty": "easy"
+    },
+    {
+      "id": 153,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 2,
+      "topic": "Tree-Based Models",
+      "text": "AdaBoost — adaptive weighting",
+      "difficulty": "medium"
+    },
+    {
+      "id": 154,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 2,
+      "topic": "Tree-Based Models",
+      "text": "Bagging vs Boosting — key differences",
+      "difficulty": "easy"
+    },
+    {
+      "id": 155,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Other Classical Algorithms",
+      "text": "SVM — margin maximization, support vectors",
+      "difficulty": "medium"
+    },
+    {
+      "id": 156,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Other Classical Algorithms",
+      "text": "Kernel Trick — RBF, polynomial, linear kernels",
+      "difficulty": "medium"
+    },
+    {
+      "id": 157,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Other Classical Algorithms",
+      "text": "Naive Bayes — conditional independence assumption",
+      "difficulty": "medium"
+    },
+    {
+      "id": 158,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Other Classical Algorithms",
+      "text": "Why Naive Bayes works despite unrealistic assumptions",
+      "difficulty": "medium"
+    },
+    {
+      "id": 159,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Other Classical Algorithms",
+      "text": "KNN — distance metrics, choosing K",
+      "difficulty": "medium"
+    },
+    {
+      "id": 160,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Other Classical Algorithms",
+      "text": "Why KNN is lazy learning",
+      "difficulty": "medium"
+    },
+    {
+      "id": 161,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Other Classical Algorithms",
+      "text": "Nearest Neighbor Search — KD-tree, ball tree",
+      "difficulty": "medium"
+    },
+    {
+      "id": 162,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Dimensionality Reduction & Clustering",
+      "text": "PCA — principal components, variance maximization",
+      "difficulty": "medium"
+    },
+    {
+      "id": 163,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Dimensionality Reduction & Clustering",
+      "text": "Why PCA works — covariance matrix eigen decomposition",
+      "difficulty": "medium"
+    },
+    {
+      "id": 164,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Dimensionality Reduction & Clustering",
+      "text": "t-SNE — non-linear dimensionality reduction for visualization",
+      "difficulty": "medium"
+    },
+    {
+      "id": 165,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Dimensionality Reduction & Clustering",
+      "text": "UMAP — topology-preserving dimensionality reduction",
+      "difficulty": "medium"
+    },
+    {
+      "id": 166,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Dimensionality Reduction & Clustering",
+      "text": "K-Means Clustering — algorithm, convergence",
+      "difficulty": "medium"
+    },
+    {
+      "id": 167,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Dimensionality Reduction & Clustering",
+      "text": "Limitations of K-Means",
+      "difficulty": "medium"
+    },
+    {
+      "id": 168,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Dimensionality Reduction & Clustering",
+      "text": "Choosing K — elbow method, silhouette score",
+      "difficulty": "medium"
+    },
+    {
+      "id": 169,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Dimensionality Reduction & Clustering",
+      "text": "Hierarchical Clustering — agglomerative, divisive, dendrograms",
+      "difficulty": "medium"
+    },
+    {
+      "id": 170,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Dimensionality Reduction & Clustering",
+      "text": "DBSCAN — density-based, noise handling",
+      "difficulty": "medium"
+    },
+    {
+      "id": 171,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Dimensionality Reduction & Clustering",
+      "text": "Gaussian Mixture Models (GMM)",
+      "difficulty": "medium"
+    },
+    {
+      "id": 172,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Dimensionality Reduction & Clustering",
+      "text": "Expectation Maximization (EM) Algorithm",
+      "difficulty": "medium"
+    },
+    {
+      "id": 173,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Regularization & Optimization",
+      "text": "L1 vs L2 Regularization — sparsity vs smoothness",
+      "difficulty": "easy"
+    },
+    {
+      "id": 174,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Regularization & Optimization",
+      "text": "Hyperparameter Tuning — grid search, random search, Bayesian",
+      "difficulty": "medium"
+    },
+    {
+      "id": 175,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Regularization & Optimization",
+      "text": "Feature Importance — permutation, SHAP, Gini",
+      "difficulty": "medium"
+    },
+    {
+      "id": 176,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Regularization & Optimization",
+      "text": "SHAP Values — Shapley value interpretation",
+      "difficulty": "medium"
+    },
+    {
+      "id": 177,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Regularization & Optimization",
+      "text": "LIME — local interpretable model-agnostic explanations",
+      "difficulty": "medium"
+    },
+    {
+      "id": 178,
+      "sectionId": 3,
+      "sectionName": "Classical Machine Learning",
+      "tier": 1,
+      "topic": "Regularization & Optimization",
+      "text": "Calibration — Platt scaling, isotonic regression",
+      "difficulty": "medium"
+    },
+    {
+      "id": 179,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Neural Network Foundations",
+      "text": "Perceptron — single neuron, step function",
+      "difficulty": "medium"
+    },
+    {
+      "id": 180,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Neural Network Foundations",
+      "text": "Multilayer Perceptron — hidden layers, universal approximation",
+      "difficulty": "medium"
+    },
+    {
+      "id": 181,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Neural Network Foundations",
+      "text": "Activation Functions — purpose, non-linearity",
+      "difficulty": "medium"
+    },
+    {
+      "id": 182,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Neural Network Foundations",
+      "text": "Sigmoid — output range, saturation issues",
+      "difficulty": "medium"
+    },
+    {
+      "id": 183,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Neural Network Foundations",
+      "text": "Tanh — zero-centered, gradient comparison to sigmoid",
+      "difficulty": "medium"
+    },
+    {
+      "id": 184,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Neural Network Foundations",
+      "text": "ReLU — dying ReLU problem",
+      "difficulty": "medium"
+    },
+    {
+      "id": 185,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Neural Network Foundations",
+      "text": "Leaky ReLU, PReLU, ELU — variants and motivation",
+      "difficulty": "medium"
+    },
+    {
+      "id": 186,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Neural Network Foundations",
+      "text": "Softmax — multiclass probability output",
+      "difficulty": "medium"
+    },
+    {
+      "id": 187,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Neural Network Foundations",
+      "text": "GELU — used in Transformers",
+      "difficulty": "medium"
+    },
+    {
+      "id": 188,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Neural Network Foundations",
+      "text": "Backpropagation — chain rule, gradient flow",
+      "difficulty": "medium"
+    },
+    {
+      "id": 189,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Neural Network Foundations",
+      "text": "Computational Graph — forward and backward pass",
+      "difficulty": "medium"
+    },
+    {
+      "id": 190,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Neural Network Foundations",
+      "text": "Vanishing Gradient Problem — causes, solutions",
+      "difficulty": "medium"
+    },
+    {
+      "id": 191,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Neural Network Foundations",
+      "text": "Exploding Gradient Problem — gradient clipping",
+      "difficulty": "medium"
+    },
+    {
+      "id": 192,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Optimization",
+      "text": "Gradient Descent — batch, stochastic, mini-batch",
+      "difficulty": "medium"
+    },
+    {
+      "id": 193,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Optimization",
+      "text": "SGD with Momentum",
+      "difficulty": "medium"
+    },
+    {
+      "id": 194,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Optimization",
+      "text": "Adam Optimizer — adaptive learning rates, β₁, β₂",
+      "difficulty": "medium"
+    },
+    {
+      "id": 195,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Optimization",
+      "text": "RMSProp",
+      "difficulty": "medium"
+    },
+    {
+      "id": 196,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Optimization",
+      "text": "AdaGrad",
+      "difficulty": "medium"
+    },
+    {
+      "id": 197,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Optimization",
+      "text": "Learning Rate — impact on convergence",
+      "difficulty": "medium"
+    },
+    {
+      "id": 198,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Optimization",
+      "text": "Learning Rate Scheduling — step decay, cosine annealing, warmup",
+      "difficulty": "medium"
+    },
+    {
+      "id": 199,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Optimization",
+      "text": "Loss Functions — MSE, BCE, categorical cross-entropy, focal loss",
+      "difficulty": "medium"
+    },
+    {
+      "id": 200,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Optimization",
+      "text": "Weight Initialization — why it matters",
+      "difficulty": "medium"
+    },
+    {
+      "id": 201,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Optimization",
+      "text": "Xavier / Glorot Initialization",
+      "difficulty": "medium"
+    },
+    {
+      "id": 202,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Optimization",
+      "text": "He Initialization — for ReLU networks",
+      "difficulty": "medium"
+    },
+    {
+      "id": 203,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Optimization",
+      "text": "Batch Normalization — normalization, γ, β parameters",
+      "difficulty": "medium"
+    },
+    {
+      "id": 204,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Optimization",
+      "text": "Layer Normalization — used in Transformers",
+      "difficulty": "medium"
+    },
+    {
+      "id": 205,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Optimization",
+      "text": "Group Normalization",
+      "difficulty": "medium"
+    },
+    {
+      "id": 206,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Optimization",
+      "text": "Dropout — regularization, inference vs training",
+      "difficulty": "easy"
+    },
+    {
+      "id": 207,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "CNNs & Computer Vision",
+      "text": "CNN Architecture — conv, pool, FC layers",
+      "difficulty": "medium"
+    },
+    {
+      "id": 208,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "CNNs & Computer Vision",
+      "text": "Convolution Operation — stride, padding, receptive field",
+      "difficulty": "medium"
+    },
+    {
+      "id": 209,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "CNNs & Computer Vision",
+      "text": "Why Convolutions Are Useful — weight sharing, translation invariance",
+      "difficulty": "medium"
+    },
+    {
+      "id": 210,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "CNNs & Computer Vision",
+      "text": "Filters / Kernels — edge detection, feature extraction",
+      "difficulty": "medium"
+    },
+    {
+      "id": 211,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "CNNs & Computer Vision",
+      "text": "Pooling — max pooling, average pooling, global average pooling",
+      "difficulty": "medium"
+    },
+    {
+      "id": 212,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "CNNs & Computer Vision",
+      "text": "Feature Maps",
+      "difficulty": "medium"
+    },
+    {
+      "id": 213,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "CNNs & Computer Vision",
+      "text": "ResNet — skip connections, solving vanishing gradients",
+      "difficulty": "medium"
+    },
+    {
+      "id": 214,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "CNNs & Computer Vision",
+      "text": "Why Skip Connections Are Useful",
+      "difficulty": "medium"
+    },
+    {
+      "id": 215,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "CNNs & Computer Vision",
+      "text": "DenseNet — dense connections",
+      "difficulty": "medium"
+    },
+    {
+      "id": 216,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "CNNs & Computer Vision",
+      "text": "EfficientNet — compound scaling",
+      "difficulty": "medium"
+    },
+    {
+      "id": 217,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "CNNs & Computer Vision",
+      "text": "Transfer Learning — feature extraction vs fine-tuning",
+      "difficulty": "easy"
+    },
+    {
+      "id": 218,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "CNNs & Computer Vision",
+      "text": "Data Augmentation — flips, crops, color jitter, Mixup, CutMix",
+      "difficulty": "medium"
+    },
+    {
+      "id": 219,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "CNNs & Computer Vision",
+      "text": "Image Classification Pipeline",
+      "difficulty": "medium"
+    },
+    {
+      "id": 220,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "CNNs & Computer Vision",
+      "text": "Object Detection — two-stage vs single-stage",
+      "difficulty": "easy"
+    },
+    {
+      "id": 221,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "CNNs & Computer Vision",
+      "text": "YOLO — anchor-free detection, speed vs accuracy",
+      "difficulty": "easy"
+    },
+    {
+      "id": 222,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "CNNs & Computer Vision",
+      "text": "Faster R-CNN — RPN, ROI pooling",
+      "difficulty": "medium"
+    },
+    {
+      "id": 223,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "CNNs & Computer Vision",
+      "text": "IoU (Intersection over Union)",
+      "difficulty": "medium"
+    },
+    {
+      "id": 224,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "CNNs & Computer Vision",
+      "text": "Non-Max Suppression (NMS)",
+      "difficulty": "medium"
+    },
+    {
+      "id": 225,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "CNNs & Computer Vision",
+      "text": "Semantic Segmentation — FCN, DeepLab",
+      "difficulty": "medium"
+    },
+    {
+      "id": 226,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "CNNs & Computer Vision",
+      "text": "Instance Segmentation vs Semantic Segmentation",
+      "difficulty": "easy"
+    },
+    {
+      "id": 227,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "CNNs & Computer Vision",
+      "text": "U-Net — encoder-decoder, skip connections for segmentation",
+      "difficulty": "medium"
+    },
+    {
+      "id": 228,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "CNNs & Computer Vision",
+      "text": "Vision Transformers (ViT) — patch embeddings, positional encoding",
+      "difficulty": "medium"
+    },
+    {
+      "id": 229,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "RNNs & Sequential Models",
+      "text": "RNN — hidden state, sequential processing",
+      "difficulty": "medium"
+    },
+    {
+      "id": 230,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "RNNs & Sequential Models",
+      "text": "Why RNNs Suffer from Vanishing Gradients",
+      "difficulty": "medium"
+    },
+    {
+      "id": 231,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "RNNs & Sequential Models",
+      "text": "LSTM — cell state, forget/input/output gates",
+      "difficulty": "medium"
+    },
+    {
+      "id": 232,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "RNNs & Sequential Models",
+      "text": "Why LSTM Solves Long-Term Dependency",
+      "difficulty": "medium"
+    },
+    {
+      "id": 233,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "RNNs & Sequential Models",
+      "text": "GRU — simplified gating mechanism",
+      "difficulty": "medium"
+    },
+    {
+      "id": 234,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "RNNs & Sequential Models",
+      "text": "LSTM vs GRU — complexity, performance comparison",
+      "difficulty": "easy"
+    },
+    {
+      "id": 235,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "RNNs & Sequential Models",
+      "text": "Seq2Seq Architecture — encoder-decoder for translation",
+      "difficulty": "medium"
+    },
+    {
+      "id": 236,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 2,
+      "topic": "RNNs & Sequential Models",
+      "text": "Bidirectional RNN",
+      "difficulty": "medium"
+    },
+    {
+      "id": 237,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Attention & Transformers",
+      "text": "Attention Mechanism — query, key, value",
+      "difficulty": "medium"
+    },
+    {
+      "id": 238,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Attention & Transformers",
+      "text": "Self-Attention — intra-sequence attention",
+      "difficulty": "medium"
+    },
+    {
+      "id": 239,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Attention & Transformers",
+      "text": "Multi-Head Attention — parallel attention heads",
+      "difficulty": "medium"
+    },
+    {
+      "id": 240,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Attention & Transformers",
+      "text": "Scaled Dot-Product Attention — why scaling by √d_k",
+      "difficulty": "medium"
+    },
+    {
+      "id": 241,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Attention & Transformers",
+      "text": "Transformer Architecture — encoder, decoder, positional encoding",
+      "difficulty": "medium"
+    },
+    {
+      "id": 242,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Attention & Transformers",
+      "text": "Positional Encoding — sinusoidal, learned",
+      "difficulty": "medium"
+    },
+    {
+      "id": 243,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Attention & Transformers",
+      "text": "Cross-Attention — encoder-decoder attention",
+      "difficulty": "medium"
+    },
+    {
+      "id": 244,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Attention & Transformers",
+      "text": "Flash Attention — memory-efficient attention",
+      "difficulty": "medium"
+    },
+    {
+      "id": 245,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Attention & Transformers",
+      "text": "Sparse Attention — Longformer, BigBird",
+      "difficulty": "medium"
+    },
+    {
+      "id": 246,
+      "sectionId": 4,
+      "sectionName": "Deep Learning",
+      "tier": 1,
+      "topic": "Attention & Transformers",
+      "text": "Why Transformers Replaced RNNs",
+      "difficulty": "medium"
+    },
+    {
+      "id": 247,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Classical NLP",
+      "text": "Tokenization — word, subword (BPE, WordPiece, Unigram), character",
+      "difficulty": "medium"
+    },
+    {
+      "id": 248,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Classical NLP",
+      "text": "Stemming vs Lemmatization",
+      "difficulty": "easy"
+    },
+    {
+      "id": 249,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Classical NLP",
+      "text": "TF-IDF — term weighting, document retrieval",
+      "difficulty": "medium"
+    },
+    {
+      "id": 250,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Classical NLP",
+      "text": "Bag of Words (BoW) — limitations",
+      "difficulty": "medium"
+    },
+    {
+      "id": 251,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Classical NLP",
+      "text": "N-grams",
+      "difficulty": "medium"
+    },
+    {
+      "id": 252,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Classical NLP",
+      "text": "Word2Vec — neural word embeddings",
+      "difficulty": "medium"
+    },
+    {
+      "id": 253,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Classical NLP",
+      "text": "CBOW vs Skip-Gram",
+      "difficulty": "easy"
+    },
+    {
+      "id": 254,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Classical NLP",
+      "text": "GloVe — global co-occurrence matrix",
+      "difficulty": "medium"
+    },
+    {
+      "id": 255,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Classical NLP",
+      "text": "FastText — subword embeddings, OOV handling",
+      "difficulty": "medium"
+    },
+    {
+      "id": 256,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Classical NLP",
+      "text": "Embeddings — dense vector representations",
+      "difficulty": "medium"
+    },
+    {
+      "id": 257,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Classical NLP",
+      "text": "Sentence Embeddings — pooling strategies",
+      "difficulty": "medium"
+    },
+    {
+      "id": 258,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Pre-trained Language Models",
+      "text": "BERT — masked language modeling, next sentence prediction",
+      "difficulty": "medium"
+    },
+    {
+      "id": 259,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Pre-trained Language Models",
+      "text": "What Makes BERT Bidirectional",
+      "difficulty": "medium"
+    },
+    {
+      "id": 260,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Pre-trained Language Models",
+      "text": "RoBERTa — BERT without NSP, dynamic masking",
+      "difficulty": "medium"
+    },
+    {
+      "id": 261,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Pre-trained Language Models",
+      "text": "DistilBERT — knowledge distillation of BERT",
+      "difficulty": "medium"
+    },
+    {
+      "id": 262,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Pre-trained Language Models",
+      "text": "T5 — text-to-text transfer transformer",
+      "difficulty": "medium"
+    },
+    {
+      "id": 263,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Pre-trained Language Models",
+      "text": "GPT Architecture — causal language modeling",
+      "difficulty": "medium"
+    },
+    {
+      "id": 264,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Pre-trained Language Models",
+      "text": "GPT vs BERT — encoder vs decoder, use cases",
+      "difficulty": "easy"
+    },
+    {
+      "id": 265,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Pre-trained Language Models",
+      "text": "Encoder vs Decoder vs Encoder-Decoder models",
+      "difficulty": "easy"
+    },
+    {
+      "id": 266,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Pre-trained Language Models",
+      "text": "CLIP — contrastive image-text pre-training",
+      "difficulty": "medium"
+    },
+    {
+      "id": 267,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "LLM Internals",
+      "text": "How LLMs Work — next token prediction at scale",
+      "difficulty": "medium"
+    },
+    {
+      "id": 268,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "LLM Internals",
+      "text": "Next Token Prediction — autoregressive generation",
+      "difficulty": "medium"
+    },
+    {
+      "id": 269,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "LLM Internals",
+      "text": "Context Window — definition, impact on memory",
+      "difficulty": "medium"
+    },
+    {
+      "id": 270,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "LLM Internals",
+      "text": "Why Context Windows Matter",
+      "difficulty": "medium"
+    },
+    {
+      "id": 271,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "LLM Internals",
+      "text": "What Happens When Context Limits Are Exceeded",
+      "difficulty": "medium"
+    },
+    {
+      "id": 272,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "LLM Internals",
+      "text": "How Modern LLMs Handle Long Contexts — RoPE, ALiBi, sliding window",
+      "difficulty": "medium"
+    },
+    {
+      "id": 273,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "LLM Internals",
+      "text": "Context Compression — summarization, selective retention",
+      "difficulty": "medium"
+    },
+    {
+      "id": 274,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "LLM Internals",
+      "text": "Lost-in-the-Middle Problem",
+      "difficulty": "medium"
+    },
+    {
+      "id": 275,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "LLM Internals",
+      "text": "Token — subword unit, BPE",
+      "difficulty": "medium"
+    },
+    {
+      "id": 276,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "LLM Internals",
+      "text": "How Tokens Are Counted",
+      "difficulty": "medium"
+    },
+    {
+      "id": 277,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "LLM Internals",
+      "text": "Input Tokens vs Output Tokens — pricing implications",
+      "difficulty": "easy"
+    },
+    {
+      "id": 278,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "LLM Internals",
+      "text": "Why Token Costs Matter — cost optimization strategies",
+      "difficulty": "medium"
+    },
+    {
+      "id": 279,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "LLM Internals",
+      "text": "KV Cache — inference acceleration",
+      "difficulty": "medium"
+    },
+    {
+      "id": 280,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "LLM Internals",
+      "text": "Speculative Decoding",
+      "difficulty": "medium"
+    },
+    {
+      "id": 281,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "LLM Alignment & Training",
+      "text": "Pre-training — unsupervised, large corpora",
+      "difficulty": "medium"
+    },
+    {
+      "id": 282,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "LLM Alignment & Training",
+      "text": "Supervised Fine-Tuning (SFT)",
+      "difficulty": "medium"
+    },
+    {
+      "id": 283,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "LLM Alignment & Training",
+      "text": "RLHF — reward model, PPO loop",
+      "difficulty": "medium"
+    },
+    {
+      "id": 284,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "LLM Alignment & Training",
+      "text": "DPO (Direct Preference Optimization) — RLHF without RL",
+      "difficulty": "medium"
+    },
+    {
+      "id": 285,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "LLM Alignment & Training",
+      "text": "Constitutional AI",
+      "difficulty": "medium"
+    },
+    {
+      "id": 286,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "LLM Alignment & Training",
+      "text": "Foundation Models",
+      "difficulty": "medium"
+    },
+    {
+      "id": 287,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "LLM Alignment & Training",
+      "text": "Instruction Tuning",
+      "difficulty": "medium"
+    },
+    {
+      "id": 288,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Efficient Fine-Tuning & Compression",
+      "text": "Fine-Tuning — full fine-tuning vs parameter-efficient",
+      "difficulty": "easy"
+    },
+    {
+      "id": 289,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Efficient Fine-Tuning & Compression",
+      "text": "LoRA — low-rank decomposition of weight updates",
+      "difficulty": "medium"
+    },
+    {
+      "id": 290,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Efficient Fine-Tuning & Compression",
+      "text": "QLoRA — quantized LoRA, 4-bit training",
+      "difficulty": "medium"
+    },
+    {
+      "id": 291,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Efficient Fine-Tuning & Compression",
+      "text": "Prefix Tuning, Prompt Tuning, Adapter Layers",
+      "difficulty": "medium"
+    },
+    {
+      "id": 292,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Efficient Fine-Tuning & Compression",
+      "text": "Quantization — INT8, INT4, GPTQ, AWQ",
+      "difficulty": "medium"
+    },
+    {
+      "id": 293,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Efficient Fine-Tuning & Compression",
+      "text": "Knowledge Distillation — teacher-student",
+      "difficulty": "medium"
+    },
+    {
+      "id": 294,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Efficient Fine-Tuning & Compression",
+      "text": "Pruning — structured vs unstructured",
+      "difficulty": "easy"
+    },
+    {
+      "id": 295,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Efficient Fine-Tuning & Compression",
+      "text": "Model Merging — SLERP, TIES, DARE",
+      "difficulty": "medium"
+    },
+    {
+      "id": 296,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Decoding & Sampling",
+      "text": "Temperature — creativity vs determinism",
+      "difficulty": "easy"
+    },
+    {
+      "id": 297,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Decoding & Sampling",
+      "text": "Temperature = 0 vs 1 vs 2",
+      "difficulty": "easy"
+    },
+    {
+      "id": 298,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Decoding & Sampling",
+      "text": "Top-K Sampling",
+      "difficulty": "medium"
+    },
+    {
+      "id": 299,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Decoding & Sampling",
+      "text": "Top-P (Nucleus) Sampling",
+      "difficulty": "medium"
+    },
+    {
+      "id": 300,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Decoding & Sampling",
+      "text": "Frequency Penalty",
+      "difficulty": "medium"
+    },
+    {
+      "id": 301,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Decoding & Sampling",
+      "text": "Presence Penalty",
+      "difficulty": "medium"
+    },
+    {
+      "id": 302,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Decoding & Sampling",
+      "text": "Greedy Decoding vs Beam Search",
+      "difficulty": "easy"
+    },
+    {
+      "id": 303,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Decoding & Sampling",
+      "text": "Why Hallucinations Increase with Temperature",
+      "difficulty": "medium"
+    },
+    {
+      "id": 304,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Decoding & Sampling",
+      "text": "Best Parameters for RAG vs Creative Writing",
+      "difficulty": "easy"
+    },
+    {
+      "id": 305,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Decoding & Sampling",
+      "text": "Decoding Strategies and Output Quality",
+      "difficulty": "medium"
+    },
+    {
+      "id": 306,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Prompt Engineering",
+      "text": "Prompt Engineering — zero-shot, few-shot, chain-of-thought",
+      "difficulty": "medium"
+    },
+    {
+      "id": 307,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Prompt Engineering",
+      "text": "Chain-of-Thought (CoT) Prompting",
+      "difficulty": "medium"
+    },
+    {
+      "id": 308,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Prompt Engineering",
+      "text": "Self-Consistency — majority vote over CoT paths",
+      "difficulty": "medium"
+    },
+    {
+      "id": 309,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Prompt Engineering",
+      "text": "Tree of Thought",
+      "difficulty": "medium"
+    },
+    {
+      "id": 310,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Prompt Engineering",
+      "text": "ReAct — reasoning + acting interleaved",
+      "difficulty": "medium"
+    },
+    {
+      "id": 311,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Prompt Engineering",
+      "text": "Prompt Injection — direct and indirect",
+      "difficulty": "medium"
+    },
+    {
+      "id": 312,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Prompt Engineering",
+      "text": "How to Secure LLM Applications against Prompt Injection",
+      "difficulty": "medium"
+    },
+    {
+      "id": 313,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Prompt Engineering",
+      "text": "Hallucination in LLMs — causes and types",
+      "difficulty": "medium"
+    },
+    {
+      "id": 314,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Prompt Engineering",
+      "text": "How to Reduce Hallucinations",
+      "difficulty": "medium"
+    },
+    {
+      "id": 315,
+      "sectionId": 5,
+      "sectionName": "NLP & Large Language Models",
+      "tier": 1,
+      "topic": "Prompt Engineering",
+      "text": "LLM Evaluation — BLEU, ROUGE, BERTScore, G-Eval, LLM-as-judge",
+      "difficulty": "medium"
+    },
+    {
+      "id": 316,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "RAG Fundamentals",
+      "text": "What is RAG — motivation, architecture overview",
+      "difficulty": "easy"
+    },
+    {
+      "id": 317,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "RAG Fundamentals",
+      "text": "End-to-End RAG Workflow — ingest → index → retrieve → generate",
+      "difficulty": "medium"
+    },
+    {
+      "id": 318,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "RAG Fundamentals",
+      "text": "Components of a RAG System",
+      "difficulty": "medium"
+    },
+    {
+      "id": 319,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "RAG Fundamentals",
+      "text": "Why Use RAG Instead of Fine-Tuning",
+      "difficulty": "medium"
+    },
+    {
+      "id": 320,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "RAG Fundamentals",
+      "text": "Naive RAG vs Advanced RAG vs Modular RAG",
+      "difficulty": "easy"
+    },
+    {
+      "id": 321,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Chunking",
+      "text": "What is Chunking — splitting documents into retrievable units",
+      "difficulty": "easy"
+    },
+    {
+      "id": 322,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Chunking",
+      "text": "Fixed-Size vs Semantic Chunking",
+      "difficulty": "easy"
+    },
+    {
+      "id": 323,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Chunking",
+      "text": "Recursive Character Text Splitter",
+      "difficulty": "medium"
+    },
+    {
+      "id": 324,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Chunking",
+      "text": "Chunk Overlap — purpose and tradeoffs",
+      "difficulty": "medium"
+    },
+    {
+      "id": 325,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Chunking",
+      "text": "What Chunk Size to Choose and Why",
+      "difficulty": "medium"
+    },
+    {
+      "id": 326,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Chunking",
+      "text": "Sentence-Level Chunking",
+      "difficulty": "medium"
+    },
+    {
+      "id": 327,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Chunking",
+      "text": "Document-Level Chunking — when to keep whole docs",
+      "difficulty": "medium"
+    },
+    {
+      "id": 328,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Chunking",
+      "text": "Late Chunking / Contextual Chunking (Jina AI approach)",
+      "difficulty": "medium"
+    },
+    {
+      "id": 329,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Embeddings & Vector Databases",
+      "text": "Embedding Models — what makes a good one",
+      "difficulty": "medium"
+    },
+    {
+      "id": 330,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Embeddings & Vector Databases",
+      "text": "Sentence Transformers (SBERT)",
+      "difficulty": "medium"
+    },
+    {
+      "id": 331,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Embeddings & Vector Databases",
+      "text": "OpenAI Embeddings vs Open-Source (BGE, E5, GTE)",
+      "difficulty": "easy"
+    },
+    {
+      "id": 332,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Embeddings & Vector Databases",
+      "text": "Matryoshka Embeddings — variable-dimension embeddings",
+      "difficulty": "medium"
+    },
+    {
+      "id": 333,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Embeddings & Vector Databases",
+      "text": "Vector Database — purpose, architecture",
+      "difficulty": "medium"
+    },
+    {
+      "id": 334,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Embeddings & Vector Databases",
+      "text": "ChromaDB vs FAISS vs Pinecone vs Weaviate vs Qdrant",
+      "difficulty": "easy"
+    },
+    {
+      "id": 335,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Embeddings & Vector Databases",
+      "text": "Vector Similarity Search — HNSW, IVF, flat index",
+      "difficulty": "medium"
+    },
+    {
+      "id": 336,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Embeddings & Vector Databases",
+      "text": "Cosine Similarity vs Euclidean Distance vs Dot Product",
+      "difficulty": "easy"
+    },
+    {
+      "id": 337,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Embeddings & Vector Databases",
+      "text": "ANN (Approximate Nearest Neighbor) Search",
+      "difficulty": "medium"
+    },
+    {
+      "id": 338,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Retrieval Strategies",
+      "text": "Sparse Retrieval — BM25, TF-IDF",
+      "difficulty": "medium"
+    },
+    {
+      "id": 339,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Retrieval Strategies",
+      "text": "Dense Retrieval — embedding-based",
+      "difficulty": "medium"
+    },
+    {
+      "id": 340,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Retrieval Strategies",
+      "text": "Hybrid Search — combining sparse and dense",
+      "difficulty": "medium"
+    },
+    {
+      "id": 341,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Retrieval Strategies",
+      "text": "Re-ranking — cross-encoders, Cohere Rerank",
+      "difficulty": "medium"
+    },
+    {
+      "id": 342,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Retrieval Strategies",
+      "text": "Multi-Query Retrieval — query expansion",
+      "difficulty": "medium"
+    },
+    {
+      "id": 343,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Retrieval Strategies",
+      "text": "HyDE (Hypothetical Document Embeddings)",
+      "difficulty": "medium"
+    },
+    {
+      "id": 344,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Retrieval Strategies",
+      "text": "Parent-Child Chunking — retrieve child, return parent",
+      "difficulty": "medium"
+    },
+    {
+      "id": 345,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Retrieval Strategies",
+      "text": "Multi-Hop RAG — multi-step reasoning",
+      "difficulty": "medium"
+    },
+    {
+      "id": 346,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Retrieval Strategies",
+      "text": "Graph RAG — knowledge graph + LLM",
+      "difficulty": "medium"
+    },
+    {
+      "id": 347,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Retrieval Strategies",
+      "text": "Agentic RAG — retrieval as a tool call",
+      "difficulty": "medium"
+    },
+    {
+      "id": 348,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Retrieval Strategies",
+      "text": "Corrective RAG — self-correction with web search fallback",
+      "difficulty": "medium"
+    },
+    {
+      "id": 349,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Retrieval Strategies",
+      "text": "Adaptive RAG — routing queries to retrieval strategies",
+      "difficulty": "medium"
+    },
+    {
+      "id": 350,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Retrieval Strategies",
+      "text": "Contextual Compression — reduce retrieved context before LLM call",
+      "difficulty": "medium"
+    },
+    {
+      "id": 351,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "RAG Evaluation",
+      "text": "How to Evaluate a RAG System — RAGAS framework",
+      "difficulty": "medium"
+    },
+    {
+      "id": 352,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "RAG Evaluation",
+      "text": "Retrieval Metrics — Recall@K, Precision@K, MRR, NDCG",
+      "difficulty": "medium"
+    },
+    {
+      "id": 353,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "RAG Evaluation",
+      "text": "Generation Metrics — faithfulness, answer relevance, context recall",
+      "difficulty": "medium"
+    },
+    {
+      "id": 354,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "RAG Evaluation",
+      "text": "Common Causes of RAG Hallucinations",
+      "difficulty": "medium"
+    },
+    {
+      "id": 355,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "RAG Evaluation",
+      "text": "How to Improve Retrieval Quality",
+      "difficulty": "medium"
+    },
+    {
+      "id": 356,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "RAG Evaluation",
+      "text": "Retrieval Debugging — inspecting retrieved chunks",
+      "difficulty": "medium"
+    },
+    {
+      "id": 357,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Production RAG",
+      "text": "Build RAG for Company Documents — end-to-end design",
+      "difficulty": "medium"
+    },
+    {
+      "id": 358,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Production RAG",
+      "text": "How to Scale a RAG System — indexing pipeline, caching, async",
+      "difficulty": "medium"
+    },
+    {
+      "id": 359,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Production RAG",
+      "text": "Context Window Optimization for RAG",
+      "difficulty": "medium"
+    },
+    {
+      "id": 360,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Production RAG",
+      "text": "Metadata Filtering — pre-filtering before vector search",
+      "difficulty": "medium"
+    },
+    {
+      "id": 361,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Production RAG",
+      "text": "Long Context RAG — stuffing vs chunking tradeoffs",
+      "difficulty": "easy"
+    },
+    {
+      "id": 362,
+      "sectionId": 6,
+      "sectionName": "RAG (Retrieval-Augmented Generation)",
+      "tier": 1,
+      "topic": "Production RAG",
+      "text": "RAG with Tables and PDFs — structured document handling",
+      "difficulty": "medium"
+    },
+    {
+      "id": 363,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "Agentic AI",
+      "text": "What is an AI Agent — definition, components",
+      "difficulty": "easy"
+    },
+    {
+      "id": 364,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "Agentic AI",
+      "text": "Agent Loop — perceive → think → act → observe",
+      "difficulty": "medium"
+    },
+    {
+      "id": 365,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "Agentic AI",
+      "text": "Tool Calling — LLM invoking external functions",
+      "difficulty": "medium"
+    },
+    {
+      "id": 366,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "Agentic AI",
+      "text": "Function Calling — structured output for tool invocation",
+      "difficulty": "medium"
+    },
+    {
+      "id": 367,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "Agentic AI",
+      "text": "How Agents Use Tools — schema definition, execution, result injection",
+      "difficulty": "medium"
+    },
+    {
+      "id": 368,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "Agentic AI",
+      "text": "Planning in Agents — task decomposition, MCTS",
+      "difficulty": "medium"
+    },
+    {
+      "id": 369,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "Agentic AI",
+      "text": "Reflection in Agents — self-critique, iterative refinement",
+      "difficulty": "medium"
+    },
+    {
+      "id": 370,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "Agentic AI",
+      "text": "ReAct Framework — interleaved reasoning and action",
+      "difficulty": "medium"
+    },
+    {
+      "id": 371,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "Agentic AI",
+      "text": "Multi-Agent Systems — orchestrator, subagents",
+      "difficulty": "medium"
+    },
+    {
+      "id": 372,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "Agentic AI",
+      "text": "When Multi-Agent Systems Fail — coordination, context loss",
+      "difficulty": "medium"
+    },
+    {
+      "id": 373,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "Agentic AI",
+      "text": "Agent Memory — short-term, long-term, episodic, semantic",
+      "difficulty": "medium"
+    },
+    {
+      "id": 374,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "Agentic AI",
+      "text": "Conversation Memory — rolling context, summarization",
+      "difficulty": "medium"
+    },
+    {
+      "id": 375,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "Agentic AI",
+      "text": "Multi-Session Memory — persistence across conversations",
+      "difficulty": "medium"
+    },
+    {
+      "id": 376,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "Agentic AI",
+      "text": "Semantic Memory vs Episodic Memory",
+      "difficulty": "easy"
+    },
+    {
+      "id": 377,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "Agentic AI",
+      "text": "Long-Term Memory Implementation — vector DB + retrieval",
+      "difficulty": "medium"
+    },
+    {
+      "id": 378,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "MCP (Model Context Protocol)",
+      "text": "What is MCP — Anthropic's open standard for tool integration",
+      "difficulty": "easy"
+    },
+    {
+      "id": 379,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "MCP (Model Context Protocol)",
+      "text": "Why MCP Was Introduced",
+      "difficulty": "medium"
+    },
+    {
+      "id": 380,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "MCP (Model Context Protocol)",
+      "text": "MCP vs REST APIs",
+      "difficulty": "easy"
+    },
+    {
+      "id": 381,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "MCP (Model Context Protocol)",
+      "text": "MCP Client vs MCP Server",
+      "difficulty": "easy"
+    },
+    {
+      "id": 382,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "MCP (Model Context Protocol)",
+      "text": "Tool Discovery in MCP",
+      "difficulty": "medium"
+    },
+    {
+      "id": 383,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "MCP (Model Context Protocol)",
+      "text": "MCP Architecture — host, client, server, transport",
+      "difficulty": "medium"
+    },
+    {
+      "id": 384,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "MCP (Model Context Protocol)",
+      "text": "Authentication in MCP — OAuth, API keys",
+      "difficulty": "medium"
+    },
+    {
+      "id": 385,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "MCP (Model Context Protocol)",
+      "text": "MCP vs Function Calling",
+      "difficulty": "easy"
+    },
+    {
+      "id": 386,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "MCP (Model Context Protocol)",
+      "text": "When to Use MCP vs Function Calling",
+      "difficulty": "easy"
+    },
+    {
+      "id": 387,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "MCP (Model Context Protocol)",
+      "text": "How to Build an MCP Server",
+      "difficulty": "medium"
+    },
+    {
+      "id": 388,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "MCP (Model Context Protocol)",
+      "text": "MCP Security Considerations",
+      "difficulty": "medium"
+    },
+    {
+      "id": 389,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "Context Management",
+      "text": "Chat History Management — stateless vs stateful",
+      "difficulty": "easy"
+    },
+    {
+      "id": 390,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "Context Management",
+      "text": "Rolling Context Window",
+      "difficulty": "medium"
+    },
+    {
+      "id": 391,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "Context Management",
+      "text": "Context Summarization",
+      "difficulty": "medium"
+    },
+    {
+      "id": 392,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "Context Management",
+      "text": "Automatic Context Switching",
+      "difficulty": "medium"
+    },
+    {
+      "id": 393,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "Context Management",
+      "text": "Context Compression Strategies",
+      "difficulty": "medium"
+    },
+    {
+      "id": 394,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "Context Management",
+      "text": "How to Optimize Token Usage",
+      "difficulty": "medium"
+    },
+    {
+      "id": 395,
+      "sectionId": 7,
+      "sectionName": "Generative AI & Agents",
+      "tier": 1,
+      "topic": "Context Management",
+      "text": "How to Reduce Inference Cost",
+      "difficulty": "medium"
+    },
+    {
+      "id": 396,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "API & Serving",
+      "text": "FastAPI Architecture for AI — async endpoints, dependency injection",
+      "difficulty": "medium"
+    },
+    {
+      "id": 397,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "API & Serving",
+      "text": "Async Programming in FastAPI — async def, await, event loop",
+      "difficulty": "medium"
+    },
+    {
+      "id": 398,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "API & Serving",
+      "text": "Server-Sent Events (SSE) — streaming token output",
+      "difficulty": "medium"
+    },
+    {
+      "id": 399,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "API & Serving",
+      "text": "WebSockets vs SSE — bidirectional vs unidirectional streaming",
+      "difficulty": "easy"
+    },
+    {
+      "id": 400,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "API & Serving",
+      "text": "Streaming Response in FastAPI — StreamingResponse",
+      "difficulty": "medium"
+    },
+    {
+      "id": 401,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "API & Serving",
+      "text": "Building a Production AI API — auth, rate limiting, logging",
+      "difficulty": "medium"
+    },
+    {
+      "id": 402,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "API & Serving",
+      "text": "Pydantic Models — validation, JSON mode",
+      "difficulty": "medium"
+    },
+    {
+      "id": 403,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "API & Serving",
+      "text": "Structured Outputs — JSON mode, tool-use extraction",
+      "difficulty": "medium"
+    },
+    {
+      "id": 404,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "LLM Serving Frameworks",
+      "text": "Ollama — local LLM serving, model management",
+      "difficulty": "medium"
+    },
+    {
+      "id": 405,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "LLM Serving Frameworks",
+      "text": "vLLM — PagedAttention, high-throughput serving",
+      "difficulty": "medium"
+    },
+    {
+      "id": 406,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "LLM Serving Frameworks",
+      "text": "TGI (Text Generation Inference) — HuggingFace serving",
+      "difficulty": "medium"
+    },
+    {
+      "id": 407,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "LLM Serving Frameworks",
+      "text": "LM Studio — GUI-based local inference",
+      "difficulty": "medium"
+    },
+    {
+      "id": 408,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "LLM Serving Frameworks",
+      "text": "Ollama vs vLLM — use cases comparison",
+      "difficulty": "easy"
+    },
+    {
+      "id": 409,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "LLM Serving Frameworks",
+      "text": "GPU Optimization — batching, quantization, tensor parallelism",
+      "difficulty": "medium"
+    },
+    {
+      "id": 410,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "LLM Serving Frameworks",
+      "text": "Quantized Deployment — GGUF, GPTQ, AWQ on consumer GPUs",
+      "difficulty": "medium"
+    },
+    {
+      "id": 411,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "LLM Serving Frameworks",
+      "text": "Latency Optimization — KV cache, speculative decoding, batching",
+      "difficulty": "medium"
+    },
+    {
+      "id": 412,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "LLM Serving Frameworks",
+      "text": "Cost Optimization — choosing model size, caching, batching",
+      "difficulty": "medium"
+    },
+    {
+      "id": 413,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "LLM Serving Frameworks",
+      "text": "Scaling LLM Systems — horizontal scaling, load balancing",
+      "difficulty": "medium"
+    },
+    {
+      "id": 414,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "Infrastructure",
+      "text": "Docker — containerization for AI services",
+      "difficulty": "medium"
+    },
+    {
+      "id": 415,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "Infrastructure",
+      "text": "Kubernetes — orchestration, scaling pods",
+      "difficulty": "medium"
+    },
+    {
+      "id": 416,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "Infrastructure",
+      "text": "Nginx — reverse proxy, load balancing",
+      "difficulty": "medium"
+    },
+    {
+      "id": 417,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "Infrastructure",
+      "text": "Redis — caching embeddings, session state",
+      "difficulty": "medium"
+    },
+    {
+      "id": 418,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "Infrastructure",
+      "text": "Celery + RabbitMQ — async task queues for ML jobs",
+      "difficulty": "medium"
+    },
+    {
+      "id": 419,
+      "sectionId": 8,
+      "sectionName": "AI Engineering & Infrastructure",
+      "tier": 1,
+      "topic": "Infrastructure",
+      "text": "Deploying an LLM Application — cloud vs on-prem",
+      "difficulty": "easy"
+    },
+    {
+      "id": 420,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "PDF Processing",
+      "text": "Text PDFs vs Scanned PDFs — fundamental difference",
+      "difficulty": "easy"
+    },
+    {
+      "id": 421,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "PDF Processing",
+      "text": "Can Scanned PDFs Be Read by PyPDF? (No — needs OCR)",
+      "difficulty": "medium"
+    },
+    {
+      "id": 422,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "PDF Processing",
+      "text": "PyPDF — text extraction from native PDFs",
+      "difficulty": "medium"
+    },
+    {
+      "id": 423,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "PDF Processing",
+      "text": "PDFPlumber — table-aware extraction, bounding boxes",
+      "difficulty": "medium"
+    },
+    {
+      "id": 424,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "PDF Processing",
+      "text": "PyMuPDF (fitz) — fast extraction, image rendering",
+      "difficulty": "medium"
+    },
+    {
+      "id": 425,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "PDF Processing",
+      "text": "Combining Text Extraction + OCR in One Pipeline",
+      "difficulty": "medium"
+    },
+    {
+      "id": 426,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "PDF Processing",
+      "text": "RAG with PDFs — chunking strategies for documents",
+      "difficulty": "medium"
+    },
+    {
+      "id": 427,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "OCR",
+      "text": "What is OCR — character recognition pipeline",
+      "difficulty": "easy"
+    },
+    {
+      "id": 428,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "OCR",
+      "text": "Tesseract — open-source OCR, language packs",
+      "difficulty": "medium"
+    },
+    {
+      "id": 429,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "OCR",
+      "text": "EasyOCR — deep learning-based, multi-language",
+      "difficulty": "medium"
+    },
+    {
+      "id": 430,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "OCR",
+      "text": "Tesseract vs EasyOCR — accuracy, speed, use cases",
+      "difficulty": "easy"
+    },
+    {
+      "id": 431,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "OCR",
+      "text": "Azure Document Intelligence — cloud OCR with structure",
+      "difficulty": "medium"
+    },
+    {
+      "id": 432,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "OCR",
+      "text": "AWS Textract — table/form extraction",
+      "difficulty": "medium"
+    },
+    {
+      "id": 433,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "OCR",
+      "text": "Google Document AI",
+      "difficulty": "medium"
+    },
+    {
+      "id": 434,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "OCR",
+      "text": "Preprocessing for Better OCR — deskewing, binarization, denoising",
+      "difficulty": "medium"
+    },
+    {
+      "id": 435,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "OCR",
+      "text": "Common Causes of OCR Failures",
+      "difficulty": "medium"
+    },
+    {
+      "id": 436,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "Document Extraction & Pipelines",
+      "text": "Invoice Data Extraction — field detection, structured output",
+      "difficulty": "medium"
+    },
+    {
+      "id": 437,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "Document Extraction & Pipelines",
+      "text": "Contract Extraction — clause identification, NER",
+      "difficulty": "medium"
+    },
+    {
+      "id": 438,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "Document Extraction & Pipelines",
+      "text": "Resume Parsing — section detection, entity extraction",
+      "difficulty": "medium"
+    },
+    {
+      "id": 439,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "Document Extraction & Pipelines",
+      "text": "Extracting Structured JSON with LLM — prompt design",
+      "difficulty": "medium"
+    },
+    {
+      "id": 440,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "Document Extraction & Pipelines",
+      "text": "Building a Document Processing Pipeline — OCR → chunk → embed → index",
+      "difficulty": "medium"
+    },
+    {
+      "id": 441,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "Document Extraction & Pipelines",
+      "text": "Design a Production Document Processing Pipeline",
+      "difficulty": "hard"
+    },
+    {
+      "id": 442,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "Document Extraction & Pipelines",
+      "text": "ChromaDB vs FAISS — local vector stores comparison",
+      "difficulty": "easy"
+    },
+    {
+      "id": 443,
+      "sectionId": 9,
+      "sectionName": "Document AI, OCR & PDF",
+      "tier": 1,
+      "topic": "Document Extraction & Pipelines",
+      "text": "Building a Local AI Stack with Ollama",
+      "difficulty": "medium"
+    },
+    {
+      "id": 444,
+      "sectionId": 10,
+      "sectionName": "MLOps & Production ML",
+      "tier": 1,
+      "topic": "MLOps Lifecycle",
+      "text": "What is MLOps — DevOps + ML lifecycle",
+      "difficulty": "easy"
+    },
+    {
+      "id": 445,
+      "sectionId": 10,
+      "sectionName": "MLOps & Production ML",
+      "tier": 1,
+      "topic": "MLOps Lifecycle",
+      "text": "CI/CD for ML — data validation, model training, deployment gates",
+      "difficulty": "medium"
+    },
+    {
+      "id": 446,
+      "sectionId": 10,
+      "sectionName": "MLOps & Production ML",
+      "tier": 1,
+      "topic": "MLOps Lifecycle",
+      "text": "Model Registry — versioning, lineage, promotion stages",
+      "difficulty": "medium"
+    },
+    {
+      "id": 447,
+      "sectionId": 10,
+      "sectionName": "MLOps & Production ML",
+      "tier": 1,
+      "topic": "MLOps Lifecycle",
+      "text": "MLflow — experiment tracking, model registry, serving",
+      "difficulty": "medium"
+    },
+    {
+      "id": 448,
+      "sectionId": 10,
+      "sectionName": "MLOps & Production ML",
+      "tier": 1,
+      "topic": "MLOps Lifecycle",
+      "text": "Kubeflow — Kubernetes-native ML pipelines",
+      "difficulty": "medium"
+    },
+    {
+      "id": 449,
+      "sectionId": 10,
+      "sectionName": "MLOps & Production ML",
+      "tier": 1,
+      "topic": "MLOps Lifecycle",
+      "text": "Airflow — workflow orchestration, DAGs",
+      "difficulty": "medium"
+    },
+    {
+      "id": 450,
+      "sectionId": 10,
+      "sectionName": "MLOps & Production ML",
+      "tier": 1,
+      "topic": "MLOps Lifecycle",
+      "text": "Feature Store — offline vs online store, consistency",
+      "difficulty": "easy"
+    },
+    {
+      "id": 451,
+      "sectionId": 10,
+      "sectionName": "MLOps & Production ML",
+      "tier": 1,
+      "topic": "MLOps Lifecycle",
+      "text": "Feature Pipelines — real-time vs batch feature computation",
+      "difficulty": "easy"
+    },
+    {
+      "id": 452,
+      "sectionId": 10,
+      "sectionName": "MLOps & Production ML",
+      "tier": 1,
+      "topic": "MLOps Lifecycle",
+      "text": "End-to-End ML Platform Design",
+      "difficulty": "medium"
+    },
+    {
+      "id": 453,
+      "sectionId": 10,
+      "sectionName": "MLOps & Production ML",
+      "tier": 1,
+      "topic": "Drift & Monitoring",
+      "text": "Model Drift — performance degradation over time",
+      "difficulty": "medium"
+    },
+    {
+      "id": 454,
+      "sectionId": 10,
+      "sectionName": "MLOps & Production ML",
+      "tier": 1,
+      "topic": "Drift & Monitoring",
+      "text": "Data Drift — input distribution shift",
+      "difficulty": "medium"
+    },
+    {
+      "id": 455,
+      "sectionId": 10,
+      "sectionName": "MLOps & Production ML",
+      "tier": 1,
+      "topic": "Drift & Monitoring",
+      "text": "Concept Drift — label relationship change",
+      "difficulty": "medium"
+    },
+    {
+      "id": 456,
+      "sectionId": 10,
+      "sectionName": "MLOps & Production ML",
+      "tier": 1,
+      "topic": "Drift & Monitoring",
+      "text": "How to Monitor ML Models — metrics, dashboards, alerts",
+      "difficulty": "medium"
+    },
+    {
+      "id": 457,
+      "sectionId": 10,
+      "sectionName": "MLOps & Production ML",
+      "tier": 1,
+      "topic": "Drift & Monitoring",
+      "text": "Model Versioning — tracking artifacts and metadata",
+      "difficulty": "medium"
+    },
+    {
+      "id": 458,
+      "sectionId": 10,
+      "sectionName": "MLOps & Production ML",
+      "tier": 1,
+      "topic": "Drift & Monitoring",
+      "text": "Retraining Triggers — scheduled vs drift-based",
+      "difficulty": "easy"
+    },
+    {
+      "id": 459,
+      "sectionId": 10,
+      "sectionName": "MLOps & Production ML",
+      "tier": 1,
+      "topic": "Deployment Strategies",
+      "text": "Blue-Green Deployment — zero-downtime switching",
+      "difficulty": "medium"
+    },
+    {
+      "id": 460,
+      "sectionId": 10,
+      "sectionName": "MLOps & Production ML",
+      "tier": 1,
+      "topic": "Deployment Strategies",
+      "text": "Canary Deployment — gradual traffic ramp-up",
+      "difficulty": "medium"
+    },
+    {
+      "id": 461,
+      "sectionId": 10,
+      "sectionName": "MLOps & Production ML",
+      "tier": 1,
+      "topic": "Deployment Strategies",
+      "text": "Shadow Deployment — offline evaluation on live traffic",
+      "difficulty": "medium"
+    },
+    {
+      "id": 462,
+      "sectionId": 10,
+      "sectionName": "MLOps & Production ML",
+      "tier": 1,
+      "topic": "Deployment Strategies",
+      "text": "A/B Testing Models — online model comparison",
+      "difficulty": "medium"
+    },
+    {
+      "id": 463,
+      "sectionId": 10,
+      "sectionName": "MLOps & Production ML",
+      "tier": 1,
+      "topic": "Deployment Strategies",
+      "text": "Online vs Batch Inference — latency vs throughput tradeoff",
+      "difficulty": "easy"
+    },
+    {
+      "id": 464,
+      "sectionId": 10,
+      "sectionName": "MLOps & Production ML",
+      "tier": 1,
+      "topic": "Deployment Strategies",
+      "text": "Scaling RAG Systems — indexing, retrieval, generation layers",
+      "difficulty": "medium"
+    },
+    {
+      "id": 465,
+      "sectionId": 10,
+      "sectionName": "MLOps & Production ML",
+      "tier": 1,
+      "topic": "Deployment Strategies",
+      "text": "Scaling Agent Systems — task queues, parallelism",
+      "difficulty": "medium"
+    },
+    {
+      "id": 466,
+      "sectionId": 10,
+      "sectionName": "MLOps & Production ML",
+      "tier": 1,
+      "topic": "Deployment Strategies",
+      "text": "Production Failure Scenarios — debugging model degradation",
+      "difficulty": "medium"
+    },
+    {
+      "id": 467,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "Recommendation Systems",
+      "text": "Design Amazon Recommendation System — collaborative filtering + DL",
+      "difficulty": "hard"
+    },
+    {
+      "id": 468,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "Recommendation Systems",
+      "text": "Design YouTube Recommendation System — two-tower, engagement signals",
+      "difficulty": "medium"
+    },
+    {
+      "id": 469,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "Recommendation Systems",
+      "text": "Design Netflix Recommendation Engine — matrix factorization, contextual",
+      "difficulty": "medium"
+    },
+    {
+      "id": 470,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "Recommendation Systems",
+      "text": "Design LinkedIn Job Recommendation — candidate-job matching",
+      "difficulty": "medium"
+    },
+    {
+      "id": 471,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "Recommendation Systems",
+      "text": "Design Personalized Feed Ranking — multi-objective, diversity",
+      "difficulty": "medium"
+    },
+    {
+      "id": 472,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "Recommendation Systems",
+      "text": "Design Ad Click Prediction System — logistic regression → DNN",
+      "difficulty": "hard"
+    },
+    {
+      "id": 473,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "Recommendation Systems",
+      "text": "How Would You Rank Products in E-Commerce",
+      "difficulty": "medium"
+    },
+    {
+      "id": 474,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "Recommendation Systems",
+      "text": "Collaborative Filtering — user-based, item-based, matrix factorization",
+      "difficulty": "medium"
+    },
+    {
+      "id": 475,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "Recommendation Systems",
+      "text": "Content-Based Filtering vs Collaborative Filtering",
+      "difficulty": "easy"
+    },
+    {
+      "id": 476,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "Recommendation Systems",
+      "text": "Two-Tower Architecture for Retrieval",
+      "difficulty": "medium"
+    },
+    {
+      "id": 477,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "Recommendation Systems",
+      "text": "Cold Start Problem — new user, new item strategies",
+      "difficulty": "medium"
+    },
+    {
+      "id": 478,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "Search & Retrieval",
+      "text": "Design Google Search Ranking System — multi-stage ranking",
+      "difficulty": "medium"
+    },
+    {
+      "id": 479,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "Search & Retrieval",
+      "text": "Semantic Search — embedding-based vs keyword-based",
+      "difficulty": "easy"
+    },
+    {
+      "id": 480,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "Search & Retrieval",
+      "text": "Hybrid Search — BM25 + dense retrieval",
+      "difficulty": "medium"
+    },
+    {
+      "id": 481,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "Search & Retrieval",
+      "text": "Learning to Rank — pointwise, pairwise, listwise",
+      "difficulty": "medium"
+    },
+    {
+      "id": 482,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "Search & Retrieval",
+      "text": "Embedding Search vs Keyword Search — tradeoffs",
+      "difficulty": "easy"
+    },
+    {
+      "id": 483,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "Fraud & Safety",
+      "text": "Design Real-Time Fraud Detection — feature engineering, streaming",
+      "difficulty": "medium"
+    },
+    {
+      "id": 484,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "Fraud & Safety",
+      "text": "Design Spam Detection System — text classification, behavioral signals",
+      "difficulty": "medium"
+    },
+    {
+      "id": 485,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "Fraud & Safety",
+      "text": "How to Predict Customer Churn",
+      "difficulty": "medium"
+    },
+    {
+      "id": 486,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "Fraud & Safety",
+      "text": "How to Improve CTR by 10% — feature ideas, model improvements",
+      "difficulty": "medium"
+    },
+    {
+      "id": 487,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "Fraud & Safety",
+      "text": "Anomaly Detection — isolation forest, autoencoders, statistical",
+      "difficulty": "medium"
+    },
+    {
+      "id": 488,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "ML Infrastructure Design",
+      "text": "Design Large-Scale Feature Store",
+      "difficulty": "hard"
+    },
+    {
+      "id": 489,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "ML Infrastructure Design",
+      "text": "Design Auto Labeling System — active learning, pseudo-labeling",
+      "difficulty": "hard"
+    },
+    {
+      "id": 490,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "ML Infrastructure Design",
+      "text": "Design Predictive Typing System — n-gram + neural, latency constraints",
+      "difficulty": "medium"
+    },
+    {
+      "id": 491,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "ML Infrastructure Design",
+      "text": "Design End-to-End ML Platform",
+      "difficulty": "medium"
+    },
+    {
+      "id": 492,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "ML Infrastructure Design",
+      "text": "Design ML Pipeline for 1M Users",
+      "difficulty": "medium"
+    },
+    {
+      "id": 493,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "ML Infrastructure Design",
+      "text": "Tradeoffs Between Cost, Latency, and Quality",
+      "difficulty": "medium"
+    },
+    {
+      "id": 494,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "LLM & Agent System Design",
+      "text": "Design LLM-Based Customer Support Agent — RAG + tools + escalation",
+      "difficulty": "medium"
+    },
+    {
+      "id": 495,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "LLM & Agent System Design",
+      "text": "Design AI Copilot for Developers — code completion, context awareness",
+      "difficulty": "hard"
+    },
+    {
+      "id": 496,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "LLM & Agent System Design",
+      "text": "Design a Chatbot from Scratch",
+      "difficulty": "hard"
+    },
+    {
+      "id": 497,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "LLM & Agent System Design",
+      "text": "Design a Resume Screening System",
+      "difficulty": "hard"
+    },
+    {
+      "id": 498,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "LLM & Agent System Design",
+      "text": "Design a Document Classification Pipeline",
+      "difficulty": "hard"
+    },
+    {
+      "id": 499,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "LLM & Agent System Design",
+      "text": "How to Evaluate an LLM Chatbot — automated + human eval",
+      "difficulty": "medium"
+    },
+    {
+      "id": 500,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "LLM & Agent System Design",
+      "text": "Build RAG for Company Documents — full architecture",
+      "difficulty": "medium"
+    },
+    {
+      "id": 501,
+      "sectionId": 11,
+      "sectionName": "System Design (MNC-Level)",
+      "tier": 2,
+      "topic": "LLM & Agent System Design",
+      "text": "Design a Local AI Stack Using Ollama",
+      "difficulty": "hard"
+    },
+    {
+      "id": 502,
+      "sectionId": 12,
+      "sectionName": "Behavioral Questions",
+      "tier": 1,
+      "topic": "Standard Behavioral",
+      "text": "Tell me about yourself — structured 2-minute pitch",
+      "difficulty": "medium"
+    },
+    {
+      "id": 503,
+      "sectionId": 12,
+      "sectionName": "Behavioral Questions",
+      "tier": 1,
+      "topic": "Standard Behavioral",
+      "text": "Explain your latest ML project end-to-end",
+      "difficulty": "medium"
+    },
+    {
+      "id": 504,
+      "sectionId": 12,
+      "sectionName": "Behavioral Questions",
+      "tier": 1,
+      "topic": "Standard Behavioral",
+      "text": "Describe a project you're most proud of",
+      "difficulty": "medium"
+    },
+    {
+      "id": 505,
+      "sectionId": 12,
+      "sectionName": "Behavioral Questions",
+      "tier": 1,
+      "topic": "Standard Behavioral",
+      "text": "Biggest technical challenge in a project and how you solved it",
+      "difficulty": "medium"
+    },
+    {
+      "id": 506,
+      "sectionId": 12,
+      "sectionName": "Behavioral Questions",
+      "tier": 1,
+      "topic": "Standard Behavioral",
+      "text": "Describe a failed ML experiment — what did you learn",
+      "difficulty": "medium"
+    },
+    {
+      "id": 507,
+      "sectionId": 12,
+      "sectionName": "Behavioral Questions",
+      "tier": 1,
+      "topic": "Standard Behavioral",
+      "text": "Tell me about a production incident and how you resolved it",
+      "difficulty": "medium"
+    },
+    {
+      "id": 508,
+      "sectionId": 12,
+      "sectionName": "Behavioral Questions",
+      "tier": 1,
+      "topic": "Standard Behavioral",
+      "text": "How do you handle disagreements with teammates or managers",
+      "difficulty": "medium"
+    },
+    {
+      "id": 509,
+      "sectionId": 12,
+      "sectionName": "Behavioral Questions",
+      "tier": 1,
+      "topic": "Standard Behavioral",
+      "text": "Explain a model you deployed — metrics, monitoring, impact",
+      "difficulty": "medium"
+    },
+    {
+      "id": 510,
+      "sectionId": 12,
+      "sectionName": "Behavioral Questions",
+      "tier": 1,
+      "topic": "Standard Behavioral",
+      "text": "Explain a project's impact using quantitative metrics",
+      "difficulty": "medium"
+    },
+    {
+      "id": 511,
+      "sectionId": 12,
+      "sectionName": "Behavioral Questions",
+      "tier": 1,
+      "topic": "Standard Behavioral",
+      "text": "Why do you want to join this company",
+      "difficulty": "medium"
+    },
+    {
+      "id": 512,
+      "sectionId": 12,
+      "sectionName": "Behavioral Questions",
+      "tier": 1,
+      "topic": "Standard Behavioral",
+      "text": "Describe a time you had to learn something new quickly",
+      "difficulty": "medium"
+    },
+    {
+      "id": 513,
+      "sectionId": 12,
+      "sectionName": "Behavioral Questions",
+      "tier": 1,
+      "topic": "Standard Behavioral",
+      "text": "How do you prioritize tasks when working on multiple projects",
+      "difficulty": "medium"
+    },
+    {
+      "id": 514,
+      "sectionId": 12,
+      "sectionName": "Behavioral Questions",
+      "tier": 1,
+      "topic": "Standard Behavioral",
+      "text": "Tell me about a time you influenced a technical decision",
+      "difficulty": "medium"
+    },
+    {
+      "id": 515,
+      "sectionId": 12,
+      "sectionName": "Behavioral Questions",
+      "tier": 1,
+      "topic": "Standard Behavioral",
+      "text": "Describe a time you mentored someone",
+      "difficulty": "medium"
+    },
+    {
+      "id": 516,
+      "sectionId": 13,
+      "sectionName": "Priority Tiers & Study Plan",
+      "tier": 1,
+      "topic": "Top 20 Must-Master Questions",
+      "text": "Bias vs Variance Tradeoff",
+      "difficulty": "easy"
+    },
+    {
+      "id": 517,
+      "sectionId": 13,
+      "sectionName": "Priority Tiers & Study Plan",
+      "tier": 1,
+      "topic": "Top 20 Must-Master Questions",
+      "text": "Precision vs Recall — when each matters",
+      "difficulty": "easy"
+    },
+    {
+      "id": 518,
+      "sectionId": 13,
+      "sectionName": "Priority Tiers & Study Plan",
+      "tier": 1,
+      "topic": "Top 20 Must-Master Questions",
+      "text": "ROC-AUC — interpretation and construction",
+      "difficulty": "medium"
+    },
+    {
+      "id": 519,
+      "sectionId": 13,
+      "sectionName": "Priority Tiers & Study Plan",
+      "tier": 1,
+      "topic": "Top 20 Must-Master Questions",
+      "text": "Cross Validation — K-Fold, stratified, time-series",
+      "difficulty": "medium"
+    },
+    {
+      "id": 520,
+      "sectionId": 13,
+      "sectionName": "Priority Tiers & Study Plan",
+      "tier": 1,
+      "topic": "Top 20 Must-Master Questions",
+      "text": "Overfitting — causes and prevention",
+      "difficulty": "medium"
+    },
+    {
+      "id": 521,
+      "sectionId": 13,
+      "sectionName": "Priority Tiers & Study Plan",
+      "tier": 1,
+      "topic": "Top 20 Must-Master Questions",
+      "text": "PCA — intuition, algorithm, scree plot",
+      "difficulty": "medium"
+    },
+    {
+      "id": 522,
+      "sectionId": 13,
+      "sectionName": "Priority Tiers & Study Plan",
+      "tier": 1,
+      "topic": "Top 20 Must-Master Questions",
+      "text": "Random Forest — why it works, feature importance",
+      "difficulty": "medium"
+    },
+    {
+      "id": 523,
+      "sectionId": 13,
+      "sectionName": "Priority Tiers & Study Plan",
+      "tier": 1,
+      "topic": "Top 20 Must-Master Questions",
+      "text": "XGBoost — architecture, hyperparameter tuning",
+      "difficulty": "medium"
+    },
+    {
+      "id": 524,
+      "sectionId": 13,
+      "sectionName": "Priority Tiers & Study Plan",
+      "tier": 1,
+      "topic": "Top 20 Must-Master Questions",
+      "text": "CNN — architecture, conv/pool layers, use cases",
+      "difficulty": "medium"
+    },
+    {
+      "id": 525,
+      "sectionId": 13,
+      "sectionName": "Priority Tiers & Study Plan",
+      "tier": 1,
+      "topic": "Top 20 Must-Master Questions",
+      "text": "Transformer — encoder/decoder, attention mechanism",
+      "difficulty": "medium"
+    },
+    {
+      "id": 526,
+      "sectionId": 13,
+      "sectionName": "Priority Tiers & Study Plan",
+      "tier": 1,
+      "topic": "Top 20 Must-Master Questions",
+      "text": "Attention — Q/K/V, scaled dot-product",
+      "difficulty": "medium"
+    },
+    {
+      "id": 527,
+      "sectionId": 13,
+      "sectionName": "Priority Tiers & Study Plan",
+      "tier": 1,
+      "topic": "Top 20 Must-Master Questions",
+      "text": "BERT vs GPT — bidirectionality, tasks, fine-tuning",
+      "difficulty": "easy"
+    },
+    {
+      "id": 528,
+      "sectionId": 13,
+      "sectionName": "Priority Tiers & Study Plan",
+      "tier": 1,
+      "topic": "Top 20 Must-Master Questions",
+      "text": "RAG — end-to-end pipeline design",
+      "difficulty": "medium"
+    },
+    {
+      "id": 529,
+      "sectionId": 13,
+      "sectionName": "Priority Tiers & Study Plan",
+      "tier": 1,
+      "topic": "Top 20 Must-Master Questions",
+      "text": "Vector Databases — HNSW, similarity metrics, scaling",
+      "difficulty": "medium"
+    },
+    {
+      "id": 530,
+      "sectionId": 13,
+      "sectionName": "Priority Tiers & Study Plan",
+      "tier": 1,
+      "topic": "Top 20 Must-Master Questions",
+      "text": "LLM Evaluation — metrics, frameworks (RAGAS, G-Eval)",
+      "difficulty": "medium"
+    },
+    {
+      "id": 531,
+      "sectionId": 13,
+      "sectionName": "Priority Tiers & Study Plan",
+      "tier": 1,
+      "topic": "Top 20 Must-Master Questions",
+      "text": "Model Drift — types, detection, remediation",
+      "difficulty": "medium"
+    },
+    {
+      "id": 532,
+      "sectionId": 13,
+      "sectionName": "Priority Tiers & Study Plan",
+      "tier": 1,
+      "topic": "Top 20 Must-Master Questions",
+      "text": "Recommendation Systems — two-tower, cold start, metrics",
+      "difficulty": "medium"
+    },
+    {
+      "id": 533,
+      "sectionId": 13,
+      "sectionName": "Priority Tiers & Study Plan",
+      "tier": 1,
+      "topic": "Top 20 Must-Master Questions",
+      "text": "Fraud Detection Design — real-time streaming pipeline",
+      "difficulty": "medium"
+    },
+    {
+      "id": 534,
+      "sectionId": 13,
+      "sectionName": "Priority Tiers & Study Plan",
+      "tier": 1,
+      "topic": "Top 20 Must-Master Questions",
+      "text": "Logistic Regression from Scratch — code + theory",
+      "difficulty": "hard"
+    },
+    {
+      "id": 535,
+      "sectionId": 13,
+      "sectionName": "Priority Tiers & Study Plan",
+      "tier": 1,
+      "topic": "Top 20 Must-Master Questions",
+      "text": "Explain Your ML Project End-to-End — impact + metrics",
+      "difficulty": "medium"
+    }
+  ]
+}

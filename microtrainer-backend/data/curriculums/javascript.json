@@ -1,110 +1,1371 @@
 {
   "technology": "JavaScript",
-  "totalConcepts": 5,
+  "totalConcepts": 37,
+  "sections": [
+    {
+      "id": "01",
+      "title": "JavaScript Foundations & Environment",
+      "moduleCount": 3
+    },
+    {
+      "id": "02",
+      "title": "Variables, Types & Operators",
+      "moduleCount": 4
+    },
+    {
+      "id": "03",
+      "title": "Control Flow & Iteration",
+      "moduleCount": 3
+    },
+    {
+      "id": "04",
+      "title": "Functions & Scope",
+      "moduleCount": 4
+    },
+    {
+      "id": "05",
+      "title": "Arrays & Objects",
+      "moduleCount": 4
+    },
+    {
+      "id": "06",
+      "title": "OOP, Prototypes & Classes",
+      "moduleCount": 3
+    },
+    {
+      "id": "07",
+      "title": "Modern JavaScript & Modules",
+      "moduleCount": 4
+    },
+    {
+      "id": "08",
+      "title": "Asynchronous JavaScript",
+      "moduleCount": 4
+    },
+    {
+      "id": "09",
+      "title": "Browser, DOM & Web APIs",
+      "moduleCount": 4
+    },
+    {
+      "id": "10",
+      "title": "Professional JavaScript & Capstone",
+      "moduleCount": 4
+    }
+  ],
   "concepts": [
     {
       "id": "js-1",
       "order": 1,
-      "title": "Variables and Data Types",
-      "description": "Learn about var, let, const and primitive data types",
+      "sectionId": "01",
+      "sectionTitle": "JavaScript Foundations & Environment",
+      "moduleNumber": 1,
+      "title": "Module 1: JavaScript Landscape & Career Paths",
+      "description": "What JavaScript is: language of the web + Node.js backend",
+      "topics": [
+        "What JavaScript is: language of the web + Node.js backend",
+        "Browser vs Node.js vs Deno — where code runs",
+        "Frontend vs full-stack roles: React, Node, TypeScript paths",
+        "ECMAScript versions (ES6+) and why 'modern JS' matters",
+        "How companies use JS: SPAs, APIs, mobile (React Native), tooling"
+      ],
+      "project": null,
       "objectives": [
-        "Understand variable declaration",
-        "Know the difference between var, let, and const",
-        "Identify primitive data types"
+        "What JavaScript is: language of the web + Node.js backend",
+        "Browser vs Node.js vs Deno — where code runs",
+        "Frontend vs full-stack roles: React, Node, TypeScript paths",
+        "ECMAScript versions (ES6+) and why 'modern JS' matters",
+        "How companies use JS: SPAs, APIs, mobile (React Native), tooling"
       ],
       "teachingContent": {
-        "beginner": "In JavaScript, we have three ways to declare variables: **var**, **let**, and **const**.\n\n**var** - The old way (function-scoped):\n```javascript\nvar name = 'John';\nvar age = 25;\n```\n\n**let** - Modern way for values that change (block-scoped):\n```javascript\nlet score = 0;\nscore = 10; // Can be changed\n```\n\n**const** - For values that should NOT change (block-scoped):\n```javascript\nconst PI = 3.14159;\nconst API_KEY = 'abc123';\n// PI = 3.14; // ❌ Error! Cannot reassign\n```\n\n**Key Differences:**\n- **var**: Function-scoped, can be redeclared, hoisted\n- **let**: Block-scoped, cannot be redeclared, not hoisted\n- **const**: Block-scoped, cannot be reassigned or redeclared\n\n**Best Practice:** Use `const` by default, use `let` when you need to reassign, avoid `var`.",
-        "intermediate": "JavaScript has three variable declaration keywords with important differences:\n\n**1. var (ES5 - Avoid in modern code)**\n- Function-scoped (not block-scoped)\n- Hoisted to top of function\n- Can be redeclared\n```javascript\nfunction example() {\n  var x = 1;\n  if (true) {\n    var x = 2; // Same variable!\n    console.log(x); // 2\n  }\n  console.log(x); // 2 (not 1!)\n}\n```\n\n**2. let (ES6 - Use for mutable values)**\n- Block-scoped\n- Not hoisted (temporal dead zone)\n- Cannot be redeclared in same scope\n```javascript\nlet count = 0;\ncount = 1; // ✅ OK\nlet count = 2; // ❌ Error\n\nif (true) {\n  let blockVar = 'inside';\n}\n// console.log(blockVar); // ❌ Error: not defined\n```\n\n**3. const (ES6 - Use by default)**\n- Block-scoped\n- Cannot be reassigned\n- Must be initialized\n```javascript\nconst MAX = 100;\n// MAX = 200; // ❌ Error\n\nconst user = { name: 'John' };\nuser.name = 'Jane'; // ✅ OK (object properties can change)\nuser = {}; // ❌ Error (cannot reassign)\n```\n\n**Primitive Data Types:**\n- `string`: 'hello', \"world\", \\`template\\`\n- `number`: 42, 3.14, NaN, Infinity\n- `boolean`: true, false\n- `undefined`: variable declared but not assigned\n- `null`: intentional absence of value\n- `symbol`: unique identifier (ES6)\n- `bigint`: large integers (ES2020)",
-        "advanced": "Understanding JavaScript's variable declaration mechanisms and type system:\n\n**Variable Hoisting & Temporal Dead Zone:**\n```javascript\n// var hoisting\nconsole.log(x); // undefined (hoisted)\nvar x = 5;\n\n// let/const temporal dead zone\nconsole.log(y); // ❌ ReferenceError\nlet y = 5;\n```\n\n**Scope Chain & Closures:**\n```javascript\nfunction outer() {\n  const outerVar = 'outer';\n  \n  function inner() {\n    const innerVar = 'inner';\n    console.log(outerVar); // ✅ Closure\n  }\n  \n  return inner;\n}\n```\n\n**const with Objects (Shallow Immutability):**\n```javascript\nconst obj = { a: 1 };\nobj.a = 2; // ✅ OK (property mutation)\nobj.b = 3; // ✅ OK (adding property)\nobj = {}; // ❌ Error (reassignment)\n\n// Deep immutability requires Object.freeze()\nconst frozen = Object.freeze({ a: 1 });\nfrozen.a = 2; // ❌ Fails silently (strict mode: Error)\n```\n\n**Type Coercion & Checking:**\n```javascript\n// Loose equality (type coercion)\n'5' == 5; // true\n0 == false; // true\n\n// Strict equality (no coercion)\n'5' === 5; // false\n0 === false; // false\n\n// Type checking\ntypeof 'hello'; // 'string'\ntypeof 42; // 'number'\ntypeof undefined; // 'undefined'\ntypeof null; // 'object' (historical bug!)\n```\n\n**Best Practices:**\n1. Use `const` by default\n2. Use `let` only when reassignment is needed\n3. Never use `var` in modern code\n4. Use strict equality (`===`) over loose (`==`)\n5. Understand the difference between `undefined` and `null`"
+        "beginner": "Introduction to JavaScript Landscape & Career Paths. What JavaScript is: language of the web + Node.js backend; Browser vs Node.js vs Deno — where code runs; Frontend vs full-stack roles: React, Node, TypeScript paths; ECMAScript versions (ES6+) and why 'modern JS' matters. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "JavaScript Landscape & Career Paths: What JavaScript is: language of the web + Node.js backend Browser vs Node.js vs Deno — where code runs Frontend vs full-stack roles: React, Node, TypeScript paths ECMAScript versions (ES6+) and why 'modern JS' matters How companies use JS: SPAs, APIs, mobile (React Native), tooling. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: JavaScript Landscape & Career Paths. What JavaScript is: language of the web + Node.js backend Browser vs Node.js vs Deno — where code runs Frontend vs full-stack roles: React, Node, TypeScript paths ECMAScript versions (ES6+) and why 'modern JS' matters How companies use JS: SPAs, APIs, mobile (React Native), tooling. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — JavaScript Landscape & Career Paths\n\nTOPICS TO COVER (in order):\n- What JavaScript is: language of the web + Node.js backend\n- Browser vs Node.js vs Deno — where code runs\n- Frontend vs full-stack roles: React, Node, TypeScript paths\n- ECMAScript versions (ES6+) and why 'modern JS' matters\n- How companies use JS: SPAs, APIs, mobile (React Native), tooling\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "What's the difference between let and const?",
-        "Give me an example of when to use const",
-        "What happens if you try to reassign a const variable?"
+        "Explain What JavaScript is with a concrete example.",
+        "How would you apply Browser vs Node.js vs Deno — where code runs in a real project?",
+        "What is a common beginner mistake with Frontend vs full-stack roles, and how do you avoid it?"
       ]
     },
     {
       "id": "js-2",
       "order": 2,
-      "title": "Functions",
-      "description": "Learn about function declarations, expressions, and arrow functions",
+      "sectionId": "01",
+      "sectionTitle": "JavaScript Foundations & Environment",
+      "moduleNumber": 2,
+      "title": "Module 2: DevTools, Console & Your First Program",
+      "description": "Browser DevTools: Console, Sources, Network tabs",
+      "topics": [
+        "Browser DevTools: Console, Sources, Network tabs",
+        "Running JS: <script>, defer/async, external files",
+        "console.log, console.error, debugging basics",
+        "Reading error messages (line numbers, stack traces)",
+        "VS Code setup: extensions, live server, formatting"
+      ],
+      "project": "Print a personalized greeting in the console and in an alert",
       "objectives": [
-        "Create and call functions",
-        "Understand function parameters and return values",
-        "Use arrow functions"
+        "Browser DevTools: Console, Sources, Network tabs",
+        "Running JS: <script>, defer/async, external files",
+        "console.log, console.error, debugging basics",
+        "Reading error messages (line numbers, stack traces)",
+        "VS Code setup: extensions, live server, formatting",
+        "Project: Print a personalized greeting in the console and in an alert"
       ],
       "teachingContent": {
-        "beginner": "Functions are reusable blocks of code. You define them once and can call them many times.",
-        "intermediate": "JavaScript has multiple ways to create functions: function declarations, function expressions, and arrow functions. Each has different behavior with 'this' binding.",
-        "advanced": "Understanding closures, higher-order functions, and the differences in 'this' binding between regular and arrow functions is essential."
+        "beginner": "Introduction to DevTools, Console & Your First Program. Browser DevTools: Console, Sources, Network tabs; Running JS: <script>, defer/async, external files; console.log, console.error, debugging basics; Reading error messages (line numbers, stack traces). Project: Print a personalized greeting in the console and in an alert. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "DevTools, Console & Your First Program: Browser DevTools: Console, Sources, Network tabs Running JS: <script>, defer/async, external files console.log, console.error, debugging basics Reading error messages (line numbers, stack traces) VS Code setup: extensions, live server, formatting. Project: Print a personalized greeting in the console and in an alert. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: DevTools, Console & Your First Program. Browser DevTools: Console, Sources, Network tabs Running JS: <script>, defer/async, external files console.log, console.error, debugging basics Reading error messages (line numbers, stack traces) VS Code setup: extensions, live server, formatting. Project: Print a personalized greeting in the console and in an alert. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — DevTools, Console & Your First Program\n\nTOPICS TO COVER (in order):\n- Browser DevTools: Console, Sources, Network tabs\n- Running JS: <script>, defer/async, external files\n- console.log, console.error, debugging basics\n- Reading error messages (line numbers, stack traces)\n- VS Code setup: extensions, live server, formatting\n\nHANDS-ON PROJECT: Print a personalized greeting in the console and in an alert\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "Write a simple function that adds two numbers",
-        "What's the difference between a function declaration and arrow function?",
-        "What does a function return if there's no return statement?"
+        "Explain Browser DevTools with a concrete example.",
+        "How would you apply Running JS in a real project?",
+        "What is a common beginner mistake with console.log, console.error, debugging basics, and how do you avoid it?"
       ]
     },
     {
       "id": "js-3",
       "order": 3,
-      "title": "Arrays and Array Methods",
-      "description": "Work with arrays and common array methods",
+      "sectionId": "01",
+      "sectionTitle": "JavaScript Foundations & Environment",
+      "moduleNumber": 3,
+      "title": "Module 3: Syntax, Comments & Strict Mode",
+      "description": "Statements vs expressions; semicolons (ASI)",
+      "topics": [
+        "Statements vs expressions; semicolons (ASI)",
+        "Comments: single-line, block, JSDoc intro",
+        "'use strict' and common strict-mode errors",
+        "Identifiers, reserved words, camelCase conventions",
+        "Code style: readability, linting (ESLint overview)"
+      ],
+      "project": null,
       "objectives": [
-        "Create and manipulate arrays",
-        "Use map, filter, reduce",
-        "Understand array iteration"
+        "Statements vs expressions; semicolons (ASI)",
+        "Comments: single-line, block, JSDoc intro",
+        "'use strict' and common strict-mode errors",
+        "Identifiers, reserved words, camelCase conventions",
+        "Code style: readability, linting (ESLint overview)"
       ],
       "teachingContent": {
-        "beginner": "Arrays are lists that can store multiple values. You can add, remove, and access items using methods.",
-        "intermediate": "JavaScript arrays have powerful methods like map (transform), filter (select), and reduce (accumulate) for functional programming.",
-        "advanced": "Master array methods, understand their time complexity, and know when to use forEach vs map vs for loops."
+        "beginner": "Introduction to Syntax, Comments & Strict Mode. Statements vs expressions; semicolons (ASI); Comments: single-line, block, JSDoc intro; 'use strict' and common strict-mode errors; Identifiers, reserved words, camelCase conventions. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Syntax, Comments & Strict Mode: Statements vs expressions; semicolons (ASI) Comments: single-line, block, JSDoc intro 'use strict' and common strict-mode errors Identifiers, reserved words, camelCase conventions Code style: readability, linting (ESLint overview). Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Syntax, Comments & Strict Mode. Statements vs expressions; semicolons (ASI) Comments: single-line, block, JSDoc intro 'use strict' and common strict-mode errors Identifiers, reserved words, camelCase conventions Code style: readability, linting (ESLint overview). Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — Syntax, Comments & Strict Mode\n\nTOPICS TO COVER (in order):\n- Statements vs expressions; semicolons (ASI)\n- Comments: single-line, block, JSDoc intro\n- 'use strict' and common strict-mode errors\n- Identifiers, reserved words, camelCase conventions\n- Code style: readability, linting (ESLint overview)\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "How do you add an item to the end of an array?",
-        "What does the map method do?",
-        "Give me an example of using filter"
+        "Explain Statements vs expressions; semicolons (ASI) with a concrete example.",
+        "How would you apply Comments in a real project?",
+        "What is a common beginner mistake with 'use strict' and common strict-mode errors, and how do you avoid it?"
       ]
     },
     {
       "id": "js-4",
       "order": 4,
-      "title": "Objects and Object Methods",
-      "description": "Learn about JavaScript objects and how to work with them",
+      "sectionId": "02",
+      "sectionTitle": "Variables, Types & Operators",
+      "moduleNumber": 1,
+      "title": "Module 4: Variables: let, const & var",
+      "description": "Declaring variables: let, const, var",
+      "topics": [
+        "Declaring variables: let, const, var",
+        "Block scope vs function scope",
+        "Reassignment rules; const with objects/arrays",
+        "Hoisting and temporal dead zone (let/const)",
+        "Best practice: const by default, let when needed, avoid var"
+      ],
+      "project": null,
       "objectives": [
-        "Create and access object properties",
-        "Use object methods",
-        "Understand object destructuring"
+        "Declaring variables: let, const, var",
+        "Block scope vs function scope",
+        "Reassignment rules; const with objects/arrays",
+        "Hoisting and temporal dead zone (let/const)",
+        "Best practice: const by default, let when needed, avoid var"
       ],
       "teachingContent": {
-        "beginner": "Objects are collections of key-value pairs. They let you group related data together.",
-        "intermediate": "Objects can contain properties and methods. You can access them using dot notation or bracket notation.",
-        "advanced": "Understanding prototypes, property descriptors, and the difference between Object.create, object literals, and constructor functions."
+        "beginner": "Introduction to Variables: let, const & var. Declaring variables: let, const, var; Block scope vs function scope; Reassignment rules; const with objects/arrays; Hoisting and temporal dead zone (let/const). Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Variables: let, const & var: Declaring variables: let, const, var Block scope vs function scope Reassignment rules; const with objects/arrays Hoisting and temporal dead zone (let/const) Best practice: const by default, let when needed, avoid var. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Variables: let, const & var. Declaring variables: let, const, var Block scope vs function scope Reassignment rules; const with objects/arrays Hoisting and temporal dead zone (let/const) Best practice: const by default, let when needed, avoid var. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — Variables: let, const & var\n\nTOPICS TO COVER (in order):\n- Declaring variables: let, const, var\n- Block scope vs function scope\n- Reassignment rules; const with objects/arrays\n- Hoisting and temporal dead zone (let/const)\n- Best practice: const by default, let when needed, avoid var\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "How do you access a property in an object?",
-        "What's the difference between dot notation and bracket notation?",
-        "How do you add a new property to an existing object?"
+        "Explain Declaring variables with a concrete example.",
+        "How would you apply Block scope vs function scope in a real project?",
+        "What is a common beginner mistake with Reassignment rules; const with objects/arrays, and how do you avoid it?"
       ]
     },
     {
       "id": "js-5",
       "order": 5,
-      "title": "Conditional Statements",
-      "description": "Learn if-else, switch, and ternary operators",
+      "sectionId": "02",
+      "sectionTitle": "Variables, Types & Operators",
+      "moduleNumber": 2,
+      "title": "Module 5: Primitive Types & Type Checking",
+      "description": "string, number, boolean, undefined, null, symbol, bigint",
+      "topics": [
+        "string, number, boolean, undefined, null, symbol, bigint",
+        "typeof operator and its quirks (typeof null)",
+        "Number pitfalls: NaN, Infinity, floating point",
+        "Template literals and string methods overview",
+        "null vs undefined — when to use each"
+      ],
+      "project": "Build a mini profile card using strings and numbers",
       "objectives": [
-        "Use if-else statements",
-        "Understand switch statements",
-        "Use ternary operators"
+        "string, number, boolean, undefined, null, symbol, bigint",
+        "typeof operator and its quirks (typeof null)",
+        "Number pitfalls: NaN, Infinity, floating point",
+        "Template literals and string methods overview",
+        "null vs undefined — when to use each",
+        "Project: Build a mini profile card using strings and numbers"
       ],
       "teachingContent": {
-        "beginner": "Conditional statements let your code make decisions. If something is true, do this; otherwise, do that.",
-        "intermediate": "JavaScript has if-else, switch, and ternary operators for conditional logic. Each has its use case.",
-        "advanced": "Understanding truthy/falsy values, short-circuit evaluation, and when to use each conditional construct."
+        "beginner": "Introduction to Primitive Types & Type Checking. string, number, boolean, undefined, null, symbol, bigint; typeof operator and its quirks (typeof null); Number pitfalls: NaN, Infinity, floating point; Template literals and string methods overview. Project: Build a mini profile card using strings and numbers. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Primitive Types & Type Checking: string, number, boolean, undefined, null, symbol, bigint typeof operator and its quirks (typeof null) Number pitfalls: NaN, Infinity, floating point Template literals and string methods overview null vs undefined — when to use each. Project: Build a mini profile card using strings and numbers. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Primitive Types & Type Checking. string, number, boolean, undefined, null, symbol, bigint typeof operator and its quirks (typeof null) Number pitfalls: NaN, Infinity, floating point Template literals and string methods overview null vs undefined — when to use each. Project: Build a mini profile card using strings and numbers. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — Primitive Types & Type Checking\n\nTOPICS TO COVER (in order):\n- string, number, boolean, undefined, null, symbol, bigint\n- typeof operator and its quirks (typeof null)\n- Number pitfalls: NaN, Infinity, floating point\n- Template literals and string methods overview\n- null vs undefined — when to use each\n\nHANDS-ON PROJECT: Build a mini profile card using strings and numbers\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "Write an if-else statement that checks if a number is positive",
-        "When would you use a switch statement instead of if-else?",
-        "What is a ternary operator?"
+        "Explain string, number, boolean, undefined, null, symbol, bigint with a concrete example.",
+        "How would you apply typeof operator and its quirks (typeof null) in a real project?",
+        "What is a common beginner mistake with Number pitfalls, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-6",
+      "order": 6,
+      "sectionId": "02",
+      "sectionTitle": "Variables, Types & Operators",
+      "moduleNumber": 3,
+      "title": "Module 6: Operators & Expressions",
+      "description": "Arithmetic, assignment, comparison operators",
+      "topics": [
+        "Arithmetic, assignment, comparison operators",
+        "Logical operators: &&, ||, !",
+        "Unary +, increment/decrement",
+        "Operator precedence and parentheses",
+        "Optional chaining (?.) and nullish coalescing (??)"
+      ],
+      "project": null,
+      "objectives": [
+        "Arithmetic, assignment, comparison operators",
+        "Logical operators: &&, ||, !",
+        "Unary +, increment/decrement",
+        "Operator precedence and parentheses",
+        "Optional chaining (?.) and nullish coalescing (??)"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Operators & Expressions. Arithmetic, assignment, comparison operators; Logical operators: &&, ||, !; Unary +, increment/decrement; Operator precedence and parentheses. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Operators & Expressions: Arithmetic, assignment, comparison operators Logical operators: &&, ||, ! Unary +, increment/decrement Operator precedence and parentheses Optional chaining (?.) and nullish coalescing (??). Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Operators & Expressions. Arithmetic, assignment, comparison operators Logical operators: &&, ||, ! Unary +, increment/decrement Operator precedence and parentheses Optional chaining (?.) and nullish coalescing (??). Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Operators & Expressions\n\nTOPICS TO COVER (in order):\n- Arithmetic, assignment, comparison operators\n- Logical operators: &&, ||, !\n- Unary +, increment/decrement\n- Operator precedence and parentheses\n- Optional chaining (?.) and nullish coalescing (??)\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Arithmetic, assignment, comparison operators with a concrete example.",
+        "How would you apply Logical operators in a real project?",
+        "What is a common beginner mistake with Unary +, increment/decrement, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-7",
+      "order": 7,
+      "sectionId": "02",
+      "sectionTitle": "Variables, Types & Operators",
+      "moduleNumber": 4,
+      "title": "Module 7: Type Coercion & Equality",
+      "description": "Implicit vs explicit coercion (String(), Number())",
+      "topics": [
+        "Implicit vs explicit coercion (String(), Number())",
+        "== vs === and Object.is",
+        "Truthy and falsy values",
+        "Short-circuit evaluation in conditions",
+        "Common bugs from coercion in interviews"
+      ],
+      "project": null,
+      "objectives": [
+        "Implicit vs explicit coercion (String(), Number())",
+        "== vs === and Object.is",
+        "Truthy and falsy values",
+        "Short-circuit evaluation in conditions",
+        "Common bugs from coercion in interviews"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Type Coercion & Equality. Implicit vs explicit coercion (String(), Number()); == vs === and Object.is; Truthy and falsy values; Short-circuit evaluation in conditions. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Type Coercion & Equality: Implicit vs explicit coercion (String(), Number()) == vs === and Object.is Truthy and falsy values Short-circuit evaluation in conditions Common bugs from coercion in interviews. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Type Coercion & Equality. Implicit vs explicit coercion (String(), Number()) == vs === and Object.is Truthy and falsy values Short-circuit evaluation in conditions Common bugs from coercion in interviews. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Type Coercion & Equality\n\nTOPICS TO COVER (in order):\n- Implicit vs explicit coercion (String(), Number())\n- == vs === and Object.is\n- Truthy and falsy values\n- Short-circuit evaluation in conditions\n- Common bugs from coercion in interviews\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Implicit vs explicit coercion (String(), Number()) with a concrete example.",
+        "How would you apply == vs === and Object.is in a real project?",
+        "What is a common beginner mistake with Truthy and falsy values, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-8",
+      "order": 8,
+      "sectionId": "03",
+      "sectionTitle": "Control Flow & Iteration",
+      "moduleNumber": 1,
+      "title": "Module 8: Conditionals: if, else, switch, ternary",
+      "description": "if / else if / else patterns",
+      "topics": [
+        "if / else if / else patterns",
+        "switch with break, fall-through, default",
+        "Ternary operator and when to avoid nesting",
+        "Guard clauses and early returns",
+        "Writing readable conditional logic"
+      ],
+      "project": "Grade calculator using if/else and switch",
+      "objectives": [
+        "if / else if / else patterns",
+        "switch with break, fall-through, default",
+        "Ternary operator and when to avoid nesting",
+        "Guard clauses and early returns",
+        "Writing readable conditional logic",
+        "Project: Grade calculator using if/else and switch"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Conditionals: if, else, switch, ternary. if / else if / else patterns; switch with break, fall-through, default; Ternary operator and when to avoid nesting; Guard clauses and early returns. Project: Grade calculator using if/else and switch. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Conditionals: if, else, switch, ternary: if / else if / else patterns switch with break, fall-through, default Ternary operator and when to avoid nesting Guard clauses and early returns Writing readable conditional logic. Project: Grade calculator using if/else and switch. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Conditionals: if, else, switch, ternary. if / else if / else patterns switch with break, fall-through, default Ternary operator and when to avoid nesting Guard clauses and early returns Writing readable conditional logic. Project: Grade calculator using if/else and switch. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Conditionals: if, else, switch, ternary\n\nTOPICS TO COVER (in order):\n- if / else if / else patterns\n- switch with break, fall-through, default\n- Ternary operator and when to avoid nesting\n- Guard clauses and early returns\n- Writing readable conditional logic\n\nHANDS-ON PROJECT: Grade calculator using if/else and switch\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain if / else if / else patterns with a concrete example.",
+        "How would you apply switch with break, fall-through, default in a real project?",
+        "What is a common beginner mistake with Ternary operator and when to avoid nesting, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-9",
+      "order": 9,
+      "sectionId": "03",
+      "sectionTitle": "Control Flow & Iteration",
+      "moduleNumber": 2,
+      "title": "Module 9: Loops: for, while, do-while",
+      "description": "for loop: init, condition, increment",
+      "topics": [
+        "for loop: init, condition, increment",
+        "while and do-while loops",
+        "break and continue",
+        "Nested loops and complexity intuition",
+        "Choosing the right loop for the task"
+      ],
+      "project": null,
+      "objectives": [
+        "for loop: init, condition, increment",
+        "while and do-while loops",
+        "break and continue",
+        "Nested loops and complexity intuition",
+        "Choosing the right loop for the task"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Loops: for, while, do-while. for loop: init, condition, increment; while and do-while loops; break and continue; Nested loops and complexity intuition. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Loops: for, while, do-while: for loop: init, condition, increment while and do-while loops break and continue Nested loops and complexity intuition Choosing the right loop for the task. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Loops: for, while, do-while. for loop: init, condition, increment while and do-while loops break and continue Nested loops and complexity intuition Choosing the right loop for the task. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Loops: for, while, do-while\n\nTOPICS TO COVER (in order):\n- for loop: init, condition, increment\n- while and do-while loops\n- break and continue\n- Nested loops and complexity intuition\n- Choosing the right loop for the task\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain for loop with a concrete example.",
+        "How would you apply while and do-while loops in a real project?",
+        "What is a common beginner mistake with break and continue, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-10",
+      "order": 10,
+      "sectionId": "03",
+      "sectionTitle": "Control Flow & Iteration",
+      "moduleNumber": 3,
+      "title": "Module 10: for...of, for...in & Iterables",
+      "description": "for...of with arrays and strings",
+      "topics": [
+        "for...of with arrays and strings",
+        "for...in on objects (and why not on arrays)",
+        "Array.from and spread for iteration",
+        "Intro to iterables and iterators",
+        "Avoiding off-by-one and infinite loops"
+      ],
+      "project": "FizzBuzz and sum of array using loops",
+      "objectives": [
+        "for...of with arrays and strings",
+        "for...in on objects (and why not on arrays)",
+        "Array.from and spread for iteration",
+        "Intro to iterables and iterators",
+        "Avoiding off-by-one and infinite loops",
+        "Project: FizzBuzz and sum of array using loops"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to for...of, for...in & Iterables. for...of with arrays and strings; for...in on objects (and why not on arrays); Array.from and spread for iteration; Intro to iterables and iterators. Project: FizzBuzz and sum of array using loops. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "for...of, for...in & Iterables: for...of with arrays and strings for...in on objects (and why not on arrays) Array.from and spread for iteration Intro to iterables and iterators Avoiding off-by-one and infinite loops. Project: FizzBuzz and sum of array using loops. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: for...of, for...in & Iterables. for...of with arrays and strings for...in on objects (and why not on arrays) Array.from and spread for iteration Intro to iterables and iterators Avoiding off-by-one and infinite loops. Project: FizzBuzz and sum of array using loops. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — for...of, for...in & Iterables\n\nTOPICS TO COVER (in order):\n- for...of with arrays and strings\n- for...in on objects (and why not on arrays)\n- Array.from and spread for iteration\n- Intro to iterables and iterators\n- Avoiding off-by-one and infinite loops\n\nHANDS-ON PROJECT: FizzBuzz and sum of array using loops\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain for...of with arrays and strings with a concrete example.",
+        "How would you apply for...in on objects (and why not on arrays) in a real project?",
+        "What is a common beginner mistake with Array.from and spread for iteration, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-11",
+      "order": 11,
+      "sectionId": "04",
+      "sectionTitle": "Functions & Scope",
+      "moduleNumber": 1,
+      "title": "Module 11: Function Declarations & Expressions",
+      "description": "Declaring and calling functions",
+      "topics": [
+        "Declaring and calling functions",
+        "Function declarations vs expressions",
+        "Return values and early return",
+        "Function scope and shadowing",
+        "Pure functions vs side effects (intro)"
+      ],
+      "project": null,
+      "objectives": [
+        "Declaring and calling functions",
+        "Function declarations vs expressions",
+        "Return values and early return",
+        "Function scope and shadowing",
+        "Pure functions vs side effects (intro)"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Function Declarations & Expressions. Declaring and calling functions; Function declarations vs expressions; Return values and early return; Function scope and shadowing. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Function Declarations & Expressions: Declaring and calling functions Function declarations vs expressions Return values and early return Function scope and shadowing Pure functions vs side effects (intro). Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Function Declarations & Expressions. Declaring and calling functions Function declarations vs expressions Return values and early return Function scope and shadowing Pure functions vs side effects (intro). Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Function Declarations & Expressions\n\nTOPICS TO COVER (in order):\n- Declaring and calling functions\n- Function declarations vs expressions\n- Return values and early return\n- Function scope and shadowing\n- Pure functions vs side effects (intro)\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Declaring and calling functions with a concrete example.",
+        "How would you apply Function declarations vs expressions in a real project?",
+        "What is a common beginner mistake with Return values and early return, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-12",
+      "order": 12,
+      "sectionId": "04",
+      "sectionTitle": "Functions & Scope",
+      "moduleNumber": 2,
+      "title": "Module 12: Parameters: default, rest & arguments",
+      "description": "Parameters vs arguments object (legacy)",
+      "topics": [
+        "Parameters vs arguments object (legacy)",
+        "Default parameters",
+        "Rest parameters (...args)",
+        "Pass by value vs reference for objects",
+        "Validating inputs at function boundaries"
+      ],
+      "project": "Reusable math utility library (add, avg, max)",
+      "objectives": [
+        "Parameters vs arguments object (legacy)",
+        "Default parameters",
+        "Rest parameters (...args)",
+        "Pass by value vs reference for objects",
+        "Validating inputs at function boundaries",
+        "Project: Reusable math utility library (add, avg, max)"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Parameters: default, rest & arguments. Parameters vs arguments object (legacy); Default parameters; Rest parameters (...args); Pass by value vs reference for objects. Project: Reusable math utility library (add, avg, max). Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Parameters: default, rest & arguments: Parameters vs arguments object (legacy) Default parameters Rest parameters (...args) Pass by value vs reference for objects Validating inputs at function boundaries. Project: Reusable math utility library (add, avg, max). Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Parameters: default, rest & arguments. Parameters vs arguments object (legacy) Default parameters Rest parameters (...args) Pass by value vs reference for objects Validating inputs at function boundaries. Project: Reusable math utility library (add, avg, max). Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Parameters: default, rest & arguments\n\nTOPICS TO COVER (in order):\n- Parameters vs arguments object (legacy)\n- Default parameters\n- Rest parameters (...args)\n- Pass by value vs reference for objects\n- Validating inputs at function boundaries\n\nHANDS-ON PROJECT: Reusable math utility library (add, avg, max)\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Parameters vs arguments object (legacy) with a concrete example.",
+        "How would you apply Default parameters in a real project?",
+        "What is a common beginner mistake with Rest parameters (...args), and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-13",
+      "order": 13,
+      "sectionId": "04",
+      "sectionTitle": "Functions & Scope",
+      "moduleNumber": 3,
+      "title": "Module 13: Arrow Functions & this (Basics)",
+      "description": "Arrow function syntax and implicit return",
+      "topics": [
+        "Arrow function syntax and implicit return",
+        "When not to use arrows (methods, constructors)",
+        "Lexical this vs dynamic this (overview)",
+        "Callbacks and passing functions as values",
+        "Higher-order functions intro"
+      ],
+      "project": null,
+      "objectives": [
+        "Arrow function syntax and implicit return",
+        "When not to use arrows (methods, constructors)",
+        "Lexical this vs dynamic this (overview)",
+        "Callbacks and passing functions as values",
+        "Higher-order functions intro"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Arrow Functions & this (Basics). Arrow function syntax and implicit return; When not to use arrows (methods, constructors); Lexical this vs dynamic this (overview); Callbacks and passing functions as values. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Arrow Functions & this (Basics): Arrow function syntax and implicit return When not to use arrows (methods, constructors) Lexical this vs dynamic this (overview) Callbacks and passing functions as values Higher-order functions intro. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Arrow Functions & this (Basics). Arrow function syntax and implicit return When not to use arrows (methods, constructors) Lexical this vs dynamic this (overview) Callbacks and passing functions as values Higher-order functions intro. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Arrow Functions & this (Basics)\n\nTOPICS TO COVER (in order):\n- Arrow function syntax and implicit return\n- When not to use arrows (methods, constructors)\n- Lexical this vs dynamic this (overview)\n- Callbacks and passing functions as values\n- Higher-order functions intro\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Arrow function syntax and implicit return with a concrete example.",
+        "How would you apply When not to use arrows (methods, constructors) in a real project?",
+        "What is a common beginner mistake with Lexical this vs dynamic this (overview), and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-14",
+      "order": 14,
+      "sectionId": "04",
+      "sectionTitle": "Functions & Scope",
+      "moduleNumber": 4,
+      "title": "Module 14: Closures, Scope Chain & IIFE",
+      "description": "Lexical scope and scope chain",
+      "topics": [
+        "Lexical scope and scope chain",
+        "Closures: private variables, factories",
+        "IIFE pattern and module pattern (historical)",
+        "Common closure interview questions",
+        "Memory leaks from closures (awareness)"
+      ],
+      "project": "Counter factory and createMultiplier using closures",
+      "objectives": [
+        "Lexical scope and scope chain",
+        "Closures: private variables, factories",
+        "IIFE pattern and module pattern (historical)",
+        "Common closure interview questions",
+        "Memory leaks from closures (awareness)",
+        "Project: Counter factory and createMultiplier using closures"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Closures, Scope Chain & IIFE. Lexical scope and scope chain; Closures: private variables, factories; IIFE pattern and module pattern (historical); Common closure interview questions. Project: Counter factory and createMultiplier using closures. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Closures, Scope Chain & IIFE: Lexical scope and scope chain Closures: private variables, factories IIFE pattern and module pattern (historical) Common closure interview questions Memory leaks from closures (awareness). Project: Counter factory and createMultiplier using closures. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Closures, Scope Chain & IIFE. Lexical scope and scope chain Closures: private variables, factories IIFE pattern and module pattern (historical) Common closure interview questions Memory leaks from closures (awareness). Project: Counter factory and createMultiplier using closures. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Closures, Scope Chain & IIFE\n\nTOPICS TO COVER (in order):\n- Lexical scope and scope chain\n- Closures: private variables, factories\n- IIFE pattern and module pattern (historical)\n- Common closure interview questions\n- Memory leaks from closures (awareness)\n\nHANDS-ON PROJECT: Counter factory and createMultiplier using closures\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Lexical scope and scope chain with a concrete example.",
+        "How would you apply Closures in a real project?",
+        "What is a common beginner mistake with IIFE pattern and module pattern (historical), and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-15",
+      "order": 15,
+      "sectionId": "05",
+      "sectionTitle": "Arrays & Objects",
+      "moduleNumber": 1,
+      "title": "Module 15: Arrays: Creation, Mutation & Reference",
+      "description": "Creating arrays; length property",
+      "topics": [
+        "Creating arrays; length property",
+        "push, pop, shift, unshift, splice, slice",
+        "Indexing, updating, copying arrays",
+        "Shallow copy vs deep copy (spread, slice)",
+        "Multi-dimensional arrays"
+      ],
+      "project": null,
+      "objectives": [
+        "Creating arrays; length property",
+        "push, pop, shift, unshift, splice, slice",
+        "Indexing, updating, copying arrays",
+        "Shallow copy vs deep copy (spread, slice)",
+        "Multi-dimensional arrays"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Arrays: Creation, Mutation & Reference. Creating arrays; length property; push, pop, shift, unshift, splice, slice; Indexing, updating, copying arrays; Shallow copy vs deep copy (spread, slice). Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Arrays: Creation, Mutation & Reference: Creating arrays; length property push, pop, shift, unshift, splice, slice Indexing, updating, copying arrays Shallow copy vs deep copy (spread, slice) Multi-dimensional arrays. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Arrays: Creation, Mutation & Reference. Creating arrays; length property push, pop, shift, unshift, splice, slice Indexing, updating, copying arrays Shallow copy vs deep copy (spread, slice) Multi-dimensional arrays. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Arrays: Creation, Mutation & Reference\n\nTOPICS TO COVER (in order):\n- Creating arrays; length property\n- push, pop, shift, unshift, splice, slice\n- Indexing, updating, copying arrays\n- Shallow copy vs deep copy (spread, slice)\n- Multi-dimensional arrays\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Creating arrays; length property with a concrete example.",
+        "How would you apply push, pop, shift, unshift, splice, slice in a real project?",
+        "What is a common beginner mistake with Indexing, updating, copying arrays, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-16",
+      "order": 16,
+      "sectionId": "05",
+      "sectionTitle": "Arrays & Objects",
+      "moduleNumber": 2,
+      "title": "Module 16: Array Methods: map, filter, reduce",
+      "description": "forEach vs map — when to use each",
+      "topics": [
+        "forEach vs map — when to use each",
+        "filter, find, findIndex, some, every",
+        "reduce: sum, groupBy patterns",
+        "sort with compare functions",
+        "Chaining array methods cleanly"
+      ],
+      "project": "Transform a list of products (map/filter/reduce)",
+      "objectives": [
+        "forEach vs map — when to use each",
+        "filter, find, findIndex, some, every",
+        "reduce: sum, groupBy patterns",
+        "sort with compare functions",
+        "Chaining array methods cleanly",
+        "Project: Transform a list of products (map/filter/reduce)"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Array Methods: map, filter, reduce. forEach vs map — when to use each; filter, find, findIndex, some, every; reduce: sum, groupBy patterns; sort with compare functions. Project: Transform a list of products (map/filter/reduce). Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Array Methods: map, filter, reduce: forEach vs map — when to use each filter, find, findIndex, some, every reduce: sum, groupBy patterns sort with compare functions Chaining array methods cleanly. Project: Transform a list of products (map/filter/reduce). Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Array Methods: map, filter, reduce. forEach vs map — when to use each filter, find, findIndex, some, every reduce: sum, groupBy patterns sort with compare functions Chaining array methods cleanly. Project: Transform a list of products (map/filter/reduce). Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Array Methods: map, filter, reduce\n\nTOPICS TO COVER (in order):\n- forEach vs map — when to use each\n- filter, find, findIndex, some, every\n- reduce: sum, groupBy patterns\n- sort with compare functions\n- Chaining array methods cleanly\n\nHANDS-ON PROJECT: Transform a list of products (map/filter/reduce)\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain forEach vs map — when to use each with a concrete example.",
+        "How would you apply filter, find, findIndex, some, every in a real project?",
+        "What is a common beginner mistake with reduce, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-17",
+      "order": 17,
+      "sectionId": "05",
+      "sectionTitle": "Arrays & Objects",
+      "moduleNumber": 3,
+      "title": "Module 17: Objects: Keys, Methods & References",
+      "description": "Object literals; dot vs bracket notation",
+      "topics": [
+        "Object literals; dot vs bracket notation",
+        "Adding, updating, deleting properties",
+        "Methods and this in object literals",
+        "Object.keys, values, entries",
+        "Comparing objects by reference"
+      ],
+      "project": null,
+      "objectives": [
+        "Object literals; dot vs bracket notation",
+        "Adding, updating, deleting properties",
+        "Methods and this in object literals",
+        "Object.keys, values, entries",
+        "Comparing objects by reference"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Objects: Keys, Methods & References. Object literals; dot vs bracket notation; Adding, updating, deleting properties; Methods and this in object literals; Object.keys, values, entries. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Objects: Keys, Methods & References: Object literals; dot vs bracket notation Adding, updating, deleting properties Methods and this in object literals Object.keys, values, entries Comparing objects by reference. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Objects: Keys, Methods & References. Object literals; dot vs bracket notation Adding, updating, deleting properties Methods and this in object literals Object.keys, values, entries Comparing objects by reference. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Objects: Keys, Methods & References\n\nTOPICS TO COVER (in order):\n- Object literals; dot vs bracket notation\n- Adding, updating, deleting properties\n- Methods and this in object literals\n- Object.keys, values, entries\n- Comparing objects by reference\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Object literals; dot vs bracket notation with a concrete example.",
+        "How would you apply Adding, updating, deleting properties in a real project?",
+        "What is a common beginner mistake with Methods and this in object literals, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-18",
+      "order": 18,
+      "sectionId": "05",
+      "sectionTitle": "Arrays & Objects",
+      "moduleNumber": 4,
+      "title": "Module 18: Destructuring, Spread & Rest",
+      "description": "Array and object destructuring",
+      "topics": [
+        "Array and object destructuring",
+        "Default values in destructuring",
+        "Spread in arrays and objects",
+        "Rest in destructuring and parameters",
+        "Cloning and merging objects safely"
+      ],
+      "project": "Merge user settings objects with spread",
+      "objectives": [
+        "Array and object destructuring",
+        "Default values in destructuring",
+        "Spread in arrays and objects",
+        "Rest in destructuring and parameters",
+        "Cloning and merging objects safely",
+        "Project: Merge user settings objects with spread"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Destructuring, Spread & Rest. Array and object destructuring; Default values in destructuring; Spread in arrays and objects; Rest in destructuring and parameters. Project: Merge user settings objects with spread. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Destructuring, Spread & Rest: Array and object destructuring Default values in destructuring Spread in arrays and objects Rest in destructuring and parameters Cloning and merging objects safely. Project: Merge user settings objects with spread. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Destructuring, Spread & Rest. Array and object destructuring Default values in destructuring Spread in arrays and objects Rest in destructuring and parameters Cloning and merging objects safely. Project: Merge user settings objects with spread. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Destructuring, Spread & Rest\n\nTOPICS TO COVER (in order):\n- Array and object destructuring\n- Default values in destructuring\n- Spread in arrays and objects\n- Rest in destructuring and parameters\n- Cloning and merging objects safely\n\nHANDS-ON PROJECT: Merge user settings objects with spread\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Array and object destructuring with a concrete example.",
+        "How would you apply Default values in destructuring in a real project?",
+        "What is a common beginner mistake with Spread in arrays and objects, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-19",
+      "order": 19,
+      "sectionId": "06",
+      "sectionTitle": "OOP, Prototypes & Classes",
+      "moduleNumber": 1,
+      "title": "Module 19: Prototypes & Prototype Chain",
+      "description": "[[Prototype]] and __proto__ (conceptual)",
+      "topics": [
+        "[[Prototype]] and __proto__ (conceptual)",
+        "Object.create and prototype inheritance",
+        "Constructor functions and .prototype",
+        "instanceof and constructor property",
+        "Composition over inheritance (intro)"
+      ],
+      "project": null,
+      "objectives": [
+        "[[Prototype]] and __proto__ (conceptual)",
+        "Object.create and prototype inheritance",
+        "Constructor functions and .prototype",
+        "instanceof and constructor property",
+        "Composition over inheritance (intro)"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Prototypes & Prototype Chain. [[Prototype]] and __proto__ (conceptual); Object.create and prototype inheritance; Constructor functions and .prototype; instanceof and constructor property. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Prototypes & Prototype Chain: [[Prototype]] and __proto__ (conceptual) Object.create and prototype inheritance Constructor functions and .prototype instanceof and constructor property Composition over inheritance (intro). Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Prototypes & Prototype Chain. [[Prototype]] and __proto__ (conceptual) Object.create and prototype inheritance Constructor functions and .prototype instanceof and constructor property Composition over inheritance (intro). Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Prototypes & Prototype Chain\n\nTOPICS TO COVER (in order):\n- [[Prototype]] and __proto__ (conceptual)\n- Object.create and prototype inheritance\n- Constructor functions and .prototype\n- instanceof and constructor property\n- Composition over inheritance (intro)\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain [[Prototype]] and __proto__ (conceptual) with a concrete example.",
+        "How would you apply Object.create and prototype inheritance in a real project?",
+        "What is a common beginner mistake with Constructor functions and .prototype, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-20",
+      "order": 20,
+      "sectionId": "06",
+      "sectionTitle": "OOP, Prototypes & Classes",
+      "moduleNumber": 2,
+      "title": "Module 20: ES6 Classes & Inheritance",
+      "description": "class syntax, constructor, methods",
+      "topics": [
+        "class syntax, constructor, methods",
+        "extends and super",
+        "Static methods and properties",
+        "Classes vs prototype mental model",
+        "When to use classes in modern codebases"
+      ],
+      "project": "Model a simple Library system with classes",
+      "objectives": [
+        "class syntax, constructor, methods",
+        "extends and super",
+        "Static methods and properties",
+        "Classes vs prototype mental model",
+        "When to use classes in modern codebases",
+        "Project: Model a simple Library system with classes"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to ES6 Classes & Inheritance. class syntax, constructor, methods; extends and super; Static methods and properties; Classes vs prototype mental model. Project: Model a simple Library system with classes. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "ES6 Classes & Inheritance: class syntax, constructor, methods extends and super Static methods and properties Classes vs prototype mental model When to use classes in modern codebases. Project: Model a simple Library system with classes. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: ES6 Classes & Inheritance. class syntax, constructor, methods extends and super Static methods and properties Classes vs prototype mental model When to use classes in modern codebases. Project: Model a simple Library system with classes. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — ES6 Classes & Inheritance\n\nTOPICS TO COVER (in order):\n- class syntax, constructor, methods\n- extends and super\n- Static methods and properties\n- Classes vs prototype mental model\n- When to use classes in modern codebases\n\nHANDS-ON PROJECT: Model a simple Library system with classes\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain class syntax, constructor, methods with a concrete example.",
+        "How would you apply extends and super in a real project?",
+        "What is a common beginner mistake with Static methods and properties, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-21",
+      "order": 21,
+      "sectionId": "06",
+      "sectionTitle": "OOP, Prototypes & Classes",
+      "moduleNumber": 3,
+      "title": "Module 21: Encapsulation & Object Patterns",
+      "description": "Private fields (#field) and methods",
+      "topics": [
+        "Private fields (#field) and methods",
+        "Getters and setters",
+        "Mixins and factory functions",
+        "JSON serialization: JSON.stringify/parse",
+        "Structured data patterns for APIs"
+      ],
+      "project": null,
+      "objectives": [
+        "Private fields (#field) and methods",
+        "Getters and setters",
+        "Mixins and factory functions",
+        "JSON serialization: JSON.stringify/parse",
+        "Structured data patterns for APIs"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Encapsulation & Object Patterns. Private fields (#field) and methods; Getters and setters; Mixins and factory functions; JSON serialization: JSON.stringify/parse. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Encapsulation & Object Patterns: Private fields (#field) and methods Getters and setters Mixins and factory functions JSON serialization: JSON.stringify/parse Structured data patterns for APIs. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Encapsulation & Object Patterns. Private fields (#field) and methods Getters and setters Mixins and factory functions JSON serialization: JSON.stringify/parse Structured data patterns for APIs. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Encapsulation & Object Patterns\n\nTOPICS TO COVER (in order):\n- Private fields (#field) and methods\n- Getters and setters\n- Mixins and factory functions\n- JSON serialization: JSON.stringify/parse\n- Structured data patterns for APIs\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Private fields (#field) and methods with a concrete example.",
+        "How would you apply Getters and setters in a real project?",
+        "What is a common beginner mistake with Mixins and factory functions, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-22",
+      "order": 22,
+      "sectionId": "07",
+      "sectionTitle": "Modern JavaScript & Modules",
+      "moduleNumber": 1,
+      "title": "Module 22: ES Modules: import & export",
+      "description": "Named vs default exports",
+      "topics": [
+        "Named vs default exports",
+        "import syntax and re-exporting",
+        "Module scope vs global scope",
+        "Dynamic import() for code splitting (intro)",
+        "Node ESM vs CommonJS (awareness)"
+      ],
+      "project": "Split utilities into ES modules in a small project",
+      "objectives": [
+        "Named vs default exports",
+        "import syntax and re-exporting",
+        "Module scope vs global scope",
+        "Dynamic import() for code splitting (intro)",
+        "Node ESM vs CommonJS (awareness)",
+        "Project: Split utilities into ES modules in a small project"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to ES Modules: import & export. Named vs default exports; import syntax and re-exporting; Module scope vs global scope; Dynamic import() for code splitting (intro). Project: Split utilities into ES modules in a small project. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "ES Modules: import & export: Named vs default exports import syntax and re-exporting Module scope vs global scope Dynamic import() for code splitting (intro) Node ESM vs CommonJS (awareness). Project: Split utilities into ES modules in a small project. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: ES Modules: import & export. Named vs default exports import syntax and re-exporting Module scope vs global scope Dynamic import() for code splitting (intro) Node ESM vs CommonJS (awareness). Project: Split utilities into ES modules in a small project. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — ES Modules: import & export\n\nTOPICS TO COVER (in order):\n- Named vs default exports\n- import syntax and re-exporting\n- Module scope vs global scope\n- Dynamic import() for code splitting (intro)\n- Node ESM vs CommonJS (awareness)\n\nHANDS-ON PROJECT: Split utilities into ES modules in a small project\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Named vs default exports with a concrete example.",
+        "How would you apply import syntax and re-exporting in a real project?",
+        "What is a common beginner mistake with Module scope vs global scope, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-23",
+      "order": 23,
+      "sectionId": "07",
+      "sectionTitle": "Modern JavaScript & Modules",
+      "moduleNumber": 2,
+      "title": "Module 23: Strings, Template Literals & Regex",
+      "description": "Template literals and tagged templates",
+      "topics": [
+        "Template literals and tagged templates",
+        "Common string methods: includes, slice, replace",
+        "Regular expressions: test, match, groups",
+        "Validating emails/phones with regex (basics)",
+        "Unicode and internationalization (awareness)"
+      ],
+      "project": null,
+      "objectives": [
+        "Template literals and tagged templates",
+        "Common string methods: includes, slice, replace",
+        "Regular expressions: test, match, groups",
+        "Validating emails/phones with regex (basics)",
+        "Unicode and internationalization (awareness)"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Strings, Template Literals & Regex. Template literals and tagged templates; Common string methods: includes, slice, replace; Regular expressions: test, match, groups; Validating emails/phones with regex (basics). Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Strings, Template Literals & Regex: Template literals and tagged templates Common string methods: includes, slice, replace Regular expressions: test, match, groups Validating emails/phones with regex (basics) Unicode and internationalization (awareness). Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Strings, Template Literals & Regex. Template literals and tagged templates Common string methods: includes, slice, replace Regular expressions: test, match, groups Validating emails/phones with regex (basics) Unicode and internationalization (awareness). Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Strings, Template Literals & Regex\n\nTOPICS TO COVER (in order):\n- Template literals and tagged templates\n- Common string methods: includes, slice, replace\n- Regular expressions: test, match, groups\n- Validating emails/phones with regex (basics)\n- Unicode and internationalization (awareness)\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Template literals and tagged templates with a concrete example.",
+        "How would you apply Common string methods in a real project?",
+        "What is a common beginner mistake with Regular expressions, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-24",
+      "order": 24,
+      "sectionId": "07",
+      "sectionTitle": "Modern JavaScript & Modules",
+      "moduleNumber": 3,
+      "title": "Module 24: Symbols, Iterators & Generators",
+      "description": "Symbol type and unique keys",
+      "topics": [
+        "Symbol type and unique keys",
+        "Custom iterables with Symbol.iterator",
+        "Generator functions and yield",
+        "Use cases: lazy sequences, custom iteration",
+        "When generators matter in real projects"
+      ],
+      "project": null,
+      "objectives": [
+        "Symbol type and unique keys",
+        "Custom iterables with Symbol.iterator",
+        "Generator functions and yield",
+        "Use cases: lazy sequences, custom iteration",
+        "When generators matter in real projects"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Symbols, Iterators & Generators. Symbol type and unique keys; Custom iterables with Symbol.iterator; Generator functions and yield; Use cases: lazy sequences, custom iteration. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Symbols, Iterators & Generators: Symbol type and unique keys Custom iterables with Symbol.iterator Generator functions and yield Use cases: lazy sequences, custom iteration When generators matter in real projects. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Symbols, Iterators & Generators. Symbol type and unique keys Custom iterables with Symbol.iterator Generator functions and yield Use cases: lazy sequences, custom iteration When generators matter in real projects. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Symbols, Iterators & Generators\n\nTOPICS TO COVER (in order):\n- Symbol type and unique keys\n- Custom iterables with Symbol.iterator\n- Generator functions and yield\n- Use cases: lazy sequences, custom iteration\n- When generators matter in real projects\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Symbol type and unique keys with a concrete example.",
+        "How would you apply Custom iterables with Symbol.iterator in a real project?",
+        "What is a common beginner mistake with Generator functions and yield, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-25",
+      "order": 25,
+      "sectionId": "07",
+      "sectionTitle": "Modern JavaScript & Modules",
+      "moduleNumber": 4,
+      "title": "Module 25: Error Handling & Debugging",
+      "description": "try / catch / finally",
+      "topics": [
+        "try / catch / finally",
+        "throwing custom Error objects",
+        "Async errors and unhandled rejections",
+        "Breakpoints, watch, call stack in DevTools",
+        "Source maps for bundled code (awareness)"
+      ],
+      "project": "Robust input parser with try/catch",
+      "objectives": [
+        "try / catch / finally",
+        "throwing custom Error objects",
+        "Async errors and unhandled rejections",
+        "Breakpoints, watch, call stack in DevTools",
+        "Source maps for bundled code (awareness)",
+        "Project: Robust input parser with try/catch"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Error Handling & Debugging. try / catch / finally; throwing custom Error objects; Async errors and unhandled rejections; Breakpoints, watch, call stack in DevTools. Project: Robust input parser with try/catch. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Error Handling & Debugging: try / catch / finally throwing custom Error objects Async errors and unhandled rejections Breakpoints, watch, call stack in DevTools Source maps for bundled code (awareness). Project: Robust input parser with try/catch. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Error Handling & Debugging. try / catch / finally throwing custom Error objects Async errors and unhandled rejections Breakpoints, watch, call stack in DevTools Source maps for bundled code (awareness). Project: Robust input parser with try/catch. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Error Handling & Debugging\n\nTOPICS TO COVER (in order):\n- try / catch / finally\n- throwing custom Error objects\n- Async errors and unhandled rejections\n- Breakpoints, watch, call stack in DevTools\n- Source maps for bundled code (awareness)\n\nHANDS-ON PROJECT: Robust input parser with try/catch\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain try / catch / finally with a concrete example.",
+        "How would you apply throwing custom Error objects in a real project?",
+        "What is a common beginner mistake with Async errors and unhandled rejections, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-26",
+      "order": 26,
+      "sectionId": "08",
+      "sectionTitle": "Asynchronous JavaScript",
+      "moduleNumber": 1,
+      "title": "Module 26: Callbacks & the Event Loop",
+      "description": "Synchronous vs asynchronous execution",
+      "topics": [
+        "Synchronous vs asynchronous execution",
+        "Callback pattern and callback hell",
+        "Event loop, macrotasks, microtasks (intuition)",
+        "setTimeout, setInterval, clearTimeout",
+        "DOM events as async callbacks"
+      ],
+      "project": null,
+      "objectives": [
+        "Synchronous vs asynchronous execution",
+        "Callback pattern and callback hell",
+        "Event loop, macrotasks, microtasks (intuition)",
+        "setTimeout, setInterval, clearTimeout",
+        "DOM events as async callbacks"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Callbacks & the Event Loop. Synchronous vs asynchronous execution; Callback pattern and callback hell; Event loop, macrotasks, microtasks (intuition); setTimeout, setInterval, clearTimeout. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Callbacks & the Event Loop: Synchronous vs asynchronous execution Callback pattern and callback hell Event loop, macrotasks, microtasks (intuition) setTimeout, setInterval, clearTimeout DOM events as async callbacks. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Callbacks & the Event Loop. Synchronous vs asynchronous execution Callback pattern and callback hell Event loop, macrotasks, microtasks (intuition) setTimeout, setInterval, clearTimeout DOM events as async callbacks. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Callbacks & the Event Loop\n\nTOPICS TO COVER (in order):\n- Synchronous vs asynchronous execution\n- Callback pattern and callback hell\n- Event loop, macrotasks, microtasks (intuition)\n- setTimeout, setInterval, clearTimeout\n- DOM events as async callbacks\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Synchronous vs asynchronous execution with a concrete example.",
+        "How would you apply Callback pattern and callback hell in a real project?",
+        "What is a common beginner mistake with Event loop, macrotasks, microtasks (intuition), and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-27",
+      "order": 27,
+      "sectionId": "08",
+      "sectionTitle": "Asynchronous JavaScript",
+      "moduleNumber": 2,
+      "title": "Module 27: Promises",
+      "description": "Creating promises; resolve/reject",
+      "topics": [
+        "Creating promises; resolve/reject",
+        "then, catch, finally chaining",
+        "Promise.all, Promise.race, Promise.allSettled",
+        "Converting callbacks to promises",
+        "Error propagation in promise chains"
+      ],
+      "project": "Fetch multiple JSON endpoints with Promise.all",
+      "objectives": [
+        "Creating promises; resolve/reject",
+        "then, catch, finally chaining",
+        "Promise.all, Promise.race, Promise.allSettled",
+        "Converting callbacks to promises",
+        "Error propagation in promise chains",
+        "Project: Fetch multiple JSON endpoints with Promise.all"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Promises. Creating promises; resolve/reject; then, catch, finally chaining; Promise.all, Promise.race, Promise.allSettled; Converting callbacks to promises. Project: Fetch multiple JSON endpoints with Promise.all. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Promises: Creating promises; resolve/reject then, catch, finally chaining Promise.all, Promise.race, Promise.allSettled Converting callbacks to promises Error propagation in promise chains. Project: Fetch multiple JSON endpoints with Promise.all. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Promises. Creating promises; resolve/reject then, catch, finally chaining Promise.all, Promise.race, Promise.allSettled Converting callbacks to promises Error propagation in promise chains. Project: Fetch multiple JSON endpoints with Promise.all. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Promises\n\nTOPICS TO COVER (in order):\n- Creating promises; resolve/reject\n- then, catch, finally chaining\n- Promise.all, Promise.race, Promise.allSettled\n- Converting callbacks to promises\n- Error propagation in promise chains\n\nHANDS-ON PROJECT: Fetch multiple JSON endpoints with Promise.all\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Creating promises; resolve/reject with a concrete example.",
+        "How would you apply then, catch, finally chaining in a real project?",
+        "What is a common beginner mistake with Promise.all, Promise.race, Promise.allSettled, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-28",
+      "order": 28,
+      "sectionId": "08",
+      "sectionTitle": "Asynchronous JavaScript",
+      "moduleNumber": 3,
+      "title": "Module 28: async/await",
+      "description": "async functions always return promises",
+      "topics": [
+        "async functions always return promises",
+        "await and sequential vs parallel awaits",
+        "try/catch with async/await",
+        "Top-level await in modules (awareness)",
+        "Refactoring promise chains to async/await"
+      ],
+      "project": "Weather app stub using async/await",
+      "objectives": [
+        "async functions always return promises",
+        "await and sequential vs parallel awaits",
+        "try/catch with async/await",
+        "Top-level await in modules (awareness)",
+        "Refactoring promise chains to async/await",
+        "Project: Weather app stub using async/await"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to async/await. async functions always return promises; await and sequential vs parallel awaits; try/catch with async/await; Top-level await in modules (awareness). Project: Weather app stub using async/await. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "async/await: async functions always return promises await and sequential vs parallel awaits try/catch with async/await Top-level await in modules (awareness) Refactoring promise chains to async/await. Project: Weather app stub using async/await. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: async/await. async functions always return promises await and sequential vs parallel awaits try/catch with async/await Top-level await in modules (awareness) Refactoring promise chains to async/await. Project: Weather app stub using async/await. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — async/await\n\nTOPICS TO COVER (in order):\n- async functions always return promises\n- await and sequential vs parallel awaits\n- try/catch with async/await\n- Top-level await in modules (awareness)\n- Refactoring promise chains to async/await\n\nHANDS-ON PROJECT: Weather app stub using async/await\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain async functions always return promises with a concrete example.",
+        "How would you apply await and sequential vs parallel awaits in a real project?",
+        "What is a common beginner mistake with try/catch with async/await, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-29",
+      "order": 29,
+      "sectionId": "08",
+      "sectionTitle": "Asynchronous JavaScript",
+      "moduleNumber": 4,
+      "title": "Module 29: Fetch API & Working with JSON",
+      "description": "fetch GET/POST; headers and body",
+      "topics": [
+        "fetch GET/POST; headers and body",
+        "Reading Response: json(), text(), status",
+        "REST conventions: CRUD, status codes",
+        "CORS basics (why requests fail)",
+        "AbortController for canceling requests"
+      ],
+      "project": "Display users from a public API on the page",
+      "objectives": [
+        "fetch GET/POST; headers and body",
+        "Reading Response: json(), text(), status",
+        "REST conventions: CRUD, status codes",
+        "CORS basics (why requests fail)",
+        "AbortController for canceling requests",
+        "Project: Display users from a public API on the page"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Fetch API & Working with JSON. fetch GET/POST; headers and body; Reading Response: json(), text(), status; REST conventions: CRUD, status codes; CORS basics (why requests fail). Project: Display users from a public API on the page. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Fetch API & Working with JSON: fetch GET/POST; headers and body Reading Response: json(), text(), status REST conventions: CRUD, status codes CORS basics (why requests fail) AbortController for canceling requests. Project: Display users from a public API on the page. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Fetch API & Working with JSON. fetch GET/POST; headers and body Reading Response: json(), text(), status REST conventions: CRUD, status codes CORS basics (why requests fail) AbortController for canceling requests. Project: Display users from a public API on the page. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Fetch API & Working with JSON\n\nTOPICS TO COVER (in order):\n- fetch GET/POST; headers and body\n- Reading Response: json(), text(), status\n- REST conventions: CRUD, status codes\n- CORS basics (why requests fail)\n- AbortController for canceling requests\n\nHANDS-ON PROJECT: Display users from a public API on the page\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain fetch GET/POST; headers and body with a concrete example.",
+        "How would you apply Reading Response in a real project?",
+        "What is a common beginner mistake with REST conventions, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-30",
+      "order": 30,
+      "sectionId": "09",
+      "sectionTitle": "Browser, DOM & Web APIs",
+      "moduleNumber": 1,
+      "title": "Module 30: DOM Selection & Manipulation",
+      "description": "DOM tree: nodes, elements, text nodes",
+      "topics": [
+        "DOM tree: nodes, elements, text nodes",
+        "querySelector, querySelectorAll, getElementById",
+        "Creating elements, append, prepend, remove",
+        "classList, attributes, dataset",
+        "innerHTML vs textContent (XSS awareness)"
+      ],
+      "project": "Todo list UI (add/remove items in DOM)",
+      "objectives": [
+        "DOM tree: nodes, elements, text nodes",
+        "querySelector, querySelectorAll, getElementById",
+        "Creating elements, append, prepend, remove",
+        "classList, attributes, dataset",
+        "innerHTML vs textContent (XSS awareness)",
+        "Project: Todo list UI (add/remove items in DOM)"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to DOM Selection & Manipulation. DOM tree: nodes, elements, text nodes; querySelector, querySelectorAll, getElementById; Creating elements, append, prepend, remove; classList, attributes, dataset. Project: Todo list UI (add/remove items in DOM). Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "DOM Selection & Manipulation: DOM tree: nodes, elements, text nodes querySelector, querySelectorAll, getElementById Creating elements, append, prepend, remove classList, attributes, dataset innerHTML vs textContent (XSS awareness). Project: Todo list UI (add/remove items in DOM). Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: DOM Selection & Manipulation. DOM tree: nodes, elements, text nodes querySelector, querySelectorAll, getElementById Creating elements, append, prepend, remove classList, attributes, dataset innerHTML vs textContent (XSS awareness). Project: Todo list UI (add/remove items in DOM). Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — DOM Selection & Manipulation\n\nTOPICS TO COVER (in order):\n- DOM tree: nodes, elements, text nodes\n- querySelector, querySelectorAll, getElementById\n- Creating elements, append, prepend, remove\n- classList, attributes, dataset\n- innerHTML vs textContent (XSS awareness)\n\nHANDS-ON PROJECT: Todo list UI (add/remove items in DOM)\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain DOM tree with a concrete example.",
+        "How would you apply querySelector, querySelectorAll, getElementById in a real project?",
+        "What is a common beginner mistake with Creating elements, append, prepend, remove, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-31",
+      "order": 31,
+      "sectionId": "09",
+      "sectionTitle": "Browser, DOM & Web APIs",
+      "moduleNumber": 2,
+      "title": "Module 31: Events: Bubbling, Delegation & Custom Events",
+      "description": "addEventListener; event object",
+      "topics": [
+        "addEventListener; event object",
+        "Bubbling, capturing, stopPropagation",
+        "Event delegation pattern",
+        "Custom events with dispatchEvent",
+        "Keyboard and form events"
+      ],
+      "project": null,
+      "objectives": [
+        "addEventListener; event object",
+        "Bubbling, capturing, stopPropagation",
+        "Event delegation pattern",
+        "Custom events with dispatchEvent",
+        "Keyboard and form events"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Events: Bubbling, Delegation & Custom Events. addEventListener; event object; Bubbling, capturing, stopPropagation; Event delegation pattern; Custom events with dispatchEvent. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Events: Bubbling, Delegation & Custom Events: addEventListener; event object Bubbling, capturing, stopPropagation Event delegation pattern Custom events with dispatchEvent Keyboard and form events. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Events: Bubbling, Delegation & Custom Events. addEventListener; event object Bubbling, capturing, stopPropagation Event delegation pattern Custom events with dispatchEvent Keyboard and form events. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Events: Bubbling, Delegation & Custom Events\n\nTOPICS TO COVER (in order):\n- addEventListener; event object\n- Bubbling, capturing, stopPropagation\n- Event delegation pattern\n- Custom events with dispatchEvent\n- Keyboard and form events\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain addEventListener; event object with a concrete example.",
+        "How would you apply Bubbling, capturing, stopPropagation in a real project?",
+        "What is a common beginner mistake with Event delegation pattern, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-32",
+      "order": 32,
+      "sectionId": "09",
+      "sectionTitle": "Browser, DOM & Web APIs",
+      "moduleNumber": 3,
+      "title": "Module 32: Forms, Validation & FormData",
+      "description": "Form elements and submit prevention",
+      "topics": [
+        "Form elements and submit prevention",
+        "Client-side validation strategies",
+        "FormData API and file inputs",
+        "Accessibility: labels, aria (intro)",
+        "Connecting forms to fetch POST"
+      ],
+      "project": "Contact form with validation",
+      "objectives": [
+        "Form elements and submit prevention",
+        "Client-side validation strategies",
+        "FormData API and file inputs",
+        "Accessibility: labels, aria (intro)",
+        "Connecting forms to fetch POST",
+        "Project: Contact form with validation"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Forms, Validation & FormData. Form elements and submit prevention; Client-side validation strategies; FormData API and file inputs; Accessibility: labels, aria (intro). Project: Contact form with validation. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Forms, Validation & FormData: Form elements and submit prevention Client-side validation strategies FormData API and file inputs Accessibility: labels, aria (intro) Connecting forms to fetch POST. Project: Contact form with validation. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Forms, Validation & FormData. Form elements and submit prevention Client-side validation strategies FormData API and file inputs Accessibility: labels, aria (intro) Connecting forms to fetch POST. Project: Contact form with validation. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Forms, Validation & FormData\n\nTOPICS TO COVER (in order):\n- Form elements and submit prevention\n- Client-side validation strategies\n- FormData API and file inputs\n- Accessibility: labels, aria (intro)\n- Connecting forms to fetch POST\n\nHANDS-ON PROJECT: Contact form with validation\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Form elements and submit prevention with a concrete example.",
+        "How would you apply Client-side validation strategies in a real project?",
+        "What is a common beginner mistake with FormData API and file inputs, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-33",
+      "order": 33,
+      "sectionId": "09",
+      "sectionTitle": "Browser, DOM & Web APIs",
+      "moduleNumber": 4,
+      "title": "Module 33: Web Storage, Cookies & Timers",
+      "description": "localStorage vs sessionStorage",
+      "topics": [
+        "localStorage vs sessionStorage",
+        "JSON persistence patterns",
+        "Cookies overview (httpOnly, secure — awareness)",
+        "requestAnimationFrame vs setInterval",
+        "Building stateful UIs without a framework"
+      ],
+      "project": "Persist todo list to localStorage",
+      "objectives": [
+        "localStorage vs sessionStorage",
+        "JSON persistence patterns",
+        "Cookies overview (httpOnly, secure — awareness)",
+        "requestAnimationFrame vs setInterval",
+        "Building stateful UIs without a framework",
+        "Project: Persist todo list to localStorage"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Web Storage, Cookies & Timers. localStorage vs sessionStorage; JSON persistence patterns; Cookies overview (httpOnly, secure — awareness); requestAnimationFrame vs setInterval. Project: Persist todo list to localStorage. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Web Storage, Cookies & Timers: localStorage vs sessionStorage JSON persistence patterns Cookies overview (httpOnly, secure — awareness) requestAnimationFrame vs setInterval Building stateful UIs without a framework. Project: Persist todo list to localStorage. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Web Storage, Cookies & Timers. localStorage vs sessionStorage JSON persistence patterns Cookies overview (httpOnly, secure — awareness) requestAnimationFrame vs setInterval Building stateful UIs without a framework. Project: Persist todo list to localStorage. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Web Storage, Cookies & Timers\n\nTOPICS TO COVER (in order):\n- localStorage vs sessionStorage\n- JSON persistence patterns\n- Cookies overview (httpOnly, secure — awareness)\n- requestAnimationFrame vs setInterval\n- Building stateful UIs without a framework\n\nHANDS-ON PROJECT: Persist todo list to localStorage\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain localStorage vs sessionStorage with a concrete example.",
+        "How would you apply JSON persistence patterns in a real project?",
+        "What is a common beginner mistake with Cookies overview (httpOnly, secure — awareness), and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-34",
+      "order": 34,
+      "sectionId": "10",
+      "sectionTitle": "Professional JavaScript & Capstone",
+      "moduleNumber": 1,
+      "title": "Module 34: Functional Patterns & Immutability",
+      "description": "Pure functions and side effects",
+      "topics": [
+        "Pure functions and side effects",
+        "Immutability with spread and structuredClone",
+        "Composition: pipe, compose patterns",
+        "Currying and partial application (intro)",
+        "When functional style helps in React/Redux"
+      ],
+      "project": null,
+      "objectives": [
+        "Pure functions and side effects",
+        "Immutability with spread and structuredClone",
+        "Composition: pipe, compose patterns",
+        "Currying and partial application (intro)",
+        "When functional style helps in React/Redux"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Functional Patterns & Immutability. Pure functions and side effects; Immutability with spread and structuredClone; Composition: pipe, compose patterns; Currying and partial application (intro). Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Functional Patterns & Immutability: Pure functions and side effects Immutability with spread and structuredClone Composition: pipe, compose patterns Currying and partial application (intro) When functional style helps in React/Redux. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Functional Patterns & Immutability. Pure functions and side effects Immutability with spread and structuredClone Composition: pipe, compose patterns Currying and partial application (intro) When functional style helps in React/Redux. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Functional Patterns & Immutability\n\nTOPICS TO COVER (in order):\n- Pure functions and side effects\n- Immutability with spread and structuredClone\n- Composition: pipe, compose patterns\n- Currying and partial application (intro)\n- When functional style helps in React/Redux\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Pure functions and side effects with a concrete example.",
+        "How would you apply Immutability with spread and structuredClone in a real project?",
+        "What is a common beginner mistake with Composition, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-35",
+      "order": 35,
+      "sectionId": "10",
+      "sectionTitle": "Professional JavaScript & Capstone",
+      "moduleNumber": 2,
+      "title": "Module 35: Testing with Jest",
+      "description": "Unit tests: describe, it, expect",
+      "topics": [
+        "Unit tests: describe, it, expect",
+        "Testing pure functions and edge cases",
+        "Mocking fetch and modules",
+        "Test-driven development (TDD) intro",
+        "CI running tests on push (awareness)"
+      ],
+      "project": "Write tests for your math utility library",
+      "objectives": [
+        "Unit tests: describe, it, expect",
+        "Testing pure functions and edge cases",
+        "Mocking fetch and modules",
+        "Test-driven development (TDD) intro",
+        "CI running tests on push (awareness)",
+        "Project: Write tests for your math utility library"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Testing with Jest. Unit tests: describe, it, expect; Testing pure functions and edge cases; Mocking fetch and modules; Test-driven development (TDD) intro. Project: Write tests for your math utility library. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Testing with Jest: Unit tests: describe, it, expect Testing pure functions and edge cases Mocking fetch and modules Test-driven development (TDD) intro CI running tests on push (awareness). Project: Write tests for your math utility library. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Testing with Jest. Unit tests: describe, it, expect Testing pure functions and edge cases Mocking fetch and modules Test-driven development (TDD) intro CI running tests on push (awareness). Project: Write tests for your math utility library. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Testing with Jest\n\nTOPICS TO COVER (in order):\n- Unit tests: describe, it, expect\n- Testing pure functions and edge cases\n- Mocking fetch and modules\n- Test-driven development (TDD) intro\n- CI running tests on push (awareness)\n\nHANDS-ON PROJECT: Write tests for your math utility library\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Unit tests with a concrete example.",
+        "How would you apply Testing pure functions and edge cases in a real project?",
+        "What is a common beginner mistake with Mocking fetch and modules, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-36",
+      "order": 36,
+      "sectionId": "10",
+      "sectionTitle": "Professional JavaScript & Capstone",
+      "moduleNumber": 3,
+      "title": "Module 36: Performance, Security & Bundlers",
+      "description": "Debouncing and throttling",
+      "topics": [
+        "Debouncing and throttling",
+        "Lighthouse metrics (intro)",
+        "XSS, sanitizing user input, CSP basics",
+        "npm, package.json, Vite/webpack overview",
+        "Tree shaking and production builds"
+      ],
+      "project": null,
+      "objectives": [
+        "Debouncing and throttling",
+        "Lighthouse metrics (intro)",
+        "XSS, sanitizing user input, CSP basics",
+        "npm, package.json, Vite/webpack overview",
+        "Tree shaking and production builds"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Performance, Security & Bundlers. Debouncing and throttling; Lighthouse metrics (intro); XSS, sanitizing user input, CSP basics; npm, package.json, Vite/webpack overview. Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Performance, Security & Bundlers: Debouncing and throttling Lighthouse metrics (intro) XSS, sanitizing user input, CSP basics npm, package.json, Vite/webpack overview Tree shaking and production builds. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Performance, Security & Bundlers. Debouncing and throttling Lighthouse metrics (intro) XSS, sanitizing user input, CSP basics npm, package.json, Vite/webpack overview Tree shaking and production builds. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Performance, Security & Bundlers\n\nTOPICS TO COVER (in order):\n- Debouncing and throttling\n- Lighthouse metrics (intro)\n- XSS, sanitizing user input, CSP basics\n- npm, package.json, Vite/webpack overview\n- Tree shaking and production builds\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Debouncing and throttling with a concrete example.",
+        "How would you apply Lighthouse metrics (intro) in a real project?",
+        "What is a common beginner mistake with XSS, sanitizing user input, CSP basics, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "js-37",
+      "order": 37,
+      "sectionId": "10",
+      "sectionTitle": "Professional JavaScript & Capstone",
+      "moduleNumber": 4,
+      "title": "Module 37: Capstone: Mini App & Interview Prep",
+      "description": "Plan a small SPA: requirements, wireframe, data flow",
+      "topics": [
+        "Plan a small SPA: requirements, wireframe, data flow",
+        "Integrate fetch, DOM, storage, error handling",
+        "Code review checklist: naming, DRY, async errors",
+        "Common JS interview topics recap",
+        "Portfolio README and demo deployment (GitHub Pages)"
+      ],
+      "project": "Build and document a mini app (e.g. movie search, expense tracker, or quiz app)",
+      "objectives": [
+        "Plan a small SPA: requirements, wireframe, data flow",
+        "Integrate fetch, DOM, storage, error handling",
+        "Code review checklist: naming, DRY, async errors",
+        "Common JS interview topics recap",
+        "Portfolio README and demo deployment (GitHub Pages)",
+        "Project: Build and document a mini app (e.g. movie search, expense tracker, or quiz app)"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Capstone: Mini App & Interview Prep. Plan a small SPA: requirements, wireframe, data flow; Integrate fetch, DOM, storage, error handling; Code review checklist: naming, DRY, async errors; Common JS interview topics recap. Project: Build and document a mini app (e.g. movie search, expense tracker, or quiz app). Use clear, runnable examples in JavaScript in browser and Node.js.",
+        "intermediate": "Capstone: Mini App & Interview Prep: Plan a small SPA: requirements, wireframe, data flow Integrate fetch, DOM, storage, error handling Code review checklist: naming, DRY, async errors Common JS interview topics recap Portfolio README and demo deployment (GitHub Pages). Project: Build and document a mini app (e.g. movie search, expense tracker, or quiz app). Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Capstone: Mini App & Interview Prep. Plan a small SPA: requirements, wireframe, data flow Integrate fetch, DOM, storage, error handling Code review checklist: naming, DRY, async errors Common JS interview topics recap Portfolio README and demo deployment (GitHub Pages). Project: Build and document a mini app (e.g. movie search, expense tracker, or quiz app). Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Capstone: Mini App & Interview Prep\n\nTOPICS TO COVER (in order):\n- Plan a small SPA: requirements, wireframe, data flow\n- Integrate fetch, DOM, storage, error handling\n- Code review checklist: naming, DRY, async errors\n- Common JS interview topics recap\n- Portfolio README and demo deployment (GitHub Pages)\n\nHANDS-ON PROJECT: Build and document a mini app (e.g. movie search, expense tracker, or quiz app)\n\nTEACHING STYLE: Practical mentor for JavaScript in browser and Node.js.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Plan a small SPA with a concrete example.",
+        "How would you apply Integrate fetch, DOM, storage, error handling in a real project?",
+        "What is a common beginner mistake with Code review checklist, and how do you avoid it?"
       ]
     }
   ]

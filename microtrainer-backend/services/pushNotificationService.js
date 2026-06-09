@@ -233,6 +233,26 @@ async function sendMockTestReminder(studentId, technologies, timeUntilTest) {
 }
 
 /**
+ * Personal schedule daily / progress reminder
+ */
+async function sendSchedulePlanReminder(studentId, { title, body, reminderType }) {
+  const payload = {
+    title: title || "📅 Your study plan",
+    body: body || "Check today's concepts on your Personal Schedule.",
+    icon: "/logo.png",
+    badge: "/badge.png",
+    tag: `schedule-${reminderType || "daily"}`,
+    url: "/schedule",
+    data: {
+      type: "personal_schedule",
+      reminderType: reminderType || "daily",
+    },
+  };
+
+  return sendPushNotification(studentId, payload);
+}
+
+/**
  * Send test notification
  */
 async function sendTestNotification(studentId) {
@@ -269,6 +289,7 @@ module.exports = {
   sendBadgeEarnedNotification,
   sendAssessmentAvailableNotification,
   sendMockTestReminder,
+  sendSchedulePlanReminder,
   sendTestNotification,
   getAllSubscribedStudents
 };

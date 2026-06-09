@@ -1,110 +1,1120 @@
 {
   "technology": "Node.js",
-  "totalConcepts": 5,
+  "totalConcepts": 30,
+  "sections": [
+    {
+      "id": "01",
+      "title": "Node Foundations",
+      "moduleCount": 3
+    },
+    {
+      "id": "02",
+      "title": "Core APIs",
+      "moduleCount": 3
+    },
+    {
+      "id": "03",
+      "title": "Express.js",
+      "moduleCount": 3
+    },
+    {
+      "id": "04",
+      "title": "Databases",
+      "moduleCount": 3
+    },
+    {
+      "id": "05",
+      "title": "Advanced Node",
+      "moduleCount": 3
+    },
+    {
+      "id": "06",
+      "title": "Architecture",
+      "moduleCount": 3
+    },
+    {
+      "id": "07",
+      "title": "Deployment",
+      "moduleCount": 2
+    },
+    {
+      "id": "08",
+      "title": "Capstone",
+      "moduleCount": 3
+    },
+    {
+      "id": "09",
+      "title": "Production Node",
+      "moduleCount": 2
+    },
+    {
+      "id": "10",
+      "title": "Microservices & Scale",
+      "moduleCount": 2
+    },
+    {
+      "id": "11",
+      "title": "Career",
+      "moduleCount": 1
+    },
+    {
+      "id": "12",
+      "title": "Node Plus",
+      "moduleCount": 2
+    }
+  ],
   "concepts": [
     {
-      "id": "node-1",
+      "id": "nodejs-1",
       "order": 1,
-      "title": "Introduction to Node.js",
-      "description": "Learn what Node.js is and how to run JavaScript on the server",
+      "sectionId": "01",
+      "sectionTitle": "Node Foundations",
+      "moduleNumber": 1,
+      "title": "Module 1: Node.js Ecosystem",
+      "description": "V8, libuv, event loop",
+      "topics": [
+        "V8, libuv, event loop",
+        "Node vs browser JS",
+        "npm registry",
+        "LTS versions",
+        "Backend career paths"
+      ],
+      "project": null,
       "objectives": [
-        "Understand what Node.js is",
-        "Run JavaScript files with Node",
-        "Use the Node REPL"
+        "V8, libuv, event loop",
+        "Node vs browser JS",
+        "npm registry",
+        "LTS versions",
+        "Backend career paths"
       ],
       "teachingContent": {
-        "beginner": "**Node.js** lets you run JavaScript outside the browser - on servers!\n\n**What is Node.js?**\n- JavaScript runtime built on Chrome's V8 engine\n- Runs on servers, not browsers\n- Perfect for building APIs and web servers\n\n**Running a Node File:**\n```bash\n# Create a file: app.js\nconsole.log('Hello from Node!');\n\n# Run it:\nnode app.js\n```\n\n**Node REPL:**\n```bash\n# Start REPL\nnode\n\n> 2 + 2\n4\n> console.log('Hello')\nHello\n```",
-        "intermediate": "Node.js is a JavaScript runtime for server-side development:\n\n**Key Features:**\n- **Non-blocking I/O**: Handles many requests simultaneously\n- **Event-driven**: Uses callbacks and events\n- **NPM**: Huge package ecosystem\n\n**Simple Server:**\n```javascript\nconst http = require('http');\n\nconst server = http.createServer((req, res) => {\n  res.writeHead(200, { 'Content-Type': 'text/plain' });\n  res.end('Hello World!');\n});\n\nserver.listen(3000, () => {\n  console.log('Server running on port 3000');\n});\n```",
-        "advanced": "Understanding Node.js architecture and event loop:\n\n**Event Loop:**\n```javascript\nconsole.log('1');\n\nsetTimeout(() => {\n  console.log('2');\n}, 0);\n\nPromise.resolve().then(() => {\n  console.log('3');\n});\n\nconsole.log('4');\n// Output: 1, 4, 3, 2\n```\n\n**Non-blocking I/O:**\n```javascript\nconst fs = require('fs');\n\n// Blocking (synchronous)\nconst data = fs.readFileSync('file.txt', 'utf8');\n\n// Non-blocking (asynchronous)\nfs.readFile('file.txt', 'utf8', (err, data) => {\n  if (err) throw err;\n  console.log(data);\n});\n```"
+        "beginner": "Introduction to Node.js Ecosystem. V8, libuv, event loop; Node vs browser JS; npm registry; LTS versions. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "Node.js Ecosystem: V8, libuv, event loop Node vs browser JS npm registry LTS versions Backend career paths. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Node.js Ecosystem. V8, libuv, event loop Node vs browser JS npm registry LTS versions Backend career paths. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — Node.js Ecosystem\n\nTOPICS TO COVER (in order):\n- V8, libuv, event loop\n- Node vs browser JS\n- npm registry\n- LTS versions\n- Backend career paths\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "What is Node.js?",
-        "How do you run a JavaScript file with Node?",
-        "What's the difference between Node.js and browser JavaScript?"
+        "Explain V8, libuv, event loop with a concrete example.",
+        "How would you apply Node vs browser JS in a real project?",
+        "What is a common beginner mistake with npm registry, and how do you avoid it?"
       ]
     },
     {
-      "id": "node-2",
+      "id": "nodejs-2",
       "order": 2,
-      "title": "Modules and NPM",
-      "description": "Learn about Node modules and package management",
+      "sectionId": "01",
+      "sectionTitle": "Node Foundations",
+      "moduleNumber": 2,
+      "title": "Module 2: First Server",
+      "description": "node command",
+      "topics": [
+        "node command",
+        "package.json scripts",
+        "CommonJS vs ESM",
+        "Reading files with fs",
+        "Environment variables"
+      ],
+      "project": "CLI script that reads a JSON file",
       "objectives": [
-        "Use require and module.exports",
-        "Install packages with NPM",
-        "Understand package.json"
+        "node command",
+        "package.json scripts",
+        "CommonJS vs ESM",
+        "Reading files with fs",
+        "Environment variables",
+        "Project: CLI script that reads a JSON file"
       ],
       "teachingContent": {
-        "beginner": "**Modules** let you split code into separate files.\n\n**Creating a Module:**\n```javascript\n// math.js\nfunction add(a, b) {\n  return a + b;\n}\n\nmodule.exports = { add };\n```\n\n**Using a Module:**\n```javascript\n// app.js\nconst math = require('./math');\nconsole.log(math.add(2, 3)); // 5\n```\n\n**Installing Packages:**\n```bash\nnpm install express\n```",
-        "intermediate": "Node.js uses CommonJS module system:\n\n**Module Patterns:**\n```javascript\n// Export single function\nmodule.exports = function() {};\n\n// Export multiple items\nmodule.exports = {\n  func1,\n  func2\n};\n\n// Named exports\nexports.func1 = () => {};\n```\n\n**NPM Commands:**\n```bash\nnpm init              # Create package.json\nnpm install express   # Install package\nnpm install -D jest   # Install dev dependency\nnpm start             # Run start script\n```",
-        "advanced": "Understanding module resolution and package management:\n\n**Module Resolution:**\n```javascript\n// Core modules\nconst fs = require('fs');\n\n// Local modules\nconst myModule = require('./myModule');\n\n// node_modules\nconst express = require('express');\n```\n\n**Package.json:**\n```json\n{\n  \"name\": \"my-app\",\n  \"version\": \"1.0.0\",\n  \"scripts\": {\n    \"start\": \"node app.js\",\n    \"dev\": \"nodemon app.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.0\"\n  }\n}\n```"
+        "beginner": "Introduction to First Server. node command; package.json scripts; CommonJS vs ESM; Reading files with fs. Project: CLI script that reads a JSON file. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "First Server: node command package.json scripts CommonJS vs ESM Reading files with fs Environment variables. Project: CLI script that reads a JSON file. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: First Server. node command package.json scripts CommonJS vs ESM Reading files with fs Environment variables. Project: CLI script that reads a JSON file. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — First Server\n\nTOPICS TO COVER (in order):\n- node command\n- package.json scripts\n- CommonJS vs ESM\n- Reading files with fs\n- Environment variables\n\nHANDS-ON PROJECT: CLI script that reads a JSON file\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "How do you export a function from a module?",
-        "What command installs a package?",
-        "What is package.json used for?"
+        "Explain node command with a concrete example.",
+        "How would you apply package.json scripts in a real project?",
+        "What is a common beginner mistake with CommonJS vs ESM, and how do you avoid it?"
       ]
     },
     {
-      "id": "node-3",
+      "id": "nodejs-3",
       "order": 3,
-      "title": "File System Operations",
-      "description": "Learn how to read and write files",
+      "sectionId": "01",
+      "sectionTitle": "Node Foundations",
+      "moduleNumber": 3,
+      "title": "Module 3: Modules & npm",
+      "description": "require/import",
+      "topics": [
+        "require/import",
+        "Publishing packages intro",
+        "semver",
+        "package-lock.json",
+        "npm scripts workflow"
+      ],
+      "project": null,
       "objectives": [
-        "Read files with fs module",
-        "Write files",
-        "Handle file errors"
+        "require/import",
+        "Publishing packages intro",
+        "semver",
+        "package-lock.json",
+        "npm scripts workflow"
       ],
       "teachingContent": {
-        "beginner": "The **fs** module lets you work with files.\n\n**Reading a File:**\n```javascript\nconst fs = require('fs');\n\nfs.readFile('data.txt', 'utf8', (err, data) => {\n  if (err) {\n    console.error(err);\n    return;\n  }\n  console.log(data);\n});\n```\n\n**Writing a File:**\n```javascript\nfs.writeFile('output.txt', 'Hello!', (err) => {\n  if (err) throw err;\n  console.log('File saved!');\n});\n```",
-        "intermediate": "File system operations with proper error handling:\n\n**Async/Await with fs.promises:**\n```javascript\nconst fs = require('fs').promises;\n\nasync function readData() {\n  try {\n    const data = await fs.readFile('data.txt', 'utf8');\n    console.log(data);\n  } catch (err) {\n    console.error('Error:', err);\n  }\n}\n```\n\n**Common Operations:**\n```javascript\n// Check if file exists\nfs.access('file.txt', (err) => {\n  if (err) console.log('File does not exist');\n});\n\n// Delete file\nfs.unlink('file.txt', (err) => {\n  if (err) throw err;\n});\n```",
-        "advanced": "Advanced file operations and streams:\n\n**Streams for Large Files:**\n```javascript\nconst fs = require('fs');\n\n// Reading large files\nconst readStream = fs.createReadStream('large.txt');\nreadStream.on('data', (chunk) => {\n  console.log('Chunk:', chunk);\n});\n\n// Piping streams\nconst readStream = fs.createReadStream('input.txt');\nconst writeStream = fs.createWriteStream('output.txt');\nreadStream.pipe(writeStream);\n```"
+        "beginner": "Introduction to Modules & npm. require/import; Publishing packages intro; semver; package-lock.json. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "Modules & npm: require/import Publishing packages intro semver package-lock.json npm scripts workflow. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Modules & npm. require/import Publishing packages intro semver package-lock.json npm scripts workflow. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — Modules & npm\n\nTOPICS TO COVER (in order):\n- require/import\n- Publishing packages intro\n- semver\n- package-lock.json\n- npm scripts workflow\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "How do you read a file in Node.js?",
-        "What's the difference between readFile and readFileSync?",
-        "How do you handle file errors?"
+        "Explain require/import with a concrete example.",
+        "How would you apply Publishing packages intro in a real project?",
+        "What is a common beginner mistake with semver, and how do you avoid it?"
       ]
     },
     {
-      "id": "node-4",
+      "id": "nodejs-4",
       "order": 4,
-      "title": "Express.js Basics",
-      "description": "Learn to build web servers with Express",
+      "sectionId": "02",
+      "sectionTitle": "Core APIs",
+      "moduleNumber": 1,
+      "title": "Module 4: File System & Path",
+      "description": "fs promises API",
+      "topics": [
+        "fs promises API",
+        "path.join, resolve",
+        "Watching files",
+        "Streams intro",
+        "Working with directories"
+      ],
+      "project": null,
       "objectives": [
-        "Create an Express server",
-        "Define routes",
-        "Use middleware"
+        "fs promises API",
+        "path.join, resolve",
+        "Watching files",
+        "Streams intro",
+        "Working with directories"
       ],
       "teachingContent": {
-        "beginner": "**Express** makes building web servers easy!\n\n**Basic Server:**\n```javascript\nconst express = require('express');\nconst app = express();\n\napp.get('/', (req, res) => {\n  res.send('Hello World!');\n});\n\napp.listen(3000, () => {\n  console.log('Server running on port 3000');\n});\n```\n\n**Routes:**\n```javascript\napp.get('/users', (req, res) => {\n  res.json([{ name: 'John' }]);\n});\n\napp.post('/users', (req, res) => {\n  res.json({ message: 'User created' });\n});\n```",
-        "intermediate": "Express.js for building RESTful APIs:\n\n**Middleware:**\n```javascript\nconst express = require('express');\nconst app = express();\n\n// Built-in middleware\napp.use(express.json());\n\n// Custom middleware\napp.use((req, res, next) => {\n  console.log(`${req.method} ${req.url}`);\n  next();\n});\n\n// Route handlers\napp.get('/api/users/:id', (req, res) => {\n  const { id } = req.params;\n  res.json({ id, name: 'John' });\n});\n```",
-        "advanced": "Advanced Express patterns and error handling:\n\n**Error Handling:**\n```javascript\n// Error handling middleware\napp.use((err, req, res, next) => {\n  console.error(err.stack);\n  res.status(500).json({ error: err.message });\n});\n\n// Async error handling\nconst asyncHandler = (fn) => (req, res, next) => {\n  Promise.resolve(fn(req, res, next)).catch(next);\n};\n\napp.get('/users', asyncHandler(async (req, res) => {\n  const users = await User.find();\n  res.json(users);\n}));\n```"
+        "beginner": "Introduction to File System & Path. fs promises API; path.join, resolve; Watching files; Streams intro. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "File System & Path: fs promises API path.join, resolve Watching files Streams intro Working with directories. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: File System & Path. fs promises API path.join, resolve Watching files Streams intro Working with directories. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — File System & Path\n\nTOPICS TO COVER (in order):\n- fs promises API\n- path.join, resolve\n- Watching files\n- Streams intro\n- Working with directories\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "How do you create a route in Express?",
-        "What is middleware?",
-        "How do you send JSON responses?"
+        "Explain fs promises API with a concrete example.",
+        "How would you apply path.join, resolve in a real project?",
+        "What is a common beginner mistake with Watching files, and how do you avoid it?"
       ]
     },
     {
-      "id": "node-5",
+      "id": "nodejs-5",
       "order": 5,
-      "title": "Async Programming",
-      "description": "Learn callbacks, promises, and async/await",
+      "sectionId": "02",
+      "sectionTitle": "Core APIs",
+      "moduleNumber": 2,
+      "title": "Module 5: HTTP Module",
+      "description": "createServer basics",
+      "topics": [
+        "createServer basics",
+        "req, res objects",
+        "Routing manually",
+        "Status codes",
+        "Why frameworks exist"
+      ],
+      "project": null,
       "objectives": [
-        "Understand callbacks",
-        "Use promises",
-        "Write async/await code"
+        "createServer basics",
+        "req, res objects",
+        "Routing manually",
+        "Status codes",
+        "Why frameworks exist"
       ],
       "teachingContent": {
-        "beginner": "Node.js uses **asynchronous** code to handle multiple tasks.\n\n**Callbacks:**\n```javascript\nfs.readFile('file.txt', (err, data) => {\n  if (err) throw err;\n  console.log(data);\n});\n```\n\n**Promises:**\n```javascript\nfs.promises.readFile('file.txt')\n  .then(data => console.log(data))\n  .catch(err => console.error(err));\n```\n\n**Async/Await:**\n```javascript\nasync function readData() {\n  const data = await fs.promises.readFile('file.txt');\n  console.log(data);\n}\n```",
-        "intermediate": "Modern async patterns in Node.js:\n\n**Promise Chaining:**\n```javascript\nfetchUser()\n  .then(user => fetchPosts(user.id))\n  .then(posts => console.log(posts))\n  .catch(err => console.error(err));\n```\n\n**Async/Await:**\n```javascript\nasync function getData() {\n  try {\n    const user = await fetchUser();\n    const posts = await fetchPosts(user.id);\n    return posts;\n  } catch (err) {\n    console.error(err);\n  }\n}\n```",
-        "advanced": "Advanced async patterns and error handling:\n\n**Promise.all:**\n```javascript\nconst [users, posts, comments] = await Promise.all([\n  fetchUsers(),\n  fetchPosts(),\n  fetchComments()\n]);\n```\n\n**Error Handling:**\n```javascript\ntry {\n  const data = await riskyOperation();\n} catch (err) {\n  if (err.code === 'ENOENT') {\n    // Handle file not found\n  } else {\n    throw err;\n  }\n}\n```"
+        "beginner": "Introduction to HTTP Module. createServer basics; req, res objects; Routing manually; Status codes. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "HTTP Module: createServer basics req, res objects Routing manually Status codes Why frameworks exist. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: HTTP Module. createServer basics req, res objects Routing manually Status codes Why frameworks exist. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — HTTP Module\n\nTOPICS TO COVER (in order):\n- createServer basics\n- req, res objects\n- Routing manually\n- Status codes\n- Why frameworks exist\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "What's the difference between callbacks and promises?",
-        "How do you handle errors with async/await?",
-        "What does Promise.all do?"
+        "Explain createServer basics with a concrete example.",
+        "How would you apply req, res objects in a real project?",
+        "What is a common beginner mistake with Routing manually, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-6",
+      "order": 6,
+      "sectionId": "02",
+      "sectionTitle": "Core APIs",
+      "moduleNumber": 3,
+      "title": "Module 6: Events & Streams",
+      "description": "EventEmitter pattern",
+      "topics": [
+        "EventEmitter pattern",
+        "Readable/writable streams",
+        "Pipe and backpressure",
+        "Buffer basics",
+        "Practical stream use cases"
+      ],
+      "project": null,
+      "objectives": [
+        "EventEmitter pattern",
+        "Readable/writable streams",
+        "Pipe and backpressure",
+        "Buffer basics",
+        "Practical stream use cases"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Events & Streams. EventEmitter pattern; Readable/writable streams; Pipe and backpressure; Buffer basics. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "Events & Streams: EventEmitter pattern Readable/writable streams Pipe and backpressure Buffer basics Practical stream use cases. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Events & Streams. EventEmitter pattern Readable/writable streams Pipe and backpressure Buffer basics Practical stream use cases. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Events & Streams\n\nTOPICS TO COVER (in order):\n- EventEmitter pattern\n- Readable/writable streams\n- Pipe and backpressure\n- Buffer basics\n- Practical stream use cases\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain EventEmitter pattern with a concrete example.",
+        "How would you apply Readable/writable streams in a real project?",
+        "What is a common beginner mistake with Pipe and backpressure, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-7",
+      "order": 7,
+      "sectionId": "03",
+      "sectionTitle": "Express.js",
+      "moduleNumber": 1,
+      "title": "Module 7: Express Setup",
+      "description": "Installing express",
+      "topics": [
+        "Installing express",
+        "app, listen",
+        "Middleware chain",
+        "req.params, query, body",
+        "JSON body parser"
+      ],
+      "project": "REST API for todos",
+      "objectives": [
+        "Installing express",
+        "app, listen",
+        "Middleware chain",
+        "req.params, query, body",
+        "JSON body parser",
+        "Project: REST API for todos"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Express Setup. Installing express; app, listen; Middleware chain; req.params, query, body. Project: REST API for todos. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "Express Setup: Installing express app, listen Middleware chain req.params, query, body JSON body parser. Project: REST API for todos. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Express Setup. Installing express app, listen Middleware chain req.params, query, body JSON body parser. Project: REST API for todos. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Express Setup\n\nTOPICS TO COVER (in order):\n- Installing express\n- app, listen\n- Middleware chain\n- req.params, query, body\n- JSON body parser\n\nHANDS-ON PROJECT: REST API for todos\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Installing express with a concrete example.",
+        "How would you apply app, listen in a real project?",
+        "What is a common beginner mistake with Middleware chain, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-8",
+      "order": 8,
+      "sectionId": "03",
+      "sectionTitle": "Express.js",
+      "moduleNumber": 2,
+      "title": "Module 8: Routing & Middleware",
+      "description": "Router modularization",
+      "topics": [
+        "Router modularization",
+        "Custom middleware",
+        "Error-handling middleware",
+        "Static files",
+        "CORS middleware"
+      ],
+      "project": null,
+      "objectives": [
+        "Router modularization",
+        "Custom middleware",
+        "Error-handling middleware",
+        "Static files",
+        "CORS middleware"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Routing & Middleware. Router modularization; Custom middleware; Error-handling middleware; Static files. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "Routing & Middleware: Router modularization Custom middleware Error-handling middleware Static files CORS middleware. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Routing & Middleware. Router modularization Custom middleware Error-handling middleware Static files CORS middleware. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Routing & Middleware\n\nTOPICS TO COVER (in order):\n- Router modularization\n- Custom middleware\n- Error-handling middleware\n- Static files\n- CORS middleware\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Router modularization with a concrete example.",
+        "How would you apply Custom middleware in a real project?",
+        "What is a common beginner mistake with Error-handling middleware, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-9",
+      "order": 9,
+      "sectionId": "03",
+      "sectionTitle": "Express.js",
+      "moduleNumber": 3,
+      "title": "Module 9: Validation & Security",
+      "description": "express-validator",
+      "topics": [
+        "express-validator",
+        "Helmet headers",
+        "Rate limiting intro",
+        "Input sanitization",
+        "Secrets in .env"
+      ],
+      "project": null,
+      "objectives": [
+        "express-validator",
+        "Helmet headers",
+        "Rate limiting intro",
+        "Input sanitization",
+        "Secrets in .env"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Validation & Security. express-validator; Helmet headers; Rate limiting intro; Input sanitization. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "Validation & Security: express-validator Helmet headers Rate limiting intro Input sanitization Secrets in .env. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Validation & Security. express-validator Helmet headers Rate limiting intro Input sanitization Secrets in .env. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Validation & Security\n\nTOPICS TO COVER (in order):\n- express-validator\n- Helmet headers\n- Rate limiting intro\n- Input sanitization\n- Secrets in .env\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain express-validator with a concrete example.",
+        "How would you apply Helmet headers in a real project?",
+        "What is a common beginner mistake with Rate limiting intro, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-10",
+      "order": 10,
+      "sectionId": "04",
+      "sectionTitle": "Databases",
+      "moduleNumber": 1,
+      "title": "Module 10: MongoDB with Mongoose",
+      "description": "Schemas and models",
+      "topics": [
+        "Schemas and models",
+        "CRUD operations",
+        "Population",
+        "Indexes intro",
+        "Validation in schema"
+      ],
+      "project": null,
+      "objectives": [
+        "Schemas and models",
+        "CRUD operations",
+        "Population",
+        "Indexes intro",
+        "Validation in schema"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to MongoDB with Mongoose. Schemas and models; CRUD operations; Population; Indexes intro. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "MongoDB with Mongoose: Schemas and models CRUD operations Population Indexes intro Validation in schema. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: MongoDB with Mongoose. Schemas and models CRUD operations Population Indexes intro Validation in schema. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — MongoDB with Mongoose\n\nTOPICS TO COVER (in order):\n- Schemas and models\n- CRUD operations\n- Population\n- Indexes intro\n- Validation in schema\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Schemas and models with a concrete example.",
+        "How would you apply CRUD operations in a real project?",
+        "What is a common beginner mistake with Population, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-11",
+      "order": 11,
+      "sectionId": "04",
+      "sectionTitle": "Databases",
+      "moduleNumber": 2,
+      "title": "Module 11: SQL with pg/Prisma intro",
+      "description": "SQL vs NoSQL trade-offs",
+      "topics": [
+        "SQL vs NoSQL trade-offs",
+        "Prisma schema",
+        "Migrations awareness",
+        "Relations",
+        "Choosing database"
+      ],
+      "project": null,
+      "objectives": [
+        "SQL vs NoSQL trade-offs",
+        "Prisma schema",
+        "Migrations awareness",
+        "Relations",
+        "Choosing database"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to SQL with pg/Prisma intro. SQL vs NoSQL trade-offs; Prisma schema; Migrations awareness; Relations. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "SQL with pg/Prisma intro: SQL vs NoSQL trade-offs Prisma schema Migrations awareness Relations Choosing database. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: SQL with pg/Prisma intro. SQL vs NoSQL trade-offs Prisma schema Migrations awareness Relations Choosing database. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — SQL with pg/Prisma intro\n\nTOPICS TO COVER (in order):\n- SQL vs NoSQL trade-offs\n- Prisma schema\n- Migrations awareness\n- Relations\n- Choosing database\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain SQL vs NoSQL trade-offs with a concrete example.",
+        "How would you apply Prisma schema in a real project?",
+        "What is a common beginner mistake with Migrations awareness, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-12",
+      "order": 12,
+      "sectionId": "04",
+      "sectionTitle": "Databases",
+      "moduleNumber": 3,
+      "title": "Module 12: Authentication",
+      "description": "JWT tokens",
+      "topics": [
+        "JWT tokens",
+        "bcrypt password hashing",
+        "Auth middleware",
+        "Refresh tokens intro",
+        "Session vs stateless"
+      ],
+      "project": null,
+      "objectives": [
+        "JWT tokens",
+        "bcrypt password hashing",
+        "Auth middleware",
+        "Refresh tokens intro",
+        "Session vs stateless"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Authentication. JWT tokens; bcrypt password hashing; Auth middleware; Refresh tokens intro. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "Authentication: JWT tokens bcrypt password hashing Auth middleware Refresh tokens intro Session vs stateless. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Authentication. JWT tokens bcrypt password hashing Auth middleware Refresh tokens intro Session vs stateless. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Authentication\n\nTOPICS TO COVER (in order):\n- JWT tokens\n- bcrypt password hashing\n- Auth middleware\n- Refresh tokens intro\n- Session vs stateless\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain JWT tokens with a concrete example.",
+        "How would you apply bcrypt password hashing in a real project?",
+        "What is a common beginner mistake with Auth middleware, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-13",
+      "order": 13,
+      "sectionId": "05",
+      "sectionTitle": "Advanced Node",
+      "moduleNumber": 1,
+      "title": "Module 13: Async Patterns",
+      "description": "Callbacks to promises",
+      "topics": [
+        "Callbacks to promises",
+        "async/await in routes",
+        "Parallel vs sequential",
+        "Error propagation",
+        "Unhandled rejections"
+      ],
+      "project": null,
+      "objectives": [
+        "Callbacks to promises",
+        "async/await in routes",
+        "Parallel vs sequential",
+        "Error propagation",
+        "Unhandled rejections"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Async Patterns. Callbacks to promises; async/await in routes; Parallel vs sequential; Error propagation. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "Async Patterns: Callbacks to promises async/await in routes Parallel vs sequential Error propagation Unhandled rejections. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Async Patterns. Callbacks to promises async/await in routes Parallel vs sequential Error propagation Unhandled rejections. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Async Patterns\n\nTOPICS TO COVER (in order):\n- Callbacks to promises\n- async/await in routes\n- Parallel vs sequential\n- Error propagation\n- Unhandled rejections\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Callbacks to promises with a concrete example.",
+        "How would you apply async/await in routes in a real project?",
+        "What is a common beginner mistake with Parallel vs sequential, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-14",
+      "order": 14,
+      "sectionId": "05",
+      "sectionTitle": "Advanced Node",
+      "moduleNumber": 2,
+      "title": "Module 14: Testing APIs",
+      "description": "Supertest with Jest",
+      "topics": [
+        "Supertest with Jest",
+        "Mocking DB",
+        "Integration tests",
+        "Test databases",
+        "CI pipeline"
+      ],
+      "project": null,
+      "objectives": [
+        "Supertest with Jest",
+        "Mocking DB",
+        "Integration tests",
+        "Test databases",
+        "CI pipeline"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Testing APIs. Supertest with Jest; Mocking DB; Integration tests; Test databases. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "Testing APIs: Supertest with Jest Mocking DB Integration tests Test databases CI pipeline. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Testing APIs. Supertest with Jest Mocking DB Integration tests Test databases CI pipeline. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Testing APIs\n\nTOPICS TO COVER (in order):\n- Supertest with Jest\n- Mocking DB\n- Integration tests\n- Test databases\n- CI pipeline\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Supertest with Jest with a concrete example.",
+        "How would you apply Mocking DB in a real project?",
+        "What is a common beginner mistake with Integration tests, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-15",
+      "order": 15,
+      "sectionId": "05",
+      "sectionTitle": "Advanced Node",
+      "moduleNumber": 3,
+      "title": "Module 15: Logging & Monitoring",
+      "description": "Winston/pino",
+      "topics": [
+        "Winston/pino",
+        "Request logging",
+        "Health check endpoints",
+        "PM2 intro",
+        "12-factor app"
+      ],
+      "project": null,
+      "objectives": [
+        "Winston/pino",
+        "Request logging",
+        "Health check endpoints",
+        "PM2 intro",
+        "12-factor app"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Logging & Monitoring. Winston/pino; Request logging; Health check endpoints; PM2 intro. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "Logging & Monitoring: Winston/pino Request logging Health check endpoints PM2 intro 12-factor app. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Logging & Monitoring. Winston/pino Request logging Health check endpoints PM2 intro 12-factor app. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Logging & Monitoring\n\nTOPICS TO COVER (in order):\n- Winston/pino\n- Request logging\n- Health check endpoints\n- PM2 intro\n- 12-factor app\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Winston/pino with a concrete example.",
+        "How would you apply Request logging in a real project?",
+        "What is a common beginner mistake with Health check endpoints, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-16",
+      "order": 16,
+      "sectionId": "06",
+      "sectionTitle": "Architecture",
+      "moduleNumber": 1,
+      "title": "Module 16: Project Structure",
+      "description": "MVC / layered architecture",
+      "topics": [
+        "MVC / layered architecture",
+        "Service layer",
+        "Config per environment",
+        "Dependency injection intro",
+        "API versioning"
+      ],
+      "project": null,
+      "objectives": [
+        "MVC / layered architecture",
+        "Service layer",
+        "Config per environment",
+        "Dependency injection intro",
+        "API versioning"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Project Structure. MVC / layered architecture; Service layer; Config per environment; Dependency injection intro. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "Project Structure: MVC / layered architecture Service layer Config per environment Dependency injection intro API versioning. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Project Structure. MVC / layered architecture Service layer Config per environment Dependency injection intro API versioning. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Project Structure\n\nTOPICS TO COVER (in order):\n- MVC / layered architecture\n- Service layer\n- Config per environment\n- Dependency injection intro\n- API versioning\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain MVC / layered architecture with a concrete example.",
+        "How would you apply Service layer in a real project?",
+        "What is a common beginner mistake with Config per environment, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-17",
+      "order": 17,
+      "sectionId": "06",
+      "sectionTitle": "Architecture",
+      "moduleNumber": 2,
+      "title": "Module 17: WebSockets & Real-time",
+      "description": "socket.io basics",
+      "topics": [
+        "socket.io basics",
+        "Rooms and events",
+        "Scaling websockets",
+        "Use cases",
+        "Fallback polling"
+      ],
+      "project": null,
+      "objectives": [
+        "socket.io basics",
+        "Rooms and events",
+        "Scaling websockets",
+        "Use cases",
+        "Fallback polling"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to WebSockets & Real-time. socket.io basics; Rooms and events; Scaling websockets; Use cases. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "WebSockets & Real-time: socket.io basics Rooms and events Scaling websockets Use cases Fallback polling. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: WebSockets & Real-time. socket.io basics Rooms and events Scaling websockets Use cases Fallback polling. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — WebSockets & Real-time\n\nTOPICS TO COVER (in order):\n- socket.io basics\n- Rooms and events\n- Scaling websockets\n- Use cases\n- Fallback polling\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain socket.io basics with a concrete example.",
+        "How would you apply Rooms and events in a real project?",
+        "What is a common beginner mistake with Scaling websockets, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-18",
+      "order": 18,
+      "sectionId": "06",
+      "sectionTitle": "Architecture",
+      "moduleNumber": 3,
+      "title": "Module 18: File Uploads & Jobs",
+      "description": "multer for uploads",
+      "topics": [
+        "multer for uploads",
+        "Cloud storage intro",
+        "Background jobs with Bull",
+        "Cron jobs",
+        "Email with nodemailer"
+      ],
+      "project": null,
+      "objectives": [
+        "multer for uploads",
+        "Cloud storage intro",
+        "Background jobs with Bull",
+        "Cron jobs",
+        "Email with nodemailer"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to File Uploads & Jobs. multer for uploads; Cloud storage intro; Background jobs with Bull; Cron jobs. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "File Uploads & Jobs: multer for uploads Cloud storage intro Background jobs with Bull Cron jobs Email with nodemailer. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: File Uploads & Jobs. multer for uploads Cloud storage intro Background jobs with Bull Cron jobs Email with nodemailer. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — File Uploads & Jobs\n\nTOPICS TO COVER (in order):\n- multer for uploads\n- Cloud storage intro\n- Background jobs with Bull\n- Cron jobs\n- Email with nodemailer\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain multer for uploads with a concrete example.",
+        "How would you apply Cloud storage intro in a real project?",
+        "What is a common beginner mistake with Background jobs with Bull, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-19",
+      "order": 19,
+      "sectionId": "07",
+      "sectionTitle": "Deployment",
+      "moduleNumber": 1,
+      "title": "Module 19: Docker for Node",
+      "description": "Dockerfile basics",
+      "topics": [
+        "Dockerfile basics",
+        "docker-compose",
+        "Multi-stage builds",
+        "Env in containers",
+        "Local prod parity"
+      ],
+      "project": null,
+      "objectives": [
+        "Dockerfile basics",
+        "docker-compose",
+        "Multi-stage builds",
+        "Env in containers",
+        "Local prod parity"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Docker for Node. Dockerfile basics; docker-compose; Multi-stage builds; Env in containers. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "Docker for Node: Dockerfile basics docker-compose Multi-stage builds Env in containers Local prod parity. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Docker for Node. Dockerfile basics docker-compose Multi-stage builds Env in containers Local prod parity. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Docker for Node\n\nTOPICS TO COVER (in order):\n- Dockerfile basics\n- docker-compose\n- Multi-stage builds\n- Env in containers\n- Local prod parity\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Dockerfile basics with a concrete example.",
+        "How would you apply docker-compose in a real project?",
+        "What is a common beginner mistake with Multi-stage builds, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-20",
+      "order": 20,
+      "sectionId": "07",
+      "sectionTitle": "Deployment",
+      "moduleNumber": 2,
+      "title": "Module 20: Cloud Deploy",
+      "description": "Render/Railway/Fly intro",
+      "topics": [
+        "Render/Railway/Fly intro",
+        "CI/CD GitHub Actions",
+        "HTTPS and domains",
+        "Scaling awareness",
+        "Secrets management"
+      ],
+      "project": null,
+      "objectives": [
+        "Render/Railway/Fly intro",
+        "CI/CD GitHub Actions",
+        "HTTPS and domains",
+        "Scaling awareness",
+        "Secrets management"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Cloud Deploy. Render/Railway/Fly intro; CI/CD GitHub Actions; HTTPS and domains; Scaling awareness. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "Cloud Deploy: Render/Railway/Fly intro CI/CD GitHub Actions HTTPS and domains Scaling awareness Secrets management. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Cloud Deploy. Render/Railway/Fly intro CI/CD GitHub Actions HTTPS and domains Scaling awareness Secrets management. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Cloud Deploy\n\nTOPICS TO COVER (in order):\n- Render/Railway/Fly intro\n- CI/CD GitHub Actions\n- HTTPS and domains\n- Scaling awareness\n- Secrets management\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Render/Railway/Fly intro with a concrete example.",
+        "How would you apply CI/CD GitHub Actions in a real project?",
+        "What is a common beginner mistake with HTTPS and domains, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-21",
+      "order": 21,
+      "sectionId": "08",
+      "sectionTitle": "Capstone",
+      "moduleNumber": 1,
+      "title": "Module 21: Capstone API",
+      "description": "Design REST resources",
+      "topics": [
+        "Design REST resources",
+        "Auth + CRUD",
+        "Tests and docs",
+        "Deploy live API",
+        "Postman collection"
+      ],
+      "project": "Production-ready REST API with auth",
+      "objectives": [
+        "Design REST resources",
+        "Auth + CRUD",
+        "Tests and docs",
+        "Deploy live API",
+        "Postman collection",
+        "Project: Production-ready REST API with auth"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Capstone API. Design REST resources; Auth + CRUD; Tests and docs; Deploy live API. Project: Production-ready REST API with auth. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "Capstone API: Design REST resources Auth + CRUD Tests and docs Deploy live API Postman collection. Project: Production-ready REST API with auth. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Capstone API. Design REST resources Auth + CRUD Tests and docs Deploy live API Postman collection. Project: Production-ready REST API with auth. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Capstone API\n\nTOPICS TO COVER (in order):\n- Design REST resources\n- Auth + CRUD\n- Tests and docs\n- Deploy live API\n- Postman collection\n\nHANDS-ON PROJECT: Production-ready REST API with auth\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Design REST resources with a concrete example.",
+        "How would you apply Auth + CRUD in a real project?",
+        "What is a common beginner mistake with Tests and docs, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-22",
+      "order": 22,
+      "sectionId": "08",
+      "sectionTitle": "Capstone",
+      "moduleNumber": 2,
+      "title": "Module 22: GraphQL Intro",
+      "description": "Schema and resolvers",
+      "topics": [
+        "Schema and resolvers",
+        "vs REST trade-offs",
+        "Apollo Server awareness",
+        "When GraphQL fits",
+        "Learning path"
+      ],
+      "project": null,
+      "objectives": [
+        "Schema and resolvers",
+        "vs REST trade-offs",
+        "Apollo Server awareness",
+        "When GraphQL fits",
+        "Learning path"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to GraphQL Intro. Schema and resolvers; vs REST trade-offs; Apollo Server awareness; When GraphQL fits. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "GraphQL Intro: Schema and resolvers vs REST trade-offs Apollo Server awareness When GraphQL fits Learning path. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: GraphQL Intro. Schema and resolvers vs REST trade-offs Apollo Server awareness When GraphQL fits Learning path. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — GraphQL Intro\n\nTOPICS TO COVER (in order):\n- Schema and resolvers\n- vs REST trade-offs\n- Apollo Server awareness\n- When GraphQL fits\n- Learning path\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Schema and resolvers with a concrete example.",
+        "How would you apply vs REST trade-offs in a real project?",
+        "What is a common beginner mistake with Apollo Server awareness, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-23",
+      "order": 23,
+      "sectionId": "08",
+      "sectionTitle": "Capstone",
+      "moduleNumber": 3,
+      "title": "Module 23: Interview Prep",
+      "description": "Event loop questions",
+      "topics": [
+        "Event loop questions",
+        "Express middleware order",
+        "Security checklist",
+        "System design for APIs",
+        "Debugging production Node"
+      ],
+      "project": null,
+      "objectives": [
+        "Event loop questions",
+        "Express middleware order",
+        "Security checklist",
+        "System design for APIs",
+        "Debugging production Node"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Interview Prep. Event loop questions; Express middleware order; Security checklist; System design for APIs. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "Interview Prep: Event loop questions Express middleware order Security checklist System design for APIs Debugging production Node. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Interview Prep. Event loop questions Express middleware order Security checklist System design for APIs Debugging production Node. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Interview Prep\n\nTOPICS TO COVER (in order):\n- Event loop questions\n- Express middleware order\n- Security checklist\n- System design for APIs\n- Debugging production Node\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Event loop questions with a concrete example.",
+        "How would you apply Express middleware order in a real project?",
+        "What is a common beginner mistake with Security checklist, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-24",
+      "order": 24,
+      "sectionId": "09",
+      "sectionTitle": "Production Node",
+      "moduleNumber": 1,
+      "title": "Module 24: Caching Strategies",
+      "description": "In-memory cache",
+      "topics": [
+        "In-memory cache",
+        "Redis with ioredis",
+        "HTTP cache headers",
+        "Cache invalidation",
+        "CDN edge caching"
+      ],
+      "project": null,
+      "objectives": [
+        "In-memory cache",
+        "Redis with ioredis",
+        "HTTP cache headers",
+        "Cache invalidation",
+        "CDN edge caching"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Caching Strategies. In-memory cache; Redis with ioredis; HTTP cache headers; Cache invalidation. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "Caching Strategies: In-memory cache Redis with ioredis HTTP cache headers Cache invalidation CDN edge caching. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Caching Strategies. In-memory cache Redis with ioredis HTTP cache headers Cache invalidation CDN edge caching. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Caching Strategies\n\nTOPICS TO COVER (in order):\n- In-memory cache\n- Redis with ioredis\n- HTTP cache headers\n- Cache invalidation\n- CDN edge caching\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain In-memory cache with a concrete example.",
+        "How would you apply Redis with ioredis in a real project?",
+        "What is a common beginner mistake with HTTP cache headers, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-25",
+      "order": 25,
+      "sectionId": "09",
+      "sectionTitle": "Production Node",
+      "moduleNumber": 2,
+      "title": "Module 25: API Design",
+      "description": "REST conventions",
+      "topics": [
+        "REST conventions",
+        "Versioning",
+        "Pagination patterns",
+        "HATEOAS intro",
+        "OpenAPI spec"
+      ],
+      "project": null,
+      "objectives": [
+        "REST conventions",
+        "Versioning",
+        "Pagination patterns",
+        "HATEOAS intro",
+        "OpenAPI spec"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to API Design. REST conventions; Versioning; Pagination patterns; HATEOAS intro. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "API Design: REST conventions Versioning Pagination patterns HATEOAS intro OpenAPI spec. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: API Design. REST conventions Versioning Pagination patterns HATEOAS intro OpenAPI spec. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — API Design\n\nTOPICS TO COVER (in order):\n- REST conventions\n- Versioning\n- Pagination patterns\n- HATEOAS intro\n- OpenAPI spec\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain REST conventions with a concrete example.",
+        "How would you apply Versioning in a real project?",
+        "What is a common beginner mistake with Pagination patterns, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-26",
+      "order": 26,
+      "sectionId": "10",
+      "sectionTitle": "Microservices & Scale",
+      "moduleNumber": 1,
+      "title": "Module 26: Message Queues",
+      "description": "BullMQ jobs",
+      "topics": [
+        "BullMQ jobs",
+        "Retry and DLQ",
+        "Idempotency keys",
+        "Outbox pattern intro",
+        "Event-driven APIs"
+      ],
+      "project": null,
+      "objectives": [
+        "BullMQ jobs",
+        "Retry and DLQ",
+        "Idempotency keys",
+        "Outbox pattern intro",
+        "Event-driven APIs"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Message Queues. BullMQ jobs; Retry and DLQ; Idempotency keys; Outbox pattern intro. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "Message Queues: BullMQ jobs Retry and DLQ Idempotency keys Outbox pattern intro Event-driven APIs. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Message Queues. BullMQ jobs Retry and DLQ Idempotency keys Outbox pattern intro Event-driven APIs. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Message Queues\n\nTOPICS TO COVER (in order):\n- BullMQ jobs\n- Retry and DLQ\n- Idempotency keys\n- Outbox pattern intro\n- Event-driven APIs\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain BullMQ jobs with a concrete example.",
+        "How would you apply Retry and DLQ in a real project?",
+        "What is a common beginner mistake with Idempotency keys, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-27",
+      "order": 27,
+      "sectionId": "10",
+      "sectionTitle": "Microservices & Scale",
+      "moduleNumber": 2,
+      "title": "Module 27: Observability",
+      "description": "OpenTelemetry intro",
+      "topics": [
+        "OpenTelemetry intro",
+        "Correlation IDs",
+        "Metrics and alerts",
+        "Load testing k6",
+        "Capacity planning"
+      ],
+      "project": null,
+      "objectives": [
+        "OpenTelemetry intro",
+        "Correlation IDs",
+        "Metrics and alerts",
+        "Load testing k6",
+        "Capacity planning"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Observability. OpenTelemetry intro; Correlation IDs; Metrics and alerts; Load testing k6. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "Observability: OpenTelemetry intro Correlation IDs Metrics and alerts Load testing k6 Capacity planning. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Observability. OpenTelemetry intro Correlation IDs Metrics and alerts Load testing k6 Capacity planning. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Observability\n\nTOPICS TO COVER (in order):\n- OpenTelemetry intro\n- Correlation IDs\n- Metrics and alerts\n- Load testing k6\n- Capacity planning\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain OpenTelemetry intro with a concrete example.",
+        "How would you apply Correlation IDs in a real project?",
+        "What is a common beginner mistake with Metrics and alerts, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-28",
+      "order": 28,
+      "sectionId": "11",
+      "sectionTitle": "Career",
+      "moduleNumber": 1,
+      "title": "Module 28: Node in Enterprise",
+      "description": "Monolith vs microservices",
+      "topics": [
+        "Monolith vs microservices",
+        "TypeScript adoption",
+        "Legacy migration",
+        "On-call practices",
+        "Interview system design"
+      ],
+      "project": null,
+      "objectives": [
+        "Monolith vs microservices",
+        "TypeScript adoption",
+        "Legacy migration",
+        "On-call practices",
+        "Interview system design"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Node in Enterprise. Monolith vs microservices; TypeScript adoption; Legacy migration; On-call practices. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "Node in Enterprise: Monolith vs microservices TypeScript adoption Legacy migration On-call practices Interview system design. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Node in Enterprise. Monolith vs microservices TypeScript adoption Legacy migration On-call practices Interview system design. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Node in Enterprise\n\nTOPICS TO COVER (in order):\n- Monolith vs microservices\n- TypeScript adoption\n- Legacy migration\n- On-call practices\n- Interview system design\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Monolith vs microservices with a concrete example.",
+        "How would you apply TypeScript adoption in a real project?",
+        "What is a common beginner mistake with Legacy migration, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-29",
+      "order": 29,
+      "sectionId": "12",
+      "sectionTitle": "Node Plus",
+      "moduleNumber": 1,
+      "title": "Module 29: Serverless Node",
+      "description": "AWS Lambda handler",
+      "topics": [
+        "AWS Lambda handler",
+        "Cold starts",
+        "Serverless framework intro",
+        "Edge functions",
+        "When serverless fits"
+      ],
+      "project": null,
+      "objectives": [
+        "AWS Lambda handler",
+        "Cold starts",
+        "Serverless framework intro",
+        "Edge functions",
+        "When serverless fits"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Serverless Node. AWS Lambda handler; Cold starts; Serverless framework intro; Edge functions. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "Serverless Node: AWS Lambda handler Cold starts Serverless framework intro Edge functions When serverless fits. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Serverless Node. AWS Lambda handler Cold starts Serverless framework intro Edge functions When serverless fits. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Serverless Node\n\nTOPICS TO COVER (in order):\n- AWS Lambda handler\n- Cold starts\n- Serverless framework intro\n- Edge functions\n- When serverless fits\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain AWS Lambda handler with a concrete example.",
+        "How would you apply Cold starts in a real project?",
+        "What is a common beginner mistake with Serverless framework intro, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "nodejs-30",
+      "order": 30,
+      "sectionId": "12",
+      "sectionTitle": "Node Plus",
+      "moduleNumber": 2,
+      "title": "Module 30: GraphQL Server",
+      "description": "Apollo Server setup",
+      "topics": [
+        "Apollo Server setup",
+        "Resolvers",
+        "DataLoader N+1 fix",
+        "vs REST",
+        "Schema-first design"
+      ],
+      "project": null,
+      "objectives": [
+        "Apollo Server setup",
+        "Resolvers",
+        "DataLoader N+1 fix",
+        "vs REST",
+        "Schema-first design"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to GraphQL Server. Apollo Server setup; Resolvers; DataLoader N+1 fix; vs REST. Use clear, runnable examples in Node.js server-side JavaScript and backend APIs.",
+        "intermediate": "GraphQL Server: Apollo Server setup Resolvers DataLoader N+1 fix vs REST Schema-first design. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: GraphQL Server. Apollo Server setup Resolvers DataLoader N+1 fix vs REST Schema-first design. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — GraphQL Server\n\nTOPICS TO COVER (in order):\n- Apollo Server setup\n- Resolvers\n- DataLoader N+1 fix\n- vs REST\n- Schema-first design\n\nTEACHING STYLE: Practical mentor for Node.js server-side JavaScript and backend APIs.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Apollo Server setup with a concrete example.",
+        "How would you apply Resolvers in a real project?",
+        "What is a common beginner mistake with DataLoader N+1 fix, and how do you avoid it?"
       ]
     }
   ]

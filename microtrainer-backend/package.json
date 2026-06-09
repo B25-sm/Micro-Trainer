@@ -6,6 +6,7 @@
     "start": "node index.js",
     "dev": "node index.js",
     "test": "node scripts/smoke-test.js",
+    "build:ai-ml-bank": "node scripts/build-ai-ml-master-bank.js",
     "verify:sheets": "node scripts/verify-google-sheets.js"
   },
   "keywords": [],

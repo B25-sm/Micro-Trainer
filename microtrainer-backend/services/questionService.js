@@ -25,6 +25,11 @@ const {
   pickInterviewTopic,
   getRolePromptHint,
 } = require("./dataScienceInterviewRoles");
+const {
+  getRandomAiMlQuestion,
+  isAiMlMasterSubject,
+  matchesRoleSubject,
+} = require("./aiMlQuestionBank");
 
 
 // =======================================================
@@ -211,13 +216,30 @@ async function generateQuestion({ subject, history = [], studentId }) {
       }
     }
     
-    // Data roles — Analyst, ML Engineer, or general Data Science
+    // Data / AI-ML roles — topic pools + 535-question master bank
     const originalSubject = subject;
-    const dsTopic = pickInterviewTopic(subject);
-    if (dsTopic) {
-      subject = dsTopic;
+    const useAiMlBank =
+      isAiMlMasterSubject(originalSubject) ||
+      matchesRoleSubject(originalSubject);
+
+    let dsTopic = null;
+    if (!isAiMlMasterSubject(originalSubject)) {
+      dsTopic = pickInterviewTopic(subject);
+      if (dsTopic) {
+        subject = dsTopic;
+      }
     }
     const dsRoleHint = getRolePromptHint(originalSubject);
+
+    if (useAiMlBank) {
+      let tier;
+      if (difficulty === "easy") tier = 1;
+      else if (difficulty === "hard") tier = Math.random() < 0.45 ? 3 : 2;
+      else tier = Math.random() < 0.65 ? 1 : 2;
+
+      const question = getRandomAiMlQuestion(difficulty, { tier });
+      return questionPack(transformToSaiMahendraStyle(question), difficulty);
+    }
 
     // 🔥 Python Full Stack - Mix of Python backend + frontend
     if (subject.toLowerCase().includes("python") && isFullStack) {

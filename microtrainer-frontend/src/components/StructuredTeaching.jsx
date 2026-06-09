@@ -50,6 +50,7 @@ const StructuredTeaching = ({
   onBack 
 }) => {
   const [sessionId, setSessionId] = useState(null);
+  const [totalConcepts, setTotalConcepts] = useState(5);
   const [conceptData, setConceptData] = useState(null);
   const [conversation, setConversation] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -172,6 +173,25 @@ const StructuredTeaching = ({
   };
 
   // Initialize session and fetch concept
+  useEffect(() => {
+    if (!technology) return undefined;
+    let cancelled = false;
+    learningPathAPI
+      .getCurriculum(technology)
+      .then((res) => {
+        if (cancelled) return;
+        const total =
+          res.data?.totalConcepts || res.data?.concepts?.length || 5;
+        setTotalConcepts(total);
+      })
+      .catch(() => {
+        if (!cancelled) setTotalConcepts(5);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [technology]);
+
   useEffect(() => {
     const initializeSession = async () => {
       const loadGen = ++loadGenRef.current;
@@ -686,7 +706,12 @@ const StructuredTeaching = ({
             <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 read-mode:bg-[var(--read-border)] rounded-full overflow-hidden mb-3">
               <div
                 className="h-full bg-blue-500 rounded-full transition-all"
-                style={{ width: `${(conceptData.conceptOrder / 5) * 100}%` }}
+                style={{
+                  width: `${Math.min(
+                    100,
+                    (conceptData.conceptOrder / (totalConcepts || 1)) * 100
+                  )}%`,
+                }}
               />
             </div>
             {!showingQuestions && !assessmentResult && (

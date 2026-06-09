@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import { ArrowLeft, TrendingUp, TrendingDown, Minus, Award, AlertCircle, CheckCircle } from "lucide-react";
 import { getTrainerHeaders } from "../utils/trainerAuth";
 import InterviewHistoryPanel from "../components/InterviewHistoryPanel";
+import TrainerPersonalSchedulePanel from "../components/personalSchedule/TrainerPersonalSchedulePanel";
+import { personalScheduleAPI } from "../api/personalSchedule";
 
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
@@ -17,6 +19,8 @@ const StudentDetailView = () => {
   const [memory, setMemory] = useState(null);
   const [profile, setProfile] = useState(null);
   const [learningProgress, setLearningProgress] = useState(null);
+  const [personalSchedule, setPersonalSchedule] = useState(null);
+  const [scheduleToday, setScheduleToday] = useState(null);
 
   useEffect(() => {
     fetchStudentData();
@@ -27,25 +31,34 @@ const StudentDetailView = () => {
       setLoading(true);
 
       // Fetch all student data in parallel
-      const [analyticsRes, memoryRes, profileRes, learningRes] = await Promise.all([
-        axios.get(`${BASE_URL}/student/${studentId}/analytics`, {
-          headers: getTrainerHeaders(),
-        }),
-        axios.get(`${BASE_URL}/student/${studentId}/memory`, {
-          headers: getTrainerHeaders(),
-        }),
-        axios.get(`${BASE_URL}/profile/${studentId}`),
-        axios
-          .get(`${BASE_URL}/trainer/learning-progress/${studentId}`, {
+      const [analyticsRes, memoryRes, profileRes, learningRes, scheduleRes, todayRes] =
+        await Promise.all([
+          axios.get(`${BASE_URL}/student/${studentId}/analytics`, {
             headers: getTrainerHeaders(),
-          })
-          .catch(() => ({ data: null })),
-      ]);
+          }),
+          axios.get(`${BASE_URL}/student/${studentId}/memory`, {
+            headers: getTrainerHeaders(),
+          }),
+          axios.get(`${BASE_URL}/profile/${studentId}`),
+          axios
+            .get(`${BASE_URL}/trainer/learning-progress/${studentId}`, {
+              headers: getTrainerHeaders(),
+            })
+            .catch(() => ({ data: null })),
+          personalScheduleAPI.getScheduleForTrainer(studentId).catch(() => ({
+            data: { schedule: null },
+          })),
+          personalScheduleAPI.getTodayForTrainer(studentId).catch(() => ({
+            data: { hasPlan: false },
+          })),
+        ]);
 
       setAnalytics(analyticsRes.data);
       setMemory(memoryRes.data);
       setProfile(profileRes.data);
       setLearningProgress(learningRes.data);
+      setPersonalSchedule(scheduleRes.data?.schedule ?? null);
+      setScheduleToday(todayRes.data ?? null);
 
     } catch (err) {
       console.error("Error fetching student data:", err);
@@ -83,11 +96,11 @@ const StudentDetailView = () => {
     );
   }
 
-  const hasLearning =
-    learningProgress?.technologies?.length > 0;
+  const hasLearning = learningProgress?.technologies?.length > 0;
   const hasInterviewData = analytics || memory;
+  const hasPersonalSchedule = Boolean(personalSchedule?.category);
 
-  if (!hasInterviewData && !hasLearning) {
+  if (!hasInterviewData && !hasLearning && !hasPersonalSchedule) {
     return (
       <div className="min-h-screen p-6 bg-white dark:bg-[#202124]">
         <button
@@ -101,7 +114,7 @@ const StudentDetailView = () => {
           <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h2 className="text-xl font-medium text-gray-900 dark:text-gray-100 mb-2">No data available</h2>
           <p className="text-gray-500 dark:text-gray-400 text-sm">
-            This student has no interview or guided course progress recorded yet.
+            This student has no interview, guided course, or personal schedule data yet.
           </p>
         </div>
       </div>
@@ -313,6 +326,11 @@ const StudentDetailView = () => {
           )}
         </motion.div>
       </div>
+
+      <TrainerPersonalSchedulePanel
+        schedule={personalSchedule}
+        todayInfo={scheduleToday}
+      />
 
       {/* GUIDED COURSE PROGRESS (trainer API — local + Google Sheets) */}
       {hasLearning && (

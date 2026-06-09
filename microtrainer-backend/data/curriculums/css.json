@@ -1,110 +1,1110 @@
 {
   "technology": "CSS",
-  "totalConcepts": 5,
+  "totalConcepts": 30,
+  "sections": [
+    {
+      "id": "01",
+      "title": "CSS Foundations",
+      "moduleCount": 3
+    },
+    {
+      "id": "02",
+      "title": "Typography & Color",
+      "moduleCount": 3
+    },
+    {
+      "id": "03",
+      "title": "Layout Fundamentals",
+      "moduleCount": 4
+    },
+    {
+      "id": "04",
+      "title": "Visual Design",
+      "moduleCount": 3
+    },
+    {
+      "id": "05",
+      "title": "Components & Patterns",
+      "moduleCount": 3
+    },
+    {
+      "id": "06",
+      "title": "Advanced CSS",
+      "moduleCount": 3
+    },
+    {
+      "id": "07",
+      "title": "Preprocessors & Tooling",
+      "moduleCount": 3
+    },
+    {
+      "id": "08",
+      "title": "Projects & Capstone",
+      "moduleCount": 4
+    },
+    {
+      "id": "09",
+      "title": "Advanced Layout & Motion",
+      "moduleCount": 2
+    },
+    {
+      "id": "10",
+      "title": "Professional CSS",
+      "moduleCount": 2
+    }
+  ],
   "concepts": [
     {
       "id": "css-1",
       "order": 1,
-      "title": "CSS Basics and Selectors",
-      "description": "Learn CSS syntax, selectors, and how to apply styles",
+      "sectionId": "01",
+      "sectionTitle": "CSS Foundations",
+      "moduleNumber": 1,
+      "title": "Module 1: How CSS Works",
+      "description": "Cascade, specificity, inheritance",
+      "topics": [
+        "Cascade, specificity, inheritance",
+        "Selectors overview",
+        "DevTools Styles panel",
+        "External vs internal vs inline",
+        "CSS career skills"
+      ],
+      "project": null,
       "objectives": [
-        "Understand CSS syntax",
-        "Use CSS selectors",
-        "Apply styles to HTML"
+        "Cascade, specificity, inheritance",
+        "Selectors overview",
+        "DevTools Styles panel",
+        "External vs internal vs inline",
+        "CSS career skills"
       ],
       "teachingContent": {
-        "beginner": "**CSS** (Cascading Style Sheets) styles HTML elements.\n\n**CSS Syntax:**\n```css\nselector {\n    property: value;\n}\n```\n\n**Adding CSS:**\n```html\n<!-- Inline -->\n<p style=\"color: blue;\">Text</p>\n\n<!-- Internal -->\n<style>\n    p { color: blue; }\n</style>\n\n<!-- External (recommended) -->\n<link rel=\"stylesheet\" href=\"styles.css\">\n```\n\n**Basic Selectors:**\n```css\n/* Element */\np { color: blue; }\n\n/* Class */\n.button { background: red; }\n\n/* ID */\n#header { font-size: 24px; }\n```",
-        "intermediate": "Advanced selectors and specificity:\n\n**Combinators:**\n```css\n/* Descendant */\ndiv p { color: blue; }\n\n/* Child */\ndiv > p { color: red; }\n\n/* Adjacent sibling */\nh1 + p { margin-top: 0; }\n\n/* General sibling */\nh1 ~ p { color: gray; }\n```\n\n**Pseudo-classes:**\n```css\na:hover { color: red; }\na:visited { color: purple; }\ninput:focus { border: 2px solid blue; }\nli:first-child { font-weight: bold; }\nli:nth-child(2n) { background: #f0f0f0; }\n```\n\n**Specificity:**\n- Inline: 1000\n- ID: 100\n- Class: 10\n- Element: 1",
-        "advanced": "Advanced selectors:\n\n**Attribute Selectors:**\n```css\n[type=\"text\"] { border: 1px solid gray; }\n[href^=\"https\"] { color: green; }\n[href$=\".pdf\"] { color: red; }\n[class*=\"btn\"] { padding: 10px; }\n```\n\n**Pseudo-elements:**\n```css\np::first-line { font-weight: bold; }\np::first-letter { font-size: 2em; }\n.button::before { content: \"→ \"; }\n.button::after { content: \" ←\"; }\n```"
+        "beginner": "Introduction to How CSS Works. Cascade, specificity, inheritance; Selectors overview; DevTools Styles panel; External vs internal vs inline. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "How CSS Works: Cascade, specificity, inheritance Selectors overview DevTools Styles panel External vs internal vs inline CSS career skills. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: How CSS Works. Cascade, specificity, inheritance Selectors overview DevTools Styles panel External vs internal vs inline CSS career skills. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — How CSS Works\n\nTOPICS TO COVER (in order):\n- Cascade, specificity, inheritance\n- Selectors overview\n- DevTools Styles panel\n- External vs internal vs inline\n- CSS career skills\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "What is CSS?",
-        "What's the difference between class and ID?",
-        "How do you select all paragraphs inside a div?"
+        "Explain Cascade, specificity, inheritance with a concrete example.",
+        "How would you apply Selectors overview in a real project?",
+        "What is a common beginner mistake with DevTools Styles panel, and how do you avoid it?"
       ]
     },
     {
       "id": "css-2",
       "order": 2,
-      "title": "Box Model and Layout",
-      "description": "Learn the CSS box model and basic layout",
+      "sectionId": "01",
+      "sectionTitle": "CSS Foundations",
+      "moduleNumber": 2,
+      "title": "Module 2: Selectors Deep Dive",
+      "description": "Element, class, ID",
+      "topics": [
+        "Element, class, ID",
+        "Descendant and child combinators",
+        "Attribute selectors",
+        ":hover, :focus, :nth-child",
+        "Specificity calculation"
+      ],
+      "project": "Style a profile card",
       "objectives": [
-        "Understand the box model",
-        "Use margin and padding",
-        "Control element sizing"
+        "Element, class, ID",
+        "Descendant and child combinators",
+        "Attribute selectors",
+        ":hover, :focus, :nth-child",
+        "Specificity calculation",
+        "Project: Style a profile card"
       ],
       "teachingContent": {
-        "beginner": "**Box Model**: Every element is a box!\n\n**Box Model Parts:**\n```\n┌─────────────────────────┐\n│       Margin            │\n│  ┌──────────────────┐   │\n│  │    Border        │   │\n│  │  ┌───────────┐   │   │\n│  │  │  Padding  │   │   │\n│  │  │ ┌───────┐ │   │   │\n│  │  │ │Content│ │   │   │\n│  │  │ └───────┘ │   │   │\n│  │  └───────────┘   │   │\n│  └──────────────────┘   │\n└─────────────────────────┘\n```\n\n**CSS:**\n```css\n.box {\n    width: 200px;\n    height: 100px;\n    padding: 20px;\n    border: 2px solid black;\n    margin: 10px;\n}\n```",
-        "intermediate": "Box model properties:\n\n**Margin and Padding:**\n```css\n/* All sides */\nmargin: 10px;\n\n/* Top/Bottom, Left/Right */\nmargin: 10px 20px;\n\n/* Top, Right, Bottom, Left */\nmargin: 10px 20px 30px 40px;\n\n/* Individual sides */\nmargin-top: 10px;\nmargin-right: 20px;\n```\n\n**Box Sizing:**\n```css\n/* Default: width doesn't include padding/border */\nbox-sizing: content-box;\n\n/* Better: width includes padding/border */\nbox-sizing: border-box;\n\n/* Apply to all elements */\n* {\n    box-sizing: border-box;\n}\n```",
-        "advanced": "Advanced box model:\n\n**Margin Collapse:**\n```css\n/* Vertical margins collapse */\n.box1 { margin-bottom: 20px; }\n.box2 { margin-top: 30px; }\n/* Actual gap: 30px (not 50px) */\n```\n\n**Overflow:**\n```css\n.container {\n    overflow: hidden;  /* Hide overflow */\n    overflow: scroll;  /* Always show scrollbar */\n    overflow: auto;    /* Show scrollbar when needed */\n}\n```"
+        "beginner": "Introduction to Selectors Deep Dive. Element, class, ID; Descendant and child combinators; Attribute selectors; :hover, :focus, :nth-child. Project: Style a profile card. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Selectors Deep Dive: Element, class, ID Descendant and child combinators Attribute selectors :hover, :focus, :nth-child Specificity calculation. Project: Style a profile card. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Selectors Deep Dive. Element, class, ID Descendant and child combinators Attribute selectors :hover, :focus, :nth-child Specificity calculation. Project: Style a profile card. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — Selectors Deep Dive\n\nTOPICS TO COVER (in order):\n- Element, class, ID\n- Descendant and child combinators\n- Attribute selectors\n- :hover, :focus, :nth-child\n- Specificity calculation\n\nHANDS-ON PROJECT: Style a profile card\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "What is the box model?",
-        "What's the difference between margin and padding?",
-        "What does box-sizing: border-box do?"
+        "Explain Element, class, ID with a concrete example.",
+        "How would you apply Descendant and child combinators in a real project?",
+        "What is a common beginner mistake with Attribute selectors, and how do you avoid it?"
       ]
     },
     {
       "id": "css-3",
       "order": 3,
-      "title": "Flexbox",
-      "description": "Learn CSS Flexbox for flexible layouts",
+      "sectionId": "01",
+      "sectionTitle": "CSS Foundations",
+      "moduleNumber": 3,
+      "title": "Module 3: The Cascade & Specificity",
+      "description": "Origin and importance",
+      "topics": [
+        "Origin and importance",
+        "!important pitfalls",
+        "Layer (@layer) intro",
+        "Inheritance control",
+        "Debugging specificity wars"
+      ],
+      "project": null,
       "objectives": [
-        "Create flex containers",
-        "Align flex items",
-        "Control flex direction and wrapping"
+        "Origin and importance",
+        "!important pitfalls",
+        "Layer (@layer) intro",
+        "Inheritance control",
+        "Debugging specificity wars"
       ],
       "teachingContent": {
-        "beginner": "**Flexbox** makes layouts easy!\n\n**Basic Flexbox:**\n```css\n.container {\n    display: flex;\n}\n```\n\n**Flex Direction:**\n```css\n.row {\n    display: flex;\n    flex-direction: row;  /* Default: left to right */\n}\n\n.column {\n    display: flex;\n    flex-direction: column;  /* Top to bottom */\n}\n```\n\n**Justify Content (Main Axis):**\n```css\n.container {\n    display: flex;\n    justify-content: center;        /* Center */\n    justify-content: space-between; /* Space between items */\n    justify-content: space-around;  /* Space around items */\n}\n```",
-        "intermediate": "Advanced flexbox properties:\n\n**Align Items (Cross Axis):**\n```css\n.container {\n    display: flex;\n    align-items: center;      /* Center vertically */\n    align-items: flex-start;  /* Top */\n    align-items: flex-end;    /* Bottom */\n    align-items: stretch;     /* Stretch to fill */\n}\n```\n\n**Flex Items:**\n```css\n.item {\n    flex: 1;  /* Grow to fill space */\n    flex: 0 0 200px;  /* Don't grow/shrink, 200px wide */\n}\n\n/* Shorthand for: */\nflex-grow: 1;\nflex-shrink: 1;\nflex-basis: 0;\n```\n\n**Flex Wrap:**\n```css\n.container {\n    display: flex;\n    flex-wrap: wrap;  /* Wrap to next line */\n}\n```",
-        "advanced": "Advanced flexbox patterns:\n\n**Align Self:**\n```css\n.item {\n    align-self: flex-end;  /* Override container's align-items */\n}\n```\n\n**Order:**\n```css\n.item1 { order: 2; }\n.item2 { order: 1; }  /* Appears first */\n.item3 { order: 3; }\n```\n\n**Gap:**\n```css\n.container {\n    display: flex;\n    gap: 20px;  /* Space between items */\n    row-gap: 10px;\n    column-gap: 20px;\n}\n```"
+        "beginner": "Introduction to The Cascade & Specificity. Origin and importance; !important pitfalls; Layer (@layer) intro; Inheritance control. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "The Cascade & Specificity: Origin and importance !important pitfalls Layer (@layer) intro Inheritance control Debugging specificity wars. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: The Cascade & Specificity. Origin and importance !important pitfalls Layer (@layer) intro Inheritance control Debugging specificity wars. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — The Cascade & Specificity\n\nTOPICS TO COVER (in order):\n- Origin and importance\n- !important pitfalls\n- Layer (@layer) intro\n- Inheritance control\n- Debugging specificity wars\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "What is Flexbox?",
-        "What does justify-content do?",
-        "What's the difference between align-items and justify-content?"
+        "Explain Origin and importance with a concrete example.",
+        "How would you apply !important pitfalls in a real project?",
+        "What is a common beginner mistake with Layer (@layer) intro, and how do you avoid it?"
       ]
     },
     {
       "id": "css-4",
       "order": 4,
-      "title": "CSS Grid",
-      "description": "Learn CSS Grid for complex 2D layouts",
+      "sectionId": "02",
+      "sectionTitle": "Typography & Color",
+      "moduleNumber": 1,
+      "title": "Module 4: Fonts & Text",
+      "description": "font-family stacks",
+      "topics": [
+        "font-family stacks",
+        "font-size, weight, line-height",
+        "Google Fonts",
+        "text-align, decoration",
+        "Readable typography scale"
+      ],
+      "project": null,
       "objectives": [
-        "Create grid containers",
-        "Define grid columns and rows",
-        "Position grid items"
+        "font-family stacks",
+        "font-size, weight, line-height",
+        "Google Fonts",
+        "text-align, decoration",
+        "Readable typography scale"
       ],
       "teachingContent": {
-        "beginner": "**CSS Grid** creates 2D layouts.\n\n**Basic Grid:**\n```css\n.container {\n    display: grid;\n    grid-template-columns: 200px 200px 200px;\n    grid-template-rows: 100px 100px;\n    gap: 20px;\n}\n```\n\n**Fractional Units (fr):**\n```css\n.container {\n    display: grid;\n    grid-template-columns: 1fr 2fr 1fr;\n    /* 1 part, 2 parts, 1 part */\n}\n```\n\n**Repeat:**\n```css\n.container {\n    display: grid;\n    grid-template-columns: repeat(3, 1fr);\n    /* Same as: 1fr 1fr 1fr */\n}\n```",
-        "intermediate": "Advanced grid features:\n\n**Grid Areas:**\n```css\n.container {\n    display: grid;\n    grid-template-areas:\n        \"header header header\"\n        \"sidebar main main\"\n        \"footer footer footer\";\n}\n\n.header { grid-area: header; }\n.sidebar { grid-area: sidebar; }\n.main { grid-area: main; }\n.footer { grid-area: footer; }\n```\n\n**Grid Lines:**\n```css\n.item {\n    grid-column: 1 / 3;  /* Span columns 1-3 */\n    grid-row: 1 / 2;     /* Span rows 1-2 */\n}\n\n/* Shorthand */\n.item {\n    grid-area: 1 / 1 / 2 / 3;\n    /* row-start / col-start / row-end / col-end */\n}\n```",
-        "advanced": "Advanced grid techniques:\n\n**Auto-fit and Auto-fill:**\n```css\n.container {\n    display: grid;\n    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n    /* Responsive grid without media queries! */\n}\n```\n\n**Grid Auto Flow:**\n```css\n.container {\n    display: grid;\n    grid-auto-flow: dense;  /* Fill gaps */\n}\n```\n\n**Implicit Grid:**\n```css\n.container {\n    display: grid;\n    grid-auto-rows: 100px;  /* Auto-created rows */\n}\n```"
+        "beginner": "Introduction to Fonts & Text. font-family stacks; font-size, weight, line-height; Google Fonts; text-align, decoration. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Fonts & Text: font-family stacks font-size, weight, line-height Google Fonts text-align, decoration Readable typography scale. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Fonts & Text. font-family stacks font-size, weight, line-height Google Fonts text-align, decoration Readable typography scale. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — Fonts & Text\n\nTOPICS TO COVER (in order):\n- font-family stacks\n- font-size, weight, line-height\n- Google Fonts\n- text-align, decoration\n- Readable typography scale\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "What is CSS Grid?",
-        "What does 1fr mean?",
-        "When would you use Grid vs Flexbox?"
+        "Explain font-family stacks with a concrete example.",
+        "How would you apply font-size, weight, line-height in a real project?",
+        "What is a common beginner mistake with Google Fonts, and how do you avoid it?"
       ]
     },
     {
       "id": "css-5",
       "order": 5,
-      "title": "Responsive Design",
-      "description": "Learn to make websites responsive",
+      "sectionId": "02",
+      "sectionTitle": "Typography & Color",
+      "moduleNumber": 2,
+      "title": "Module 5: Colors & Backgrounds",
+      "description": "color formats: hex, rgb, hsl",
+      "topics": [
+        "color formats: hex, rgb, hsl",
+        "background-color, image",
+        "gradients linear/radial",
+        "opacity vs transparency",
+        "Dark mode color tokens"
+      ],
+      "project": null,
       "objectives": [
-        "Use media queries",
-        "Create responsive layouts",
-        "Implement mobile-first design"
+        "color formats: hex, rgb, hsl",
+        "background-color, image",
+        "gradients linear/radial",
+        "opacity vs transparency",
+        "Dark mode color tokens"
       ],
       "teachingContent": {
-        "beginner": "**Responsive Design** makes sites work on all devices.\n\n**Viewport Meta Tag:**\n```html\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n```\n\n**Media Queries:**\n```css\n/* Mobile first (default) */\n.container {\n    width: 100%;\n}\n\n/* Tablet */\n@media (min-width: 768px) {\n    .container {\n        width: 750px;\n    }\n}\n\n/* Desktop */\n@media (min-width: 1024px) {\n    .container {\n        width: 1000px;\n    }\n}\n```",
-        "intermediate": "Advanced responsive techniques:\n\n**Responsive Images:**\n```css\nimg {\n    max-width: 100%;\n    height: auto;\n}\n```\n\n**Responsive Typography:**\n```css\nhtml {\n    font-size: 16px;\n}\n\n@media (min-width: 768px) {\n    html {\n        font-size: 18px;\n    }\n}\n\n/* Or use clamp() */\nhtml {\n    font-size: clamp(14px, 2vw, 20px);\n}\n```\n\n**Breakpoints:**\n```css\n/* Mobile: < 768px */\n/* Tablet: 768px - 1024px */\n/* Desktop: > 1024px */\n```",
-        "advanced": "Modern responsive techniques:\n\n**Container Queries:**\n```css\n@container (min-width: 400px) {\n    .card {\n        display: grid;\n        grid-template-columns: 1fr 2fr;\n    }\n}\n```\n\n**Fluid Typography:**\n```css\nh1 {\n    font-size: calc(1.5rem + 2vw);\n}\n```\n\n**Aspect Ratio:**\n```css\n.video {\n    aspect-ratio: 16 / 9;\n}\n```"
+        "beginner": "Introduction to Colors & Backgrounds. color formats: hex, rgb, hsl; background-color, image; gradients linear/radial; opacity vs transparency. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Colors & Backgrounds: color formats: hex, rgb, hsl background-color, image gradients linear/radial opacity vs transparency Dark mode color tokens. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Colors & Backgrounds. color formats: hex, rgb, hsl background-color, image gradients linear/radial opacity vs transparency Dark mode color tokens. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — Colors & Backgrounds\n\nTOPICS TO COVER (in order):\n- color formats: hex, rgb, hsl\n- background-color, image\n- gradients linear/radial\n- opacity vs transparency\n- Dark mode color tokens\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "What are media queries?",
-        "What is mobile-first design?",
-        "How do you make images responsive?"
+        "Explain color formats with a concrete example.",
+        "How would you apply background-color, image in a real project?",
+        "What is a common beginner mistake with gradients linear/radial, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-6",
+      "order": 6,
+      "sectionId": "02",
+      "sectionTitle": "Typography & Color",
+      "moduleNumber": 3,
+      "title": "Module 6: Box Model",
+      "description": "content, padding, border, margin",
+      "topics": [
+        "content, padding, border, margin",
+        "box-sizing: border-box",
+        "Margin collapse",
+        "Outline vs border",
+        "Sizing width/height"
+      ],
+      "project": null,
+      "objectives": [
+        "content, padding, border, margin",
+        "box-sizing: border-box",
+        "Margin collapse",
+        "Outline vs border",
+        "Sizing width/height"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Box Model. content, padding, border, margin; box-sizing: border-box; Margin collapse; Outline vs border. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Box Model: content, padding, border, margin box-sizing: border-box Margin collapse Outline vs border Sizing width/height. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Box Model. content, padding, border, margin box-sizing: border-box Margin collapse Outline vs border Sizing width/height. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Box Model\n\nTOPICS TO COVER (in order):\n- content, padding, border, margin\n- box-sizing: border-box\n- Margin collapse\n- Outline vs border\n- Sizing width/height\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain content, padding, border, margin with a concrete example.",
+        "How would you apply box-sizing in a real project?",
+        "What is a common beginner mistake with Margin collapse, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-7",
+      "order": 7,
+      "sectionId": "03",
+      "sectionTitle": "Layout Fundamentals",
+      "moduleNumber": 1,
+      "title": "Module 7: Display & Positioning",
+      "description": "block, inline, inline-block",
+      "topics": [
+        "block, inline, inline-block",
+        "none and visibility",
+        "static, relative, absolute",
+        "fixed and sticky",
+        "z-index stacking"
+      ],
+      "project": null,
+      "objectives": [
+        "block, inline, inline-block",
+        "none and visibility",
+        "static, relative, absolute",
+        "fixed and sticky",
+        "z-index stacking"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Display & Positioning. block, inline, inline-block; none and visibility; static, relative, absolute; fixed and sticky. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Display & Positioning: block, inline, inline-block none and visibility static, relative, absolute fixed and sticky z-index stacking. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Display & Positioning. block, inline, inline-block none and visibility static, relative, absolute fixed and sticky z-index stacking. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Display & Positioning\n\nTOPICS TO COVER (in order):\n- block, inline, inline-block\n- none and visibility\n- static, relative, absolute\n- fixed and sticky\n- z-index stacking\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain block, inline, inline-block with a concrete example.",
+        "How would you apply none and visibility in a real project?",
+        "What is a common beginner mistake with static, relative, absolute, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-8",
+      "order": 8,
+      "sectionId": "03",
+      "sectionTitle": "Layout Fundamentals",
+      "moduleNumber": 2,
+      "title": "Module 8: Flexbox",
+      "description": "flex container and items",
+      "topics": [
+        "flex container and items",
+        "justify-content, align-items",
+        "flex-direction, wrap",
+        "flex-grow/shrink/basis",
+        "Common flex patterns"
+      ],
+      "project": "Responsive navbar with flex",
+      "objectives": [
+        "flex container and items",
+        "justify-content, align-items",
+        "flex-direction, wrap",
+        "flex-grow/shrink/basis",
+        "Common flex patterns",
+        "Project: Responsive navbar with flex"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Flexbox. flex container and items; justify-content, align-items; flex-direction, wrap; flex-grow/shrink/basis. Project: Responsive navbar with flex. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Flexbox: flex container and items justify-content, align-items flex-direction, wrap flex-grow/shrink/basis Common flex patterns. Project: Responsive navbar with flex. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Flexbox. flex container and items justify-content, align-items flex-direction, wrap flex-grow/shrink/basis Common flex patterns. Project: Responsive navbar with flex. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Flexbox\n\nTOPICS TO COVER (in order):\n- flex container and items\n- justify-content, align-items\n- flex-direction, wrap\n- flex-grow/shrink/basis\n- Common flex patterns\n\nHANDS-ON PROJECT: Responsive navbar with flex\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain flex container and items with a concrete example.",
+        "How would you apply justify-content, align-items in a real project?",
+        "What is a common beginner mistake with flex-direction, wrap, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-9",
+      "order": 9,
+      "sectionId": "03",
+      "sectionTitle": "Layout Fundamentals",
+      "moduleNumber": 3,
+      "title": "Module 9: CSS Grid",
+      "description": "grid-template-columns/rows",
+      "topics": [
+        "grid-template-columns/rows",
+        "gap, fr units",
+        "grid-area and placement",
+        "Auto-fit/minmax responsive grids",
+        "Flexbox vs Grid decision"
+      ],
+      "project": null,
+      "objectives": [
+        "grid-template-columns/rows",
+        "gap, fr units",
+        "grid-area and placement",
+        "Auto-fit/minmax responsive grids",
+        "Flexbox vs Grid decision"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to CSS Grid. grid-template-columns/rows; gap, fr units; grid-area and placement; Auto-fit/minmax responsive grids. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "CSS Grid: grid-template-columns/rows gap, fr units grid-area and placement Auto-fit/minmax responsive grids Flexbox vs Grid decision. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: CSS Grid. grid-template-columns/rows gap, fr units grid-area and placement Auto-fit/minmax responsive grids Flexbox vs Grid decision. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — CSS Grid\n\nTOPICS TO COVER (in order):\n- grid-template-columns/rows\n- gap, fr units\n- grid-area and placement\n- Auto-fit/minmax responsive grids\n- Flexbox vs Grid decision\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain grid-template-columns/rows with a concrete example.",
+        "How would you apply gap, fr units in a real project?",
+        "What is a common beginner mistake with grid-area and placement, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-10",
+      "order": 10,
+      "sectionId": "03",
+      "sectionTitle": "Layout Fundamentals",
+      "moduleNumber": 4,
+      "title": "Module 10: Responsive Design",
+      "description": "Mobile-first CSS",
+      "topics": [
+        "Mobile-first CSS",
+        "Media queries",
+        "clamp() and fluid type",
+        "Container queries intro",
+        "Breakpoints strategy"
+      ],
+      "project": null,
+      "objectives": [
+        "Mobile-first CSS",
+        "Media queries",
+        "clamp() and fluid type",
+        "Container queries intro",
+        "Breakpoints strategy"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Responsive Design. Mobile-first CSS; Media queries; clamp() and fluid type; Container queries intro. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Responsive Design: Mobile-first CSS Media queries clamp() and fluid type Container queries intro Breakpoints strategy. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Responsive Design. Mobile-first CSS Media queries clamp() and fluid type Container queries intro Breakpoints strategy. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Responsive Design\n\nTOPICS TO COVER (in order):\n- Mobile-first CSS\n- Media queries\n- clamp() and fluid type\n- Container queries intro\n- Breakpoints strategy\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Mobile-first CSS with a concrete example.",
+        "How would you apply Media queries in a real project?",
+        "What is a common beginner mistake with clamp() and fluid type, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-11",
+      "order": 11,
+      "sectionId": "04",
+      "sectionTitle": "Visual Design",
+      "moduleNumber": 1,
+      "title": "Module 11: Borders & Shadows",
+      "description": "border-radius",
+      "topics": [
+        "border-radius",
+        "box-shadow layers",
+        "filter: blur, brightness",
+        "Clipping and masking intro",
+        "Neumorphism awareness"
+      ],
+      "project": null,
+      "objectives": [
+        "border-radius",
+        "box-shadow layers",
+        "filter: blur, brightness",
+        "Clipping and masking intro",
+        "Neumorphism awareness"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Borders & Shadows. border-radius; box-shadow layers; filter: blur, brightness; Clipping and masking intro. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Borders & Shadows: border-radius box-shadow layers filter: blur, brightness Clipping and masking intro Neumorphism awareness. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Borders & Shadows. border-radius box-shadow layers filter: blur, brightness Clipping and masking intro Neumorphism awareness. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Borders & Shadows\n\nTOPICS TO COVER (in order):\n- border-radius\n- box-shadow layers\n- filter: blur, brightness\n- Clipping and masking intro\n- Neumorphism awareness\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain border-radius with a concrete example.",
+        "How would you apply box-shadow layers in a real project?",
+        "What is a common beginner mistake with filter, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-12",
+      "order": 12,
+      "sectionId": "04",
+      "sectionTitle": "Visual Design",
+      "moduleNumber": 2,
+      "title": "Module 12: Transitions & Animations",
+      "description": "transition property",
+      "topics": [
+        "transition property",
+        "transform: translate, scale",
+        "@keyframes animations",
+        "Animation performance",
+        "prefers-reduced-motion"
+      ],
+      "project": null,
+      "objectives": [
+        "transition property",
+        "transform: translate, scale",
+        "@keyframes animations",
+        "Animation performance",
+        "prefers-reduced-motion"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Transitions & Animations. transition property; transform: translate, scale; @keyframes animations; Animation performance. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Transitions & Animations: transition property transform: translate, scale @keyframes animations Animation performance prefers-reduced-motion. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Transitions & Animations. transition property transform: translate, scale @keyframes animations Animation performance prefers-reduced-motion. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Transitions & Animations\n\nTOPICS TO COVER (in order):\n- transition property\n- transform: translate, scale\n- @keyframes animations\n- Animation performance\n- prefers-reduced-motion\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain transition property with a concrete example.",
+        "How would you apply transform in a real project?",
+        "What is a common beginner mistake with @keyframes animations, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-13",
+      "order": 13,
+      "sectionId": "04",
+      "sectionTitle": "Visual Design",
+      "moduleNumber": 3,
+      "title": "Module 13: Modern Effects",
+      "description": "backdrop-filter",
+      "topics": [
+        "backdrop-filter",
+        "blend modes",
+        "clip-path",
+        "CSS variables (--token)",
+        "Theming with custom properties"
+      ],
+      "project": null,
+      "objectives": [
+        "backdrop-filter",
+        "blend modes",
+        "clip-path",
+        "CSS variables (--token)",
+        "Theming with custom properties"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Modern Effects. backdrop-filter; blend modes; clip-path; CSS variables (--token). Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Modern Effects: backdrop-filter blend modes clip-path CSS variables (--token) Theming with custom properties. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Modern Effects. backdrop-filter blend modes clip-path CSS variables (--token) Theming with custom properties. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Modern Effects\n\nTOPICS TO COVER (in order):\n- backdrop-filter\n- blend modes\n- clip-path\n- CSS variables (--token)\n- Theming with custom properties\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain backdrop-filter with a concrete example.",
+        "How would you apply blend modes in a real project?",
+        "What is a common beginner mistake with clip-path, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-14",
+      "order": 14,
+      "sectionId": "05",
+      "sectionTitle": "Components & Patterns",
+      "moduleNumber": 1,
+      "title": "Module 14: Buttons & Cards",
+      "description": "Button states and focus rings",
+      "topics": [
+        "Button states and focus rings",
+        "Card layout patterns",
+        "Hover/focus accessibility",
+        "Component tokens",
+        "BEM naming intro"
+      ],
+      "project": null,
+      "objectives": [
+        "Button states and focus rings",
+        "Card layout patterns",
+        "Hover/focus accessibility",
+        "Component tokens",
+        "BEM naming intro"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Buttons & Cards. Button states and focus rings; Card layout patterns; Hover/focus accessibility; Component tokens. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Buttons & Cards: Button states and focus rings Card layout patterns Hover/focus accessibility Component tokens BEM naming intro. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Buttons & Cards. Button states and focus rings Card layout patterns Hover/focus accessibility Component tokens BEM naming intro. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Buttons & Cards\n\nTOPICS TO COVER (in order):\n- Button states and focus rings\n- Card layout patterns\n- Hover/focus accessibility\n- Component tokens\n- BEM naming intro\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Button states and focus rings with a concrete example.",
+        "How would you apply Card layout patterns in a real project?",
+        "What is a common beginner mistake with Hover/focus accessibility, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-15",
+      "order": 15,
+      "sectionId": "05",
+      "sectionTitle": "Components & Patterns",
+      "moduleNumber": 2,
+      "title": "Module 15: Navigation Patterns",
+      "description": "Horizontal nav",
+      "topics": [
+        "Horizontal nav",
+        "Hamburger menu CSS",
+        "Dropdown basics",
+        "Breadcrumbs styling",
+        "Sticky header"
+      ],
+      "project": null,
+      "objectives": [
+        "Horizontal nav",
+        "Hamburger menu CSS",
+        "Dropdown basics",
+        "Breadcrumbs styling",
+        "Sticky header"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Navigation Patterns. Horizontal nav; Hamburger menu CSS; Dropdown basics; Breadcrumbs styling. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Navigation Patterns: Horizontal nav Hamburger menu CSS Dropdown basics Breadcrumbs styling Sticky header. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Navigation Patterns. Horizontal nav Hamburger menu CSS Dropdown basics Breadcrumbs styling Sticky header. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Navigation Patterns\n\nTOPICS TO COVER (in order):\n- Horizontal nav\n- Hamburger menu CSS\n- Dropdown basics\n- Breadcrumbs styling\n- Sticky header\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Horizontal nav with a concrete example.",
+        "How would you apply Hamburger menu CSS in a real project?",
+        "What is a common beginner mistake with Dropdown basics, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-16",
+      "order": 16,
+      "sectionId": "05",
+      "sectionTitle": "Components & Patterns",
+      "moduleNumber": 3,
+      "title": "Module 16: Forms Styling",
+      "description": "Input styling cross-browser",
+      "topics": [
+        "Input styling cross-browser",
+        "Custom checkboxes intro",
+        "Validation styles",
+        "Focus-visible",
+        "Accessible form design"
+      ],
+      "project": null,
+      "objectives": [
+        "Input styling cross-browser",
+        "Custom checkboxes intro",
+        "Validation styles",
+        "Focus-visible",
+        "Accessible form design"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Forms Styling. Input styling cross-browser; Custom checkboxes intro; Validation styles; Focus-visible. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Forms Styling: Input styling cross-browser Custom checkboxes intro Validation styles Focus-visible Accessible form design. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Forms Styling. Input styling cross-browser Custom checkboxes intro Validation styles Focus-visible Accessible form design. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Forms Styling\n\nTOPICS TO COVER (in order):\n- Input styling cross-browser\n- Custom checkboxes intro\n- Validation styles\n- Focus-visible\n- Accessible form design\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Input styling cross-browser with a concrete example.",
+        "How would you apply Custom checkboxes intro in a real project?",
+        "What is a common beginner mistake with Validation styles, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-17",
+      "order": 17,
+      "sectionId": "06",
+      "sectionTitle": "Advanced CSS",
+      "moduleNumber": 1,
+      "title": "Module 17: Pseudo Elements",
+      "description": "::before, ::after",
+      "topics": [
+        "::before, ::after",
+        "Content property",
+        "Decorative patterns",
+        "Tooltips with CSS",
+        "Counters"
+      ],
+      "project": null,
+      "objectives": [
+        "::before, ::after",
+        "Content property",
+        "Decorative patterns",
+        "Tooltips with CSS",
+        "Counters"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Pseudo Elements. ::before, ::after; Content property; Decorative patterns; Tooltips with CSS. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Pseudo Elements: ::before, ::after Content property Decorative patterns Tooltips with CSS Counters. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Pseudo Elements. ::before, ::after Content property Decorative patterns Tooltips with CSS Counters. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Pseudo Elements\n\nTOPICS TO COVER (in order):\n- ::before, ::after\n- Content property\n- Decorative patterns\n- Tooltips with CSS\n- Counters\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Pseudo Elements with a concrete example.",
+        "How would you apply Content property in a real project?",
+        "What is a common beginner mistake with Decorative patterns, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-18",
+      "order": 18,
+      "sectionId": "06",
+      "sectionTitle": "Advanced CSS",
+      "moduleNumber": 2,
+      "title": "Module 18: Functions & Units",
+      "description": "calc(), min(), max()",
+      "topics": [
+        "calc(), min(), max()",
+        "vh/vw/dvh units",
+        "aspect-ratio",
+        "env() for safe areas",
+        "Logical properties"
+      ],
+      "project": null,
+      "objectives": [
+        "calc(), min(), max()",
+        "vh/vw/dvh units",
+        "aspect-ratio",
+        "env() for safe areas",
+        "Logical properties"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Functions & Units. calc(), min(), max(); vh/vw/dvh units; aspect-ratio; env() for safe areas. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Functions & Units: calc(), min(), max() vh/vw/dvh units aspect-ratio env() for safe areas Logical properties. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Functions & Units. calc(), min(), max() vh/vw/dvh units aspect-ratio env() for safe areas Logical properties. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Functions & Units\n\nTOPICS TO COVER (in order):\n- calc(), min(), max()\n- vh/vw/dvh units\n- aspect-ratio\n- env() for safe areas\n- Logical properties\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain calc(), min(), max() with a concrete example.",
+        "How would you apply vh/vw/dvh units in a real project?",
+        "What is a common beginner mistake with aspect-ratio, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-19",
+      "order": 19,
+      "sectionId": "06",
+      "sectionTitle": "Advanced CSS",
+      "moduleNumber": 3,
+      "title": "Module 19: Architecture",
+      "description": "BEM, ITCSS overview",
+      "topics": [
+        "BEM, ITCSS overview",
+        "CSS Modules awareness",
+        "Tailwind philosophy",
+        "Design systems",
+        "Avoiding global leaks"
+      ],
+      "project": null,
+      "objectives": [
+        "BEM, ITCSS overview",
+        "CSS Modules awareness",
+        "Tailwind philosophy",
+        "Design systems",
+        "Avoiding global leaks"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Architecture. BEM, ITCSS overview; CSS Modules awareness; Tailwind philosophy; Design systems. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Architecture: BEM, ITCSS overview CSS Modules awareness Tailwind philosophy Design systems Avoiding global leaks. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Architecture. BEM, ITCSS overview CSS Modules awareness Tailwind philosophy Design systems Avoiding global leaks. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Architecture\n\nTOPICS TO COVER (in order):\n- BEM, ITCSS overview\n- CSS Modules awareness\n- Tailwind philosophy\n- Design systems\n- Avoiding global leaks\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain BEM, ITCSS overview with a concrete example.",
+        "How would you apply CSS Modules awareness in a real project?",
+        "What is a common beginner mistake with Tailwind philosophy, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-20",
+      "order": 20,
+      "sectionId": "07",
+      "sectionTitle": "Preprocessors & Tooling",
+      "moduleNumber": 1,
+      "title": "Module 20: Sass/SCSS Intro",
+      "description": "Variables and nesting",
+      "topics": [
+        "Variables and nesting",
+        "Mixins and extends",
+        "Partials and imports",
+        "When preprocessors still matter",
+        "Compiling Sass"
+      ],
+      "project": null,
+      "objectives": [
+        "Variables and nesting",
+        "Mixins and extends",
+        "Partials and imports",
+        "When preprocessors still matter",
+        "Compiling Sass"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Sass/SCSS Intro. Variables and nesting; Mixins and extends; Partials and imports; When preprocessors still matter. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Sass/SCSS Intro: Variables and nesting Mixins and extends Partials and imports When preprocessors still matter Compiling Sass. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Sass/SCSS Intro. Variables and nesting Mixins and extends Partials and imports When preprocessors still matter Compiling Sass. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Sass/SCSS Intro\n\nTOPICS TO COVER (in order):\n- Variables and nesting\n- Mixins and extends\n- Partials and imports\n- When preprocessors still matter\n- Compiling Sass\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Variables and nesting with a concrete example.",
+        "How would you apply Mixins and extends in a real project?",
+        "What is a common beginner mistake with Partials and imports, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-21",
+      "order": 21,
+      "sectionId": "07",
+      "sectionTitle": "Preprocessors & Tooling",
+      "moduleNumber": 2,
+      "title": "Module 21: PostCSS & Autoprefixer",
+      "description": "Vendor prefixes",
+      "topics": [
+        "Vendor prefixes",
+        "PostCSS plugins",
+        "Build pipeline with Vite",
+        "Source maps",
+        "Production minification"
+      ],
+      "project": null,
+      "objectives": [
+        "Vendor prefixes",
+        "PostCSS plugins",
+        "Build pipeline with Vite",
+        "Source maps",
+        "Production minification"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to PostCSS & Autoprefixer. Vendor prefixes; PostCSS plugins; Build pipeline with Vite; Source maps. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "PostCSS & Autoprefixer: Vendor prefixes PostCSS plugins Build pipeline with Vite Source maps Production minification. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: PostCSS & Autoprefixer. Vendor prefixes PostCSS plugins Build pipeline with Vite Source maps Production minification. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — PostCSS & Autoprefixer\n\nTOPICS TO COVER (in order):\n- Vendor prefixes\n- PostCSS plugins\n- Build pipeline with Vite\n- Source maps\n- Production minification\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Vendor prefixes with a concrete example.",
+        "How would you apply PostCSS plugins in a real project?",
+        "What is a common beginner mistake with Build pipeline with Vite, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-22",
+      "order": 22,
+      "sectionId": "07",
+      "sectionTitle": "Preprocessors & Tooling",
+      "moduleNumber": 3,
+      "title": "Module 22: Linting & Formatting",
+      "description": "stylelint rules",
+      "topics": [
+        "stylelint rules",
+        "Prettier for CSS",
+        "Style guides",
+        "CI checks",
+        "Team conventions"
+      ],
+      "project": null,
+      "objectives": [
+        "stylelint rules",
+        "Prettier for CSS",
+        "Style guides",
+        "CI checks",
+        "Team conventions"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Linting & Formatting. stylelint rules; Prettier for CSS; Style guides; CI checks. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Linting & Formatting: stylelint rules Prettier for CSS Style guides CI checks Team conventions. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Linting & Formatting. stylelint rules Prettier for CSS Style guides CI checks Team conventions. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Linting & Formatting\n\nTOPICS TO COVER (in order):\n- stylelint rules\n- Prettier for CSS\n- Style guides\n- CI checks\n- Team conventions\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain stylelint rules with a concrete example.",
+        "How would you apply Prettier for CSS in a real project?",
+        "What is a common beginner mistake with Style guides, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-23",
+      "order": 23,
+      "sectionId": "08",
+      "sectionTitle": "Projects & Capstone",
+      "moduleNumber": 1,
+      "title": "Module 23: Clone a Landing Page",
+      "description": "Analyze reference design",
+      "topics": [
+        "Analyze reference design",
+        "HTML structure first",
+        "Mobile layout",
+        "Desktop enhancements",
+        "Polish and QA"
+      ],
+      "project": null,
+      "objectives": [
+        "Analyze reference design",
+        "HTML structure first",
+        "Mobile layout",
+        "Desktop enhancements",
+        "Polish and QA"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Clone a Landing Page. Analyze reference design; HTML structure first; Mobile layout; Desktop enhancements. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Clone a Landing Page: Analyze reference design HTML structure first Mobile layout Desktop enhancements Polish and QA. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Clone a Landing Page. Analyze reference design HTML structure first Mobile layout Desktop enhancements Polish and QA. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Clone a Landing Page\n\nTOPICS TO COVER (in order):\n- Analyze reference design\n- HTML structure first\n- Mobile layout\n- Desktop enhancements\n- Polish and QA\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Analyze reference design with a concrete example.",
+        "How would you apply HTML structure first in a real project?",
+        "What is a common beginner mistake with Mobile layout, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-24",
+      "order": 24,
+      "sectionId": "08",
+      "sectionTitle": "Projects & Capstone",
+      "moduleNumber": 2,
+      "title": "Module 24: Design System Mini",
+      "description": "Color and type scale",
+      "topics": [
+        "Color and type scale",
+        "Spacing system",
+        "Reusable utility classes",
+        "Component library CSS",
+        "Documentation"
+      ],
+      "project": null,
+      "objectives": [
+        "Color and type scale",
+        "Spacing system",
+        "Reusable utility classes",
+        "Component library CSS",
+        "Documentation"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Design System Mini. Color and type scale; Spacing system; Reusable utility classes; Component library CSS. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Design System Mini: Color and type scale Spacing system Reusable utility classes Component library CSS Documentation. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Design System Mini. Color and type scale Spacing system Reusable utility classes Component library CSS Documentation. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Design System Mini\n\nTOPICS TO COVER (in order):\n- Color and type scale\n- Spacing system\n- Reusable utility classes\n- Component library CSS\n- Documentation\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Color and type scale with a concrete example.",
+        "How would you apply Spacing system in a real project?",
+        "What is a common beginner mistake with Reusable utility classes, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-25",
+      "order": 25,
+      "sectionId": "08",
+      "sectionTitle": "Projects & Capstone",
+      "moduleNumber": 3,
+      "title": "Module 25: CSS Interview Topics",
+      "description": "Specificity scenarios",
+      "topics": [
+        "Specificity scenarios",
+        "Centering techniques",
+        "Flex vs Grid",
+        "Performance (repaints)",
+        "Common gotchas"
+      ],
+      "project": null,
+      "objectives": [
+        "Specificity scenarios",
+        "Centering techniques",
+        "Flex vs Grid",
+        "Performance (repaints)",
+        "Common gotchas"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to CSS Interview Topics. Specificity scenarios; Centering techniques; Flex vs Grid; Performance (repaints). Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "CSS Interview Topics: Specificity scenarios Centering techniques Flex vs Grid Performance (repaints) Common gotchas. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: CSS Interview Topics. Specificity scenarios Centering techniques Flex vs Grid Performance (repaints) Common gotchas. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — CSS Interview Topics\n\nTOPICS TO COVER (in order):\n- Specificity scenarios\n- Centering techniques\n- Flex vs Grid\n- Performance (repaints)\n- Common gotchas\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Specificity scenarios with a concrete example.",
+        "How would you apply Centering techniques in a real project?",
+        "What is a common beginner mistake with Flex vs Grid, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-26",
+      "order": 26,
+      "sectionId": "08",
+      "sectionTitle": "Projects & Capstone",
+      "moduleNumber": 4,
+      "title": "Module 26: Capstone: Responsive Dashboard",
+      "description": "Sidebar + main grid",
+      "topics": [
+        "Sidebar + main grid",
+        "Charts area placeholder",
+        "Dark/light theme toggle",
+        "Accessible focus states",
+        "Deploy static site"
+      ],
+      "project": "Build responsive dashboard UI",
+      "objectives": [
+        "Sidebar + main grid",
+        "Charts area placeholder",
+        "Dark/light theme toggle",
+        "Accessible focus states",
+        "Deploy static site",
+        "Project: Build responsive dashboard UI"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Capstone: Responsive Dashboard. Sidebar + main grid; Charts area placeholder; Dark/light theme toggle; Accessible focus states. Project: Build responsive dashboard UI. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Capstone: Responsive Dashboard: Sidebar + main grid Charts area placeholder Dark/light theme toggle Accessible focus states Deploy static site. Project: Build responsive dashboard UI. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Capstone: Responsive Dashboard. Sidebar + main grid Charts area placeholder Dark/light theme toggle Accessible focus states Deploy static site. Project: Build responsive dashboard UI. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Capstone: Responsive Dashboard\n\nTOPICS TO COVER (in order):\n- Sidebar + main grid\n- Charts area placeholder\n- Dark/light theme toggle\n- Accessible focus states\n- Deploy static site\n\nHANDS-ON PROJECT: Build responsive dashboard UI\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Sidebar + main grid with a concrete example.",
+        "How would you apply Charts area placeholder in a real project?",
+        "What is a common beginner mistake with Dark/light theme toggle, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-27",
+      "order": 27,
+      "sectionId": "09",
+      "sectionTitle": "Advanced Layout & Motion",
+      "moduleNumber": 1,
+      "title": "Module 27: Subgrid & Advanced Grid",
+      "description": "subgrid",
+      "topics": [
+        "subgrid",
+        "Named lines",
+        "Overlapping grid items",
+        "Masonry intro",
+        "Complex layouts"
+      ],
+      "project": null,
+      "objectives": [
+        "subgrid",
+        "Named lines",
+        "Overlapping grid items",
+        "Masonry intro",
+        "Complex layouts"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Subgrid & Advanced Grid. subgrid; Named lines; Overlapping grid items; Masonry intro. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Subgrid & Advanced Grid: subgrid Named lines Overlapping grid items Masonry intro Complex layouts. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Subgrid & Advanced Grid. subgrid Named lines Overlapping grid items Masonry intro Complex layouts. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Subgrid & Advanced Grid\n\nTOPICS TO COVER (in order):\n- subgrid\n- Named lines\n- Overlapping grid items\n- Masonry intro\n- Complex layouts\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain subgrid with a concrete example.",
+        "How would you apply Named lines in a real project?",
+        "What is a common beginner mistake with Overlapping grid items, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-28",
+      "order": 28,
+      "sectionId": "09",
+      "sectionTitle": "Advanced Layout & Motion",
+      "moduleNumber": 2,
+      "title": "Module 28: Motion & Accessibility",
+      "description": "prefers-reduced-motion",
+      "topics": [
+        "prefers-reduced-motion",
+        "Animation performance",
+        "Focus-visible styles",
+        "Skip animations",
+        "Inclusive motion design"
+      ],
+      "project": null,
+      "objectives": [
+        "prefers-reduced-motion",
+        "Animation performance",
+        "Focus-visible styles",
+        "Skip animations",
+        "Inclusive motion design"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Motion & Accessibility. prefers-reduced-motion; Animation performance; Focus-visible styles; Skip animations. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Motion & Accessibility: prefers-reduced-motion Animation performance Focus-visible styles Skip animations Inclusive motion design. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Motion & Accessibility. prefers-reduced-motion Animation performance Focus-visible styles Skip animations Inclusive motion design. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Motion & Accessibility\n\nTOPICS TO COVER (in order):\n- prefers-reduced-motion\n- Animation performance\n- Focus-visible styles\n- Skip animations\n- Inclusive motion design\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain prefers-reduced-motion with a concrete example.",
+        "How would you apply Animation performance in a real project?",
+        "What is a common beginner mistake with Focus-visible styles, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-29",
+      "order": 29,
+      "sectionId": "10",
+      "sectionTitle": "Professional CSS",
+      "moduleNumber": 1,
+      "title": "Module 29: Cross-Browser QA",
+      "description": "@supports",
+      "topics": [
+        "@supports",
+        "Progressive enhancement",
+        "Testing matrix",
+        "Bug workarounds",
+        "Can I Use workflow"
+      ],
+      "project": null,
+      "objectives": [
+        "@supports",
+        "Progressive enhancement",
+        "Testing matrix",
+        "Bug workarounds",
+        "Can I Use workflow"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Cross-Browser QA. @supports; Progressive enhancement; Testing matrix; Bug workarounds. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "Cross-Browser QA: @supports Progressive enhancement Testing matrix Bug workarounds Can I Use workflow. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Cross-Browser QA. @supports Progressive enhancement Testing matrix Bug workarounds Can I Use workflow. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Cross-Browser QA\n\nTOPICS TO COVER (in order):\n- @supports\n- Progressive enhancement\n- Testing matrix\n- Bug workarounds\n- Can I Use workflow\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain @supports with a concrete example.",
+        "How would you apply Progressive enhancement in a real project?",
+        "What is a common beginner mistake with Testing matrix, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "css-30",
+      "order": 30,
+      "sectionId": "10",
+      "sectionTitle": "Professional CSS",
+      "moduleNumber": 2,
+      "title": "Module 30: CSS at Scale",
+      "description": "Refactoring strategies",
+      "topics": [
+        "Refactoring strategies",
+        "Token pipelines",
+        "Documentation",
+        "Code review checklist",
+        "Senior interview topics"
+      ],
+      "project": null,
+      "objectives": [
+        "Refactoring strategies",
+        "Token pipelines",
+        "Documentation",
+        "Code review checklist",
+        "Senior interview topics"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to CSS at Scale. Refactoring strategies; Token pipelines; Documentation; Code review checklist. Use clear, runnable examples in modern CSS3 layout, responsive design, and maintainable styles.",
+        "intermediate": "CSS at Scale: Refactoring strategies Token pipelines Documentation Code review checklist Senior interview topics. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: CSS at Scale. Refactoring strategies Token pipelines Documentation Code review checklist Senior interview topics. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — CSS at Scale\n\nTOPICS TO COVER (in order):\n- Refactoring strategies\n- Token pipelines\n- Documentation\n- Code review checklist\n- Senior interview topics\n\nTEACHING STYLE: Practical mentor for modern CSS3 layout, responsive design, and maintainable styles.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Refactoring strategies with a concrete example.",
+        "How would you apply Token pipelines in a real project?",
+        "What is a common beginner mistake with Documentation, and how do you avoid it?"
       ]
     }
   ]

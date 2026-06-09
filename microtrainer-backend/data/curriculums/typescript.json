@@ -1,110 +1,1119 @@
 {
   "technology": "TypeScript",
-  "totalConcepts": 5,
+  "totalConcepts": 30,
+  "sections": [
+    {
+      "id": "01",
+      "title": "TypeScript Foundations",
+      "moduleCount": 3
+    },
+    {
+      "id": "02",
+      "title": "Core Type System",
+      "moduleCount": 3
+    },
+    {
+      "id": "03",
+      "title": "Advanced Types",
+      "moduleCount": 3
+    },
+    {
+      "id": "04",
+      "title": "Classes & OOP",
+      "moduleCount": 3
+    },
+    {
+      "id": "05",
+      "title": "TS with React",
+      "moduleCount": 3
+    },
+    {
+      "id": "06",
+      "title": "TS with Node",
+      "moduleCount": 3
+    },
+    {
+      "id": "07",
+      "title": "Tooling & Quality",
+      "moduleCount": 2
+    },
+    {
+      "id": "08",
+      "title": "Capstone",
+      "moduleCount": 2
+    },
+    {
+      "id": "09",
+      "title": "Advanced TypeScript",
+      "moduleCount": 2
+    },
+    {
+      "id": "10",
+      "title": "Tooling & Monorepos",
+      "moduleCount": 2
+    },
+    {
+      "id": "11",
+      "title": "Career",
+      "moduleCount": 1
+    },
+    {
+      "id": "12",
+      "title": "TypeScript Plus",
+      "moduleCount": 3
+    }
+  ],
   "concepts": [
     {
       "id": "ts-1",
       "order": 1,
-      "title": "Basic Types",
-      "description": "Learn TypeScript's type system and basic types",
+      "sectionId": "01",
+      "sectionTitle": "TypeScript Foundations",
+      "moduleNumber": 1,
+      "title": "Module 1: Why TypeScript",
+      "description": "JS pain points TypeScript solves",
+      "topics": [
+        "JS pain points TypeScript solves",
+        "Compile vs transpile",
+        "tsc and tsconfig.json",
+        "IDE benefits",
+        "Industry adoption"
+      ],
+      "project": null,
       "objectives": [
-        "Understand type annotations",
-        "Use primitive types",
-        "Work with arrays and tuples"
+        "JS pain points TypeScript solves",
+        "Compile vs transpile",
+        "tsc and tsconfig.json",
+        "IDE benefits",
+        "Industry adoption"
       ],
       "teachingContent": {
-        "beginner": "**TypeScript** adds types to JavaScript for better code quality!\n\n**Basic Types:**\n```typescript\nlet name: string = 'John';\nlet age: number = 25;\nlet isActive: boolean = true;\n```\n\n**Arrays:**\n```typescript\nlet numbers: number[] = [1, 2, 3];\nlet names: Array<string> = ['John', 'Jane'];\n```\n\n**Type Inference:**\n```typescript\nlet message = 'Hello'; // TypeScript knows it's a string\n// message = 123; // ❌ Error!\n```",
-        "intermediate": "TypeScript's type system provides compile-time safety:\n\n**Union Types:**\n```typescript\nlet id: string | number;\nid = '123'; // ✅\nid = 123;   // ✅\n```\n\n**Type Aliases:**\n```typescript\ntype ID = string | number;\ntype User = {\n  id: ID;\n  name: string;\n  email: string;\n};\n```\n\n**Tuples:**\n```typescript\nlet point: [number, number] = [10, 20];\nlet user: [string, number] = ['John', 25];\n```",
-        "advanced": "Advanced type system features:\n\n**Literal Types:**\n```typescript\ntype Status = 'pending' | 'approved' | 'rejected';\nlet status: Status = 'pending';\n```\n\n**Type Guards:**\n```typescript\nfunction isString(value: unknown): value is string {\n  return typeof value === 'string';\n}\n```"
+        "beginner": "Introduction to Why TypeScript. JS pain points TypeScript solves; Compile vs transpile; tsc and tsconfig.json; IDE benefits. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Why TypeScript: JS pain points TypeScript solves Compile vs transpile tsc and tsconfig.json IDE benefits Industry adoption. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Why TypeScript. JS pain points TypeScript solves Compile vs transpile tsc and tsconfig.json IDE benefits Industry adoption. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — Why TypeScript\n\nTOPICS TO COVER (in order):\n- JS pain points TypeScript solves\n- Compile vs transpile\n- tsc and tsconfig.json\n- IDE benefits\n- Industry adoption\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "How do you declare a variable with a type in TypeScript?",
-        "What's a union type?",
-        "What's the difference between type and interface?"
+        "Explain JS pain points TypeScript solves with a concrete example.",
+        "How would you apply Compile vs transpile in a real project?",
+        "What is a common beginner mistake with tsc and tsconfig.json, and how do you avoid it?"
       ]
     },
     {
       "id": "ts-2",
       "order": 2,
-      "title": "Interfaces",
-      "description": "Learn about interfaces and object types",
+      "sectionId": "01",
+      "sectionTitle": "TypeScript Foundations",
+      "moduleNumber": 2,
+      "title": "Module 2: Basic Types",
+      "description": "string, number, boolean",
+      "topics": [
+        "string, number, boolean",
+        "arrays and tuples",
+        "any, unknown, never",
+        "type annotations",
+        "type inference"
+      ],
+      "project": "Type a small utility library",
       "objectives": [
-        "Define interfaces",
-        "Use optional properties",
-        "Extend interfaces"
+        "string, number, boolean",
+        "arrays and tuples",
+        "any, unknown, never",
+        "type annotations",
+        "type inference",
+        "Project: Type a small utility library"
       ],
       "teachingContent": {
-        "beginner": "**Interfaces** define the shape of objects.\n\n**Basic Interface:**\n```typescript\ninterface User {\n  name: string;\n  age: number;\n}\n\nconst user: User = {\n  name: 'John',\n  age: 25\n};\n```\n\n**Optional Properties:**\n```typescript\ninterface User {\n  name: string;\n  email?: string; // Optional\n}\n```",
-        "intermediate": "Interfaces for complex object structures:\n\n**Extending Interfaces:**\n```typescript\ninterface Person {\n  name: string;\n}\n\ninterface Employee extends Person {\n  employeeId: number;\n  department: string;\n}\n```\n\n**Function Types:**\n```typescript\ninterface Calculator {\n  add(a: number, b: number): number;\n  subtract(a: number, b: number): number;\n}\n```",
-        "advanced": "Advanced interface patterns:\n\n**Index Signatures:**\n```typescript\ninterface Dictionary {\n  [key: string]: string;\n}\n```\n\n**Hybrid Types:**\n```typescript\ninterface Counter {\n  (start: number): string;\n  interval: number;\n  reset(): void;\n}\n```"
+        "beginner": "Introduction to Basic Types. string, number, boolean; arrays and tuples; any, unknown, never; type annotations. Project: Type a small utility library. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Basic Types: string, number, boolean arrays and tuples any, unknown, never type annotations type inference. Project: Type a small utility library. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Basic Types. string, number, boolean arrays and tuples any, unknown, never type annotations type inference. Project: Type a small utility library. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — Basic Types\n\nTOPICS TO COVER (in order):\n- string, number, boolean\n- arrays and tuples\n- any, unknown, never\n- type annotations\n- type inference\n\nHANDS-ON PROJECT: Type a small utility library\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "What is an interface?",
-        "How do you make a property optional?",
-        "How do you extend an interface?"
+        "Explain string, number, boolean with a concrete example.",
+        "How would you apply arrays and tuples in a real project?",
+        "What is a common beginner mistake with any, unknown, never, and how do you avoid it?"
       ]
     },
     {
       "id": "ts-3",
       "order": 3,
-      "title": "Functions",
-      "description": "Learn about typed functions and parameters",
+      "sectionId": "01",
+      "sectionTitle": "TypeScript Foundations",
+      "moduleNumber": 3,
+      "title": "Module 3: Functions & Objects",
+      "description": "Typed parameters and returns",
+      "topics": [
+        "Typed parameters and returns",
+        "Optional and default params",
+        "Object type aliases",
+        "Index signatures",
+        "Readonly modifier"
+      ],
+      "project": null,
       "objectives": [
-        "Type function parameters",
-        "Type return values",
-        "Use optional parameters"
+        "Typed parameters and returns",
+        "Optional and default params",
+        "Object type aliases",
+        "Index signatures",
+        "Readonly modifier"
       ],
       "teachingContent": {
-        "beginner": "TypeScript lets you type function parameters and return values.\n\n**Basic Function:**\n```typescript\nfunction add(a: number, b: number): number {\n  return a + b;\n}\n```\n\n**Arrow Functions:**\n```typescript\nconst multiply = (a: number, b: number): number => {\n  return a * b;\n};\n```",
-        "intermediate": "Advanced function typing:\n\n**Optional Parameters:**\n```typescript\nfunction greet(name: string, greeting?: string): string {\n  return `${greeting || 'Hello'}, ${name}!`;\n}\n```\n\n**Default Parameters:**\n```typescript\nfunction createUser(name: string, role: string = 'user') {\n  return { name, role };\n}\n```",
-        "advanced": "Function overloads and generics:\n\n**Function Overloads:**\n```typescript\nfunction format(value: string): string;\nfunction format(value: number): string;\nfunction format(value: string | number): string {\n  return String(value);\n}\n```"
+        "beginner": "Introduction to Functions & Objects. Typed parameters and returns; Optional and default params; Object type aliases; Index signatures. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Functions & Objects: Typed parameters and returns Optional and default params Object type aliases Index signatures Readonly modifier. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Functions & Objects. Typed parameters and returns Optional and default params Object type aliases Index signatures Readonly modifier. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — Functions & Objects\n\nTOPICS TO COVER (in order):\n- Typed parameters and returns\n- Optional and default params\n- Object type aliases\n- Index signatures\n- Readonly modifier\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "How do you type function parameters?",
-        "What's an optional parameter?",
-        "How do you specify a return type?"
+        "Explain Typed parameters and returns with a concrete example.",
+        "How would you apply Optional and default params in a real project?",
+        "What is a common beginner mistake with Object type aliases, and how do you avoid it?"
       ]
     },
     {
       "id": "ts-4",
       "order": 4,
-      "title": "Generics",
-      "description": "Learn about generic types for reusable code",
+      "sectionId": "02",
+      "sectionTitle": "Core Type System",
+      "moduleNumber": 1,
+      "title": "Module 4: Unions & Intersections",
+      "description": "Union types |",
+      "topics": [
+        "Union types |",
+        "Intersection types &",
+        "Narrowing with typeof",
+        "Discriminated unions",
+        "Exhaustiveness checking"
+      ],
+      "project": null,
       "objectives": [
-        "Understand generics",
-        "Create generic functions",
-        "Use generic interfaces"
+        "Union types |",
+        "Intersection types &",
+        "Narrowing with typeof",
+        "Discriminated unions",
+        "Exhaustiveness checking"
       ],
       "teachingContent": {
-        "beginner": "**Generics** let you write reusable code that works with any type.\n\n**Generic Function:**\n```typescript\nfunction identity<T>(value: T): T {\n  return value;\n}\n\nidentity<string>('hello');\nidentity<number>(123);\n```",
-        "intermediate": "Generics for type-safe reusable code:\n\n**Generic Interface:**\n```typescript\ninterface Box<T> {\n  value: T;\n}\n\nconst stringBox: Box<string> = { value: 'hello' };\nconst numberBox: Box<number> = { value: 123 };\n```",
-        "advanced": "Advanced generic patterns:\n\n**Generic Constraints:**\n```typescript\nfunction getProperty<T, K extends keyof T>(obj: T, key: K) {\n  return obj[key];\n}\n```"
+        "beginner": "Introduction to Unions & Intersections. Union types |; Intersection types &; Narrowing with typeof; Discriminated unions. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Unions & Intersections: Union types | Intersection types & Narrowing with typeof Discriminated unions Exhaustiveness checking. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Unions & Intersections. Union types | Intersection types & Narrowing with typeof Discriminated unions Exhaustiveness checking. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — Unions & Intersections\n\nTOPICS TO COVER (in order):\n- Union types |\n- Intersection types &\n- Narrowing with typeof\n- Discriminated unions\n- Exhaustiveness checking\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "What are generics?",
-        "How do you create a generic function?",
-        "Why use generics instead of any?"
+        "Explain Union types | with a concrete example.",
+        "How would you apply Intersection types & in a real project?",
+        "What is a common beginner mistake with Narrowing with typeof, and how do you avoid it?"
       ]
     },
     {
       "id": "ts-5",
       "order": 5,
-      "title": "Classes",
-      "description": "Learn about TypeScript classes and access modifiers",
+      "sectionId": "02",
+      "sectionTitle": "Core Type System",
+      "moduleNumber": 2,
+      "title": "Module 5: Interfaces vs Types",
+      "description": "interface keyword",
+      "topics": [
+        "interface keyword",
+        "type aliases",
+        "Extending interfaces",
+        "Declaration merging",
+        "When to use which"
+      ],
+      "project": null,
       "objectives": [
-        "Create classes",
-        "Use access modifiers",
-        "Implement interfaces"
+        "interface keyword",
+        "type aliases",
+        "Extending interfaces",
+        "Declaration merging",
+        "When to use which"
       ],
       "teachingContent": {
-        "beginner": "TypeScript classes add types to JavaScript classes.\n\n**Basic Class:**\n```typescript\nclass Person {\n  name: string;\n  age: number;\n  \n  constructor(name: string, age: number) {\n    this.name = name;\n    this.age = age;\n  }\n  \n  greet(): string {\n    return `Hello, I'm ${this.name}`;\n  }\n}\n```",
-        "intermediate": "Classes with access modifiers:\n\n**Access Modifiers:**\n```typescript\nclass BankAccount {\n  public accountNumber: string;\n  private balance: number;\n  protected owner: string;\n  \n  constructor(accountNumber: string, balance: number) {\n    this.accountNumber = accountNumber;\n    this.balance = balance;\n  }\n  \n  public getBalance(): number {\n    return this.balance;\n  }\n}\n```",
-        "advanced": "Advanced class patterns:\n\n**Abstract Classes:**\n```typescript\nabstract class Animal {\n  abstract makeSound(): void;\n  \n  move(): void {\n    console.log('Moving...');\n  }\n}\n```"
+        "beginner": "Introduction to Interfaces vs Types. interface keyword; type aliases; Extending interfaces; Declaration merging. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Interfaces vs Types: interface keyword type aliases Extending interfaces Declaration merging When to use which. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Interfaces vs Types. interface keyword type aliases Extending interfaces Declaration merging When to use which. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — Interfaces vs Types\n\nTOPICS TO COVER (in order):\n- interface keyword\n- type aliases\n- Extending interfaces\n- Declaration merging\n- When to use which\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "What are access modifiers?",
-        "What's the difference between public and private?",
-        "How do you implement an interface in a class?"
+        "Explain interface keyword with a concrete example.",
+        "How would you apply type aliases in a real project?",
+        "What is a common beginner mistake with Extending interfaces, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-6",
+      "order": 6,
+      "sectionId": "02",
+      "sectionTitle": "Core Type System",
+      "moduleNumber": 3,
+      "title": "Module 6: Generics",
+      "description": "Generic functions",
+      "topics": [
+        "Generic functions",
+        "Generic interfaces",
+        "Constraints extends",
+        "Default type parameters",
+        "Generic utility patterns"
+      ],
+      "project": null,
+      "objectives": [
+        "Generic functions",
+        "Generic interfaces",
+        "Constraints extends",
+        "Default type parameters",
+        "Generic utility patterns"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Generics. Generic functions; Generic interfaces; Constraints extends; Default type parameters. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Generics: Generic functions Generic interfaces Constraints extends Default type parameters Generic utility patterns. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Generics. Generic functions Generic interfaces Constraints extends Default type parameters Generic utility patterns. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Generics\n\nTOPICS TO COVER (in order):\n- Generic functions\n- Generic interfaces\n- Constraints extends\n- Default type parameters\n- Generic utility patterns\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Generic functions with a concrete example.",
+        "How would you apply Generic interfaces in a real project?",
+        "What is a common beginner mistake with Constraints extends, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-7",
+      "order": 7,
+      "sectionId": "03",
+      "sectionTitle": "Advanced Types",
+      "moduleNumber": 1,
+      "title": "Module 7: Utility Types",
+      "description": "Partial, Required, Pick, Omit",
+      "topics": [
+        "Partial, Required, Pick, Omit",
+        "Record and ReturnType",
+        "Parameters type",
+        "Awaited",
+        "Building custom utilities"
+      ],
+      "project": null,
+      "objectives": [
+        "Partial, Required, Pick, Omit",
+        "Record and ReturnType",
+        "Parameters type",
+        "Awaited",
+        "Building custom utilities"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Utility Types. Partial, Required, Pick, Omit; Record and ReturnType; Parameters type; Awaited. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Utility Types: Partial, Required, Pick, Omit Record and ReturnType Parameters type Awaited Building custom utilities. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Utility Types. Partial, Required, Pick, Omit Record and ReturnType Parameters type Awaited Building custom utilities. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Utility Types\n\nTOPICS TO COVER (in order):\n- Partial, Required, Pick, Omit\n- Record and ReturnType\n- Parameters type\n- Awaited\n- Building custom utilities\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Partial, Required, Pick, Omit with a concrete example.",
+        "How would you apply Record and ReturnType in a real project?",
+        "What is a common beginner mistake with Parameters type, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-8",
+      "order": 8,
+      "sectionId": "03",
+      "sectionTitle": "Advanced Types",
+      "moduleNumber": 2,
+      "title": "Module 8: Mapped & Conditional Types",
+      "description": "keyof operator",
+      "topics": [
+        "keyof operator",
+        "Mapped types",
+        "Conditional types ? :",
+        "infer keyword",
+        "Template literal types"
+      ],
+      "project": null,
+      "objectives": [
+        "keyof operator",
+        "Mapped types",
+        "Conditional types ? :",
+        "infer keyword",
+        "Template literal types"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Mapped & Conditional Types. keyof operator; Mapped types; Conditional types ? :; infer keyword. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Mapped & Conditional Types: keyof operator Mapped types Conditional types ? : infer keyword Template literal types. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Mapped & Conditional Types. keyof operator Mapped types Conditional types ? : infer keyword Template literal types. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Mapped & Conditional Types\n\nTOPICS TO COVER (in order):\n- keyof operator\n- Mapped types\n- Conditional types ? :\n- infer keyword\n- Template literal types\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain keyof operator with a concrete example.",
+        "How would you apply Mapped types in a real project?",
+        "What is a common beginner mistake with Conditional types ? , and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-9",
+      "order": 9,
+      "sectionId": "03",
+      "sectionTitle": "Advanced Types",
+      "moduleNumber": 3,
+      "title": "Module 9: Type Guards",
+      "description": "typeof and instanceof guards",
+      "topics": [
+        "typeof and instanceof guards",
+        "User-defined type predicates",
+        "Assertion functions",
+        "in operator narrowing",
+        "Safe parsing patterns"
+      ],
+      "project": null,
+      "objectives": [
+        "typeof and instanceof guards",
+        "User-defined type predicates",
+        "Assertion functions",
+        "in operator narrowing",
+        "Safe parsing patterns"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Type Guards. typeof and instanceof guards; User-defined type predicates; Assertion functions; in operator narrowing. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Type Guards: typeof and instanceof guards User-defined type predicates Assertion functions in operator narrowing Safe parsing patterns. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Type Guards. typeof and instanceof guards User-defined type predicates Assertion functions in operator narrowing Safe parsing patterns. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Type Guards\n\nTOPICS TO COVER (in order):\n- typeof and instanceof guards\n- User-defined type predicates\n- Assertion functions\n- in operator narrowing\n- Safe parsing patterns\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain typeof and instanceof guards with a concrete example.",
+        "How would you apply User-defined type predicates in a real project?",
+        "What is a common beginner mistake with Assertion functions, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-10",
+      "order": 10,
+      "sectionId": "04",
+      "sectionTitle": "Classes & OOP",
+      "moduleNumber": 1,
+      "title": "Module 10: Classes in TS",
+      "description": "public private protected",
+      "topics": [
+        "public private protected",
+        "implements interface",
+        "Abstract classes",
+        "Getters/setters",
+        "Class generics"
+      ],
+      "project": null,
+      "objectives": [
+        "public private protected",
+        "implements interface",
+        "Abstract classes",
+        "Getters/setters",
+        "Class generics"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Classes in TS. public private protected; implements interface; Abstract classes; Getters/setters. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Classes in TS: public private protected implements interface Abstract classes Getters/setters Class generics. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Classes in TS. public private protected implements interface Abstract classes Getters/setters Class generics. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Classes in TS\n\nTOPICS TO COVER (in order):\n- public private protected\n- implements interface\n- Abstract classes\n- Getters/setters\n- Class generics\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain public private protected with a concrete example.",
+        "How would you apply implements interface in a real project?",
+        "What is a common beginner mistake with Abstract classes, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-11",
+      "order": 11,
+      "sectionId": "04",
+      "sectionTitle": "Classes & OOP",
+      "moduleNumber": 2,
+      "title": "Module 11: Modules",
+      "description": "ES modules import/export",
+      "topics": [
+        "ES modules import/export",
+        "Namespace awareness",
+        "Path aliases",
+        "Declaration files .d.ts",
+        "DefinitelyTyped @types"
+      ],
+      "project": null,
+      "objectives": [
+        "ES modules import/export",
+        "Namespace awareness",
+        "Path aliases",
+        "Declaration files .d.ts",
+        "DefinitelyTyped @types"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Modules. ES modules import/export; Namespace awareness; Path aliases; Declaration files .d.ts. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Modules: ES modules import/export Namespace awareness Path aliases Declaration files .d.ts DefinitelyTyped @types. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Modules. ES modules import/export Namespace awareness Path aliases Declaration files .d.ts DefinitelyTyped @types. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Modules\n\nTOPICS TO COVER (in order):\n- ES modules import/export\n- Namespace awareness\n- Path aliases\n- Declaration files .d.ts\n- DefinitelyTyped @types\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain ES modules import/export with a concrete example.",
+        "How would you apply Namespace awareness in a real project?",
+        "What is a common beginner mistake with Path aliases, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-12",
+      "order": 12,
+      "sectionId": "04",
+      "sectionTitle": "Classes & OOP",
+      "moduleNumber": 3,
+      "title": "Module 12: Enums & Literals",
+      "description": "String literal unions",
+      "topics": [
+        "String literal unions",
+        "const enums",
+        "as const assertions",
+        "satisfies operator",
+        "Branded types intro"
+      ],
+      "project": null,
+      "objectives": [
+        "String literal unions",
+        "const enums",
+        "as const assertions",
+        "satisfies operator",
+        "Branded types intro"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Enums & Literals. String literal unions; const enums; as const assertions; satisfies operator. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Enums & Literals: String literal unions const enums as const assertions satisfies operator Branded types intro. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Enums & Literals. String literal unions const enums as const assertions satisfies operator Branded types intro. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Enums & Literals\n\nTOPICS TO COVER (in order):\n- String literal unions\n- const enums\n- as const assertions\n- satisfies operator\n- Branded types intro\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain String literal unions with a concrete example.",
+        "How would you apply const enums in a real project?",
+        "What is a common beginner mistake with as const assertions, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-13",
+      "order": 13,
+      "sectionId": "05",
+      "sectionTitle": "TS with React",
+      "moduleNumber": 1,
+      "title": "Module 13: Typing Components",
+      "description": "FC vs explicit props types",
+      "topics": [
+        "FC vs explicit props types",
+        "Children typing",
+        "Event types",
+        "useState generics",
+        "useRef types"
+      ],
+      "project": null,
+      "objectives": [
+        "FC vs explicit props types",
+        "Children typing",
+        "Event types",
+        "useState generics",
+        "useRef types"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Typing Components. FC vs explicit props types; Children typing; Event types; useState generics. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Typing Components: FC vs explicit props types Children typing Event types useState generics useRef types. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Typing Components. FC vs explicit props types Children typing Event types useState generics useRef types. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Typing Components\n\nTOPICS TO COVER (in order):\n- FC vs explicit props types\n- Children typing\n- Event types\n- useState generics\n- useRef types\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain FC vs explicit props types with a concrete example.",
+        "How would you apply Children typing in a real project?",
+        "What is a common beginner mistake with Event types, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-14",
+      "order": 14,
+      "sectionId": "05",
+      "sectionTitle": "TS with React",
+      "moduleNumber": 2,
+      "title": "Module 14: Hooks & Context",
+      "description": "Custom hook types",
+      "topics": [
+        "Custom hook types",
+        "Context with generics",
+        "Reducer typing",
+        "Form libraries with TS",
+        "Common React+TS errors"
+      ],
+      "project": null,
+      "objectives": [
+        "Custom hook types",
+        "Context with generics",
+        "Reducer typing",
+        "Form libraries with TS",
+        "Common React+TS errors"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Hooks & Context. Custom hook types; Context with generics; Reducer typing; Form libraries with TS. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Hooks & Context: Custom hook types Context with generics Reducer typing Form libraries with TS Common React+TS errors. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Hooks & Context. Custom hook types Context with generics Reducer typing Form libraries with TS Common React+TS errors. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Hooks & Context\n\nTOPICS TO COVER (in order):\n- Custom hook types\n- Context with generics\n- Reducer typing\n- Form libraries with TS\n- Common React+TS errors\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Custom hook types with a concrete example.",
+        "How would you apply Context with generics in a real project?",
+        "What is a common beginner mistake with Reducer typing, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-15",
+      "order": 15,
+      "sectionId": "05",
+      "sectionTitle": "TS with React",
+      "moduleNumber": 3,
+      "title": "Module 15: Third-Party Types",
+      "description": "Installing @types packages",
+      "topics": [
+        "Installing @types packages",
+        "Module augmentation",
+        "Typing API responses",
+        "zod for runtime validation",
+        "End-to-end type safety"
+      ],
+      "project": null,
+      "objectives": [
+        "Installing @types packages",
+        "Module augmentation",
+        "Typing API responses",
+        "zod for runtime validation",
+        "End-to-end type safety"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Third-Party Types. Installing @types packages; Module augmentation; Typing API responses; zod for runtime validation. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Third-Party Types: Installing @types packages Module augmentation Typing API responses zod for runtime validation End-to-end type safety. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Third-Party Types. Installing @types packages Module augmentation Typing API responses zod for runtime validation End-to-end type safety. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Third-Party Types\n\nTOPICS TO COVER (in order):\n- Installing @types packages\n- Module augmentation\n- Typing API responses\n- zod for runtime validation\n- End-to-end type safety\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Installing @types packages with a concrete example.",
+        "How would you apply Module augmentation in a real project?",
+        "What is a common beginner mistake with Typing API responses, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-16",
+      "order": 16,
+      "sectionId": "06",
+      "sectionTitle": "TS with Node",
+      "moduleNumber": 1,
+      "title": "Module 16: Node + TypeScript Setup",
+      "description": "ts-node vs compiled",
+      "topics": [
+        "ts-node vs compiled",
+        "ESM in Node",
+        "tsconfig for backend",
+        "nodemon workflow",
+        "Debugging TS Node"
+      ],
+      "project": null,
+      "objectives": [
+        "ts-node vs compiled",
+        "ESM in Node",
+        "tsconfig for backend",
+        "nodemon workflow",
+        "Debugging TS Node"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Node + TypeScript Setup. ts-node vs compiled; ESM in Node; tsconfig for backend; nodemon workflow. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Node + TypeScript Setup: ts-node vs compiled ESM in Node tsconfig for backend nodemon workflow Debugging TS Node. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Node + TypeScript Setup. ts-node vs compiled ESM in Node tsconfig for backend nodemon workflow Debugging TS Node. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Node + TypeScript Setup\n\nTOPICS TO COVER (in order):\n- ts-node vs compiled\n- ESM in Node\n- tsconfig for backend\n- nodemon workflow\n- Debugging TS Node\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain ts-node vs compiled with a concrete example.",
+        "How would you apply ESM in Node in a real project?",
+        "What is a common beginner mistake with tsconfig for backend, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-17",
+      "order": 17,
+      "sectionId": "06",
+      "sectionTitle": "TS with Node",
+      "moduleNumber": 2,
+      "title": "Module 17: Express Typing",
+      "description": "Request/Response generics",
+      "topics": [
+        "Request/Response generics",
+        "Typed middleware",
+        "Router types",
+        "Error handler typing",
+        "Shared types package"
+      ],
+      "project": null,
+      "objectives": [
+        "Request/Response generics",
+        "Typed middleware",
+        "Router types",
+        "Error handler typing",
+        "Shared types package"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Express Typing. Request/Response generics; Typed middleware; Router types; Error handler typing. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Express Typing: Request/Response generics Typed middleware Router types Error handler typing Shared types package. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Express Typing. Request/Response generics Typed middleware Router types Error handler typing Shared types package. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Express Typing\n\nTOPICS TO COVER (in order):\n- Request/Response generics\n- Typed middleware\n- Router types\n- Error handler typing\n- Shared types package\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Request/Response generics with a concrete example.",
+        "How would you apply Typed middleware in a real project?",
+        "What is a common beginner mistake with Router types, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-18",
+      "order": 18,
+      "sectionId": "06",
+      "sectionTitle": "TS with Node",
+      "moduleNumber": 3,
+      "title": "Module 18: Prisma & tRPC Intro",
+      "description": "Prisma client types",
+      "topics": [
+        "Prisma client types",
+        "tRPC end-to-end types",
+        "Compared to REST",
+        "Monorepo types",
+        "Production builds"
+      ],
+      "project": null,
+      "objectives": [
+        "Prisma client types",
+        "tRPC end-to-end types",
+        "Compared to REST",
+        "Monorepo types",
+        "Production builds"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Prisma & tRPC Intro. Prisma client types; tRPC end-to-end types; Compared to REST; Monorepo types. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Prisma & tRPC Intro: Prisma client types tRPC end-to-end types Compared to REST Monorepo types Production builds. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Prisma & tRPC Intro. Prisma client types tRPC end-to-end types Compared to REST Monorepo types Production builds. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Prisma & tRPC Intro\n\nTOPICS TO COVER (in order):\n- Prisma client types\n- tRPC end-to-end types\n- Compared to REST\n- Monorepo types\n- Production builds\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Prisma client types with a concrete example.",
+        "How would you apply tRPC end-to-end types in a real project?",
+        "What is a common beginner mistake with Compared to REST, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-19",
+      "order": 19,
+      "sectionId": "07",
+      "sectionTitle": "Tooling & Quality",
+      "moduleNumber": 1,
+      "title": "Module 19: Strict Mode",
+      "description": "strict flag family",
+      "topics": [
+        "strict flag family",
+        "noImplicitAny",
+        "strictNullChecks",
+        "Migrating JS to TS",
+        "Incremental adoption"
+      ],
+      "project": null,
+      "objectives": [
+        "strict flag family",
+        "noImplicitAny",
+        "strictNullChecks",
+        "Migrating JS to TS",
+        "Incremental adoption"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Strict Mode. strict flag family; noImplicitAny; strictNullChecks; Migrating JS to TS. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Strict Mode: strict flag family noImplicitAny strictNullChecks Migrating JS to TS Incremental adoption. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Strict Mode. strict flag family noImplicitAny strictNullChecks Migrating JS to TS Incremental adoption. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Strict Mode\n\nTOPICS TO COVER (in order):\n- strict flag family\n- noImplicitAny\n- strictNullChecks\n- Migrating JS to TS\n- Incremental adoption\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain strict flag family with a concrete example.",
+        "How would you apply noImplicitAny in a real project?",
+        "What is a common beginner mistake with strictNullChecks, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-20",
+      "order": 20,
+      "sectionId": "07",
+      "sectionTitle": "Tooling & Quality",
+      "moduleNumber": 2,
+      "title": "Module 20: ESLint & Prettier",
+      "description": "typescript-eslint",
+      "topics": [
+        "typescript-eslint",
+        "Type-aware lint rules",
+        "Prettier integration",
+        "CI typecheck",
+        "Pre-commit hooks"
+      ],
+      "project": null,
+      "objectives": [
+        "typescript-eslint",
+        "Type-aware lint rules",
+        "Prettier integration",
+        "CI typecheck",
+        "Pre-commit hooks"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to ESLint & Prettier. typescript-eslint; Type-aware lint rules; Prettier integration; CI typecheck. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "ESLint & Prettier: typescript-eslint Type-aware lint rules Prettier integration CI typecheck Pre-commit hooks. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: ESLint & Prettier. typescript-eslint Type-aware lint rules Prettier integration CI typecheck Pre-commit hooks. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — ESLint & Prettier\n\nTOPICS TO COVER (in order):\n- typescript-eslint\n- Type-aware lint rules\n- Prettier integration\n- CI typecheck\n- Pre-commit hooks\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain typescript-eslint with a concrete example.",
+        "How would you apply Type-aware lint rules in a real project?",
+        "What is a common beginner mistake with Prettier integration, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-21",
+      "order": 21,
+      "sectionId": "08",
+      "sectionTitle": "Capstone",
+      "moduleNumber": 1,
+      "title": "Module 21: Capstone Typed App",
+      "description": "Shared types package",
+      "topics": [
+        "Shared types package",
+        "React or Node app",
+        "Zod validation layer",
+        "Tests with types",
+        "Build pipeline"
+      ],
+      "project": "Full-stack typed mini app",
+      "objectives": [
+        "Shared types package",
+        "React or Node app",
+        "Zod validation layer",
+        "Tests with types",
+        "Build pipeline",
+        "Project: Full-stack typed mini app"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Capstone Typed App. Shared types package; React or Node app; Zod validation layer; Tests with types. Project: Full-stack typed mini app. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Capstone Typed App: Shared types package React or Node app Zod validation layer Tests with types Build pipeline. Project: Full-stack typed mini app. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Capstone Typed App. Shared types package React or Node app Zod validation layer Tests with types Build pipeline. Project: Full-stack typed mini app. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Capstone Typed App\n\nTOPICS TO COVER (in order):\n- Shared types package\n- React or Node app\n- Zod validation layer\n- Tests with types\n- Build pipeline\n\nHANDS-ON PROJECT: Full-stack typed mini app\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Shared types package with a concrete example.",
+        "How would you apply React or Node app in a real project?",
+        "What is a common beginner mistake with Zod validation layer, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-22",
+      "order": 22,
+      "sectionId": "08",
+      "sectionTitle": "Capstone",
+      "moduleNumber": 2,
+      "title": "Module 22: Interview Prep",
+      "description": "Variance awareness",
+      "topics": [
+        "Variance awareness",
+        "any vs unknown",
+        "Generic constraints",
+        "TS compiler errors reading",
+        "Designing API types"
+      ],
+      "project": null,
+      "objectives": [
+        "Variance awareness",
+        "any vs unknown",
+        "Generic constraints",
+        "TS compiler errors reading",
+        "Designing API types"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Interview Prep. Variance awareness; any vs unknown; Generic constraints; TS compiler errors reading. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Interview Prep: Variance awareness any vs unknown Generic constraints TS compiler errors reading Designing API types. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Interview Prep. Variance awareness any vs unknown Generic constraints TS compiler errors reading Designing API types. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Interview Prep\n\nTOPICS TO COVER (in order):\n- Variance awareness\n- any vs unknown\n- Generic constraints\n- TS compiler errors reading\n- Designing API types\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Variance awareness with a concrete example.",
+        "How would you apply any vs unknown in a real project?",
+        "What is a common beginner mistake with Generic constraints, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-23",
+      "order": 23,
+      "sectionId": "09",
+      "sectionTitle": "Advanced TypeScript",
+      "moduleNumber": 1,
+      "title": "Module 23: Template Literal Types",
+      "description": "String manipulation types",
+      "topics": [
+        "String manipulation types",
+        "Route typing",
+        "SQL query builders",
+        "Event name typing",
+        "Practical patterns"
+      ],
+      "project": null,
+      "objectives": [
+        "String manipulation types",
+        "Route typing",
+        "SQL query builders",
+        "Event name typing",
+        "Practical patterns"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Template Literal Types. String manipulation types; Route typing; SQL query builders; Event name typing. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Template Literal Types: String manipulation types Route typing SQL query builders Event name typing Practical patterns. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Template Literal Types. String manipulation types Route typing SQL query builders Event name typing Practical patterns. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Template Literal Types\n\nTOPICS TO COVER (in order):\n- String manipulation types\n- Route typing\n- SQL query builders\n- Event name typing\n- Practical patterns\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain String manipulation types with a concrete example.",
+        "How would you apply Route typing in a real project?",
+        "What is a common beginner mistake with SQL query builders, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-24",
+      "order": 24,
+      "sectionId": "09",
+      "sectionTitle": "Advanced TypeScript",
+      "moduleNumber": 2,
+      "title": "Module 24: Module Augmentation",
+      "description": "Extending third-party types",
+      "topics": [
+        "Extending third-party types",
+        "Global augmentation risks",
+        "Declaration merging",
+        "Ambient modules",
+        "Publishing types"
+      ],
+      "project": null,
+      "objectives": [
+        "Extending third-party types",
+        "Global augmentation risks",
+        "Declaration merging",
+        "Ambient modules",
+        "Publishing types"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Module Augmentation. Extending third-party types; Global augmentation risks; Declaration merging; Ambient modules. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Module Augmentation: Extending third-party types Global augmentation risks Declaration merging Ambient modules Publishing types. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Module Augmentation. Extending third-party types Global augmentation risks Declaration merging Ambient modules Publishing types. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Module Augmentation\n\nTOPICS TO COVER (in order):\n- Extending third-party types\n- Global augmentation risks\n- Declaration merging\n- Ambient modules\n- Publishing types\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Extending third-party types with a concrete example.",
+        "How would you apply Global augmentation risks in a real project?",
+        "What is a common beginner mistake with Declaration merging, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-25",
+      "order": 25,
+      "sectionId": "10",
+      "sectionTitle": "Tooling & Monorepos",
+      "moduleNumber": 1,
+      "title": "Module 25: Project References",
+      "description": "Composite projects",
+      "topics": [
+        "Composite projects",
+        "Incremental builds",
+        "Monorepo with pnpm workspaces",
+        "Shared tsconfig",
+        "CI typecheck"
+      ],
+      "project": null,
+      "objectives": [
+        "Composite projects",
+        "Incremental builds",
+        "Monorepo with pnpm workspaces",
+        "Shared tsconfig",
+        "CI typecheck"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Project References. Composite projects; Incremental builds; Monorepo with pnpm workspaces; Shared tsconfig. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Project References: Composite projects Incremental builds Monorepo with pnpm workspaces Shared tsconfig CI typecheck. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Project References. Composite projects Incremental builds Monorepo with pnpm workspaces Shared tsconfig CI typecheck. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Project References\n\nTOPICS TO COVER (in order):\n- Composite projects\n- Incremental builds\n- Monorepo with pnpm workspaces\n- Shared tsconfig\n- CI typecheck\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Composite projects with a concrete example.",
+        "How would you apply Incremental builds in a real project?",
+        "What is a common beginner mistake with Monorepo with pnpm workspaces, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-26",
+      "order": 26,
+      "sectionId": "10",
+      "sectionTitle": "Tooling & Monorepos",
+      "moduleNumber": 2,
+      "title": "Module 26: API Codegen",
+      "description": "OpenAPI to types",
+      "topics": [
+        "OpenAPI to types",
+        "GraphQL codegen",
+        "tRPC routers",
+        "Keeping types in sync",
+        "Breaking change detection"
+      ],
+      "project": null,
+      "objectives": [
+        "OpenAPI to types",
+        "GraphQL codegen",
+        "tRPC routers",
+        "Keeping types in sync",
+        "Breaking change detection"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to API Codegen. OpenAPI to types; GraphQL codegen; tRPC routers; Keeping types in sync. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "API Codegen: OpenAPI to types GraphQL codegen tRPC routers Keeping types in sync Breaking change detection. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: API Codegen. OpenAPI to types GraphQL codegen tRPC routers Keeping types in sync Breaking change detection. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — API Codegen\n\nTOPICS TO COVER (in order):\n- OpenAPI to types\n- GraphQL codegen\n- tRPC routers\n- Keeping types in sync\n- Breaking change detection\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain OpenAPI to types with a concrete example.",
+        "How would you apply GraphQL codegen in a real project?",
+        "What is a common beginner mistake with tRPC routers, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-27",
+      "order": 27,
+      "sectionId": "11",
+      "sectionTitle": "Career",
+      "moduleNumber": 1,
+      "title": "Module 27: Migrating Large Codebases",
+      "description": "allowJs strategy",
+      "topics": [
+        "allowJs strategy",
+        "JSDoc migration",
+        "Team rollout plan",
+        "Measuring progress",
+        "Interview type challenges"
+      ],
+      "project": null,
+      "objectives": [
+        "allowJs strategy",
+        "JSDoc migration",
+        "Team rollout plan",
+        "Measuring progress",
+        "Interview type challenges"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Migrating Large Codebases. allowJs strategy; JSDoc migration; Team rollout plan; Measuring progress. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Migrating Large Codebases: allowJs strategy JSDoc migration Team rollout plan Measuring progress Interview type challenges. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Migrating Large Codebases. allowJs strategy JSDoc migration Team rollout plan Measuring progress Interview type challenges. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Migrating Large Codebases\n\nTOPICS TO COVER (in order):\n- allowJs strategy\n- JSDoc migration\n- Team rollout plan\n- Measuring progress\n- Interview type challenges\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain allowJs strategy with a concrete example.",
+        "How would you apply JSDoc migration in a real project?",
+        "What is a common beginner mistake with Team rollout plan, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-28",
+      "order": 28,
+      "sectionId": "12",
+      "sectionTitle": "TypeScript Plus",
+      "moduleNumber": 1,
+      "title": "Module 28: Decorators Stage 3",
+      "description": "Class decorators",
+      "topics": [
+        "Class decorators",
+        "Method decorators",
+        "Metadata reflection",
+        "NestJS connection",
+        "Experimental flags"
+      ],
+      "project": null,
+      "objectives": [
+        "Class decorators",
+        "Method decorators",
+        "Metadata reflection",
+        "NestJS connection",
+        "Experimental flags"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Decorators Stage 3. Class decorators; Method decorators; Metadata reflection; NestJS connection. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Decorators Stage 3: Class decorators Method decorators Metadata reflection NestJS connection Experimental flags. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Decorators Stage 3. Class decorators Method decorators Metadata reflection NestJS connection Experimental flags. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Decorators Stage 3\n\nTOPICS TO COVER (in order):\n- Class decorators\n- Method decorators\n- Metadata reflection\n- NestJS connection\n- Experimental flags\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Class decorators with a concrete example.",
+        "How would you apply Method decorators in a real project?",
+        "What is a common beginner mistake with Metadata reflection, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-29",
+      "order": 29,
+      "sectionId": "12",
+      "sectionTitle": "TypeScript Plus",
+      "moduleNumber": 2,
+      "title": "Module 29: Performance & Build",
+      "description": "Project references build order",
+      "topics": [
+        "Project references build order",
+        "Incremental watch",
+        "SWC/esbuild",
+        "Bundle size types",
+        "Tree shaking TS"
+      ],
+      "project": null,
+      "objectives": [
+        "Project references build order",
+        "Incremental watch",
+        "SWC/esbuild",
+        "Bundle size types",
+        "Tree shaking TS"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Performance & Build. Project references build order; Incremental watch; SWC/esbuild; Bundle size types. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Performance & Build: Project references build order Incremental watch SWC/esbuild Bundle size types Tree shaking TS. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Performance & Build. Project references build order Incremental watch SWC/esbuild Bundle size types Tree shaking TS. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Performance & Build\n\nTOPICS TO COVER (in order):\n- Project references build order\n- Incremental watch\n- SWC/esbuild\n- Bundle size types\n- Tree shaking TS\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Project references build order with a concrete example.",
+        "How would you apply Incremental watch in a real project?",
+        "What is a common beginner mistake with SWC/esbuild, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "ts-30",
+      "order": 30,
+      "sectionId": "12",
+      "sectionTitle": "TypeScript Plus",
+      "moduleNumber": 3,
+      "title": "Module 30: Domain Modeling Types",
+      "description": "Branded IDs",
+      "topics": [
+        "Branded IDs",
+        "Discriminated unions for state",
+        "Parse don't validate",
+        "zod infer types",
+        "API boundary types"
+      ],
+      "project": null,
+      "objectives": [
+        "Branded IDs",
+        "Discriminated unions for state",
+        "Parse don't validate",
+        "zod infer types",
+        "API boundary types"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Domain Modeling Types. Branded IDs; Discriminated unions for state; Parse don't validate; zod infer types. Use clear, runnable examples in TypeScript for typed JavaScript applications.",
+        "intermediate": "Domain Modeling Types: Branded IDs Discriminated unions for state Parse don't validate zod infer types API boundary types. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Domain Modeling Types. Branded IDs Discriminated unions for state Parse don't validate zod infer types API boundary types. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Domain Modeling Types\n\nTOPICS TO COVER (in order):\n- Branded IDs\n- Discriminated unions for state\n- Parse don't validate\n- zod infer types\n- API boundary types\n\nTEACHING STYLE: Practical mentor for TypeScript for typed JavaScript applications.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Branded IDs with a concrete example.",
+        "How would you apply Discriminated unions for state in a real project?",
+        "What is a common beginner mistake with Parse don't validate, and how do you avoid it?"
       ]
     }
   ]

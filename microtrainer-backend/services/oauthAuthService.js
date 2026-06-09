@@ -13,6 +13,14 @@ const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
 
 function getApiBase(req) {
+  // Production: set API_PUBLIC_URL on Render so callback matches GitHub/Google exactly
+  const explicit =
+    process.env.API_PUBLIC_URL ||
+    process.env.BACKEND_PUBLIC_URL ||
+    process.env.DEPLOYMENT_URL;
+  if (explicit && /^https?:\/\//i.test(String(explicit).trim())) {
+    return String(explicit).trim().replace(/\/$/, "");
+  }
   const proto = req.headers["x-forwarded-proto"] || req.protocol || "http";
   const host = req.headers["x-forwarded-host"] || req.get("host");
   return `${proto}://${host}`;

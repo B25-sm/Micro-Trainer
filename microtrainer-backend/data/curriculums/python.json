@@ -1,110 +1,1472 @@
 {
   "technology": "Python",
-  "totalConcepts": 5,
+  "totalConcepts": 40,
+  "sections": [
+    {
+      "id": "01",
+      "title": "Python Foundations & Environment",
+      "moduleCount": 3
+    },
+    {
+      "id": "02",
+      "title": "Variables, Types & Operators",
+      "moduleCount": 4
+    },
+    {
+      "id": "03",
+      "title": "Control Flow",
+      "moduleCount": 3
+    },
+    {
+      "id": "04",
+      "title": "Functions",
+      "moduleCount": 3
+    },
+    {
+      "id": "05",
+      "title": "Data Structures",
+      "moduleCount": 4
+    },
+    {
+      "id": "06",
+      "title": "Object-Oriented Python",
+      "moduleCount": 4
+    },
+    {
+      "id": "07",
+      "title": "Files, Errors & Logging",
+      "moduleCount": 3
+    },
+    {
+      "id": "08",
+      "title": "Modules, Packages & Ecosystem",
+      "moduleCount": 3
+    },
+    {
+      "id": "09",
+      "title": "Advanced Python",
+      "moduleCount": 3
+    },
+    {
+      "id": "10",
+      "title": "Data, Web & APIs",
+      "moduleCount": 3
+    },
+    {
+      "id": "11",
+      "title": "Testing & Quality",
+      "moduleCount": 2
+    },
+    {
+      "id": "12",
+      "title": "Capstone & Career",
+      "moduleCount": 5
+    }
+  ],
   "concepts": [
     {
       "id": "py-1",
       "order": 1,
-      "title": "Variables and Data Types",
-      "description": "Learn about Python variables and basic data types",
+      "sectionId": "01",
+      "sectionTitle": "Python Foundations & Environment",
+      "moduleNumber": 1,
+      "title": "Module 1: Python Landscape & Career Paths",
+      "description": "What Python is and where it runs",
+      "topics": [
+        "What Python is and where it runs",
+        "Roles: backend, data science, automation, DevOps",
+        "Python 2 vs 3 (always use 3)",
+        "Installing Python, pip, and virtual environments",
+        "How teams use Python in industry"
+      ],
+      "project": null,
       "objectives": [
-        "Declare variables in Python",
-        "Understand int, float, str, bool",
-        "Use type() function"
+        "What Python is and where it runs",
+        "Roles: backend, data science, automation, DevOps",
+        "Python 2 vs 3 (always use 3)",
+        "Installing Python, pip, and virtual environments",
+        "How teams use Python in industry"
       ],
       "teachingContent": {
-        "beginner": "Variables in Python don't need type declaration. Python automatically figures out the type based on the value you assign.",
-        "intermediate": "Python is dynamically typed. Variables can change type during execution. Use type() to check types.",
-        "advanced": "Understanding Python's type system, duck typing, and the difference between mutable and immutable types."
+        "beginner": "Introduction to Python Landscape & Career Paths. What Python is and where it runs; Roles: backend, data science, automation, DevOps; Python 2 vs 3 (always use 3); Installing Python, pip, and virtual environments. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Python Landscape & Career Paths: What Python is and where it runs Roles: backend, data science, automation, DevOps Python 2 vs 3 (always use 3) Installing Python, pip, and virtual environments How teams use Python in industry. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Python Landscape & Career Paths. What Python is and where it runs Roles: backend, data science, automation, DevOps Python 2 vs 3 (always use 3) Installing Python, pip, and virtual environments How teams use Python in industry. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — Python Landscape & Career Paths\n\nTOPICS TO COVER (in order):\n- What Python is and where it runs\n- Roles: backend, data science, automation, DevOps\n- Python 2 vs 3 (always use 3)\n- Installing Python, pip, and virtual environments\n- How teams use Python in industry\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "How do you create a variable in Python?",
-        "What are the basic data types in Python?",
-        "How do you check the type of a variable?"
+        "Explain What Python is and where it runs with a concrete example.",
+        "How would you apply Roles in a real project?",
+        "What is a common beginner mistake with Python 2 vs 3 (always use 3), and how do you avoid it?"
       ]
     },
     {
       "id": "py-2",
       "order": 2,
-      "title": "Lists and List Methods",
-      "description": "Work with Python lists and their methods",
+      "sectionId": "01",
+      "sectionTitle": "Python Foundations & Environment",
+      "moduleNumber": 2,
+      "title": "Module 2: First Programs & REPL",
+      "description": "print, input, and running .py files",
+      "topics": [
+        "print, input, and running .py files",
+        "Indentation and Python syntax rules",
+        "Comments and docstrings",
+        "Using IDLE, terminal, and Jupyter",
+        "Debugging syntax errors"
+      ],
+      "project": "Hello-world CLI that greets the user",
       "objectives": [
-        "Create and manipulate lists",
-        "Use list methods like append, remove, pop",
-        "Understand list slicing"
+        "print, input, and running .py files",
+        "Indentation and Python syntax rules",
+        "Comments and docstrings",
+        "Using IDLE, terminal, and Jupyter",
+        "Debugging syntax errors",
+        "Project: Hello-world CLI that greets the user"
       ],
       "teachingContent": {
-        "beginner": "Lists are ordered collections that can store multiple items. You can add, remove, and access items easily.",
-        "intermediate": "Lists are mutable sequences. They support indexing, slicing, and have many built-in methods.",
-        "advanced": "Understanding list comprehensions, memory management, and when to use lists vs tuples vs sets."
+        "beginner": "Introduction to First Programs & REPL. print, input, and running .py files; Indentation and Python syntax rules; Comments and docstrings; Using IDLE, terminal, and Jupyter. Project: Hello-world CLI that greets the user. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "First Programs & REPL: print, input, and running .py files Indentation and Python syntax rules Comments and docstrings Using IDLE, terminal, and Jupyter Debugging syntax errors. Project: Hello-world CLI that greets the user. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: First Programs & REPL. print, input, and running .py files Indentation and Python syntax rules Comments and docstrings Using IDLE, terminal, and Jupyter Debugging syntax errors. Project: Hello-world CLI that greets the user. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — First Programs & REPL\n\nTOPICS TO COVER (in order):\n- print, input, and running .py files\n- Indentation and Python syntax rules\n- Comments and docstrings\n- Using IDLE, terminal, and Jupyter\n- Debugging syntax errors\n\nHANDS-ON PROJECT: Hello-world CLI that greets the user\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "How do you add an item to a list?",
-        "What's the difference between append and extend?",
-        "How do you access the last item in a list?"
+        "Explain print, input, and running .py files with a concrete example.",
+        "How would you apply Indentation and Python syntax rules in a real project?",
+        "What is a common beginner mistake with Comments and docstrings, and how do you avoid it?"
       ]
     },
     {
       "id": "py-3",
       "order": 3,
-      "title": "Functions and Parameters",
-      "description": "Learn how to define and use functions in Python",
+      "sectionId": "01",
+      "sectionTitle": "Python Foundations & Environment",
+      "moduleNumber": 3,
+      "title": "Module 3: Code Style & Tooling",
+      "description": "PEP 8 naming and formatting",
+      "topics": [
+        "PEP 8 naming and formatting",
+        "Linting with ruff/flake8 intro",
+        "Type hints overview (optional)",
+        "Project layout for small apps",
+        "Reading tracebacks"
+      ],
+      "project": null,
       "objectives": [
-        "Define functions with def",
-        "Use parameters and return values",
-        "Understand default parameters"
+        "PEP 8 naming and formatting",
+        "Linting with ruff/flake8 intro",
+        "Type hints overview (optional)",
+        "Project layout for small apps",
+        "Reading tracebacks"
       ],
       "teachingContent": {
-        "beginner": "Functions are reusable blocks of code. You define them with 'def' and call them by name.",
-        "intermediate": "Functions can have positional arguments, keyword arguments, default values, and *args/**kwargs.",
-        "advanced": "Understanding function scope, closures, decorators, and first-class functions."
+        "beginner": "Introduction to Code Style & Tooling. PEP 8 naming and formatting; Linting with ruff/flake8 intro; Type hints overview (optional); Project layout for small apps. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Code Style & Tooling: PEP 8 naming and formatting Linting with ruff/flake8 intro Type hints overview (optional) Project layout for small apps Reading tracebacks. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Code Style & Tooling. PEP 8 naming and formatting Linting with ruff/flake8 intro Type hints overview (optional) Project layout for small apps Reading tracebacks. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — Code Style & Tooling\n\nTOPICS TO COVER (in order):\n- PEP 8 naming and formatting\n- Linting with ruff/flake8 intro\n- Type hints overview (optional)\n- Project layout for small apps\n- Reading tracebacks\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "How do you define a function in Python?",
-        "What's the purpose of the return statement?",
-        "How do you set a default value for a parameter?"
+        "Explain PEP 8 naming and formatting with a concrete example.",
+        "How would you apply Linting with ruff/flake8 intro in a real project?",
+        "What is a common beginner mistake with Type hints overview (optional), and how do you avoid it?"
       ]
     },
     {
       "id": "py-4",
       "order": 4,
-      "title": "Dictionaries",
-      "description": "Learn about Python dictionaries and their methods",
+      "sectionId": "02",
+      "sectionTitle": "Variables, Types & Operators",
+      "moduleNumber": 1,
+      "title": "Module 4: Variables & Assignment",
+      "description": "Dynamic typing",
+      "topics": [
+        "Dynamic typing",
+        "Naming rules and conventions",
+        "Multiple assignment",
+        "Constants by convention",
+        "id() and object identity intro"
+      ],
+      "project": null,
       "objectives": [
-        "Create and access dictionaries",
-        "Use dictionary methods",
-        "Understand key-value pairs"
+        "Dynamic typing",
+        "Naming rules and conventions",
+        "Multiple assignment",
+        "Constants by convention",
+        "id() and object identity intro"
       ],
       "teachingContent": {
-        "beginner": "Dictionaries store data in key-value pairs. You use keys to access values, like a real dictionary uses words to find definitions.",
-        "intermediate": "Dictionaries are mutable, unordered collections. They provide O(1) lookup time for keys.",
-        "advanced": "Understanding dictionary comprehensions, OrderedDict, defaultdict, and when to use dictionaries vs other data structures."
+        "beginner": "Introduction to Variables & Assignment. Dynamic typing; Naming rules and conventions; Multiple assignment; Constants by convention. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Variables & Assignment: Dynamic typing Naming rules and conventions Multiple assignment Constants by convention id() and object identity intro. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Variables & Assignment. Dynamic typing Naming rules and conventions Multiple assignment Constants by convention id() and object identity intro. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — Variables & Assignment\n\nTOPICS TO COVER (in order):\n- Dynamic typing\n- Naming rules and conventions\n- Multiple assignment\n- Constants by convention\n- id() and object identity intro\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "How do you create a dictionary?",
-        "How do you access a value using a key?",
-        "What happens if you try to access a key that doesn't exist?"
+        "Explain Dynamic typing with a concrete example.",
+        "How would you apply Naming rules and conventions in a real project?",
+        "What is a common beginner mistake with Multiple assignment, and how do you avoid it?"
       ]
     },
     {
       "id": "py-5",
       "order": 5,
-      "title": "Loops - For and While",
-      "description": "Learn about iteration in Python",
+      "sectionId": "02",
+      "sectionTitle": "Variables, Types & Operators",
+      "moduleNumber": 2,
+      "title": "Module 5: Numbers, Strings & Booleans",
+      "description": "int, float, Decimal awareness",
+      "topics": [
+        "int, float, Decimal awareness",
+        "String methods and slicing",
+        "f-strings and formatting",
+        "bool and comparison operators",
+        "None type"
+      ],
+      "project": null,
       "objectives": [
-        "Use for loops",
-        "Use while loops",
-        "Understand break and continue"
+        "int, float, Decimal awareness",
+        "String methods and slicing",
+        "f-strings and formatting",
+        "bool and comparison operators",
+        "None type"
       ],
       "teachingContent": {
-        "beginner": "Loops let you repeat code multiple times. 'for' loops iterate over sequences, 'while' loops run until a condition is false.",
-        "intermediate": "Python's for loop works with any iterable. Use enumerate() for index-value pairs, zip() for parallel iteration.",
-        "advanced": "Understanding iterators, generators, and the iteration protocol. When to use list comprehensions vs loops."
+        "beginner": "Introduction to Numbers, Strings & Booleans. int, float, Decimal awareness; String methods and slicing; f-strings and formatting; bool and comparison operators. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Numbers, Strings & Booleans: int, float, Decimal awareness String methods and slicing f-strings and formatting bool and comparison operators None type. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Numbers, Strings & Booleans. int, float, Decimal awareness String methods and slicing f-strings and formatting bool and comparison operators None type. Cover edge cases, production patterns, and common interview topics."
       },
+      "lessonBrief": "MODULE BRIEF — Numbers, Strings & Booleans\n\nTOPICS TO COVER (in order):\n- int, float, Decimal awareness\n- String methods and slicing\n- f-strings and formatting\n- bool and comparison operators\n- None type\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
       "crossQuestions": [
-        "Write a for loop that prints numbers 1 to 5",
-        "What's the difference between for and while loops?",
-        "What does the break statement do?"
+        "Explain int, float, Decimal awareness with a concrete example.",
+        "How would you apply String methods and slicing in a real project?",
+        "What is a common beginner mistake with f-strings and formatting, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-6",
+      "order": 6,
+      "sectionId": "02",
+      "sectionTitle": "Variables, Types & Operators",
+      "moduleNumber": 3,
+      "title": "Module 6: Operators & Expressions",
+      "description": "Arithmetic and assignment operators",
+      "topics": [
+        "Arithmetic and assignment operators",
+        "Logical operators",
+        "Membership: in, not in",
+        "Operator precedence",
+        "Walrus operator := (awareness)"
+      ],
+      "project": null,
+      "objectives": [
+        "Arithmetic and assignment operators",
+        "Logical operators",
+        "Membership: in, not in",
+        "Operator precedence",
+        "Walrus operator := (awareness)"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Operators & Expressions. Arithmetic and assignment operators; Logical operators; Membership: in, not in; Operator precedence. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Operators & Expressions: Arithmetic and assignment operators Logical operators Membership: in, not in Operator precedence Walrus operator := (awareness). Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Operators & Expressions. Arithmetic and assignment operators Logical operators Membership: in, not in Operator precedence Walrus operator := (awareness). Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Operators & Expressions\n\nTOPICS TO COVER (in order):\n- Arithmetic and assignment operators\n- Logical operators\n- Membership: in, not in\n- Operator precedence\n- Walrus operator := (awareness)\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Arithmetic and assignment operators with a concrete example.",
+        "How would you apply Logical operators in a real project?",
+        "What is a common beginner mistake with Membership, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-7",
+      "order": 7,
+      "sectionId": "02",
+      "sectionTitle": "Variables, Types & Operators",
+      "moduleNumber": 4,
+      "title": "Module 7: Type Conversion & Validation",
+      "description": "int(), str(), float() conversion",
+      "topics": [
+        "int(), str(), float() conversion",
+        "Handling invalid input safely",
+        "isinstance() checks",
+        "Truthy/falsy in Python",
+        "Common conversion bugs"
+      ],
+      "project": null,
+      "objectives": [
+        "int(), str(), float() conversion",
+        "Handling invalid input safely",
+        "isinstance() checks",
+        "Truthy/falsy in Python",
+        "Common conversion bugs"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Type Conversion & Validation. int(), str(), float() conversion; Handling invalid input safely; isinstance() checks; Truthy/falsy in Python. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Type Conversion & Validation: int(), str(), float() conversion Handling invalid input safely isinstance() checks Truthy/falsy in Python Common conversion bugs. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Type Conversion & Validation. int(), str(), float() conversion Handling invalid input safely isinstance() checks Truthy/falsy in Python Common conversion bugs. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Type Conversion & Validation\n\nTOPICS TO COVER (in order):\n- int(), str(), float() conversion\n- Handling invalid input safely\n- isinstance() checks\n- Truthy/falsy in Python\n- Common conversion bugs\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain int(), str(), float() conversion with a concrete example.",
+        "How would you apply Handling invalid input safely in a real project?",
+        "What is a common beginner mistake with isinstance() checks, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-8",
+      "order": 8,
+      "sectionId": "03",
+      "sectionTitle": "Control Flow",
+      "moduleNumber": 1,
+      "title": "Module 8: Conditionals",
+      "description": "if / elif / else",
+      "topics": [
+        "if / elif / else",
+        "Nested conditions",
+        "Ternary expressions",
+        "match/case (3.10+) intro",
+        "Guard clauses"
+      ],
+      "project": null,
+      "objectives": [
+        "if / elif / else",
+        "Nested conditions",
+        "Ternary expressions",
+        "match/case (3.10+) intro",
+        "Guard clauses"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Conditionals. if / elif / else; Nested conditions; Ternary expressions; match/case (3.10+) intro. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Conditionals: if / elif / else Nested conditions Ternary expressions match/case (3.10+) intro Guard clauses. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Conditionals. if / elif / else Nested conditions Ternary expressions match/case (3.10+) intro Guard clauses. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Conditionals\n\nTOPICS TO COVER (in order):\n- if / elif / else\n- Nested conditions\n- Ternary expressions\n- match/case (3.10+) intro\n- Guard clauses\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain if / elif / else with a concrete example.",
+        "How would you apply Nested conditions in a real project?",
+        "What is a common beginner mistake with Ternary expressions, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-9",
+      "order": 9,
+      "sectionId": "03",
+      "sectionTitle": "Control Flow",
+      "moduleNumber": 2,
+      "title": "Module 9: Loops",
+      "description": "while loops",
+      "topics": [
+        "while loops",
+        "for loops over sequences",
+        "range() function",
+        "break, continue, else on loops",
+        "Avoiding infinite loops"
+      ],
+      "project": null,
+      "objectives": [
+        "while loops",
+        "for loops over sequences",
+        "range() function",
+        "break, continue, else on loops",
+        "Avoiding infinite loops"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Loops. while loops; for loops over sequences; range() function; break, continue, else on loops. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Loops: while loops for loops over sequences range() function break, continue, else on loops Avoiding infinite loops. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Loops. while loops for loops over sequences range() function break, continue, else on loops Avoiding infinite loops. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Loops\n\nTOPICS TO COVER (in order):\n- while loops\n- for loops over sequences\n- range() function\n- break, continue, else on loops\n- Avoiding infinite loops\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain while loops with a concrete example.",
+        "How would you apply for loops over sequences in a real project?",
+        "What is a common beginner mistake with range() function, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-10",
+      "order": 10,
+      "sectionId": "03",
+      "sectionTitle": "Control Flow",
+      "moduleNumber": 3,
+      "title": "Module 10: Comprehensions & Iteration",
+      "description": "List comprehensions",
+      "topics": [
+        "List comprehensions",
+        "Dict and set comprehensions",
+        "enumerate and zip",
+        "Iterators vs iterables",
+        "When comprehensions hurt readability"
+      ],
+      "project": null,
+      "objectives": [
+        "List comprehensions",
+        "Dict and set comprehensions",
+        "enumerate and zip",
+        "Iterators vs iterables",
+        "When comprehensions hurt readability"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Comprehensions & Iteration. List comprehensions; Dict and set comprehensions; enumerate and zip; Iterators vs iterables. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Comprehensions & Iteration: List comprehensions Dict and set comprehensions enumerate and zip Iterators vs iterables When comprehensions hurt readability. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Comprehensions & Iteration. List comprehensions Dict and set comprehensions enumerate and zip Iterators vs iterables When comprehensions hurt readability. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Comprehensions & Iteration\n\nTOPICS TO COVER (in order):\n- List comprehensions\n- Dict and set comprehensions\n- enumerate and zip\n- Iterators vs iterables\n- When comprehensions hurt readability\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain List comprehensions with a concrete example.",
+        "How would you apply Dict and set comprehensions in a real project?",
+        "What is a common beginner mistake with enumerate and zip, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-11",
+      "order": 11,
+      "sectionId": "04",
+      "sectionTitle": "Functions",
+      "moduleNumber": 1,
+      "title": "Module 11: Defining Functions",
+      "description": "def syntax and return",
+      "topics": [
+        "def syntax and return",
+        "Docstrings",
+        "Function scope",
+        "Pure functions intro",
+        "Organizing code into modules"
+      ],
+      "project": null,
+      "objectives": [
+        "def syntax and return",
+        "Docstrings",
+        "Function scope",
+        "Pure functions intro",
+        "Organizing code into modules"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Defining Functions. def syntax and return; Docstrings; Function scope; Pure functions intro. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Defining Functions: def syntax and return Docstrings Function scope Pure functions intro Organizing code into modules. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Defining Functions. def syntax and return Docstrings Function scope Pure functions intro Organizing code into modules. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Defining Functions\n\nTOPICS TO COVER (in order):\n- def syntax and return\n- Docstrings\n- Function scope\n- Pure functions intro\n- Organizing code into modules\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain def syntax and return with a concrete example.",
+        "How would you apply Docstrings in a real project?",
+        "What is a common beginner mistake with Function scope, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-12",
+      "order": 12,
+      "sectionId": "04",
+      "sectionTitle": "Functions",
+      "moduleNumber": 2,
+      "title": "Module 12: Parameters & Arguments",
+      "description": "Positional and keyword args",
+      "topics": [
+        "Positional and keyword args",
+        "Default parameters",
+        "*args and **kwargs",
+        "Unpacking in calls",
+        "Mutable default argument trap"
+      ],
+      "project": null,
+      "objectives": [
+        "Positional and keyword args",
+        "Default parameters",
+        "*args and **kwargs",
+        "Unpacking in calls",
+        "Mutable default argument trap"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Parameters & Arguments. Positional and keyword args; Default parameters; *args and **kwargs; Unpacking in calls. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Parameters & Arguments: Positional and keyword args Default parameters *args and **kwargs Unpacking in calls Mutable default argument trap. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Parameters & Arguments. Positional and keyword args Default parameters *args and **kwargs Unpacking in calls Mutable default argument trap. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Parameters & Arguments\n\nTOPICS TO COVER (in order):\n- Positional and keyword args\n- Default parameters\n- *args and **kwargs\n- Unpacking in calls\n- Mutable default argument trap\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Positional and keyword args with a concrete example.",
+        "How would you apply Default parameters in a real project?",
+        "What is a common beginner mistake with *args and **kwargs, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-13",
+      "order": 13,
+      "sectionId": "04",
+      "sectionTitle": "Functions",
+      "moduleNumber": 3,
+      "title": "Module 13: Advanced Functions",
+      "description": "Lambda expressions",
+      "topics": [
+        "Lambda expressions",
+        "map, filter, reduce",
+        "Closures and nested functions",
+        "Recursion basics",
+        "functools.partial intro"
+      ],
+      "project": null,
+      "objectives": [
+        "Lambda expressions",
+        "map, filter, reduce",
+        "Closures and nested functions",
+        "Recursion basics",
+        "functools.partial intro"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Advanced Functions. Lambda expressions; map, filter, reduce; Closures and nested functions; Recursion basics. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Advanced Functions: Lambda expressions map, filter, reduce Closures and nested functions Recursion basics functools.partial intro. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Advanced Functions. Lambda expressions map, filter, reduce Closures and nested functions Recursion basics functools.partial intro. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Advanced Functions\n\nTOPICS TO COVER (in order):\n- Lambda expressions\n- map, filter, reduce\n- Closures and nested functions\n- Recursion basics\n- functools.partial intro\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Lambda expressions with a concrete example.",
+        "How would you apply map, filter, reduce in a real project?",
+        "What is a common beginner mistake with Closures and nested functions, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-14",
+      "order": 14,
+      "sectionId": "05",
+      "sectionTitle": "Data Structures",
+      "moduleNumber": 1,
+      "title": "Module 14: Lists",
+      "description": "Creating and indexing lists",
+      "topics": [
+        "Creating and indexing lists",
+        "Slicing and copying",
+        "List methods: append, extend, pop",
+        "Sorting lists",
+        "List as stack/queue"
+      ],
+      "project": "Analyze a list of student scores",
+      "objectives": [
+        "Creating and indexing lists",
+        "Slicing and copying",
+        "List methods: append, extend, pop",
+        "Sorting lists",
+        "List as stack/queue",
+        "Project: Analyze a list of student scores"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Lists. Creating and indexing lists; Slicing and copying; List methods: append, extend, pop; Sorting lists. Project: Analyze a list of student scores. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Lists: Creating and indexing lists Slicing and copying List methods: append, extend, pop Sorting lists List as stack/queue. Project: Analyze a list of student scores. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Lists. Creating and indexing lists Slicing and copying List methods: append, extend, pop Sorting lists List as stack/queue. Project: Analyze a list of student scores. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Lists\n\nTOPICS TO COVER (in order):\n- Creating and indexing lists\n- Slicing and copying\n- List methods: append, extend, pop\n- Sorting lists\n- List as stack/queue\n\nHANDS-ON PROJECT: Analyze a list of student scores\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Creating and indexing lists with a concrete example.",
+        "How would you apply Slicing and copying in a real project?",
+        "What is a common beginner mistake with List methods, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-15",
+      "order": 15,
+      "sectionId": "05",
+      "sectionTitle": "Data Structures",
+      "moduleNumber": 2,
+      "title": "Module 15: Tuples & Sets",
+      "description": "Immutable tuples",
+      "topics": [
+        "Immutable tuples",
+        "Named tuples intro",
+        "Sets for uniqueness",
+        "Set operations",
+        "Choosing list vs tuple vs set"
+      ],
+      "project": null,
+      "objectives": [
+        "Immutable tuples",
+        "Named tuples intro",
+        "Sets for uniqueness",
+        "Set operations",
+        "Choosing list vs tuple vs set"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Tuples & Sets. Immutable tuples; Named tuples intro; Sets for uniqueness; Set operations. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Tuples & Sets: Immutable tuples Named tuples intro Sets for uniqueness Set operations Choosing list vs tuple vs set. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Tuples & Sets. Immutable tuples Named tuples intro Sets for uniqueness Set operations Choosing list vs tuple vs set. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Tuples & Sets\n\nTOPICS TO COVER (in order):\n- Immutable tuples\n- Named tuples intro\n- Sets for uniqueness\n- Set operations\n- Choosing list vs tuple vs set\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Immutable tuples with a concrete example.",
+        "How would you apply Named tuples intro in a real project?",
+        "What is a common beginner mistake with Sets for uniqueness, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-16",
+      "order": 16,
+      "sectionId": "05",
+      "sectionTitle": "Data Structures",
+      "moduleNumber": 3,
+      "title": "Module 16: Dictionaries",
+      "description": "Key-value pairs",
+      "topics": [
+        "Key-value pairs",
+        "dict methods and get()",
+        "Nested dictionaries",
+        "defaultdict and Counter intro",
+        "Hashability requirements"
+      ],
+      "project": "Word frequency counter",
+      "objectives": [
+        "Key-value pairs",
+        "dict methods and get()",
+        "Nested dictionaries",
+        "defaultdict and Counter intro",
+        "Hashability requirements",
+        "Project: Word frequency counter"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Dictionaries. Key-value pairs; dict methods and get(); Nested dictionaries; defaultdict and Counter intro. Project: Word frequency counter. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Dictionaries: Key-value pairs dict methods and get() Nested dictionaries defaultdict and Counter intro Hashability requirements. Project: Word frequency counter. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Dictionaries. Key-value pairs dict methods and get() Nested dictionaries defaultdict and Counter intro Hashability requirements. Project: Word frequency counter. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Dictionaries\n\nTOPICS TO COVER (in order):\n- Key-value pairs\n- dict methods and get()\n- Nested dictionaries\n- defaultdict and Counter intro\n- Hashability requirements\n\nHANDS-ON PROJECT: Word frequency counter\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Key-value pairs with a concrete example.",
+        "How would you apply dict methods and get() in a real project?",
+        "What is a common beginner mistake with Nested dictionaries, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-17",
+      "order": 17,
+      "sectionId": "05",
+      "sectionTitle": "Data Structures",
+      "moduleNumber": 4,
+      "title": "Module 17: Collections Module",
+      "description": "deque for queues",
+      "topics": [
+        "deque for queues",
+        "Counter for tallies",
+        "defaultdict patterns",
+        "OrderedDict (historical)",
+        "Choosing the right structure"
+      ],
+      "project": null,
+      "objectives": [
+        "deque for queues",
+        "Counter for tallies",
+        "defaultdict patterns",
+        "OrderedDict (historical)",
+        "Choosing the right structure"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Collections Module. deque for queues; Counter for tallies; defaultdict patterns; OrderedDict (historical). Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Collections Module: deque for queues Counter for tallies defaultdict patterns OrderedDict (historical) Choosing the right structure. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Collections Module. deque for queues Counter for tallies defaultdict patterns OrderedDict (historical) Choosing the right structure. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Collections Module\n\nTOPICS TO COVER (in order):\n- deque for queues\n- Counter for tallies\n- defaultdict patterns\n- OrderedDict (historical)\n- Choosing the right structure\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain deque for queues with a concrete example.",
+        "How would you apply Counter for tallies in a real project?",
+        "What is a common beginner mistake with defaultdict patterns, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-18",
+      "order": 18,
+      "sectionId": "06",
+      "sectionTitle": "Object-Oriented Python",
+      "moduleNumber": 1,
+      "title": "Module 18: Classes & Objects",
+      "description": "class and __init__",
+      "topics": [
+        "class and __init__",
+        "Instance vs class attributes",
+        "self parameter",
+        "Methods vs functions",
+        "Modeling real entities"
+      ],
+      "project": "Bank account class",
+      "objectives": [
+        "class and __init__",
+        "Instance vs class attributes",
+        "self parameter",
+        "Methods vs functions",
+        "Modeling real entities",
+        "Project: Bank account class"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Classes & Objects. class and __init__; Instance vs class attributes; self parameter; Methods vs functions. Project: Bank account class. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Classes & Objects: class and __init__ Instance vs class attributes self parameter Methods vs functions Modeling real entities. Project: Bank account class. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Classes & Objects. class and __init__ Instance vs class attributes self parameter Methods vs functions Modeling real entities. Project: Bank account class. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Classes & Objects\n\nTOPICS TO COVER (in order):\n- class and __init__\n- Instance vs class attributes\n- self parameter\n- Methods vs functions\n- Modeling real entities\n\nHANDS-ON PROJECT: Bank account class\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain class and __init__ with a concrete example.",
+        "How would you apply Instance vs class attributes in a real project?",
+        "What is a common beginner mistake with self parameter, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-19",
+      "order": 19,
+      "sectionId": "06",
+      "sectionTitle": "Object-Oriented Python",
+      "moduleNumber": 2,
+      "title": "Module 19: Inheritance & Polymorphism",
+      "description": "super() and method override",
+      "topics": [
+        "super() and method override",
+        "isinstance and issubclass",
+        "Composition vs inheritance",
+        "Abstract base classes intro",
+        "Designing class hierarchies"
+      ],
+      "project": null,
+      "objectives": [
+        "super() and method override",
+        "isinstance and issubclass",
+        "Composition vs inheritance",
+        "Abstract base classes intro",
+        "Designing class hierarchies"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Inheritance & Polymorphism. super() and method override; isinstance and issubclass; Composition vs inheritance; Abstract base classes intro. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Inheritance & Polymorphism: super() and method override isinstance and issubclass Composition vs inheritance Abstract base classes intro Designing class hierarchies. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Inheritance & Polymorphism. super() and method override isinstance and issubclass Composition vs inheritance Abstract base classes intro Designing class hierarchies. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Inheritance & Polymorphism\n\nTOPICS TO COVER (in order):\n- super() and method override\n- isinstance and issubclass\n- Composition vs inheritance\n- Abstract base classes intro\n- Designing class hierarchies\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain super() and method override with a concrete example.",
+        "How would you apply isinstance and issubclass in a real project?",
+        "What is a common beginner mistake with Composition vs inheritance, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-20",
+      "order": 20,
+      "sectionId": "06",
+      "sectionTitle": "Object-Oriented Python",
+      "moduleNumber": 3,
+      "title": "Module 20: Special Methods & Dataclasses",
+      "description": "__str__, __repr__",
+      "topics": [
+        "__str__, __repr__",
+        "__len__, __getitem__",
+        "dataclasses module",
+        "Properties with @property",
+        "When OOP helps vs hurts"
+      ],
+      "project": null,
+      "objectives": [
+        "__str__, __repr__",
+        "__len__, __getitem__",
+        "dataclasses module",
+        "Properties with @property",
+        "When OOP helps vs hurts"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Special Methods & Dataclasses. __str__, __repr__; __len__, __getitem__; dataclasses module; Properties with @property. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Special Methods & Dataclasses: __str__, __repr__ __len__, __getitem__ dataclasses module Properties with @property When OOP helps vs hurts. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Special Methods & Dataclasses. __str__, __repr__ __len__, __getitem__ dataclasses module Properties with @property When OOP helps vs hurts. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Special Methods & Dataclasses\n\nTOPICS TO COVER (in order):\n- __str__, __repr__\n- __len__, __getitem__\n- dataclasses module\n- Properties with @property\n- When OOP helps vs hurts\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain __str__, __repr__ with a concrete example.",
+        "How would you apply __len__, __getitem__ in a real project?",
+        "What is a common beginner mistake with dataclasses module, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-21",
+      "order": 21,
+      "sectionId": "06",
+      "sectionTitle": "Object-Oriented Python",
+      "moduleNumber": 4,
+      "title": "Module 21: Encapsulation & Patterns",
+      "description": "Private naming _ and __",
+      "topics": [
+        "Private naming _ and __",
+        "Properties for validation",
+        "Factory functions",
+        "Singleton awareness",
+        "SOLID intro for Python"
+      ],
+      "project": null,
+      "objectives": [
+        "Private naming _ and __",
+        "Properties for validation",
+        "Factory functions",
+        "Singleton awareness",
+        "SOLID intro for Python"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Encapsulation & Patterns. Private naming _ and __; Properties for validation; Factory functions; Singleton awareness. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Encapsulation & Patterns: Private naming _ and __ Properties for validation Factory functions Singleton awareness SOLID intro for Python. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Encapsulation & Patterns. Private naming _ and __ Properties for validation Factory functions Singleton awareness SOLID intro for Python. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Encapsulation & Patterns\n\nTOPICS TO COVER (in order):\n- Private naming _ and __\n- Properties for validation\n- Factory functions\n- Singleton awareness\n- SOLID intro for Python\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Private naming _ and __ with a concrete example.",
+        "How would you apply Properties for validation in a real project?",
+        "What is a common beginner mistake with Factory functions, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-22",
+      "order": 22,
+      "sectionId": "07",
+      "sectionTitle": "Files, Errors & Logging",
+      "moduleNumber": 1,
+      "title": "Module 22: File I/O",
+      "description": "open(), read, write",
+      "topics": [
+        "open(), read, write",
+        "Context managers with with",
+        "Pathlib for paths",
+        "CSV and JSON files",
+        "Binary files awareness"
+      ],
+      "project": null,
+      "objectives": [
+        "open(), read, write",
+        "Context managers with with",
+        "Pathlib for paths",
+        "CSV and JSON files",
+        "Binary files awareness"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to File I/O. open(), read, write; Context managers with with; Pathlib for paths; CSV and JSON files. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "File I/O: open(), read, write Context managers with with Pathlib for paths CSV and JSON files Binary files awareness. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: File I/O. open(), read, write Context managers with with Pathlib for paths CSV and JSON files Binary files awareness. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — File I/O\n\nTOPICS TO COVER (in order):\n- open(), read, write\n- Context managers with with\n- Pathlib for paths\n- CSV and JSON files\n- Binary files awareness\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain open(), read, write with a concrete example.",
+        "How would you apply Context managers with with in a real project?",
+        "What is a common beginner mistake with Pathlib for paths, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-23",
+      "order": 23,
+      "sectionId": "07",
+      "sectionTitle": "Files, Errors & Logging",
+      "moduleNumber": 2,
+      "title": "Module 23: Exception Handling",
+      "description": "try / except / else / finally",
+      "topics": [
+        "try / except / else / finally",
+        "Raising exceptions",
+        "Custom exception classes",
+        "Exception hierarchy",
+        "EAFP vs LBYL style"
+      ],
+      "project": null,
+      "objectives": [
+        "try / except / else / finally",
+        "Raising exceptions",
+        "Custom exception classes",
+        "Exception hierarchy",
+        "EAFP vs LBYL style"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Exception Handling. try / except / else / finally; Raising exceptions; Custom exception classes; Exception hierarchy. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Exception Handling: try / except / else / finally Raising exceptions Custom exception classes Exception hierarchy EAFP vs LBYL style. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Exception Handling. try / except / else / finally Raising exceptions Custom exception classes Exception hierarchy EAFP vs LBYL style. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Exception Handling\n\nTOPICS TO COVER (in order):\n- try / except / else / finally\n- Raising exceptions\n- Custom exception classes\n- Exception hierarchy\n- EAFP vs LBYL style\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain try / except / else / finally with a concrete example.",
+        "How would you apply Raising exceptions in a real project?",
+        "What is a common beginner mistake with Custom exception classes, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-24",
+      "order": 24,
+      "sectionId": "07",
+      "sectionTitle": "Files, Errors & Logging",
+      "moduleNumber": 3,
+      "title": "Module 24: Logging & Debugging",
+      "description": "logging module basics",
+      "topics": [
+        "logging module basics",
+        "Log levels",
+        "pdb debugger intro",
+        "Assertions",
+        "Production error handling"
+      ],
+      "project": null,
+      "objectives": [
+        "logging module basics",
+        "Log levels",
+        "pdb debugger intro",
+        "Assertions",
+        "Production error handling"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Logging & Debugging. logging module basics; Log levels; pdb debugger intro; Assertions. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Logging & Debugging: logging module basics Log levels pdb debugger intro Assertions Production error handling. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Logging & Debugging. logging module basics Log levels pdb debugger intro Assertions Production error handling. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Logging & Debugging\n\nTOPICS TO COVER (in order):\n- logging module basics\n- Log levels\n- pdb debugger intro\n- Assertions\n- Production error handling\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain logging module basics with a concrete example.",
+        "How would you apply Log levels in a real project?",
+        "What is a common beginner mistake with pdb debugger intro, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-25",
+      "order": 25,
+      "sectionId": "08",
+      "sectionTitle": "Modules, Packages & Ecosystem",
+      "moduleNumber": 1,
+      "title": "Module 25: Imports & Modules",
+      "description": "import styles",
+      "topics": [
+        "import styles",
+        "Creating your own modules",
+        "__name__ == '__main__'",
+        "Package structure",
+        "Relative imports"
+      ],
+      "project": null,
+      "objectives": [
+        "import styles",
+        "Creating your own modules",
+        "__name__ == '__main__'",
+        "Package structure",
+        "Relative imports"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Imports & Modules. import styles; Creating your own modules; __name__ == '__main__'; Package structure. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Imports & Modules: import styles Creating your own modules __name__ == '__main__' Package structure Relative imports. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Imports & Modules. import styles Creating your own modules __name__ == '__main__' Package structure Relative imports. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Imports & Modules\n\nTOPICS TO COVER (in order):\n- import styles\n- Creating your own modules\n- __name__ == '__main__'\n- Package structure\n- Relative imports\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain import styles with a concrete example.",
+        "How would you apply Creating your own modules in a real project?",
+        "What is a common beginner mistake with __name__ == '__main__', and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-26",
+      "order": 26,
+      "sectionId": "08",
+      "sectionTitle": "Modules, Packages & Ecosystem",
+      "moduleNumber": 2,
+      "title": "Module 26: Virtual Envs & pip",
+      "description": "venv and pip install",
+      "topics": [
+        "venv and pip install",
+        "requirements.txt",
+        "pyproject.toml awareness",
+        "pip freeze workflow",
+        "Dependency conflicts"
+      ],
+      "project": null,
+      "objectives": [
+        "venv and pip install",
+        "requirements.txt",
+        "pyproject.toml awareness",
+        "pip freeze workflow",
+        "Dependency conflicts"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Virtual Envs & pip. venv and pip install; requirements.txt; pyproject.toml awareness; pip freeze workflow. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Virtual Envs & pip: venv and pip install requirements.txt pyproject.toml awareness pip freeze workflow Dependency conflicts. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Virtual Envs & pip. venv and pip install requirements.txt pyproject.toml awareness pip freeze workflow Dependency conflicts. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Virtual Envs & pip\n\nTOPICS TO COVER (in order):\n- venv and pip install\n- requirements.txt\n- pyproject.toml awareness\n- pip freeze workflow\n- Dependency conflicts\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain venv and pip install with a concrete example.",
+        "How would you apply requirements.txt in a real project?",
+        "What is a common beginner mistake with pyproject.toml awareness, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-27",
+      "order": 27,
+      "sectionId": "08",
+      "sectionTitle": "Modules, Packages & Ecosystem",
+      "moduleNumber": 3,
+      "title": "Module 27: Standard Library Highlights",
+      "description": "datetime and timedelta",
+      "topics": [
+        "datetime and timedelta",
+        "os, sys, pathlib",
+        "json, csv, urllib",
+        "random and math",
+        "itertools and functools intro"
+      ],
+      "project": null,
+      "objectives": [
+        "datetime and timedelta",
+        "os, sys, pathlib",
+        "json, csv, urllib",
+        "random and math",
+        "itertools and functools intro"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Standard Library Highlights. datetime and timedelta; os, sys, pathlib; json, csv, urllib; random and math. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Standard Library Highlights: datetime and timedelta os, sys, pathlib json, csv, urllib random and math itertools and functools intro. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Standard Library Highlights. datetime and timedelta os, sys, pathlib json, csv, urllib random and math itertools and functools intro. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Standard Library Highlights\n\nTOPICS TO COVER (in order):\n- datetime and timedelta\n- os, sys, pathlib\n- json, csv, urllib\n- random and math\n- itertools and functools intro\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain datetime and timedelta with a concrete example.",
+        "How would you apply os, sys, pathlib in a real project?",
+        "What is a common beginner mistake with json, csv, urllib, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-28",
+      "order": 28,
+      "sectionId": "09",
+      "sectionTitle": "Advanced Python",
+      "moduleNumber": 1,
+      "title": "Module 28: Decorators",
+      "description": "Functions as objects",
+      "topics": [
+        "Functions as objects",
+        "Writing decorators",
+        "@wraps",
+        "Decorator parameters",
+        "Common decorator patterns"
+      ],
+      "project": null,
+      "objectives": [
+        "Functions as objects",
+        "Writing decorators",
+        "@wraps",
+        "Decorator parameters",
+        "Common decorator patterns"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Decorators. Functions as objects; Writing decorators; @wraps; Decorator parameters. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Decorators: Functions as objects Writing decorators @wraps Decorator parameters Common decorator patterns. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Decorators. Functions as objects Writing decorators @wraps Decorator parameters Common decorator patterns. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Decorators\n\nTOPICS TO COVER (in order):\n- Functions as objects\n- Writing decorators\n- @wraps\n- Decorator parameters\n- Common decorator patterns\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Functions as objects with a concrete example.",
+        "How would you apply Writing decorators in a real project?",
+        "What is a common beginner mistake with @wraps, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-29",
+      "order": 29,
+      "sectionId": "09",
+      "sectionTitle": "Advanced Python",
+      "moduleNumber": 2,
+      "title": "Module 29: Generators & Iterators",
+      "description": "yield keyword",
+      "topics": [
+        "yield keyword",
+        "Generator expressions",
+        "Lazy evaluation benefits",
+        "itertools recipes",
+        "Memory efficiency"
+      ],
+      "project": null,
+      "objectives": [
+        "yield keyword",
+        "Generator expressions",
+        "Lazy evaluation benefits",
+        "itertools recipes",
+        "Memory efficiency"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Generators & Iterators. yield keyword; Generator expressions; Lazy evaluation benefits; itertools recipes. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Generators & Iterators: yield keyword Generator expressions Lazy evaluation benefits itertools recipes Memory efficiency. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Generators & Iterators. yield keyword Generator expressions Lazy evaluation benefits itertools recipes Memory efficiency. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Generators & Iterators\n\nTOPICS TO COVER (in order):\n- yield keyword\n- Generator expressions\n- Lazy evaluation benefits\n- itertools recipes\n- Memory efficiency\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain yield keyword with a concrete example.",
+        "How would you apply Generator expressions in a real project?",
+        "What is a common beginner mistake with Lazy evaluation benefits, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-30",
+      "order": 30,
+      "sectionId": "09",
+      "sectionTitle": "Advanced Python",
+      "moduleNumber": 3,
+      "title": "Module 30: Context Managers",
+      "description": "with statement internals",
+      "topics": [
+        "with statement internals",
+        "__enter__ and __exit__",
+        "contextlib.contextmanager",
+        "Managing resources",
+        "Custom context managers"
+      ],
+      "project": null,
+      "objectives": [
+        "with statement internals",
+        "__enter__ and __exit__",
+        "contextlib.contextmanager",
+        "Managing resources",
+        "Custom context managers"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Context Managers. with statement internals; __enter__ and __exit__; contextlib.contextmanager; Managing resources. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Context Managers: with statement internals __enter__ and __exit__ contextlib.contextmanager Managing resources Custom context managers. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Context Managers. with statement internals __enter__ and __exit__ contextlib.contextmanager Managing resources Custom context managers. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Context Managers\n\nTOPICS TO COVER (in order):\n- with statement internals\n- __enter__ and __exit__\n- contextlib.contextmanager\n- Managing resources\n- Custom context managers\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain with statement internals with a concrete example.",
+        "How would you apply __enter__ and __exit__ in a real project?",
+        "What is a common beginner mistake with contextlib.contextmanager, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-31",
+      "order": 31,
+      "sectionId": "10",
+      "sectionTitle": "Data, Web & APIs",
+      "moduleNumber": 1,
+      "title": "Module 31: Working with APIs",
+      "description": "requests library",
+      "topics": [
+        "requests library",
+        "JSON responses",
+        "Headers and auth basics",
+        "Error handling for HTTP",
+        "Rate limits and retries"
+      ],
+      "project": null,
+      "objectives": [
+        "requests library",
+        "JSON responses",
+        "Headers and auth basics",
+        "Error handling for HTTP",
+        "Rate limits and retries"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Working with APIs. requests library; JSON responses; Headers and auth basics; Error handling for HTTP. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Working with APIs: requests library JSON responses Headers and auth basics Error handling for HTTP Rate limits and retries. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Working with APIs. requests library JSON responses Headers and auth basics Error handling for HTTP Rate limits and retries. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Working with APIs\n\nTOPICS TO COVER (in order):\n- requests library\n- JSON responses\n- Headers and auth basics\n- Error handling for HTTP\n- Rate limits and retries\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain requests library with a concrete example.",
+        "How would you apply JSON responses in a real project?",
+        "What is a common beginner mistake with Headers and auth basics, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-32",
+      "order": 32,
+      "sectionId": "10",
+      "sectionTitle": "Data, Web & APIs",
+      "moduleNumber": 2,
+      "title": "Module 32: Data Analysis Intro",
+      "description": "NumPy arrays overview",
+      "topics": [
+        "NumPy arrays overview",
+        "Pandas DataFrame basics",
+        "Reading CSV with pandas",
+        "Simple plots with matplotlib",
+        "When to use pandas vs pure Python"
+      ],
+      "project": null,
+      "objectives": [
+        "NumPy arrays overview",
+        "Pandas DataFrame basics",
+        "Reading CSV with pandas",
+        "Simple plots with matplotlib",
+        "When to use pandas vs pure Python"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Data Analysis Intro. NumPy arrays overview; Pandas DataFrame basics; Reading CSV with pandas; Simple plots with matplotlib. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Data Analysis Intro: NumPy arrays overview Pandas DataFrame basics Reading CSV with pandas Simple plots with matplotlib When to use pandas vs pure Python. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Data Analysis Intro. NumPy arrays overview Pandas DataFrame basics Reading CSV with pandas Simple plots with matplotlib When to use pandas vs pure Python. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Data Analysis Intro\n\nTOPICS TO COVER (in order):\n- NumPy arrays overview\n- Pandas DataFrame basics\n- Reading CSV with pandas\n- Simple plots with matplotlib\n- When to use pandas vs pure Python\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain NumPy arrays overview with a concrete example.",
+        "How would you apply Pandas DataFrame basics in a real project?",
+        "What is a common beginner mistake with Reading CSV with pandas, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-33",
+      "order": 33,
+      "sectionId": "10",
+      "sectionTitle": "Data, Web & APIs",
+      "moduleNumber": 3,
+      "title": "Module 33: Web Frameworks Overview",
+      "description": "Flask vs Django vs FastAPI",
+      "topics": [
+        "Flask vs Django vs FastAPI",
+        "HTTP request/response cycle",
+        "REST API concepts",
+        "Choosing a framework",
+        "Python in microservices"
+      ],
+      "project": null,
+      "objectives": [
+        "Flask vs Django vs FastAPI",
+        "HTTP request/response cycle",
+        "REST API concepts",
+        "Choosing a framework",
+        "Python in microservices"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Web Frameworks Overview. Flask vs Django vs FastAPI; HTTP request/response cycle; REST API concepts; Choosing a framework. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Web Frameworks Overview: Flask vs Django vs FastAPI HTTP request/response cycle REST API concepts Choosing a framework Python in microservices. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Web Frameworks Overview. Flask vs Django vs FastAPI HTTP request/response cycle REST API concepts Choosing a framework Python in microservices. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Web Frameworks Overview\n\nTOPICS TO COVER (in order):\n- Flask vs Django vs FastAPI\n- HTTP request/response cycle\n- REST API concepts\n- Choosing a framework\n- Python in microservices\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Flask vs Django vs FastAPI with a concrete example.",
+        "How would you apply HTTP request/response cycle in a real project?",
+        "What is a common beginner mistake with REST API concepts, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-34",
+      "order": 34,
+      "sectionId": "11",
+      "sectionTitle": "Testing & Quality",
+      "moduleNumber": 1,
+      "title": "Module 34: pytest Fundamentals",
+      "description": "Writing test functions",
+      "topics": [
+        "Writing test functions",
+        "assert and fixtures intro",
+        "Parametrized tests",
+        "Mocking with unittest.mock",
+        "Test coverage awareness"
+      ],
+      "project": null,
+      "objectives": [
+        "Writing test functions",
+        "assert and fixtures intro",
+        "Parametrized tests",
+        "Mocking with unittest.mock",
+        "Test coverage awareness"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to pytest Fundamentals. Writing test functions; assert and fixtures intro; Parametrized tests; Mocking with unittest.mock. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "pytest Fundamentals: Writing test functions assert and fixtures intro Parametrized tests Mocking with unittest.mock Test coverage awareness. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: pytest Fundamentals. Writing test functions assert and fixtures intro Parametrized tests Mocking with unittest.mock Test coverage awareness. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — pytest Fundamentals\n\nTOPICS TO COVER (in order):\n- Writing test functions\n- assert and fixtures intro\n- Parametrized tests\n- Mocking with unittest.mock\n- Test coverage awareness\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Writing test functions with a concrete example.",
+        "How would you apply assert and fixtures intro in a real project?",
+        "What is a common beginner mistake with Parametrized tests, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-35",
+      "order": 35,
+      "sectionId": "11",
+      "sectionTitle": "Testing & Quality",
+      "moduleNumber": 2,
+      "title": "Module 35: Code Quality",
+      "description": "Black, ruff, mypy intro",
+      "topics": [
+        "Black, ruff, mypy intro",
+        "Writing testable code",
+        "CI pipelines awareness",
+        "Code reviews",
+        "Documentation with Sphinx intro"
+      ],
+      "project": null,
+      "objectives": [
+        "Black, ruff, mypy intro",
+        "Writing testable code",
+        "CI pipelines awareness",
+        "Code reviews",
+        "Documentation with Sphinx intro"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Code Quality. Black, ruff, mypy intro; Writing testable code; CI pipelines awareness; Code reviews. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Code Quality: Black, ruff, mypy intro Writing testable code CI pipelines awareness Code reviews Documentation with Sphinx intro. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Code Quality. Black, ruff, mypy intro Writing testable code CI pipelines awareness Code reviews Documentation with Sphinx intro. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Code Quality\n\nTOPICS TO COVER (in order):\n- Black, ruff, mypy intro\n- Writing testable code\n- CI pipelines awareness\n- Code reviews\n- Documentation with Sphinx intro\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Black, ruff, mypy intro with a concrete example.",
+        "How would you apply Writing testable code in a real project?",
+        "What is a common beginner mistake with CI pipelines awareness, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-36",
+      "order": 36,
+      "sectionId": "12",
+      "sectionTitle": "Capstone & Career",
+      "moduleNumber": 1,
+      "title": "Module 36: Capstone Planning",
+      "description": "Choosing a project scope",
+      "topics": [
+        "Choosing a project scope",
+        "CLI vs web vs data project",
+        "Requirements and milestones",
+        "Git workflow",
+        "README and demo"
+      ],
+      "project": null,
+      "objectives": [
+        "Choosing a project scope",
+        "CLI vs web vs data project",
+        "Requirements and milestones",
+        "Git workflow",
+        "README and demo"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Capstone Planning. Choosing a project scope; CLI vs web vs data project; Requirements and milestones; Git workflow. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Capstone Planning: Choosing a project scope CLI vs web vs data project Requirements and milestones Git workflow README and demo. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Capstone Planning. Choosing a project scope CLI vs web vs data project Requirements and milestones Git workflow README and demo. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Capstone Planning\n\nTOPICS TO COVER (in order):\n- Choosing a project scope\n- CLI vs web vs data project\n- Requirements and milestones\n- Git workflow\n- README and demo\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Choosing a project scope with a concrete example.",
+        "How would you apply CLI vs web vs data project in a real project?",
+        "What is a common beginner mistake with Requirements and milestones, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-37",
+      "order": 37,
+      "sectionId": "12",
+      "sectionTitle": "Capstone & Career",
+      "moduleNumber": 2,
+      "title": "Module 37: Build & Present",
+      "description": "Implement core features",
+      "topics": [
+        "Implement core features",
+        "Handle errors and edge cases",
+        "Package for distribution intro",
+        "Deploy script or Streamlit demo",
+        "Present trade-offs made"
+      ],
+      "project": null,
+      "objectives": [
+        "Implement core features",
+        "Handle errors and edge cases",
+        "Package for distribution intro",
+        "Deploy script or Streamlit demo",
+        "Present trade-offs made"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Build & Present. Implement core features; Handle errors and edge cases; Package for distribution intro; Deploy script or Streamlit demo. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Build & Present: Implement core features Handle errors and edge cases Package for distribution intro Deploy script or Streamlit demo Present trade-offs made. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Build & Present. Implement core features Handle errors and edge cases Package for distribution intro Deploy script or Streamlit demo Present trade-offs made. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Build & Present\n\nTOPICS TO COVER (in order):\n- Implement core features\n- Handle errors and edge cases\n- Package for distribution intro\n- Deploy script or Streamlit demo\n- Present trade-offs made\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Implement core features with a concrete example.",
+        "How would you apply Handle errors and edge cases in a real project?",
+        "What is a common beginner mistake with Package for distribution intro, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-38",
+      "order": 38,
+      "sectionId": "12",
+      "sectionTitle": "Capstone & Career",
+      "moduleNumber": 3,
+      "title": "Module 38: Interview Prep",
+      "description": "Common Python interview questions",
+      "topics": [
+        "Common Python interview questions",
+        "Big-O with Python collections",
+        "Debugging live exercises",
+        "Portfolio tips",
+        "Contributing to open source"
+      ],
+      "project": null,
+      "objectives": [
+        "Common Python interview questions",
+        "Big-O with Python collections",
+        "Debugging live exercises",
+        "Portfolio tips",
+        "Contributing to open source"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Interview Prep. Common Python interview questions; Big-O with Python collections; Debugging live exercises; Portfolio tips. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Interview Prep: Common Python interview questions Big-O with Python collections Debugging live exercises Portfolio tips Contributing to open source. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Interview Prep. Common Python interview questions Big-O with Python collections Debugging live exercises Portfolio tips Contributing to open source. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Interview Prep\n\nTOPICS TO COVER (in order):\n- Common Python interview questions\n- Big-O with Python collections\n- Debugging live exercises\n- Portfolio tips\n- Contributing to open source\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Common Python interview questions with a concrete example.",
+        "How would you apply Big-O with Python collections in a real project?",
+        "What is a common beginner mistake with Debugging live exercises, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-39",
+      "order": 39,
+      "sectionId": "12",
+      "sectionTitle": "Capstone & Career",
+      "moduleNumber": 4,
+      "title": "Module 39: Professional Practices",
+      "description": "Virtual envs in teams",
+      "topics": [
+        "Virtual envs in teams",
+        "Secrets and .env",
+        "Async intro with asyncio",
+        "Performance profiling basics",
+        "Continuing learning path"
+      ],
+      "project": null,
+      "objectives": [
+        "Virtual envs in teams",
+        "Secrets and .env",
+        "Async intro with asyncio",
+        "Performance profiling basics",
+        "Continuing learning path"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Professional Practices. Virtual envs in teams; Secrets and .env; Async intro with asyncio; Performance profiling basics. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Professional Practices: Virtual envs in teams Secrets and .env Async intro with asyncio Performance profiling basics Continuing learning path. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Professional Practices. Virtual envs in teams Secrets and .env Async intro with asyncio Performance profiling basics Continuing learning path. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Professional Practices\n\nTOPICS TO COVER (in order):\n- Virtual envs in teams\n- Secrets and .env\n- Async intro with asyncio\n- Performance profiling basics\n- Continuing learning path\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Virtual envs in teams with a concrete example.",
+        "How would you apply Secrets and .env in a real project?",
+        "What is a common beginner mistake with Async intro with asyncio, and how do you avoid it?"
+      ]
+    },
+    {
+      "id": "py-40",
+      "order": 40,
+      "sectionId": "12",
+      "sectionTitle": "Capstone & Career",
+      "moduleNumber": 5,
+      "title": "Module 40: Capstone Project",
+      "description": "Choose CLI, web, or data project",
+      "topics": [
+        "Choose CLI, web, or data project",
+        "Requirements and milestones",
+        "Implement with tests",
+        "README and demo video",
+        "Present trade-offs"
+      ],
+      "project": "Grade manager, API client, or mini data dashboard",
+      "objectives": [
+        "Choose CLI, web, or data project",
+        "Requirements and milestones",
+        "Implement with tests",
+        "README and demo video",
+        "Present trade-offs",
+        "Project: Grade manager, API client, or mini data dashboard"
+      ],
+      "teachingContent": {
+        "beginner": "Introduction to Capstone Project. Choose CLI, web, or data project; Requirements and milestones; Implement with tests; README and demo video. Project: Grade manager, API client, or mini data dashboard. Use clear, runnable examples in Python 3 scripts, notebooks, and backend development.",
+        "intermediate": "Capstone Project: Choose CLI, web, or data project Requirements and milestones Implement with tests README and demo video Present trade-offs. Project: Grade manager, API client, or mini data dashboard. Connect theory to hands-on practice with realistic scenarios.",
+        "advanced": "Deep dive: Capstone Project. Choose CLI, web, or data project Requirements and milestones Implement with tests README and demo video Present trade-offs. Project: Grade manager, API client, or mini data dashboard. Cover edge cases, production patterns, and common interview topics."
+      },
+      "lessonBrief": "MODULE BRIEF — Capstone Project\n\nTOPICS TO COVER (in order):\n- Choose CLI, web, or data project\n- Requirements and milestones\n- Implement with tests\n- README and demo video\n- Present trade-offs\n\nHANDS-ON PROJECT: Grade manager, API client, or mini data dashboard\n\nTEACHING STYLE: Practical mentor for Python 3 scripts, notebooks, and backend development.\nEvery lesson needs runnable examples and quiz questions tied to THIS module only.",
+      "crossQuestions": [
+        "Explain Choose CLI, web, or data project with a concrete example.",
+        "How would you apply Requirements and milestones in a real project?",
+        "What is a common beginner mistake with Implement with tests, and how do you avoid it?"
       ]
     }
   ]

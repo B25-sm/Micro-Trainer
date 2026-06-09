@@ -936,7 +936,12 @@ async function syncLearningProgressToSheets(studentId, technology, conceptId, qu
 // GET ALL STUDENT PROGRESS
 // =======================================================
 function getAllStudentProgress(studentId) {
-  return studentProgress[studentId] || {};
+  const raw = studentProgress[studentId] || {};
+  const enriched = {};
+  for (const [technology, progress] of Object.entries(raw)) {
+    enriched[technology] = enrichProgressForTechnology(technology, progress);
+  }
+  return enriched;
 }
 
 module.exports = {

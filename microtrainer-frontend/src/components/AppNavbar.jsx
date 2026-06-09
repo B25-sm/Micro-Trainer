@@ -9,6 +9,7 @@ const BASE_LINKS = [
   { path: "/", label: "Home" },
   { path: "/interview", label: "Interview" },
   { path: "/learn", label: "Learn" },
+  { path: "/schedule", label: "Schedule" },
   { path: "/problems", label: "Problems" },
   { path: "/dashboard", label: "Dashboard" },
   { path: "/settings/notifications", label: "Settings" },

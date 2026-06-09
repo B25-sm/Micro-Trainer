@@ -16,29 +16,32 @@ const DATA_ANALYST_TOPICS = [
 ];
 
 const ML_ENGINEER_TOPICS = [
-  "Feature engineering",
+  "RAG",
+  "LLMs",
+  "Embeddings",
+  "Vector databases",
+  "FastAPI",
+  "MCP",
+  "Tool calling",
+  "AI agents",
+  "MLOps",
   "Model deployment",
   "XGBoost",
-  "Cross-validation",
-  "MLOps",
-  "Hyperparameter tuning",
-  "Neural networks",
-  "LLM APIs",
-  "Model monitoring",
-  "Scikit-learn pipelines",
+  "Transformers",
+  "OCR and PDF processing",
 ];
 
 const DATA_SCIENCE_GENERAL_TOPICS = [
-  "Pandas",
-  "NumPy",
-  "SQL",
+  "Python for ML",
   "Statistics",
-  "Machine Learning",
+  "Machine Learning fundamentals",
   "Deep Learning",
-  "LLMs",
-  "MLOps",
-  "Data Visualization",
-  "Feature Engineering",
+  "NLP and LLMs",
+  "RAG",
+  "SQL",
+  "Feature engineering",
+  "MLOps basics",
+  "Model evaluation",
 ];
 
 const ROLE_PROMPT_HINTS = {
@@ -78,6 +81,18 @@ function isGeneralDataScience(subject) {
   );
 }
 
+function isAiMlMasterRole(subject) {
+  const s = normalizeRoleSubject(subject);
+  return (
+    s === "ai/ml master" ||
+    s.includes("ai/ml master") ||
+    s === "ai engineer" ||
+    s === "genai engineer" ||
+    s === "applied scientist" ||
+    s === "research engineer"
+  );
+}
+
 function pickInterviewTopic(subject) {
   if (isDataAnalystRole(subject)) {
     return DATA_ANALYST_TOPICS[
@@ -97,7 +112,13 @@ function pickInterviewTopic(subject) {
   return null;
 }
 
+const AI_ML_MASTER_HINT = `
+ROLE: AI / ML Master interview (AI Engineer, ML Engineer, Data Scientist, GenAI, Applied Scientist).
+Draw from the full stack: Python, statistics, classical ML, deep learning, NLP/LLMs, RAG, agents, MCP, FastAPI, document AI, MLOps, and system design.
+Ask practical, depth-testing questions with real examples — not textbook definitions only.`;
+
 function getRolePromptHint(subject) {
+  if (isAiMlMasterRole(subject)) return AI_ML_MASTER_HINT;
   if (isDataAnalystRole(subject)) return ROLE_PROMPT_HINTS["data analyst"];
   if (isMLEngineerRole(subject)) return ROLE_PROMPT_HINTS["ml engineer"];
   return "";
@@ -112,4 +133,5 @@ module.exports = {
   isDataAnalystRole,
   isMLEngineerRole,
   isGeneralDataScience,
+  isAiMlMasterRole,
 };

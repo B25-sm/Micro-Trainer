@@ -70,6 +70,20 @@ function initializeCronJobs() {
   }, {
     timezone: "UTC"
   });
+
+  // Personal schedule push reminders at 8:00 AM UTC
+  cron.schedule('0 8 * * *', async () => {
+    console.log('📅 Sending personal schedule reminders...');
+    try {
+      const { runDailyScheduleReminders } = require('./personalScheduleService');
+      const result = await runDailyScheduleReminders();
+      console.log(`✅ Schedule reminders: ${result.sent}/${result.processed} sent`);
+    } catch (error) {
+      console.error('❌ Schedule reminders failed:', error.message);
+    }
+  }, {
+    timezone: "UTC"
+  });
   
   // Weekly summary emails every Sunday at 8:00 AM UTC
   cron.schedule('0 8 * * 0', () => {
@@ -88,6 +102,7 @@ function initializeCronJobs() {
   console.log('   - Daily assessment generation (00:00 UTC)');
   console.log('   - Status update check (every 5 minutes)');
   console.log('   - Daily email reminders (09:00 UTC)');
+  console.log('   - Personal schedule reminders (08:00 UTC)');
   console.log('   - Weekly summary emails (Sunday 08:00 UTC)');
 }
 

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MicroTrainer License Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .config-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .config-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .small-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .result {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f0f9ff;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .result.show {
+            display: block;
+        }
+        
+        .result h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .result-item {
+            margin-bottom: 15px;
+        }
+        
+        .result-item strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .result-item textarea {
+            background: white;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        .copy-btn {
+            background: #10b981;
+            padding: 8px 16px;
+            font-size: 14px;
+            margin-top: 8px;
+            width: auto;
+            display: inline-block;
+        }
+        
+        .copy-btn:hover {
+            background: #059669;
+        }
+        
+        .email-template {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .success-message {
+            background: #10b981;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+            font-size: 14px;
+        }
+        
+        .success-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔒 MicroTrainer License Generator</h1>
+        <p class="subtitle">Generate personalized deploy links for students</p>
+        
+        <!-- Configuration Section -->
+        <div class="config-section">
+            <h3>⚙️ Your Configuration (Set Once)</h3>
+            
+            <div class="form-group">
+                <label for="githubRepo">Your GitHub Repository URL</label>
+                <input type="text" id="githubRepo" placeholder="https://github.com/yourusername/microtrainer" value="https://github.com/yourusername/microtrainer">
+                <div class="small-text">Your MicroTrainer repository URL</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="licenseServer">Your License Server URL</label>
+                <input type="text" id="licenseServer" placeholder="https://your-license-server.onrender.com" value="https://your-license-server.onrender.com">
+                <div class="small-text">Your deployed license validation server</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="yourEmail">Your Email</label>
+                <input type="email" id="yourEmail" placeholder="instructor@example.com" value="instructor@example.com">
+                <div class="small-text">For email template</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="yourName">Your Name</label>
+                <input type="text" id="yourName" placeholder="Instructor Name" value="Instructor Name">
+                <div class="small-text">For email signature</div>
+            </div>
+        </div>
+        
+        <!-- Student Information -->
+        <div class="form-group">
+            <label for="studentName">Student Name *</label>
+            <input type="text" id="studentName" placeholder="John Doe" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="studentEmail">Student Email *</label>
+            <input type="email" id="studentEmail" placeholder="john.doe@university.edu" required>
+        </div>
+        
+        <button onclick="generateLicense()">🚀 Generate License & Deploy Link</button>
+        
+        <!-- Result Section -->
+        <div id="result" class="result">
+            <h3>✅ License Generated Successfully!</h3>
+            
+            <div class="result-item">
+                <strong>📧 Student Email:</strong>
+                <input type="text" id="resultEmail" readonly>
+            </div>
+            
+            <div class="result-item">
+                <strong>🔑 License Key:</strong>
+                <textarea id="resultLicenseKey" readonly></textarea>
+                <button class="copy-btn" onclick="copyToClipboard('resultLicenseKey')">📋 Copy</button>
+            </div>
+            
+            <div class="result-item">
+                <strong>🔗 Personalized Deploy Link:</strong>
+                <textarea id="resultDeployLink" readonly></textarea>
+                <button class="copy-btn" onclick="copyToClipboard('resultDeployLink')">📋 Copy</button>
+            </div>
+            
+            <div class="result-item">
+                <strong>📨 Email Template (Ready to Send):</strong>
+                <div class="email-template">
+                    <textarea id="resultEmailTemplate" readonly style="min-height: 400px;"></textarea>
+                </div>
+                <button class="copy-btn" onclick="copyToClipboard('resultEmailTemplate')">📋 Copy Email</button>
+            </div>
+            
+            <div id="successMessage" class="success-message">
+                ✅ Copied to clipboard!
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Generate license key (same algorithm as backend)
+        async function generateLicenseKey(email) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(`${email}:microtrainer:2026`);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return `${email}:${hashHex.substring(0, 16)}`;
+        }
+        
+        // Generate personalized deploy link
+        function generateDeployLink(email, licenseKey, githubRepo, licenseServer) {
+            const params = new URLSearchParams({
+                repo: githubRepo,
+                'env[LICENSE_KEY]': licenseKey,
+                'env[STUDENT_EMAIL]': email,
+                'env[LICENSE_SERVER_URL]': licenseServer
+            });
+            return `https://render.com/deploy?${params.toString()}`;
+        }
+        
+        // Generate email template
+        function generateEmailTemplate(studentName, studentEmail, deployLink, yourName, yourEmail) {
+            return `Subject: Your MicroTrainer License - Ready to Deploy! 🎉
+
+Hi ${studentName},
+
+Your MicroTrainer license has been approved! You're all set to start learning.
+
+═══════════════════════════════════════════════════════════════
+
+📋 STEP 1: Get Your Groq API Key (5 minutes)
+
+1. Go to: https://console.groq.com/
+2. Sign up (free, no credit card needed)
+3. Click "API Keys" → "Create API Key"
+4. Copy your key (starts with gsk_...)
+
+═══════════════════════════════════════════════════════════════
+
+🚀 STEP 2: Deploy MicroTrainer (1 click)
+
+Click your personalized deploy link:
+${deployLink}
+
+Then:
+1. Sign in to Render (use GitHub for fastest signup)
+2. Paste your Groq API key in the GROQ_API_KEY field
+3. Click "Apply"
+4. Wait 10 minutes ☕
+
+Note: Your license key and email are already pre-filled!
+
+═══════════════════════════════════════════════════════════════
+
+🎓 STEP 3: Start Learning!
+
+Once deployed, you'll get a URL like:
+https://your-name-microtrainer.onrender.com
+
+Open it and start coding! 🚀
+
+═══════════════════════════════════════════════════════════════
+
+💡 WHAT YOU GET:
+
+✅ 50+ Programming Languages (JavaScript, Python, Java, C++, etc.)
+✅ 11 Learning Paths (JavaScript, Python, React, Node.js, etc.)
+✅ AI-Powered Teaching (Adapts to your level)
+✅ Progress Tracking (Your progress is saved)
+✅ Code Compiler (Run code instantly)
+
+═══════════════════════════════════════════════════════════════
+
+❓ NEED HELP?
+
+Reply to this email if you have any questions!
+
+Best regards,
+${yourName}
+${yourEmail}
+
+═══════════════════════════════════════════════════════════════
+
+P.S. Keep your Groq API key and license information private!`;
+        }
+        
+        // Main function
+        async function generateLicense() {
+            const studentName = document.getElementById('studentName').value.trim();
+            const studentEmail = document.getElementById('studentEmail').value.trim();
+            const githubRepo = document.getElementById('githubRepo').value.trim();
+            const licenseServer = document.getElementById('licenseServer').value.trim();
+            const yourEmail = document.getElementById('yourEmail').value.trim();
+            const yourName = document.getElementById('yourName').value.trim();
+            
+            // Validation
+            if (!studentName || !studentEmail) {
+                alert('Please enter student name and email!');
+                return;
+            }
+            
+            if (!githubRepo || !licenseServer) {
+                alert('Please configure your GitHub repo and license server URLs!');
+                return;
+            }
+            
+            // Generate license key
+            const licenseKey = await generateLicenseKey(studentEmail);
+            
+            // Generate deploy link
+            const deployLink = generateDeployLink(studentEmail, licenseKey, githubRepo, licenseServer);
+            
+            // Generate email template
+            const emailTemplate = generateEmailTemplate(studentName, studentEmail, deployLink, yourName, yourEmail);
+            
+            // Show results
+            document.getElementById('resultEmail').value = studentEmail;
+            document.getElementById('resultLicenseKey').value = licenseKey;
+            document.getElementById('resultDeployLink').value = deployLink;
+            document.getElementById('resultEmailTemplate').value = emailTemplate;
+            
+            document.getElementById('result').classList.add('show');
+            
+            // Scroll to result
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Copy to clipboard
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            element.select();
+            document.execCommand('copy');
+            
+            // Show success message
+            const successMessage = document.getElementById('successMessage');
+            successMessage.classList.add('show');
+            setTimeout(() => {
+                successMessage.classList.remove('show');
+            }, 2000);
+        }
+        
+        // Allow Enter key to submit
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && (e.target.id === 'studentName' || e.target.id === 'studentEmail')) {
+                generateLicense();
+            }
+        });
+    </script>
+</body>
+</html>
