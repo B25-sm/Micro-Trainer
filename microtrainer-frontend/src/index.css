@@ -195,6 +195,15 @@ html.dark .lesson-card-surface .lesson-section-heading,
   color: rgb(30 64 175) !important;
 }
 
+/* Guided course quiz bubbles (dark slate card — not lesson-card-surface) */
+html.dark .lesson-prose.dark\:prose-invert,
+.dark .lesson-prose.dark\:prose-invert {
+  --tw-prose-body: rgb(226 232 240);
+  --tw-prose-headings: rgb(241 245 249);
+  --tw-prose-bold: rgb(241 245 249);
+  --tw-prose-bullets: rgb(148 163 184);
+}
+
 /* Legacy pastel Tailwind boxes — fix bg + text together */
 .dark :where(.bg-yellow-50, .bg-amber-50) {
   background-color: #422006 !important;

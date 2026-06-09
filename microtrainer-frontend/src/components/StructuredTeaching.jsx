@@ -13,6 +13,9 @@ import {
 import DisplayModeToggle from "./DisplayModeToggle";
 import LessonLoadingScreen, { LESSON_LOAD_ESTIMATE_SEC } from "./LessonLoadingScreen";
 import { needsElaborationRequest } from "../utils/quizAnswerUtils";
+import { createLessonMarkdownComponents } from "../utils/lessonMarkdown";
+
+const quizMdComponents = createLessonMarkdownComponents();
 
 const stripAnswerLeak = (text) =>
   typeof text === "string"
@@ -623,9 +626,9 @@ const StructuredTeaching = ({
   if (!conceptData && !conversation.some((m) => m.role === "error")) {
     return (
       <div className="w-full max-w-lg mx-auto py-16 px-4 text-center">
-        <motion.div className="rounded-2xl border border-amber-200 bg-amber-50 px-6 py-8">
-          <p className="text-gray-800 font-medium mb-2">Lesson didn&apos;t load</p>
-          <p className="text-gray-600 text-sm mb-6">
+        <motion.div className="rounded-2xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 px-6 py-8">
+          <p className="text-gray-800 dark:text-amber-100 font-medium mb-2">Lesson didn&apos;t load</p>
+          <p className="text-gray-600 dark:text-amber-200/80 text-sm mb-6">
             The request may have been interrupted. Click retry — generation usually takes about a minute.
           </p>
           <button
@@ -651,8 +654,8 @@ const StructuredTeaching = ({
     const errMsg = conversation.find((m) => m.role === "error")?.content;
     return (
       <div className="w-full max-w-lg mx-auto py-16 px-4 text-center">
-        <motion.div className="rounded-2xl border border-red-200 bg-red-50 px-6 py-8">
-          <p className="text-red-800 text-sm leading-relaxed mb-6 whitespace-pre-wrap">
+        <motion.div className="rounded-2xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/40 px-6 py-8">
+          <p className="text-red-800 dark:text-red-200 text-sm leading-relaxed mb-6 whitespace-pre-wrap">
             {errMsg}
           </p>
           <button
@@ -705,7 +708,7 @@ const StructuredTeaching = ({
         {conceptData && (
           <div>
             {isReviewMode && (
-              <span className="inline-block mb-2 px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+              <span className="inline-block mb-2 px-3 py-1 bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 text-xs font-medium rounded-full">
                 Review mode
               </span>
             )}
@@ -775,12 +778,12 @@ const StructuredTeaching = ({
                 }`}
               >
                 {message.role === "user" ? (
-                  <div className="bg-blue-50 border border-blue-100 rounded-2xl px-5 py-3 max-w-2xl">
-                    <p className="text-gray-800">{message.content}</p>
+                  <div className="bg-blue-50 dark:bg-blue-950/50 border border-blue-100 dark:border-blue-800 rounded-2xl px-5 py-3 max-w-2xl">
+                    <p className="text-gray-800 dark:text-blue-100">{message.content}</p>
                   </div>
                 ) : message.role === "error" ? (
-                  <div className="bg-red-50 border border-red-200 rounded-2xl px-5 py-3">
-                    <div className="flex items-start gap-2 text-red-600">
+                  <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-2xl px-5 py-3">
+                    <div className="flex items-start gap-2 text-red-600 dark:text-red-300">
                       <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                       </svg>
@@ -789,14 +792,14 @@ const StructuredTeaching = ({
                   </div>
                 ) : message.role === "system" ? (
                   <motion.div className="rounded-2xl border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 read-mode:bg-[var(--read-surface-elevated)] read-mode:border-[var(--read-border)] shadow-sm px-5 py-4 w-full border-l-4 border-l-blue-500">
-                    <motion.div className="lesson-prose prose prose-sm max-w-none text-slate-700 dark:text-slate-300 read-mode:text-[var(--read-text)] [&_strong]:text-slate-900 dark:[&_strong]:text-slate-100 read-mode:[&_strong]:text-[var(--read-text-heading)]">
-                      <ReactMarkdown>{message.content}</ReactMarkdown>
+                    <motion.div className="lesson-prose prose prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-200 read-mode:text-[var(--read-text)] [&_strong]:text-slate-900 dark:[&_strong]:text-slate-100 read-mode:[&_strong]:text-[var(--read-text-heading)]">
+                      <ReactMarkdown components={quizMdComponents}>{message.content}</ReactMarkdown>
                     </motion.div>
                   </motion.div>
                 ) : message.role === "success" ? (
-                  <motion.div className="bg-green-50 border border-green-200 rounded-2xl px-5 py-4">
-                    <motion.div className="prose prose-sm max-w-none text-gray-800">
-                      <ReactMarkdown>{message.content}</ReactMarkdown>
+                  <motion.div className="bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 rounded-2xl px-5 py-4">
+                    <motion.div className="lesson-prose prose prose-sm dark:prose-invert max-w-none text-gray-800 dark:text-green-100">
+                      <ReactMarkdown components={quizMdComponents}>{message.content}</ReactMarkdown>
                     </motion.div>
                   </motion.div>
                 ) : message.role === "reteach" ? (
@@ -815,9 +818,9 @@ const StructuredTeaching = ({
                     )}
                   />
                 ) : (
-                  <motion.div className="bg-gray-50 dark:bg-slate-800/80 border border-gray-200 dark:border-slate-600 read-mode:bg-[var(--read-surface-elevated)] read-mode:border-[var(--read-border)] rounded-2xl px-5 py-4 w-full">
-                    <motion.div className="lesson-prose prose prose-base prose-neutral max-w-none text-gray-800 dark:text-slate-200 read-mode:text-[var(--read-text)]">
-                      <ReactMarkdown>{message.content}</ReactMarkdown>
+                  <motion.div className="bg-gray-50 dark:bg-slate-800/90 border border-gray-200 dark:border-slate-600 read-mode:bg-[var(--read-surface-elevated)] read-mode:border-[var(--read-border)] rounded-2xl px-5 py-4 w-full">
+                    <motion.div className="lesson-prose prose prose-base dark:prose-invert max-w-none text-gray-800 dark:text-slate-200 read-mode:text-[var(--read-text)]">
+                      <ReactMarkdown components={quizMdComponents}>{message.content}</ReactMarkdown>
                     </motion.div>
                   </motion.div>
                 )}
@@ -830,24 +833,24 @@ const StructuredTeaching = ({
       </div>
 
       {/* Action Area */}
-      <div className="sticky bottom-0 bg-white pt-4">
+      <div className="sticky bottom-0 bg-white dark:bg-[#202124] read-mode:bg-[var(--read-surface)] pt-4">
         {/* Detailed Feedback Dropdown */}
         {assessmentResult?.assessment?.detailedFeedback && (
-          <div className="mb-4 border border-gray-200 rounded-xl overflow-hidden">
+          <div className="mb-4 border border-gray-200 dark:border-slate-600 rounded-xl overflow-hidden">
             <button
               onClick={() => setShowDetailedFeedback(!showDetailedFeedback)}
-              className="w-full px-5 py-3 bg-gray-50 hover:bg-gray-100 transition flex items-center justify-between"
+              className="w-full px-5 py-3 bg-gray-50 dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700 transition flex items-center justify-between"
             >
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5 text-blue-500 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                 </svg>
-                <span className="font-medium text-gray-800">
+                <span className="font-medium text-gray-800 dark:text-slate-100">
                   {showDetailedFeedback ? 'Hide' : 'Show'} Detailed Feedback
                 </span>
               </div>
               <svg 
-                className={`w-5 h-5 text-gray-600 transition-transform ${showDetailedFeedback ? 'rotate-180' : ''}`}
+                className={`w-5 h-5 text-gray-600 dark:text-slate-400 transition-transform ${showDetailedFeedback ? 'rotate-180' : ''}`}
                 fill="currentColor" 
                 viewBox="0 0 20 20"
               >
@@ -864,20 +867,20 @@ const StructuredTeaching = ({
                   transition={{ duration: 0.3 }}
                   className="overflow-hidden"
                 >
-                  <div className="p-5 space-y-4 bg-white">
+                  <div className="p-5 space-y-4 bg-white dark:bg-slate-900">
                     {assessmentResult.assessment.detailedFeedback.map((item, index) => (
                       <div 
                         key={index}
                         className={`p-4 rounded-lg border-2 ${
                           item.status === 'correct' 
-                            ? 'bg-green-50 border-green-200' 
+                            ? 'bg-green-50 dark:bg-green-950/40 border-green-200 dark:border-green-800' 
                             : item.status === 'partial'
-                            ? 'bg-yellow-50 border-yellow-200'
-                            : 'bg-red-50 border-red-200'
+                            ? 'bg-yellow-50 dark:bg-amber-950/40 border-yellow-200 dark:border-amber-800'
+                            : 'bg-red-50 dark:bg-red-950/40 border-red-200 dark:border-red-800'
                         }`}
                       >
                         <div className="flex items-start justify-between mb-2">
-                          <h4 className="font-semibold text-gray-800">
+                          <h4 className="font-semibold text-gray-800 dark:text-slate-100">
                             Question {item.questionNumber}
                           </h4>
                           <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
@@ -893,25 +896,25 @@ const StructuredTeaching = ({
 
                         <div className="space-y-2 text-sm">
                           <div>
-                            <p className="text-gray-600 font-medium mb-1">Question:</p>
-                            <p className="text-gray-800">{item.question}</p>
+                            <p className="text-gray-600 dark:text-slate-400 font-medium mb-1">Question:</p>
+                            <p className="text-gray-800 dark:text-slate-200">{item.question}</p>
                           </div>
 
                           <div>
-                            <p className="text-gray-600 font-medium mb-1">Your Answer:</p>
-                            <p className="text-gray-800 bg-white px-3 py-2 rounded border border-gray-200">
+                            <p className="text-gray-600 dark:text-slate-400 font-medium mb-1">Your Answer:</p>
+                            <p className="text-gray-800 dark:text-slate-200 bg-white dark:bg-slate-800 px-3 py-2 rounded border border-gray-200 dark:border-slate-600">
                               {item.yourAnswer}
                             </p>
                           </div>
 
                           <div className={`mt-3 p-3 rounded ${
                             item.status === 'correct'
-                              ? 'bg-green-100'
+                              ? 'bg-green-100 dark:bg-green-900/50'
                               : item.status === 'partial'
-                              ? 'bg-yellow-100'
-                              : 'bg-red-100'
+                              ? 'bg-yellow-100 dark:bg-amber-900/50'
+                              : 'bg-red-100 dark:bg-red-900/50'
                           }`}>
-                            <p className="text-gray-800 leading-relaxed">
+                            <p className="text-gray-800 dark:text-slate-200 leading-relaxed">
                               {item.feedback}
                             </p>
                           </div>
@@ -919,12 +922,12 @@ const StructuredTeaching = ({
                       </div>
                     ))}
 
-                    <div className="pt-3 border-t border-gray-200">
+                    <div className="pt-3 border-t border-gray-200 dark:border-slate-700">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">Overall Score:</span>
-                        <span className="font-semibold text-gray-800">
+                        <span className="text-gray-600 dark:text-slate-400">Overall Score:</span>
+                        <span className="font-semibold text-gray-800 dark:text-slate-100">
                           {assessmentResult.assessment.score}/{assessmentResult.assessment.maxScore} 
-                          <span className="ml-2 text-blue-600">
+                          <span className="ml-2 text-blue-600 dark:text-blue-400">
                             ({assessmentResult.assessment.percentage}%)
                           </span>
                         </span>
@@ -958,20 +961,20 @@ const StructuredTeaching = ({
                 type="button"
                 onClick={() => handleMcqSelect(option)}
                 disabled={isAssessing}
-                className="w-full text-left px-5 py-4 rounded-xl border-2 border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition disabled:opacity-50"
+                className="w-full text-left px-5 py-4 rounded-xl border-2 border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-slate-700 transition disabled:opacity-50"
               >
-                <span className="font-semibold text-blue-600 mr-2">{String.fromCharCode(65 + i)})</span>
-                <span className="text-gray-800">{option}</span>
+                <span className="font-semibold text-blue-600 dark:text-blue-400 mr-2">{String.fromCharCode(65 + i)})</span>
+                <span className="text-gray-800 dark:text-slate-100">{option}</span>
               </button>
             ))}
-            <p className="text-xs text-gray-500 text-center mt-2">
+            <p className="text-xs text-gray-500 dark:text-slate-400 text-center mt-2">
               Multiple choice — pick one option (about 30% of Quick Check questions).
             </p>
           </motion.div>
         )}
 
         {showingQuestions && !assessmentResult && currentQuestion?.type !== "mcq" && (
-          <form onSubmit={handleAnswerSubmit} className="bg-white rounded-full border border-gray-200 shadow-lg">
+          <form onSubmit={handleAnswerSubmit} className="bg-white dark:bg-[#2d2f35] rounded-full border border-gray-200 dark:border-slate-600 shadow-lg">
             <div className="flex items-center gap-3 px-6 py-4">
               <input
                 ref={answerInputRef}
@@ -984,7 +987,7 @@ const StructuredTeaching = ({
                 onCut={(e) => e.preventDefault()}
                 placeholder="Type your answer in your own words..."
                 disabled={isAssessing}
-                className="flex-1 bg-transparent text-gray-800 placeholder-gray-400 text-base disabled:opacity-50 select-none"
+                className="flex-1 bg-transparent text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400 text-base disabled:opacity-50 select-none"
                 style={{ 
                   border: 'none',
                   outline: 'none',
@@ -1014,7 +1017,7 @@ const StructuredTeaching = ({
         )}
 
         {showingQuestions && !assessmentResult && (
-          <p className="text-xs text-gray-500 text-center mt-2 leading-relaxed">
+          <p className="text-xs text-gray-500 dark:text-slate-400 text-center mt-2 leading-relaxed">
             {currentQuestion?.type !== "mcq" && (
               <>
                 Write in your own words — copy and paste is disabled.
@@ -1025,7 +1028,7 @@ const StructuredTeaching = ({
               type="button"
               onClick={handleSimplifyQuestion}
               disabled={isSimplifyingQuestion || isAssessing}
-              className="text-gray-400 hover:text-blue-600 underline-offset-2 hover:underline disabled:opacity-40 disabled:no-underline transition"
+              className="text-gray-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 underline-offset-2 hover:underline disabled:opacity-40 disabled:no-underline transition"
             >
               {isSimplifyingQuestion
                 ? "Getting a simpler version…"
@@ -1036,7 +1039,7 @@ const StructuredTeaching = ({
 
         {assessmentResult && !assessmentResult.passed && (
           <div className="space-y-3 mb-4">
-            <p className="text-xs text-gray-500 text-center">
+            <p className="text-xs text-gray-500 dark:text-slate-400 text-center">
               Take your time — review each question above before retrying.
             </p>
             <button
@@ -1050,7 +1053,7 @@ const StructuredTeaching = ({
               type="button"
               onClick={handleStudySimplerExplanation}
               disabled={isReteachLoading}
-              className="w-full py-3.5 border-2 border-blue-300 text-blue-700 rounded-xl font-medium hover:bg-blue-50 transition disabled:opacity-50"
+              className="w-full py-3.5 border-2 border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-300 rounded-xl font-medium hover:bg-blue-50 dark:hover:bg-slate-800 transition disabled:opacity-50"
             >
               {isReteachLoading
                 ? "Loading simpler explanation…"
