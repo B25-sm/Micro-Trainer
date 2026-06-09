@@ -10,7 +10,9 @@ const {
   TEACHING_STRUCTURE,
   GUIDED_LESSON_FORMAT,
   TERSE_SUMMARY_FORMAT,
+  QUIZ_STYLE_RULES,
   TECHNOLOGY_ANALOGY_HINTS,
+  ADAPTIVE_TEACHING_PERSONA,
 } = require("./personaConfig");
 const {
   normalizeQuizQuestions,
@@ -69,20 +71,20 @@ async function generateGuidedStoryOnly({
     : "";
 
   const mappingBar = `
-- **What** cast list is mandatory for ALL levels: 4-6 bullets, **Name** = **Term** (role)`;
+- **What** concept map is mandatory: 4-6 bullets, **Plain label** = **Technical term** (role)`;
 
   const levelExtras =
     normalizedLevel === "beginner"
       ? `${mappingBar}
-- Pick ONE vivid analogy and go DEEP — name characters, actions, consequences
-- In **How**: up to 3 inline commands allowed — each MUST have "This means…" after it
+- Open **Why** with a real engineering problem; optional 1–2 sentence analogy hook only
+- **How** uses technical terms — not a long story; up to 3 inline commands with "This means…"
 - No huge code blocks; explain every technical word the first time`
       : normalizedLevel === "intermediate"
       ? `${mappingBar}
 - After **How**, add **Example** with ONE commented code block (8-15 lines)
-- Tie every line of code back to the cast names from **What**`
+- Tie code to technical terms from **What**, not story characters`
       : `${mappingBar}
-- **Example** with substantive code; **How** references cast names and includes one "gotcha"`;
+- **Example** with substantive code; **How** uses technical terms and includes one "gotcha"`;
 
   const techKey = (technology || "").toLowerCase();
   const analogyHint =
@@ -103,16 +105,16 @@ Topic summary: ${description}
 Learning objectives — EACH must appear clearly in **How** (say which step covers which):
 ${objectivesText}
 
-DEPTH BAR: Strong enough that a beginner never opens Google. Shallow = failure.
+DEPTH BAR: Strong enough that a beginner never opens Google. Shallow = failure. Boring kiddish story = failure.
 ${lessonBrief ? "\nCAREER MODULE BAR: In **How**, explicitly contrast Data Analyst vs Data Scientist vs ML Engineer vs Data Engineer with what each does on a typical workday.\n" : ""}
 
-CONSISTENCY BAR: One cast, one mapping per character in Why/What/How. Never remap waiter/chef mid-lesson.
+ENGAGEMENT BAR: Lead with real problems and products. Max 2 sentences of analogy in **Why** — then teach like an engineer.
 
-MAPPING CLARITY BAR: In **What**, after the definition, print 4-6 bullets: **Simple name** = **Tech term** (what it does). Same clarity as "Customer = you, Waiter = View". One bullet per line — no pipes.
+MAPPING CLARITY BAR: In **What**, print 4-6 bullets: **Plain label** = **Tech term** (role). Prefer direct labels over story characters.
 
-HOW FLOW BAR: In **How**, use numbered steps that show the data flow using the SAME cast names from **What**. If **What** includes Data Warehouse, Model, and Dashboard, **How** MUST explain in order: (1) who provides data, (2) where data is stored, (3) how the model learns, (4) how the dashboard shows results — so quiz questions about this flow are answerable.
+HOW FLOW BAR: In **How**, numbered steps use **technical terms** from **What**. Show input → storage → processing → output. Quiz must be answerable without remembering a metaphor.
 
-REAL-TIME BAR: In **Real-time use case** use a REAL website/app with "What user sees" vs "What happens internally" — NO hospital/waiter/kitchen metaphor in this section.
+REAL-TIME BAR: In **Real-time use case** use a REAL website/app with "What user sees" vs "What happens internally" — NO story characters in this section.
 
 ${GUIDED_LESSON_FORMAT}
 ${analogyHint ? `\nTECH-SPECIFIC CAST HINT:\n${analogyHint}` : ""}
@@ -281,25 +283,23 @@ Return ONLY 4 lines of plain text (see TERSE format — line 3 must be the flow 
 const LEVEL_1_PERSONA = `
 ${BASE_PERSONA}
 
+${ADAPTIVE_TEACHING_PERSONA}
+
 You are teaching a COMPLETE BEGINNER who knows NOTHING about programming.
 
 TEACHING STYLE:
-- ONE strong analogy — go DEEP (names, actions, consequences — not a one-liner)
+- Real problem first; optional 1–2 sentence analogy hook in **Why** only
 - Structured sections: **Why**, **What**, **How**, **Real-time use case**, **Key takeaway**
-- **Real-time use case** = real app only: "What user sees" vs "What happens internally" — never more waiter/hospital story
-- **What** must include the bullet cast list: **Name** = **Term** (role) — student scans and instantly gets it
-- **How** is the longest section — each step references cast names from **What**, e.g. "the **Waiter** (View)…"
-- Bold section titles AND map analogy parts to tech in the **What** list only
-- Fierce, energetic, practical — student must feel "I actually get it now"
+- **What** includes concept map: **Plain label** = **Technical term** (role)
+- **How** is the longest section — uses real technical terms, not story dialogue
+- **Real-time use case** = real app only: user sees vs internal plumbing
+- Fierce, energetic, practical — respect intelligence; never sound like a children's book
 
 FORBIDDEN:
+- Long fairy-tale analogies that dominate the lesson
+- Quiz-style questions about story props (backpack, waiter, locker)
 - Shallow 1-sentence sections
 - Listing commands without explaining what they DO
-- Multiple analogies
-- Remapping the same character twice (e.g. waiter = user, then waiter = View)
-- Pipe-separated cast on one line instead of separate bullets in **What**
-- **What** without the 4-6 line **X = Y (role)** mapping list
-- Continuing the analogy in **Real-time use case** (must be a real app: user sees vs internal)
 - Wikipedia tone
 
 ${GUIDED_LESSON_FORMAT}
@@ -455,22 +455,23 @@ async function generateBeginnerExplanation(concept) {
   try {
     const prompt = `Generate a beginner-friendly explanation for: ${concept}
 
-Use a real-life analogy/story. Follow this structure:
-1. "Let me explain ${concept} in the simplest way possible."
-2. Build a relatable story (use everyday scenarios)
-3. "Here's the important part..." (key moment)
-4. "That's EXACTLY how ${concept} works in programming."
-5. Connect story to programming concept
-6. "Make sense?"
+Structure:
+1. Open with the REAL problem this concept solves (1-2 sentences)
+2. Optional: ONE short analogy hook (max 2 sentences) — then introduce the real technical term
+3. Explain how it works in plain English with a concrete app or code scenario
+4. End with when you'd use it in a real project
 
-Also generate a cross-question to test understanding.
+Cross-question rules:
+- Ask about the REAL concept (purpose, trade-off, what breaks without it)
+- NEVER ask about story props or "in our analogy what is…"
+- Sound like a curious engineer, not a primary-school teacher
 
 Return in this format:
 EXPLANATION:
-[Your story-based explanation]
+[Your explanation]
 
 CROSS_QUESTION:
-[A question to test their understanding]`;
+[A practical question about the real concept — no story references]`;
 
     const response = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
@@ -499,7 +500,9 @@ CROSS_QUESTION:
     
     return {
       explanation: explanationMatch ? explanationMatch[1].trim() : content,
-      crossQuestion: questionMatch ? questionMatch[1].trim() : "Can you tell me why this concept is useful?"
+      crossQuestion: questionMatch
+        ? questionMatch[1].trim()
+        : `What real problem does ${concept} solve in a typical app?`
     };
 
   } catch (error) {
@@ -691,7 +694,8 @@ Rules:
 - Do NOT ask the student to repeat an example already written in the question stem (e.g. if the question mentions hospital readmission, grade understanding of WHY/benefits, not repeating "readmission")
 - MCQ correctIndex must match the lesson definition (e.g. Data Scientist = turn raw data into decisions / modeling — NOT "manage warehouse" unless the lesson says that)
 - Never use "what do you already know"
-- If the lesson does not explain warehouse+model+dashboard flow together, do NOT ask that combo question`,
+- If the lesson does not explain warehouse+model+dashboard flow together, do NOT ask that combo question
+${QUIZ_STYLE_RULES}`,
         },
         {
           role: "user",

@@ -104,10 +104,18 @@ function validateHowFlow(howSection, mappings) {
     errors.push("How needs at least 3 numbered steps (1. 2. 3.)");
   }
 
-  const mappingNames = mappings.map((m) => m.simple.toLowerCase());
-  const referenced = mappingNames.filter((name) => how.includes(name.split(" ")[0]));
+  const mappingLabels = mappings.flatMap((m) => {
+    const terms = [m.simple, m.tech.replace(/\*\*/g, "")];
+    return terms
+      .join(" ")
+      .toLowerCase()
+      .split(/\W+/)
+      .filter((w) => w.length > 4);
+  });
+  const uniqueLabels = [...new Set(mappingLabels)];
+  const referenced = uniqueLabels.filter((label) => how.includes(label));
   if (mappings.length >= 4 && referenced.length < 2) {
-    errors.push("How must reference cast names from the What list");
+    errors.push("How must reference technical terms or mapping labels from the What list");
   }
 
   const flowSignals = [

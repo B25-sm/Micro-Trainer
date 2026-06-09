@@ -288,13 +288,21 @@ app.post("/ask", async (req, res) => {
       studentId // NEW: Track student
     } = req.body;
 
-    if (!question || typeof question !== "string") {
-      return res.status(400).json({ error: "Question is required" });
+    const hasQuestion = question && typeof question === "string";
+    const hasAnswer = answer && typeof answer === "string";
+
+    if (!hasQuestion && !hasAnswer) {
+      return res.status(400).json({ error: "Question or answer is required" });
     }
 
     // Get or create session
     const sid = sessionId || "session_" + Date.now();
     if (!teachingSessions[sid]) {
+      if (!hasQuestion) {
+        return res.status(400).json({
+          error: "Session expired. Please start a new topic and try again.",
+        });
+      }
       teachingSessions[sid] = {
         history: [],
         level: null,
@@ -304,6 +312,18 @@ app.post("/ask", async (req, res) => {
     }
 
     const session = teachingSessions[sid];
+
+    // Quick Check: frontend sends answer only — use concept stored from first message
+    const concept = hasQuestion ? question : session.concept;
+    if (!concept) {
+      return res.status(400).json({
+        error: "Session expired. Please start a new topic and try again.",
+      });
+    }
+
+    if (hasQuestion) {
+      session.concept = question;
+    }
 
     // If student has a saved level, use it
     let detectedLevel = level || session.level;
@@ -316,8 +336,8 @@ app.post("/ask", async (req, res) => {
 
     // Adaptive teaching
     const result = await adaptiveTeach({
-      concept: question,
-      studentAnswer: answer || null,
+      concept,
+      studentAnswer: hasAnswer ? answer : null,
       conversationHistory: session.history,
       detectedLevel: detectedLevel
     });
@@ -334,7 +354,7 @@ app.post("/ask", async (req, res) => {
     
     session.history.push({
       role: "user",
-      content: answer || question
+      content: hasAnswer ? answer : question
     });
     
     session.history.push({
@@ -414,6 +434,7 @@ Available interview types:
 - Data Analyst (SQL, Excel, dashboards, A/B testing, storytelling)
 - ML Engineer (ML, deployment, MLOps, LLMs, pipelines)
 - Data Scientist / Data Science (general mix of analytics + ML)
+- AI / ML Master (535-question bank: Python, stats, ML, DL, LLMs, RAG, agents, MLOps, system design)
 - Individual technologies: React, JavaScript, Java, Python, SQL, Node.js, Angular, TypeScript
 - Problem Solving & DSA (Algorithms, Data Structures)
 
@@ -524,11 +545,15 @@ app.post("/interview", async (req, res) => {
 // =======================================================
 app.post("/interview/start", async (req, res) => {
   try {
-    const { subject, studentId } = req.body;
+    const { subject, studentId, totalQuestions } = req.body;
+    const questionCount = Math.min(
+      30,
+      Math.max(1, Number(totalQuestions) || 20)
+    );
 
     const session = await createSession(
       subject || "General",
-      20,
+      questionCount,
       studentId || "anonymous"
     );
 
@@ -1521,6 +1546,152 @@ app.get("/learning-path/progress/:studentId", studentSelfOrTrainer, (req, res) =
   } catch (error) {
     console.error("GET ALL PROGRESS ERROR:", error.message);
     res.status(500).json({ error: "Failed to get progress" });
+  }
+});
+
+// =======================================================
+// 📅 PERSONAL SCHEDULE (interview roadmap)
+// =======================================================
+const {
+  getCategoryList,
+  getTechOptionsForCategory,
+  setCategory: setScheduleCategory,
+  setDeclaredSkills: setScheduleSkills,
+  recordDiagnosticResult,
+  generatePlan: generatePersonalPlan,
+  completeTask: completeScheduleTask,
+  getTodayPlan,
+  checkAndBuildReminder,
+  sendScheduleReminder,
+  resetSchedule,
+  publicView: publicScheduleView,
+  DIAGNOSTIC_QUESTIONS_PER_TECH,
+} = require("./services/personalScheduleService");
+const { getSchedule: getStoredSchedule } = require("./services/personalScheduleStore");
+
+// =======================================================
+// 🤖 AI / ML MASTER INTERVIEW BANK (535 questions)
+// =======================================================
+const {
+  getBankMeta,
+  getSections: getAiMlBankSections,
+  getTierCounts,
+} = require("./services/aiMlQuestionBank");
+
+app.get("/api/ai-ml-bank/meta", (req, res) => {
+  try {
+    res.json({
+      meta: getBankMeta(),
+      sections: getAiMlBankSections(),
+      tierCounts: getTierCounts(),
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/api/personal-schedule/categories", (req, res) => {
+  try {
+    res.json({ categories: getCategoryList() });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/api/personal-schedule/tech-options/:category", (req, res) => {
+  try {
+    res.json({ technologies: getTechOptionsForCategory(req.params.category) });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/api/personal-schedule/:studentId", studentSelfOrTrainer, (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const schedule = getStoredSchedule(studentId);
+    res.json({
+      schedule: schedule ? publicScheduleView(schedule) : null,
+      diagnosticQuestionsPerTech: DIAGNOSTIC_QUESTIONS_PER_TECH,
+    });
+  } catch (error) {
+    console.error("GET PERSONAL SCHEDULE ERROR:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.put("/api/personal-schedule/:studentId/category", studentSelfOrTrainer, (req, res) => {
+  try {
+    const { category } = req.body;
+    const result = setScheduleCategory(req.params.studentId, category);
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.put("/api/personal-schedule/:studentId/skills", studentSelfOrTrainer, (req, res) => {
+  try {
+    const result = setScheduleSkills(req.params.studentId, req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.post("/api/personal-schedule/:studentId/diagnostic", studentSelfOrTrainer, (req, res) => {
+  try {
+    const result = recordDiagnosticResult(req.params.studentId, req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.post("/api/personal-schedule/:studentId/generate", studentSelfOrTrainer, async (req, res) => {
+  try {
+    const result = await generatePersonalPlan(req.params.studentId);
+    res.json(result);
+  } catch (error) {
+    console.error("GENERATE PLAN ERROR:", error.message);
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.post("/api/personal-schedule/:studentId/complete-task", studentSelfOrTrainer, (req, res) => {
+  try {
+    const result = completeScheduleTask(req.params.studentId, req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.get("/api/personal-schedule/:studentId/today", studentSelfOrTrainer, (req, res) => {
+  try {
+    const result = getTodayPlan(req.params.studentId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/api/personal-schedule/:studentId/reminder", studentSelfOrTrainer, async (req, res) => {
+  try {
+    const preview = checkAndBuildReminder(req.params.studentId);
+    const sent = await sendScheduleReminder(req.params.studentId);
+    res.json({ preview, ...sent });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/api/personal-schedule/:studentId/reset", studentSelfOrTrainer, (req, res) => {
+  try {
+    const schedule = resetSchedule(req.params.studentId);
+    res.json({ schedule: publicScheduleView(schedule) });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 

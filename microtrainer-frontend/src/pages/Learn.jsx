@@ -152,7 +152,11 @@ const Learn = () => {
       console.error("Teaching error:", err);
       setConversation(prev => [...prev, {
         role: "error",
-        content: err?.response?.data?.error || "Something went wrong. Please try again.",
+        content:
+          err?.response?.data?.error ||
+          err?.error ||
+          (typeof err === "string" ? err : null) ||
+          "Something went wrong. Please try again.",
         timestamp: new Date().toISOString()
       }]);
     } finally {

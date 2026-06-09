@@ -26,7 +26,7 @@ A function is like you going on a trip. The variables from the outer function ar
 It didn't leave those variables behind. They traveled with the function.
 
 Make sense?`,
-    crossQuestion: "Can you tell me WHY we would need this 'backpack' concept in programming? What problem does it solve?"
+    crossQuestion: "When an inner function still needs variables from its outer function after the outer one has finished — what real problem does that solve?"
   },
 
   promise: {
@@ -52,7 +52,7 @@ Meanwhile, your program continues doing other things - showing animations, respo
 When the data arrives, the program handles it, just like you handle the pizza when it arrives.
 
 Make sense?`,
-    crossQuestion: "Why would we want the program to continue doing other things instead of just waiting? What's the benefit?"
+    crossQuestion: "Your app fetches data from a server — why is it better to keep the UI responsive instead of blocking until the response arrives?"
   },
 
   variable: {
@@ -72,7 +72,7 @@ That's EXACTLY the difference between 'let' and 'const' in programming.
 'const' is like writing with a permanent marker - once you set the value, it can't be changed.
 
 Make sense?`,
-    crossQuestion: "When would you want to use a permanent marker (const) instead of a pencil (let)?"
+    crossQuestion: "You have a config value that must never change at runtime — would you use let or const, and why?"
   },
 
   array: {
@@ -94,7 +94,7 @@ An array is like a row of lockers. Each position has a number (we call it an ind
 array[3] means "give me what's in position 3" - just like opening locker 3.
 
 Make sense?`,
-    crossQuestion: "Why would we want to store multiple things in numbered positions instead of giving each thing its own separate name?"
+    crossQuestion: "You need to store 100 scores and access each by position — why use an array instead of 100 separate variables?"
   },
 
   function: {
@@ -116,7 +116,7 @@ A function is like a recipe. You give it some ingredients (we call them paramete
 Every time you use that function with the same inputs, you get the same output - just like following a recipe.
 
 Make sense?`,
-    crossQuestion: "Why would we want to write a recipe (function) instead of just doing the steps manually each time?"
+    crossQuestion: "Three parts of your app all validate email addresses the same way — why extract that into a function?"
   },
 
   loop: {
@@ -140,7 +140,7 @@ A loop says "Do this same action for each item in a list" or "Do this action 10 
 You write the action once, and the loop repeats it automatically - just like you wash each plate the same way.
 
 Make sense?`,
-    crossQuestion: "What would happen if we didn't have loops? How would we wash 100 plates in code?"
+    crossQuestion: "You need to email 500 users with the same template — what would your code look like without a loop?"
   },
 
   object: {
@@ -162,7 +162,7 @@ An object is like a person (or any thing) with multiple properties. Instead of h
 person.age gives you the age, person.job gives you the job - just like asking about John's properties.
 
 Make sense?`,
-    crossQuestion: "Why would we want to group related information together instead of keeping everything separate?"
+    crossQuestion: "A user has name, email, and age that always travel together in your app — why model that as one object?"
   },
 
   callback: {
@@ -186,7 +186,7 @@ You tell the program: "When this task is done, call this function." Then your pr
 When the task finishes, the callback function runs - just like the doorbell rings when the package arrives.
 
 Make sense?`,
-    crossQuestion: "Why would we want to be notified when something is done, instead of just waiting for it?"
+    crossQuestion: "Your code must run a specific step only after an API call finishes — how does a callback help?"
   },
 
   scope: {
@@ -208,7 +208,7 @@ Each function is like a room. Variables created inside that function are like it
 You can't access a variable from outside its function, just like you can't grab a pillow from the kitchen without going to the bedroom.
 
 Make sense?`,
-    crossQuestion: "Why would we want variables to be limited to certain 'rooms' instead of everything being available everywhere?"
+    crossQuestion: "Two functions both use a variable named count — why shouldn't they accidentally share or overwrite each other's value?"
   },
 
   hoisting: {
@@ -226,7 +226,7 @@ JavaScript reads your entire code first and says "Okay, I see you're going to cr
 It's like JavaScript gives you a preview of what's coming, so nothing is a complete surprise.
 
 Make sense?`,
-    crossQuestion: "Why would JavaScript want to know about variables before it actually runs the code that creates them?"
+    crossQuestion: "In JavaScript, a function declaration can be called before its line in the file — what language behavior makes that possible?"
   }
 };
 

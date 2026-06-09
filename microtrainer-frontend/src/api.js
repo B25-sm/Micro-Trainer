@@ -52,7 +52,7 @@ export const abandonInterview = (data) =>
 // =======================================================
 
 export const askAI = (data) =>
-  API.post("/ask", data);
+  API.post("/ask", data, { timeout: 60000 });
 
 
 // =======================================================

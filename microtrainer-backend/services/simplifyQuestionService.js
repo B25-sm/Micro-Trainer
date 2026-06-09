@@ -29,7 +29,7 @@ function buildPrompt({ technology, conceptTitle, lessonSnippet, question }) {
 Technology: ${technology}
 Concept: ${conceptTitle}
 
-Lesson context (use the same analogy names if present):
+Lesson context (prefer technical terms from the lesson — avoid story/analogy names):
 ${(lessonSnippet || "").slice(0, 1800)}
 
 ORIGINAL QUESTION (JSON):
@@ -38,6 +38,7 @@ ${JSON.stringify(q)}
 Rewrite this question in SIMPLER English for a beginner:
 - Shorter sentences, plain words, no jargon unless the lesson already used it
 - Same topic and what is being tested — do NOT make it a different question
+- Do NOT rewrite into story/analogy language (no waiter, backpack, locker metaphors)
 - Do NOT include the correct answer, hints, or "Correct answer:" lines
 - For MCQ: simplify question AND each option; keep the SAME correct option index (${question.correctIndex ?? 0})
 - Max 2 short sentences for open questions; MCQ stem max 2 sentences

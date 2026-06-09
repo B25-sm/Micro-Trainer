@@ -8,9 +8,27 @@ const BLOCKED_QUESTION_PATTERNS = [
   /can you tell me what you already know/i,
 ];
 
+/** Quiz questions that only test story/metaphor recall — not real understanding */
+const ANALOGY_HEAVY_QUESTION_PATTERNS = [
+  /\b(backpack|suitcase|waiter|chef|locker|recipe card|plated dish)\b/i,
+  /in (our|the|your) (story|analogy|metaphor|example)/i,
+  /from the (story|analogy|metaphor)/i,
+  /what does the ['"]?\w+['"]? (represent|mean) in (the|our) (story|analogy|lesson)/i,
+  /tell me (about|why we need) (the|this) ['"]/i,
+  /what (problem|role) does the ['"]/i,
+  /in (this|the) lesson,? what does ["']/i,
+  /layman example/i,
+  /story character/i,
+];
+
 function isBlockedQuestion(text) {
   if (!text || typeof text !== "string") return true;
   return BLOCKED_QUESTION_PATTERNS.some((p) => p.test(text));
+}
+
+function isAnalogyHeavyQuestion(text) {
+  if (!text || typeof text !== "string") return false;
+  return ANALOGY_HEAVY_QUESTION_PATTERNS.some((p) => p.test(text));
 }
 
 function stripAnswerLeak(text) {
@@ -278,19 +296,18 @@ function buildFallbackQuestionsFromLesson(lessonContent, count = 4) {
   const lesson = String(lessonContent || "");
   const fallbacks = [];
 
-  if (/predict|readmission|hospital/i.test(lesson)) {
-    fallbacks.push({
-      type: "open",
-      question:
-        "Why does data science matter for organizations? Use the hospital or business example from the lesson.",
-    });
-  }
+  const techTerms = (lesson.match(/\*\*[^*]+\*\*\s*=\s*\*\*([^*]+)\*\*/g) || [])
+    .map((line) => {
+      const m = line.match(/\*\*[^*]+\*\*\s*=\s*\*\*([^*]+)\*\*/);
+      return m ? m[1].trim() : null;
+    })
+    .filter(Boolean)
+    .slice(0, 3);
 
-  const castLines = lesson.match(/\*\*[^*]+\*\*\s*=\s*[^\n]+/g) || [];
-  if (castLines.length >= 2) {
+  if (techTerms.length >= 2) {
     fallbacks.push({
       type: "open",
-      question: `What does "${castLines[0].replace(/\*\*/g, "").trim()}" mean in this lesson?`,
+      question: `What's the difference between **${techTerms[0]}** and **${techTerms[1]}** in practice?`,
     });
   }
 
@@ -298,13 +315,29 @@ function buildFallbackQuestionsFromLesson(lessonContent, count = 4) {
     fallbacks.push({
       type: "open",
       question:
-        "What does the user see on the app versus what happens internally? (from the Real-time use case section)",
+        "Pick the real app from the lesson: what does the user see on screen versus what runs internally?",
+    });
+  }
+
+  if (/\*\*how\*\*/i.test(lesson)) {
+    fallbacks.push({
+      type: "open",
+      question:
+        "Walk through the main process chain from the **How** section — what happens step by step?",
+    });
+  }
+
+  if (/predict|readmission|hospital|data scientist|data analyst/i.test(lesson)) {
+    fallbacks.push({
+      type: "open",
+      question:
+        "Why does this concept matter for a real business decision — not just in theory?",
     });
   }
 
   fallbacks.push({
     type: "open",
-    question: "In your own words, what is the key takeaway from this lesson?",
+    question: "When would you actually use this in a project — and what goes wrong if you skip it?",
   });
 
   return fallbacks.slice(0, count);
@@ -318,6 +351,7 @@ function alignQuizWithLesson(questions, lessonContent, targetCount = 4) {
   const lesson = String(lessonContent || "");
 
   let aligned = normalized
+    .filter((q) => !isAnalogyHeavyQuestion(q.question))
     .filter((q) => isQuestionAnswerableFromLesson(q, lesson))
     .map((q) =>
       q.type === "mcq" ? alignMcqCorrectIndexWithLesson(q, lesson) : q
@@ -593,7 +627,11 @@ function normalizeQuizQuestion(item, index = 0) {
         correctIndex,
       });
     }
-    if (questionText.length > 5 && !isBlockedQuestion(questionText)) {
+    if (
+      questionText.length > 5 &&
+      !isBlockedQuestion(questionText) &&
+      !isAnalogyHeavyQuestion(questionText)
+    ) {
       return { type: "open", question: questionText };
     }
   }
