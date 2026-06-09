@@ -6,6 +6,8 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 /** Lesson generation (Groq story + terse + wireframe + quiz) — parallel on server */
 const CONCEPT_TIMEOUT_MS = 180000;
 const SESSION_TIMEOUT_MS = 20000;
+/** Groq grading + revalidation for 4 questions can take 60–90s on cold start */
+const SUBMIT_TIMEOUT_MS = 120000;
 
 /**
  * Learning Path API Client
@@ -59,8 +61,10 @@ export const learningPathAPI = {
    * @param {Array<string>} answers - Array of student answers
    * @returns {Promise} Assessment result with passed status and percentage
    */
-  submitAnswers: (sessionId, answers) => 
-    axios.post(`${API_URL}/learning-path/submit`, { sessionId, answers }),
+  submitAnswers: (sessionId, answers) =>
+    axios.post(`${API_URL}/learning-path/submit`, { sessionId, answers }, {
+      timeout: SUBMIT_TIMEOUT_MS,
+    }),
 
   /**
    * Re-phrase the current Quick Check question in simpler language

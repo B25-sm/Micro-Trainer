@@ -1518,9 +1518,13 @@ app.post("/learning-path/submit", async (req, res) => {
   } catch (error) {
     console.error("❌ SUBMIT ANSWERS ERROR:", error.message);
     console.error("Stack trace:", error.stack);
-    res.status(500).json({ 
-      error: "Failed to submit answers",
-      details: error.message 
+    const isSessionMissing = /session not found/i.test(error.message || "");
+    res.status(isSessionMissing ? 404 : 500).json({
+      error: isSessionMissing
+        ? "Your lesson session expired. Go back and open the concept again."
+        : "Failed to submit answers",
+      details: error.message,
+      code: isSessionMissing ? "SESSION_EXPIRED" : "SUBMIT_FAILED",
     });
   }
 });

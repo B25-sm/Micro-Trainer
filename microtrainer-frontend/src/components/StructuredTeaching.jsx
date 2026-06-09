@@ -517,11 +517,20 @@ const StructuredTeaching = ({
 
     } catch (err) {
       console.error("Error submitting assessment:", err);
+      const data = err.response?.data;
+      const msg =
+        data?.error ||
+        err?.error ||
+        (err.code === "ECONNABORTED"
+          ? "Grading is taking longer than usual. Wait a moment and try again."
+          : null) ||
+        "Failed to submit assessment. Please try again.";
+      const detail = data?.details;
       setConversation(prev => [
         ...prev.filter(msg => msg.content !== "⏳ Evaluating your understanding..."),
         {
           role: "error",
-          content: err.response?.data?.error || "Failed to submit assessment. Please try again.",
+          content: detail && detail !== msg ? `${msg}\n\n(${detail})` : msg,
           timestamp: new Date().toISOString()
         }
       ]);

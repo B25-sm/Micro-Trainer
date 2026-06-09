@@ -78,6 +78,20 @@ function saveProgressToDisk() {
   }
 }
 
+function ensureStudentProgress(studentId, technology) {
+  if (!studentProgress[studentId]) {
+    studentProgress[studentId] = {};
+  }
+  if (!studentProgress[studentId][technology]) {
+    studentProgress[studentId][technology] = {
+      currentConceptOrder: 1,
+      completedConcepts: [],
+      conceptScores: {},
+    };
+  }
+  return studentProgress[studentId][technology];
+}
+
 // Auto-save progress every 30 seconds
 setInterval(() => {
   if (Object.keys(studentProgress).length > 0) {
@@ -94,19 +108,7 @@ function startLearningPath(studentId, technology, conceptOrder) {
   console.log(`🎯 Creating learning session: ${sessionId} for ${studentId} - ${technology}`);
   
   // Get or create student progress
-  if (!studentProgress[studentId]) {
-    studentProgress[studentId] = {};
-  }
-  
-  if (!studentProgress[studentId][technology]) {
-    studentProgress[studentId][technology] = {
-      currentConceptOrder: 1,
-      completedConcepts: [],
-      conceptScores: {}
-    };
-  }
-  
-  const progress = studentProgress[studentId][technology];
+  const progress = ensureStudentProgress(studentId, technology);
   const requestedOrder =
     conceptOrder != null && Number.isFinite(Number(conceptOrder))
       ? Number(conceptOrder)
@@ -530,13 +532,18 @@ For feedback, explain what was correct or incorrect about each answer.`;
       return intelligentFallbackScoring(answers, crossQuestions, lessonContext);
     }
     
-    const totalScore = evaluation.scores ? evaluation.scores.reduce((a, b) => a + b, 0) : 0;
+    const rawScores = Array.isArray(evaluation.scores) ? evaluation.scores : [];
+    const normalizedScores = answers.map((_, index) => {
+      const s = Number(rawScores[index]);
+      return Number.isFinite(s) ? Math.max(0, Math.min(10, s)) : 0;
+    });
+    const totalScore = normalizedScores.reduce((a, b) => a + b, 0);
     const maxScore = answers.length * 10;
     const percentage = Math.round((totalScore / maxScore) * 100);
     
     // Generate detailed feedback for each question
     const detailedFeedback = answers.map((answer, index) => {
-      const score = evaluation.scores[index];
+      const score = normalizedScores[index];
       const isPerfect = score >= 9;
       const isGood = score >= 7;
       const isFailed = score < 6;
@@ -779,19 +786,36 @@ async function submitConceptAnswers(sessionId, answers) {
 
   console.log(`🛡️ Starting revalidated grading (${MAX_REVALIDATION_PASSES || 3} passes max)…`);
 
-  const { assessment, lockedQuestions } = await runRevalidatedGrading({
-    answers,
-    questions: gradingQuestions,
-    lessonContext,
-    assessOpenFn: async (openAnswers, openQuestions) => {
-      const openResult = await assessUnderstanding(
-        openAnswers,
-        openQuestions,
-        lessonContext
-      );
-      return openResult;
-    },
-  });
+  let assessment;
+  let lockedQuestions = gradingQuestions;
+
+  try {
+    const graded = await runRevalidatedGrading({
+      answers,
+      questions: gradingQuestions,
+      lessonContext,
+      assessOpenFn: async (openAnswers, openQuestions) => {
+        const openResult = await assessUnderstanding(
+          openAnswers,
+          openQuestions,
+          lessonContext
+        );
+        return openResult;
+      },
+    });
+    assessment = graded.assessment;
+    lockedQuestions = graded.lockedQuestions;
+  } catch (gradingErr) {
+    console.error("❌ Revalidated grading failed, using lesson-aware fallback:", gradingErr.message);
+    const questionTexts = gradingQuestions.map((q) =>
+      typeof q === "string" ? q : q?.question || ""
+    );
+    assessment = intelligentFallbackScoring(
+      answers,
+      questionTexts,
+      lessonContext
+    );
+  }
 
   session.quizQuestionsInternal = lockedQuestions;
   session.activeCrossQuestions = sanitizeQuestionsForClient(lockedQuestions);
@@ -800,10 +824,9 @@ async function submitConceptAnswers(sessionId, answers) {
   console.log(
     `📊 Assessment result (revalidated): ${assessment.percentage}% (${assessment.passed ? 'PASSED' : 'FAILED'})`
   );
-  
-  const progress = studentProgress[session.studentId][session.technology];
-  
+
   if (assessment.passed) {
+    const progress = ensureStudentProgress(session.studentId, session.technology);
     // Mark concept as completed
     if (!progress.completedConcepts.includes(conceptId)) {
       progress.completedConcepts.push(conceptId);

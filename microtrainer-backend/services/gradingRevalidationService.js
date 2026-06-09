@@ -266,6 +266,10 @@ Return ONLY JSON: {"fair":true|false,"correctedScore":0-10,"reason":"one sentenc
 async function aiAuditPass(assessment, answers, questions, lessonContent) {
   let changed = false;
 
+  if (!Array.isArray(assessment?.detailedFeedback)) {
+    return { assessment, changed: false };
+  }
+
   for (let i = 0; i < assessment.detailedFeedback.length; i++) {
     const q = questions[i];
     if (q?.type === "mcq") continue;
@@ -381,13 +385,13 @@ async function runRevalidatedGrading({
     assessment = gradeMcqAnswers(answers, lockedQuestions);
   } else if (!lockedQuestions.some((q) => q.type === "mcq")) {
     const openTexts = lockedQuestions.map((q) => questionText(q));
-    const openResult = await assessOpenFn(openTexts, openTexts);
-    assessment = openResult.detailedFeedback
+    const openResult = await assessOpenFn(answers, openTexts);
+    assessment = openResult?.detailedFeedback?.length
       ? openResult
       : buildAssessmentFromParts(
           lockedQuestions,
-          openResult.scores || [],
-          openResult.feedback || []
+          openResult?.scores || [],
+          openResult?.feedback || []
         );
   } else {
     assessment = await gradeMixedAnswers(
@@ -395,11 +399,24 @@ async function runRevalidatedGrading({
       lockedQuestions,
       async (openAnswers, openQuestions) => {
         const openResult = await assessOpenFn(openAnswers, openQuestions);
+        const rows = openResult?.detailedFeedback || [];
         return {
-          scores: openResult.detailedFeedback.map((d) => d.score),
-          feedback: openResult.detailedFeedback.map((d) => d.feedback),
+          scores: rows.length
+            ? rows.map((d) => d.score)
+            : openResult?.scores || [],
+          feedback: rows.length
+            ? rows.map((d) => d.feedback)
+            : openResult?.feedback || [],
         };
       }
+    );
+  }
+
+  if (!assessment?.detailedFeedback) {
+    assessment = buildAssessmentFromParts(
+      lockedQuestions,
+      [],
+      lockedQuestions.map(() => "Could not grade this answer automatically.")
     );
   }
 
