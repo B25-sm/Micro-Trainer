@@ -101,6 +101,22 @@ async function submitAnswer(sessionId, answer) {
   currentEntry.answer = answer;
   Object.assign(currentEntry, result);
 
+  try {
+    const { logInterviewAnswer } = require("./studentLearningLedgerService");
+    logInterviewAnswer({
+      studentId: session.studentId,
+      subject: session.subject,
+      topic: currentEntry.question,
+      score: result.score != null ? Number(result.score) : null,
+      metadata: {
+        communication: result.communication,
+        technical: result.technical,
+      },
+    });
+  } catch (ledgerErr) {
+    console.error("Ledger interview log error:", ledgerErr.message);
+  }
+
   session.currentQuestion++;
 
   console.log(`📊 Progress: ${session.currentQuestion}/${session.totalQuestions}`);

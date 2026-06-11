@@ -76,6 +76,42 @@ async function getPyodide() {
   return pyodideReadyPromise;
 }
 
+/** Strip student debug lines that call solution(input) — shadows Python's built-in input */
+function preparePythonStudentCode(code) {
+  const lines = String(code || '').split('\n');
+  while (lines.length > 0) {
+    const trimmed = lines[lines.length - 1].trim();
+    if (!trimmed) {
+      lines.pop();
+      continue;
+    }
+    if (/^print\s*\(\s*solution\s*\(/i.test(trimmed)) {
+      lines.pop();
+      continue;
+    }
+    break;
+  }
+  return lines.join('\n');
+}
+
+function formatPythonRunError(message) {
+  const msg = String(message || '');
+  if (
+    /invalid literal for int\(\) with base 10: ['"]<['"]/i.test(msg) ||
+    /invalid literal for int/i.test(msg) &&
+      /built-in function input/i.test(msg)
+  ) {
+    return (
+      'You called solution(input) where `input` is Python\'s built-in function, not the test value. ' +
+      'Remove print(solution(input)) at the bottom and use def solution(value): — then click Run.'
+    );
+  }
+  if (/def solution\(input\)/.test(msg)) {
+    return 'Rename `def solution(input)` to `def solution(value)` — `input` is reserved in Python.';
+  }
+  return msg;
+}
+
 async function runTestCase(pyodide, code, testCase) {
   const stdoutLines = [];
   const stderrLines = [];
@@ -112,14 +148,15 @@ __microtrainer_result = solution(json.loads(__microtrainer_input))
       executionTime: Date.now() - start,
     };
   } catch (error) {
+    const friendly = formatPythonRunError(error.message || String(error));
     return {
       input: testCase.input,
       expectedOutput: testCase.output,
       actualOutput: null,
       passed: false,
       stdout: stdoutLines.join('\n'),
-      stderr: stderrLines.join('\n') || error.message || String(error),
-      error: error.message || String(error),
+      stderr: stderrLines.join('\n') || friendly,
+      error: friendly,
       executionTime: Date.now() - start,
     };
   }
@@ -132,11 +169,13 @@ self.onmessage = async (event) => {
     const pyodide = await getPyodide();
 
     if (!/^\s*def\s+solution\s*\(/m.test(code)) {
-      throw new Error('Code must define a solution(input) function');
+      throw new Error('Code must define a solution(value) function');
     }
 
+    const preparedCode = preparePythonStudentCode(code);
+
     if (mode === 'run') {
-      const result = await runTestCase(pyodide, code, { input });
+      const result = await runTestCase(pyodide, preparedCode, { input });
       self.postMessage({
         success: !result.error,
         mode: 'run',
@@ -158,7 +197,7 @@ self.onmessage = async (event) => {
 
     const results = [];
     for (const testCase of testCases) {
-      results.push(await runTestCase(pyodide, code, testCase));
+      results.push(await runTestCase(pyodide, preparedCode, testCase));
     }
 
     self.postMessage(buildJudgeResponse({ mode, language, results }));

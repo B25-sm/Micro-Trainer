@@ -183,7 +183,7 @@ function executeCodeInProcess(language, code, testCases, timeout) {
       const startTime = Date.now();
       try {
         const inputJson = JSON.stringify(JSON.stringify(testCase.input));
-        const runner = `import json\n${code}\nprint(json.dumps(solution(json.loads(${inputJson}))))\n`;
+        const runner = `import json\n${preparePythonStudentCode(code)}\nprint(json.dumps(solution(json.loads(${inputJson}))))\n`;
         const spawnArgs =
           py === 'py' ? ['-3', '-c', runner] : ['-c', runner];
         const r = spawnSync(py, spawnArgs, {
@@ -591,6 +591,26 @@ async function executeCode(language, code, testCases, timeout = PISTON_MAX_TIMEO
 }
 
 // =======================================================
+// 🔹 PYTHON STUDENT CODE SANITIZE
+// =======================================================
+function preparePythonStudentCode(code) {
+  const lines = String(code || '').split('\n');
+  while (lines.length > 0) {
+    const trimmed = lines[lines.length - 1].trim();
+    if (!trimmed) {
+      lines.pop();
+      continue;
+    }
+    if (/^print\s*\(\s*solution\s*\(/i.test(trimmed)) {
+      lines.pop();
+      continue;
+    }
+    break;
+  }
+  return lines.join('\n');
+}
+
+// =======================================================
 // 🔹 WRAP CODE FOR EXECUTION
 // =======================================================
 function wrapCodeForExecution(language, code, input) {
@@ -603,7 +623,7 @@ function wrapCodeForExecution(language, code, input) {
 
     case 'python':
     case 'py':
-      return `import json\n${code}\nprint(json.dumps(solution(${inputStr})))`;
+      return `import json\n${preparePythonStudentCode(code)}\nprint(json.dumps(solution(${inputStr})))`;
 
     case 'java':
       return `import com.google.gson.*;
@@ -748,6 +768,11 @@ function validateCode(language, code) {
   if (lang === 'python' || lang === 'py') {
     if (!code.includes('def ')) {
       errors.push('Code must contain at least one function definition');
+    }
+    if (/\bprint\s*\(\s*solution\s*\(\s*input\s*\)/.test(code)) {
+      errors.push(
+        'Remove `print(solution(input))` at the bottom — the runner calls solution() for you. `input` here is Python\'s built-in, not the test number.'
+      );
     }
   }
 

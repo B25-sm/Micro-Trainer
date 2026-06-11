@@ -12,6 +12,7 @@ import {
   TrendingDown,
   Minus,
   X,
+  BarChart3,
 } from "lucide-react";
 import AppSelect from "../components/AppSelect";
 import { getTrainerHeaders } from "../utils/trainerAuth";
@@ -54,9 +55,12 @@ const TrainerDashboard = () => {
   const [learningLoading, setLearningLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
   const [syncingLearning, setSyncingLearning] = useState(false);
+  const [syncingReadiness, setSyncingReadiness] = useState(false);
   const [exportMessage, setExportMessage] = useState("");
   const [activeTab, setActiveTab] = useState("interviews");
   const [bugReports, setBugReports] = useState([]);
+  const [readinessData, setReadinessData] = useState({ students: [], technologies: [] });
+  const [readinessLoading, setReadinessLoading] = useState(true);
 
   const availableSubjects = [
     "react",
@@ -73,7 +77,26 @@ const TrainerDashboard = () => {
     fetchLeaderboard();
     fetchLearningProgress();
     fetchBugReports();
+    fetchTechnologyReadiness();
   }, [subject, selectedSubjects]);
+
+  const fetchTechnologyReadiness = async () => {
+    try {
+      setReadinessLoading(true);
+      const res = await axios.get(`${BASE_URL}/trainer/technology-readiness`, {
+        headers: getTrainerHeaders(),
+      });
+      setReadinessData({
+        students: res.data?.students || [],
+        technologies: res.data?.technologies || availableSubjects,
+      });
+    } catch (err) {
+      console.error("Technology readiness error:", err);
+      setReadinessData({ students: [], technologies: availableSubjects });
+    } finally {
+      setReadinessLoading(false);
+    }
+  };
 
   const fetchBugReports = async () => {
     try {
@@ -228,6 +251,29 @@ const TrainerDashboard = () => {
     }
   };
 
+  const handleSyncTechnologyReadiness = async () => {
+    try {
+      setSyncingReadiness(true);
+      setExportMessage("");
+      const res = await axios.post(
+        `${BASE_URL}/trainer/technology-readiness/sync`,
+        {},
+        { headers: getTrainerHeaders() }
+      );
+      setExportMessage(res.data.message || "Technology readiness synced.");
+      await fetchTechnologyReadiness();
+      setTimeout(() => setExportMessage(""), 5000);
+    } catch (err) {
+      console.error("Readiness sync error:", err);
+      setExportMessage(
+        "Readiness sync failed. Check Google Sheets credentials on the server."
+      );
+      setTimeout(() => setExportMessage(""), 5000);
+    } finally {
+      setSyncingReadiness(false);
+    }
+  };
+
   const getTrendDisplay = (trend) => {
     if (trend === "improving") {
       return {
@@ -283,6 +329,20 @@ const TrainerDashboard = () => {
   const formatSyncLabel = (syncStatus) => {
     if (!syncStatus?.lastSuccessfulSyncAt) return "No sync";
     return new Date(syncStatus.lastSuccessfulSyncAt).toLocaleDateString();
+  };
+
+  const getReadinessBandClass = (band) => {
+    if (band === "Good") return "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800";
+    if (band === "Average") return "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800";
+    if (band === "Weak") return "bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800";
+    return "bg-gray-50 dark:bg-gray-800/60 text-gray-400 dark:text-gray-500 border-gray-200 dark:border-gray-700";
+  };
+
+  const getStudentTechBand = (student, tech) => {
+    const entry = (student.technologies || []).find(
+      (t) => t.technology === tech
+    );
+    return entry?.band || "—";
   };
 
   const getSyncBadge = (syncStatus) => {
@@ -343,6 +403,18 @@ const TrainerDashboard = () => {
                 className={`w-4 h-4 ${syncingLearning ? "animate-spin" : ""}`}
               />
               {syncingLearning ? "Syncing…" : "Sync course progress"}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleSyncTechnologyReadiness}
+              disabled={syncingReadiness || readinessLoading}
+              className={btnSecondary}
+            >
+              <RefreshCw
+                className={`w-4 h-4 ${syncingReadiness ? "animate-spin" : ""}`}
+              />
+              {syncingReadiness ? "Syncing…" : "Sync tech readiness"}
             </button>
 
             <button
@@ -409,6 +481,13 @@ const TrainerDashboard = () => {
             icon={BookOpen}
           >
             Guided course progress
+          </TabButton>
+          <TabButton
+            active={activeTab === "readiness"}
+            onClick={() => setActiveTab("readiness")}
+            icon={BarChart3}
+          >
+            Technology readiness
           </TabButton>
         </nav>
       </header>
@@ -612,6 +691,78 @@ const TrainerDashboard = () => {
               interviews.
             </div>
           )}
+        </div>
+      )}
+
+      {activeTab === "readiness" && (
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] overflow-hidden">
+          <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#202124]/50">
+            <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+              Overall strength per technology from interviews, guided lessons, Ask Anything,
+              coding problems, and daily quizzes. Rows auto-sync to the{" "}
+              <span className="font-medium">Technology_Readiness</span> sheet tab when students
+              learn. Use <span className="font-medium">Sync tech readiness</span> for a full refresh.
+            </p>
+          </div>
+
+          <div className="overflow-x-auto">
+            <div
+              className="grid gap-2 px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 min-w-[900px]"
+              style={{
+                gridTemplateColumns: `minmax(140px, 1.4fr) repeat(${readinessData.technologies.length}, minmax(72px, 1fr))`,
+              }}
+            >
+              <span>Student</span>
+              {readinessData.technologies.map((tech) => (
+                <span key={tech} className="text-center capitalize truncate">
+                  {tech}
+                </span>
+              ))}
+            </div>
+
+            {readinessLoading && (
+              <div className="px-4 py-10 text-center text-sm text-gray-500 dark:text-gray-400">
+                Loading technology readiness…
+              </div>
+            )}
+
+            {!readinessLoading &&
+              readinessData.students.map((student) => (
+                <motion.div
+                  key={student.studentId}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  onClick={() => navigate(`/trainer/student/${student.studentId}`)}
+                  className="grid gap-2 px-4 py-3 border-b border-gray-100 dark:border-gray-700/80 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/30 transition min-w-[900px]"
+                  style={{
+                    gridTemplateColumns: `minmax(140px, 1.4fr) repeat(${readinessData.technologies.length}, minmax(72px, 1fr))`,
+                  }}
+                >
+                  <span className="font-medium text-gray-800 dark:text-gray-200 truncate">
+                    {student.displayName || student.name || student.studentId}
+                  </span>
+                  {readinessData.technologies.map((tech) => {
+                    const band = getStudentTechBand(student, tech);
+                    return (
+                      <span key={tech} className="flex justify-center">
+                        <span
+                          className={`inline-flex items-center justify-center min-w-[4.5rem] px-2 py-0.5 rounded-md text-xs font-medium border ${getReadinessBandClass(band)}`}
+                        >
+                          {band === "Not assessed" ? "—" : band}
+                        </span>
+                      </span>
+                    );
+                  })}
+                </motion.div>
+              ))}
+
+            {!readinessLoading && readinessData.students.length === 0 && (
+              <div className="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
+                No learning activity recorded yet. Students appear here after interviews,
+                guided lessons, Ask Anything, or problem solving.
+              </div>
+            )}
+          </div>
         </div>
       )}
 

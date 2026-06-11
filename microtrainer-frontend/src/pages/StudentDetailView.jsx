@@ -21,6 +21,8 @@ const StudentDetailView = () => {
   const [learningProgress, setLearningProgress] = useState(null);
   const [personalSchedule, setPersonalSchedule] = useState(null);
   const [scheduleToday, setScheduleToday] = useState(null);
+  const [techReadiness, setTechReadiness] = useState(null);
+  const [expandedTech, setExpandedTech] = useState(null);
 
   useEffect(() => {
     fetchStudentData();
@@ -31,7 +33,7 @@ const StudentDetailView = () => {
       setLoading(true);
 
       // Fetch all student data in parallel
-      const [analyticsRes, memoryRes, profileRes, learningRes, scheduleRes, todayRes] =
+      const [analyticsRes, memoryRes, profileRes, learningRes, readinessRes, scheduleRes, todayRes] =
         await Promise.all([
           axios.get(`${BASE_URL}/student/${studentId}/analytics`, {
             headers: getTrainerHeaders(),
@@ -42,6 +44,11 @@ const StudentDetailView = () => {
           axios.get(`${BASE_URL}/profile/${studentId}`),
           axios
             .get(`${BASE_URL}/trainer/learning-progress/${studentId}`, {
+              headers: getTrainerHeaders(),
+            })
+            .catch(() => ({ data: null })),
+          axios
+            .get(`${BASE_URL}/trainer/technology-readiness/${studentId}`, {
               headers: getTrainerHeaders(),
             })
             .catch(() => ({ data: null })),
@@ -57,6 +64,7 @@ const StudentDetailView = () => {
       setMemory(memoryRes.data);
       setProfile(profileRes.data);
       setLearningProgress(learningRes.data);
+      setTechReadiness(readinessRes.data);
       setPersonalSchedule(scheduleRes.data?.schedule ?? null);
       setScheduleToday(todayRes.data ?? null);
 
@@ -88,6 +96,29 @@ const StudentDetailView = () => {
     return "text-red-600";
   };
 
+  const getReadinessBandClass = (band) => {
+    if (band === "Good") return "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800";
+    if (band === "Average") return "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800";
+    if (band === "Weak") return "bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800";
+    return "bg-gray-50 dark:bg-gray-800/60 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700";
+  };
+
+  const formatActivityLabel = (type) => {
+    const labels = {
+      guided_quiz: "Guided lesson",
+      ask_topic: "Ask Anything",
+      ask_quick_check: "Quick Check",
+      interview: "Interview",
+      coding_problem: "Coding problem",
+      mini_assessment: "Daily quiz",
+      chat_question: "Home chat",
+    };
+    return labels[type] || type;
+  };
+
+  const assessedTechnologies =
+    techReadiness?.technologies?.filter((t) => t.band !== "Not assessed") || [];
+
   if (loading) {
     return (
       <div className="min-h-screen p-6 bg-white dark:bg-[#202124] flex items-center justify-center">
@@ -99,8 +130,9 @@ const StudentDetailView = () => {
   const hasLearning = learningProgress?.technologies?.length > 0;
   const hasInterviewData = analytics || memory;
   const hasPersonalSchedule = Boolean(personalSchedule?.category);
+  const hasTechReadiness = assessedTechnologies.length > 0;
 
-  if (!hasInterviewData && !hasLearning && !hasPersonalSchedule) {
+  if (!hasInterviewData && !hasLearning && !hasPersonalSchedule && !hasTechReadiness) {
     return (
       <div className="min-h-screen p-6 bg-white dark:bg-[#202124]">
         <button
@@ -331,6 +363,95 @@ const StudentDetailView = () => {
         schedule={personalSchedule}
         todayInfo={scheduleToday}
       />
+
+      {hasTechReadiness && (
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] p-6 mb-6">
+          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1">
+            Technology readiness
+          </h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+            Combined from all learning on MicroTrainer — interviews, guided course, Ask Anything,
+            problems, and quizzes. Click a technology to see recent activity.
+          </p>
+          <div className="space-y-3">
+            {assessedTechnologies.map((tech) => (
+              <div
+                key={tech.technology}
+                className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden"
+              >
+                <button
+                  type="button"
+                  onClick={() =>
+                    setExpandedTech(
+                      expandedTech === tech.technology ? null : tech.technology
+                    )
+                  }
+                  className="w-full flex items-center justify-between gap-4 px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800/40 transition"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="font-medium text-gray-800 dark:text-gray-200 capitalize">
+                      {tech.technology}
+                    </span>
+                    <span
+                      className={`inline-flex px-2.5 py-0.5 rounded-md text-xs font-medium border ${getReadinessBandClass(tech.band)}`}
+                    >
+                      {tech.band}
+                    </span>
+                    {tech.score != null && (
+                      <span className="text-sm text-gray-500 dark:text-gray-400 tabular-nums">
+                        {tech.score}/100
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-xs text-gray-400 shrink-0">
+                    {tech.eventCount} activities · {tech.confidence} confidence
+                  </span>
+                </button>
+
+                {expandedTech === tech.technology && (
+                  <div className="px-4 pb-4 border-t border-gray-100 dark:border-gray-700/80 bg-gray-50/50 dark:bg-gray-900/20">
+                    {tech.topicsStudied?.length > 0 && (
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 mb-2">
+                        Topics: {tech.topicsStudied.join(", ")}
+                      </p>
+                    )}
+                    <div className="space-y-2 max-h-64 overflow-y-auto mt-2">
+                      {(techReadiness.timeline || [])
+                        .filter((e) => e.technology === tech.technology)
+                        .slice(0, 15)
+                        .map((event) => (
+                          <div
+                            key={event.id}
+                            className="flex flex-wrap items-center justify-between gap-2 text-sm py-1.5 border-b border-gray-100 dark:border-gray-700/60 last:border-0"
+                          >
+                            <div className="min-w-0">
+                              <span className="text-gray-700 dark:text-gray-300">
+                                {formatActivityLabel(event.activityType)}
+                              </span>
+                              {event.topic && (
+                                <span className="text-gray-500 dark:text-gray-400 ml-2 truncate">
+                                  — {event.topic}
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2 text-xs text-gray-400 shrink-0">
+                              {event.score != null && (
+                                <span className="tabular-nums">{Math.round(event.score)}%</span>
+                              )}
+                              <span>
+                                {new Date(event.timestamp).toLocaleDateString()}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* GUIDED COURSE PROGRESS (trainer API — local + Google Sheets) */}
       {hasLearning && (

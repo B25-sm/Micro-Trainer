@@ -274,6 +274,17 @@ app.get("/trainer/sync-status", trainerOnly, (req, res) => {
 // =======================================================
 const { adaptiveTeach } = require("./services/adaptiveTeachingService");
 const { saveStudentLevel, getStudentLevel } = require("./services/memoryService");
+const {
+  logAskTopic,
+  logAskQuickCheck,
+  logChatQuestion,
+  logCodingProblem,
+  logMiniAssessment,
+} = require("./services/studentLearningLedgerService");
+const {
+  buildStudentReadiness,
+  getAllStudentsReadiness,
+} = require("./services/technologyReadinessService");
 
 // Teaching sessions storage (in-memory for now)
 const teachingSessions = {};
@@ -362,6 +373,23 @@ app.post("/ask", async (req, res) => {
       content: result.explanation
     });
 
+    const ledgerStudentId = studentId || session.studentId;
+    if (ledgerStudentId && ledgerStudentId !== "anonymous") {
+      try {
+        if (hasQuestion) {
+          logAskTopic({ studentId: ledgerStudentId, topic: concept });
+        } else if (hasAnswer) {
+          logAskQuickCheck({
+            studentId: ledgerStudentId,
+            topic: concept,
+            level: result.level || session.level,
+          });
+        }
+      } catch (ledgerErr) {
+        console.error("Ledger ask log error:", ledgerErr.message);
+      }
+    }
+
     return res.json({
       sessionId: sid,
       explanation: result.explanation,
@@ -386,7 +414,7 @@ const chatSessions = {};
 
 app.post("/chat/ask", async (req, res) => {
   try {
-    const { question, sessionId } = req.body;
+    const { question, sessionId, studentId } = req.body;
 
     if (!question || typeof question !== "string") {
       return res.status(400).json({ error: "Question is required" });
@@ -484,6 +512,14 @@ Don't:
     session.history.push({ role: "user", content: question });
     session.history.push({ role: "assistant", content: answer });
     session.questionCount++;
+
+    if (studentId && studentId !== "anonymous") {
+      try {
+        logChatQuestion({ studentId, topic: question });
+      } catch (ledgerErr) {
+        console.error("Ledger chat log error:", ledgerErr.message);
+      }
+    }
 
     return res.json({
       sessionId: sid,
@@ -794,6 +830,67 @@ app.post("/trainer/learning-progress/sync", trainerOnly, async (req, res) => {
   }
 });
 
+app.get("/trainer/technology-readiness", trainerOnly, async (req, res) => {
+  try {
+    const data = await getAllStudentsReadiness();
+    res.json(data);
+  } catch (error) {
+    console.error("TECHNOLOGY READINESS ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get technology readiness" });
+  }
+});
+
+app.get("/trainer/technology-readiness/:studentId", trainerOnly, async (req, res) => {
+  try {
+    const detail = await buildStudentReadiness(req.params.studentId);
+    res.json(detail);
+  } catch (error) {
+    console.error("STUDENT TECHNOLOGY READINESS ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get student technology readiness" });
+  }
+});
+
+const {
+  syncAllReadinessToSheets,
+  syncStudentReadinessToSheets,
+} = require("./services/technologyReadinessSheetsService");
+
+app.post("/trainer/technology-readiness/sync", trainerOnly, async (req, res) => {
+  try {
+    const result = await syncAllReadinessToSheets();
+    res.json({
+      success: true,
+      message: `Synced ${result.synced} technology readiness rows for ${result.students} students`,
+      ...result,
+    });
+  } catch (error) {
+    console.error("TECHNOLOGY READINESS SYNC ERROR:", error.message);
+    res.status(500).json({
+      error: "Failed to sync technology readiness to Google Sheets",
+      details: error.message,
+    });
+  }
+});
+
+app.post("/trainer/technology-readiness/sync/:studentId", trainerOnly, async (req, res) => {
+  try {
+    const result = await syncStudentReadinessToSheets(req.params.studentId);
+    res.json({
+      success: result.success,
+      message: result.success
+        ? `Synced ${result.synced} technologies for ${req.params.studentId}`
+        : "No assessed technologies to sync",
+      ...result,
+    });
+  } catch (error) {
+    console.error("STUDENT READINESS SYNC ERROR:", error.message);
+    res.status(500).json({
+      error: "Failed to sync student technology readiness",
+      details: error.message,
+    });
+  }
+});
+
 
 // =======================================================
 // 🔹 DASHBOARD APIs
@@ -1078,6 +1175,21 @@ app.post("/problems/:id/submit", async (req, res) => {
       score: payload.score,
     });
 
+    if (studentId && studentId !== "anonymous") {
+      try {
+        logCodingProblem({
+          studentId,
+          language,
+          problemId,
+          topic: problem.title || problemId,
+          score: payload.score,
+          passed: payload.allPassed,
+        });
+      } catch (ledgerErr) {
+        console.error("Ledger problem log error:", ledgerErr.message);
+      }
+    }
+
     return res.json(payload);
   } catch (error) {
     console.error("SUBMIT SOLUTION ERROR:", error.message);
@@ -1143,6 +1255,21 @@ app.post("/problems/:id/browser-submit", async (req, res) => {
       `${JSON.stringify(payload)}\n`,
       "utf8"
     );
+
+    if (studentId && studentId !== "anonymous") {
+      try {
+        logCodingProblem({
+          studentId,
+          language,
+          problemId,
+          topic: problem.title || problemId,
+          score: payload.score,
+          passed: payload.allPassed,
+        });
+      } catch (ledgerErr) {
+        console.error("Ledger browser-submit log error:", ledgerErr.message);
+      }
+    }
 
     return res.json(payload);
   } catch (error) {
@@ -1986,6 +2113,17 @@ app.post("/api/assessment/mini-assessment/submit", async (req, res) => {
       timeSpent,
       result.score
     );
+
+    try {
+      logMiniAssessment({
+        studentId,
+        technology: result.technology || "general",
+        topic: result.topic || result.technology || "mini assessment",
+        score: result.score,
+      });
+    } catch (ledgerErr) {
+      console.error("Ledger mini-assessment log error:", ledgerErr.message);
+    }
     
     // Check for badges
     const badges = checkAndAwardBadges(studentId, {

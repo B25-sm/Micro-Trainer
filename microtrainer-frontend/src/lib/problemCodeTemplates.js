@@ -61,12 +61,12 @@ export function buildProblemTemplate(language, problem = null) {
   if (lang === "python") {
     return `"""
 ${title}
-Implement solution(input). Test input is passed automatically${example}.
+Implement solution(value). The runner passes each test case automatically${example}.
 Input type: ${inLabel} | Expected output type: ${outLabel}
-Do not hardcode answers.
+Do not hardcode answers. Do not add print(solution(...)) — Run/Submit calls your function.
 """
 
-def solution(input):
+def solution(value):
     # Write your code here
     pass
 `;

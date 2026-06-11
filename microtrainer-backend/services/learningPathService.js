@@ -825,6 +825,20 @@ async function submitConceptAnswers(sessionId, answers) {
     `📊 Assessment result (revalidated): ${assessment.percentage}% (${assessment.passed ? 'PASSED' : 'FAILED'})`
   );
 
+  try {
+    const { logGuidedQuiz } = require('./studentLearningLedgerService');
+    logGuidedQuiz({
+      studentId: session.studentId,
+      technology: session.technology,
+      conceptId,
+      topic: concept?.title || conceptId,
+      score: assessment.percentage,
+      passed: assessment.passed,
+    });
+  } catch (ledgerErr) {
+    console.error('Ledger guided quiz log error:', ledgerErr.message);
+  }
+
   if (assessment.passed) {
     const progress = ensureStudentProgress(session.studentId, session.technology);
     // Mark concept as completed
