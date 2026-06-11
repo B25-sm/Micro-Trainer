@@ -13,7 +13,7 @@ const FROM_NAME = process.env.FROM_NAME || 'MicroTrainer';
 /**
  * Send email via SMTP
  */
-async function sendEmail(to, subject, htmlContent, textContent) {
+async function sendEmail(to, subject, htmlContent, textContent, options = {}) {
   if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
     console.warn('⚠️  SMTP email is not configured. Email not sent.');
     return { success: false, error: 'SMTP not configured' };
@@ -36,6 +36,7 @@ async function sendEmail(to, subject, htmlContent, textContent) {
       subject,
       html: htmlContent,
       text: textContent,
+      attachments: options.attachments || [],
     });
 
     console.log(`✅ Email sent to ${to}: ${subject}`);

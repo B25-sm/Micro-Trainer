@@ -15,6 +15,7 @@ import {
   BarChart3,
 } from "lucide-react";
 import AppSelect from "../components/AppSelect";
+import FeedbackScreenshotThumb from "../components/FeedbackScreenshotThumb";
 import { getTrainerHeaders } from "../utils/trainerAuth";
 
 const BASE_URL =
@@ -588,6 +589,17 @@ const TrainerDashboard = () => {
                 <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 font-mono">
                   {r.pagePath}
                 </p>
+                {r.screenshotCount > 0 && r.reportId && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {(r.screenshots || []).map((shot) => (
+                      <FeedbackScreenshotThumb
+                        key={shot.id}
+                        reportId={r.reportId}
+                        screenshot={shot}
+                      />
+                    ))}
+                  </div>
+                )}
               </li>
             ))}
           </ul>

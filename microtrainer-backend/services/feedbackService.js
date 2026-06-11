@@ -4,11 +4,23 @@
 
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 const { sendEmail } = require("./emailService");
 const { logFeedbackReport } = require("./sheetsService");
 
 const DATA_DIR = path.join(__dirname, "..", "data");
 const FEEDBACK_LOG = path.join(DATA_DIR, "feedback-reports.jsonl");
+const SCREENSHOTS_DIR = path.join(DATA_DIR, "feedback-screenshots");
+
+const MAX_SCREENSHOTS = 3;
+const MAX_SCREENSHOT_BYTES = 2.5 * 1024 * 1024;
+const ALLOWED_MIME = new Set([
+  "image/png",
+  "image/jpeg",
+  "image/jpg",
+  "image/webp",
+  "image/gif",
+]);
 
 /** @type {Map<string, { count: number, resetAt: number }>} */
 const rateLimit = new Map();
@@ -78,6 +90,7 @@ function escapeHtml(text) {
 }
 
 function logReportBanner(record, { emailSent, recipients, sheetsLogged }) {
+  const shotCount = record.screenshotCount || 0;
   const lines = [
     "══════════════════════════════════════════════════",
     "🐛 NEW BUG REPORT — MicroTrainer",
@@ -86,12 +99,112 @@ function logReportBanner(record, { emailSent, recipients, sheetsLogged }) {
     `   Email:   ${record.email}`,
     `   Page:    ${record.pagePath}`,
     `   Message: ${record.message.slice(0, 120)}${record.message.length > 120 ? "…" : ""}`,
+    `   Screens: ${shotCount}`,
     `   Saved:   data/feedback-reports.jsonl`,
     `   Email:   ${emailSent ? `sent to ${recipients.join(", ")}` : "NOT sent — configure SMTP email settings"}`,
     `   Sheets:  ${sheetsLogged ? "logged to BugReports tab" : "skipped or failed"}`,
     "══════════════════════════════════════════════════",
   ];
   console.log(lines.join("\n"));
+}
+
+function extensionForMime(mimeType) {
+  const map = {
+    "image/png": "png",
+    "image/jpeg": "jpg",
+    "image/jpg": "jpg",
+    "image/webp": "webp",
+    "image/gif": "gif",
+  };
+  return map[mimeType] || "png";
+}
+
+function parseScreenshotPayload(item) {
+  if (!item || typeof item !== "object") return null;
+
+  let mimeType = String(item.mimeType || item.type || "").toLowerCase();
+  let base64 = item.data || item.base64 || "";
+
+  if (item.dataUrl && typeof item.dataUrl === "string") {
+    const match = item.dataUrl.match(/^data:(image\/[a-z+]+);base64,(.+)$/i);
+    if (match) {
+      mimeType = match[1].toLowerCase();
+      base64 = match[2];
+    }
+  }
+
+  if (!mimeType.startsWith("image/")) return null;
+  if (!ALLOWED_MIME.has(mimeType)) return null;
+  if (!base64 || typeof base64 !== "string") return null;
+
+  base64 = base64.replace(/\s/g, "");
+  let buffer;
+  try {
+    buffer = Buffer.from(base64, "base64");
+  } catch {
+    return null;
+  }
+
+  if (!buffer.length || buffer.length > MAX_SCREENSHOT_BYTES) return null;
+
+  return { mimeType, buffer };
+}
+
+function saveScreenshots(reportId, screenshotsInput = []) {
+  if (!Array.isArray(screenshotsInput) || screenshotsInput.length === 0) {
+    return [];
+  }
+
+  if (!fs.existsSync(SCREENSHOTS_DIR)) {
+    fs.mkdirSync(SCREENSHOTS_DIR, { recursive: true });
+  }
+
+  const reportDir = path.join(SCREENSHOTS_DIR, reportId);
+  fs.mkdirSync(reportDir, { recursive: true });
+
+  const saved = [];
+  for (const item of screenshotsInput.slice(0, MAX_SCREENSHOTS)) {
+    const parsed = parseScreenshotPayload(item);
+    if (!parsed) continue;
+
+    const id = crypto.randomBytes(8).toString("hex");
+    const ext = extensionForMime(parsed.mimeType);
+    const filename = `${id}.${ext}`;
+    const filePath = path.join(reportDir, filename);
+
+    fs.writeFileSync(filePath, parsed.buffer);
+
+    saved.push({
+      id,
+      filename,
+      mimeType: parsed.mimeType,
+      size: parsed.buffer.length,
+      reportId,
+    });
+  }
+
+  return saved;
+}
+
+function resolveScreenshotPath(reportId, screenshotId) {
+  if (!reportId || !screenshotId) return null;
+  if (!/^[a-zA-Z0-9_-]+$/.test(reportId) || !/^[a-f0-9]+$/.test(screenshotId)) {
+    return null;
+  }
+
+  const reportDir = path.join(SCREENSHOTS_DIR, reportId);
+  if (!fs.existsSync(reportDir)) return null;
+
+  const match = fs
+    .readdirSync(reportDir)
+    .find((name) => name.startsWith(`${screenshotId}.`));
+
+  if (!match) return null;
+
+  const fullPath = path.join(reportDir, match);
+  if (!fullPath.startsWith(reportDir)) return null;
+
+  return fullPath;
 }
 
 /**
@@ -104,6 +217,7 @@ async function submitFeedbackReport({
   pageUrl = "",
   pagePath = "",
   userAgent = "",
+  screenshots = [],
 }) {
   const key = rateLimitKey(authUser, req);
   if (!checkRateLimit(key)) {
@@ -115,22 +229,43 @@ async function submitFeedbackReport({
   const trimmedMessage = String(message || "").trim().slice(0, 2000);
   const recipients = getBugReportRecipients();
   const timestamp = new Date().toISOString();
+  const reportId = `rpt_${Date.now()}_${crypto.randomBytes(4).toString("hex")}`;
 
   const studentId = authUser?.studentId || "(not signed in)";
   const email = authUser?.email || "(guest)";
   const name = authUser?.name || "(guest)";
   const role = authUser?.role || "guest";
 
+  const savedScreenshots = saveScreenshots(reportId, screenshots);
+
+  if (!trimmedMessage && savedScreenshots.length === 0) {
+    const err = new Error("Please describe the problem or attach a screenshot.");
+    err.statusCode = 400;
+    throw err;
+  }
+
   const record = {
+    reportId,
     timestamp,
     studentId,
     email,
     name,
     role,
-    message: trimmedMessage || "(quick report — no extra details)",
+    message:
+      trimmedMessage ||
+      (savedScreenshots.length > 0
+        ? `(screenshot report — ${savedScreenshots.length} image(s))`
+        : "(quick report — no extra details)"),
     pageUrl: String(pageUrl || "").slice(0, 500),
     pagePath: String(pagePath || "").slice(0, 300),
     userAgent: String(userAgent || "").slice(0, 400),
+    screenshotCount: savedScreenshots.length,
+    screenshots: savedScreenshots.map((s) => ({
+      id: s.id,
+      mimeType: s.mimeType,
+      size: s.size,
+      reportId: s.reportId,
+    })),
   };
 
   const saved = appendLocalLog(record);
@@ -145,6 +280,13 @@ async function submitFeedbackReport({
   let emailSent = false;
   if (recipients.length > 0) {
     const subject = `[MicroTrainer] Issue — ${record.pagePath || "app"} (${studentId})`;
+    const inlineImages = savedScreenshots
+      .map((shot, index) => {
+        const filePath = path.join(SCREENSHOTS_DIR, reportId, shot.filename);
+        return `<p><strong>Screenshot ${index + 1}:</strong></p><img src="cid:screenshot${index}" alt="Screenshot ${index + 1}" style="max-width:100%;border:1px solid #e5e7eb;border-radius:8px;" />`;
+      })
+      .join("");
+
     const html = `
       <h2>Student issue report</h2>
       <p><strong>Time:</strong> ${escapeHtml(timestamp)}</p>
@@ -152,9 +294,11 @@ async function submitFeedbackReport({
       <p><strong>Email:</strong> ${escapeHtml(email)}</p>
       <p><strong>Role:</strong> ${escapeHtml(role)}</p>
       <p><strong>Page:</strong> <a href="${escapeHtml(record.pageUrl)}">${escapeHtml(record.pagePath || record.pageUrl)}</a></p>
+      <p><strong>Screenshots:</strong> ${savedScreenshots.length}</p>
       <hr/>
       <p><strong>Message:</strong></p>
       <pre style="white-space:pre-wrap;font-family:inherit;background:#f4f4f5;padding:12px;border-radius:8px;">${escapeHtml(record.message)}</pre>
+      ${inlineImages}
       <p style="color:#666;font-size:12px;">User-Agent: ${escapeHtml(record.userAgent)}</p>
     `;
     const text = [
@@ -163,14 +307,27 @@ async function submitFeedbackReport({
       `Student: ${name} (${studentId})`,
       `Email: ${email}`,
       `Page: ${record.pageUrl || record.pagePath}`,
+      `Screenshots: ${savedScreenshots.length}`,
       "",
       record.message,
       "",
       `User-Agent: ${record.userAgent}`,
     ].join("\n");
 
+    const attachments = savedScreenshots.map((shot, index) => {
+      const filePath = path.join(SCREENSHOTS_DIR, reportId, shot.filename);
+      return {
+        filename: shot.filename,
+        content: fs.readFileSync(filePath),
+        contentType: shot.mimeType,
+        cid: `screenshot${index}`,
+      };
+    });
+
     const results = await Promise.all(
-      recipients.map((to) => sendEmail(to, subject, html, text))
+      recipients.map((to) =>
+        sendEmail(to, subject, html, text, { attachments })
+      )
     );
     emailSent = results.some((r) => r.success === true);
   }
@@ -226,4 +383,6 @@ module.exports = {
   submitFeedbackReport,
   getBugReportRecipients,
   getRecentFeedbackReports,
+  resolveScreenshotPath,
+  SCREENSHOTS_DIR,
 };

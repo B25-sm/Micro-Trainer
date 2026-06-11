@@ -110,7 +110,7 @@ async function ensureBugReportsSheet() {
     });
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${BUG_REPORTS_SHEET}!A1:G1`,
+      range: `${BUG_REPORTS_SHEET}!A1:I1`,
       valueInputOption: "USER_ENTERED",
       resource: {
         values: [
@@ -122,6 +122,8 @@ async function ensureBugReportsSheet() {
             "message",
             "pagePath",
             "pageUrl",
+            "screenshotCount",
+            "screenshotIds",
           ],
         ],
       },
@@ -147,11 +149,13 @@ async function logFeedbackReport(data) {
       safe(data.message),
       safe(data.pagePath),
       safe(data.pageUrl),
+      safe(data.screenshotCount ?? 0),
+      safe((data.screenshots || []).map((s) => s.id).join(", ")),
     ];
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${BUG_REPORTS_SHEET}!A:G`,
+      range: `${BUG_REPORTS_SHEET}!A:I`,
       valueInputOption: "USER_ENTERED",
       insertDataOption: "INSERT_ROWS",
       resource: { values: [row] },
