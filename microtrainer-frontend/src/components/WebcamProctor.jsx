@@ -29,49 +29,51 @@ function estimateVideoLuminance(video) {
 
 const LOW_LIGHT_LUMA = 58;
 
-/** Normal vs dim room — pose/head checks stay strict; only no-face & multi-face get extra grace */
+/**
+ * Normal vs dim room.
+ * Pose checks are lenient: reading the screen (not staring at the lens) is expected.
+ * Warnings require sustained clear turns — not landmark jitter or off-center framing.
+ */
 function getProctorRules(lowLight) {
   if (lowLight) {
     return {
-      noFaceStreakMin: 5,
-      noFaceHoldMs: 8000,
-      lookingAwayDelayMs: 2500,
-      headTurnDelayMs: 2000,
-      lookingAwayMulX: 1.05,
-      lookingAwayMulY: 1.05,
-      headTurnEyeRatioMax: 0.46,
-      headTurnNormXMin: 0.15,
-      headTurnNormYMin: 0.12,
-      frameOffCenterXMin: 0.15,
-      frameOffCenterYMin: 0.13,
-      noseFrameOffXMin: 0.17,
-      noseFrameOffYMin: 0.14,
-      yawAbsMin: 0.1,
-      pitchAbsMin: 0.15,
-      multipleFacesConfirmSecs: 3,
+      noFaceStreakMin: 6,
+      noFaceHoldMs: 9000,
+      poseStreakMin: 7,
+      lookingAwayDelayMs: 4500,
+      headTurnDelayMs: 5000,
+      lookingAwayMulX: 1.15,
+      lookingAwayMulY: 1.2,
+      headTurnEyeRatioMax: 0.34,
+      headTurnNormXMin: 0.2,
+      headTurnNormYMin: 0.18,
+      yawAbsMin: 0.26,
+      pitchAbsMin: 0.32,
+      profileAspectMax: 0.68,
+      profileEyeRatioMax: 0.4,
+      multipleFacesConfirmSecs: 4,
       noFaceMessage:
         "Face not visible — look at the camera (dim lighting — add front light)",
     };
   }
   return {
-    noFaceStreakMin: 3,
-    noFaceHoldMs: 5000,
-    lookingAwayDelayMs: 2000,
-    headTurnDelayMs: 1500,
-    lookingAwayMulX: 1,
-    lookingAwayMulY: 1,
-    headTurnEyeRatioMax: 0.48,
-    headTurnNormXMin: 0.14,
-    headTurnNormYMin: 0.11,
-    frameOffCenterXMin: 0.14,
-    frameOffCenterYMin: 0.12,
-    noseFrameOffXMin: 0.16,
-    noseFrameOffYMin: 0.13,
-    yawAbsMin: 0.1,
-    pitchAbsMin: 0.15,
-    multipleFacesConfirmSecs: 1,
+    noFaceStreakMin: 4,
+    noFaceHoldMs: 6000,
+    poseStreakMin: 6,
+    lookingAwayDelayMs: 4000,
+    headTurnDelayMs: 4500,
+    lookingAwayMulX: 1.1,
+    lookingAwayMulY: 1.15,
+    headTurnEyeRatioMax: 0.36,
+    headTurnNormXMin: 0.19,
+    headTurnNormYMin: 0.17,
+    yawAbsMin: 0.24,
+    pitchAbsMin: 0.3,
+    profileAspectMax: 0.7,
+    profileEyeRatioMax: 0.42,
+    multipleFacesConfirmSecs: 2,
     noFaceMessage:
-      "Face not visible — look at the camera and stay centered",
+      "Face not visible — look at the camera and stay in frame",
   };
 }
 
@@ -102,21 +104,24 @@ const WebcamProctor = ({ onViolation, isActive }) => {
   const consecutiveNoFaceRef = useRef(0);
   /** Dim-light: require multiple consecutive seconds with 2+ faces before warning */
   const consecutiveMultipleFacesRef = useRef(0);
+  /** Require sustained pose drift — single jittery frames should not start timers */
+  const consecutiveLookingAwayRef = useRef(0);
+  const consecutiveHeadTurnRef = useRef(0);
   /** Avoid spamming parent (and duplicate warnings) when pose jitters */
   const violationCooldownRef = useRef({});
   const COOLDOWN_MS = {
-    head_turned: 8_000,
-    looking_away: 8_000,
-    multiple_faces: 6_000,
-    no_face_detected: 12_000,
+    head_turned: 15_000,
+    looking_away: 15_000,
+    multiple_faces: 8_000,
+    no_face_detected: 15_000,
   };
 
   const reportViolation = (type, points, reason) => {
     const poseTypes = ["head_turned", "looking_away"];
     const cooldownKey = poseTypes.includes(type) ? "_pose_group" : type;
     const cooldown = poseTypes.includes(type)
-      ? 8_000
-      : COOLDOWN_MS[type] ?? 5_000;
+      ? 15_000
+      : COOLDOWN_MS[type] ?? 8_000;
 
     const now = Date.now();
     const last = violationCooldownRef.current[cooldownKey] ?? 0;
@@ -316,12 +321,8 @@ const WebcamProctor = ({ onViolation, isActive }) => {
           const rightEye = landmarks.getRightEye();
 
           const faceBox = detections[0].detection.box;
-          const frameW = v.videoWidth;
-          const frameH = v.videoHeight;
           const faceCenterX = faceBox.x + faceBox.width / 2;
           const faceCenterY = faceBox.y + faceBox.height / 2;
-          const frameCenterX = frameW / 2;
-          const frameCenterY = frameH / 2;
 
           const noseX = nose[3].x;
           const noseY = nose[3].y;
@@ -341,77 +342,77 @@ const WebcamProctor = ({ onViolation, isActive }) => {
           const yawNorm = (noseX - eyeMidX) / faceWidth;
           const pitchNorm = (noseY - eyeMidY) / faceHeight;
 
-          const frameOffCenterX =
-            Math.abs(faceCenterX - frameCenterX) / Math.max(frameW, 1);
-          const frameOffCenterY =
-            Math.abs(faceCenterY - frameCenterY) / Math.max(frameH, 1);
-          const noseFrameOffX = Math.abs(noseX - frameCenterX) / Math.max(frameW, 1);
-          const noseFrameOffY = Math.abs(noseY - frameCenterY) / Math.max(frameH, 1);
-
-          const lookingAwayThresholdX = faceBox.width * 0.1 * rules.lookingAwayMulX;
-          const lookingAwayThresholdY = faceBox.height * 0.12 * rules.lookingAwayMulY;
+          const lookingAwayThresholdX = faceBox.width * 0.14 * rules.lookingAwayMulX;
+          const lookingAwayThresholdY = faceBox.height * 0.16 * rules.lookingAwayMulY;
 
           const noseOffsetSuspected =
             offsetX > lookingAwayThresholdX || offsetY > lookingAwayThresholdY;
 
-          const frameCenterSuspected =
-            frameOffCenterX > rules.frameOffCenterXMin ||
-            frameOffCenterY > rules.frameOffCenterYMin ||
-            noseFrameOffX > rules.noseFrameOffXMin ||
-            noseFrameOffY > rules.noseFrameOffYMin;
-
-          const headPoseSuspected =
-            Math.abs(yawNorm) > rules.yawAbsMin ||
-            Math.abs(pitchNorm) > rules.pitchAbsMin;
+          const extremeYaw = Math.abs(yawNorm) > rules.yawAbsMin;
+          const extremePitch = Math.abs(pitchNorm) > rules.pitchAbsMin;
 
           const profileAspect = faceWidth / faceHeight;
-          const profileLike = profileAspect < 0.78 && eyeDistRatio < 0.5;
+          const profileLike =
+            profileAspect < rules.profileAspectMax &&
+            eyeDistRatio < rules.profileEyeRatioMax;
 
+          // Looking at the question on-screen is OK — only flag a clear side turn / gaze away.
           const lookingAwaySuspected =
-            noseOffsetSuspected || frameCenterSuspected || headPoseSuspected;
+            extremeYaw || (noseOffsetSuspected && extremePitch);
 
           if (lookingAwaySuspected) {
-            if (!lookingAwayTimerRef.current) {
+            consecutiveLookingAwayRef.current += 1;
+            if (
+              consecutiveLookingAwayRef.current >= rules.poseStreakMin &&
+              !lookingAwayTimerRef.current
+            ) {
               lookingAwayTimerRef.current = setTimeout(() => {
                 reportViolation(
                   "looking_away",
                   lowLight ? 12 : 15,
-                  lowLight
-                    ? "Not facing the camera — look at the screen"
-                    : "Not facing the camera — look at the screen"
+                  "Not facing the screen — keep your attention on the interview"
                 );
                 lookingAwayTimerRef.current = null;
               }, rules.lookingAwayDelayMs);
             }
-          } else if (lookingAwayTimerRef.current) {
-            clearTimeout(lookingAwayTimerRef.current);
-            lookingAwayTimerRef.current = null;
+          } else {
+            consecutiveLookingAwayRef.current = 0;
+            if (lookingAwayTimerRef.current) {
+              clearTimeout(lookingAwayTimerRef.current);
+              lookingAwayTimerRef.current = null;
+            }
           }
 
           const headTurnSuspected =
             eyeDistRatio < rules.headTurnEyeRatioMax ||
             normX > rules.headTurnNormXMin ||
             normY > rules.headTurnNormYMin ||
-            headPoseSuspected ||
-            profileLike ||
-            frameCenterSuspected;
+            extremeYaw ||
+            profileLike;
 
           if (headTurnSuspected) {
-            if (!headTurnTimerRef.current) {
+            consecutiveHeadTurnRef.current += 1;
+            if (
+              consecutiveHeadTurnRef.current >= rules.poseStreakMin &&
+              !headTurnTimerRef.current
+            ) {
               headTurnTimerRef.current = setTimeout(() => {
                 reportViolation(
                   "head_turned",
                   lowLight ? 22 : 25,
                   lowLight
-                    ? "Head turned away — face the camera"
-                    : "Head turned away — face the camera and do not talk to others"
+                    ? "Head turned away for several seconds — face the screen"
+                    : "Head turned away for several seconds — stay facing the screen"
                 );
                 headTurnTimerRef.current = null;
               }, rules.headTurnDelayMs);
             }
-          } else if (headTurnTimerRef.current) {
-            clearTimeout(headTurnTimerRef.current);
-            headTurnTimerRef.current = null;
+          } else {
+            consecutiveHeadTurnRef.current = 0;
+            if (headTurnTimerRef.current) {
+              clearTimeout(headTurnTimerRef.current);
+              headTurnTimerRef.current = null;
+            }
           }
         }
       } catch (error) {
@@ -437,6 +438,8 @@ const WebcamProctor = ({ onViolation, isActive }) => {
       }
       consecutiveNoFaceRef.current = 0;
       consecutiveMultipleFacesRef.current = 0;
+      consecutiveLookingAwayRef.current = 0;
+      consecutiveHeadTurnRef.current = 0;
     };
   }, [cameraActive, modelsLoaded, isActive]);
 
@@ -491,9 +494,9 @@ const WebcamProctor = ({ onViolation, isActive }) => {
         {lowLightActive && modelsLoaded && !liveAlert && (
           <div className="px-3 py-2 bg-amber-50 border-t border-amber-100 dark:bg-amber-950/40 dark:border-amber-900">
             <p className="text-xs text-amber-950 dark:text-amber-100 leading-snug">
-              <span className="font-semibold">Dim lighting.</span> Head-turn and look-away
-              checks still run. Extra grace applies only if the camera briefly loses your face.
-              Add front light when you can.
+              <span className="font-semibold">Dim lighting.</span> Looking at the screen is
+              fine — warnings only fire after several seconds of a clear turn away. Add front
+              light if the camera loses your face.
             </p>
           </div>
         )}

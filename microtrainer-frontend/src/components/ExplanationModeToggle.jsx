@@ -17,14 +17,14 @@ export default function ExplanationModeToggle({ mode, onChange }) {
       </span>
 
       <div
-        className="relative flex p-0.5 rounded-full bg-slate-200/80 shrink-0"
+        className="relative flex p-0.5 rounded-full bg-slate-200/80 dark:bg-slate-700/80 shrink-0"
         role="group"
         aria-label="Lesson length"
       >
         <motion.div
           layout
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
-          className="absolute top-0.5 bottom-0.5 rounded-full bg-white shadow-sm"
+          className="absolute top-0.5 bottom-0.5 rounded-full bg-white dark:bg-slate-600 shadow-sm"
           style={{
             width: "calc(50% - 2px)",
             left: isTerse ? "calc(50% + 1px)" : "2px",
@@ -34,7 +34,9 @@ export default function ExplanationModeToggle({ mode, onChange }) {
           type="button"
           onClick={() => onChange("lucid")}
           className={`relative z-10 px-4 sm:px-5 py-1.5 text-sm font-medium rounded-full transition-colors ${
-            !isTerse ? "text-slate-900" : "text-slate-500 hover:text-slate-700"
+            !isTerse
+              ? "text-slate-900 dark:text-slate-100"
+              : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
           }`}
           aria-pressed={!isTerse}
         >
@@ -44,7 +46,9 @@ export default function ExplanationModeToggle({ mode, onChange }) {
           type="button"
           onClick={() => onChange("terse")}
           className={`relative z-10 px-4 sm:px-5 py-1.5 text-sm font-medium rounded-full transition-colors ${
-            isTerse ? "text-slate-900" : "text-slate-500 hover:text-slate-700"
+            isTerse
+              ? "text-slate-900 dark:text-slate-100"
+              : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
           }`}
           aria-pressed={isTerse}
         >
@@ -54,7 +58,9 @@ export default function ExplanationModeToggle({ mode, onChange }) {
 
       <p
         className={`text-[11px] truncate min-w-0 flex-1 text-right leading-tight ${
-          isTerse ? "text-amber-700 font-medium" : "text-slate-400"
+          isTerse
+            ? "text-amber-700 dark:text-amber-400 font-medium"
+            : "text-slate-400 dark:text-slate-500"
         }`}
       >
         <span className="hidden md:inline">

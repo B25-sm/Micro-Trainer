@@ -51,7 +51,7 @@ export function normalizeLessonMarkdown(content) {
 }
 
 const CAST_LINE_CLASS =
-  "lesson-cast-line mb-2 pl-3 border-l-4 border-indigo-400 bg-indigo-50 rounded-r-lg py-2.5 pr-3 list-none ml-0 text-[15px] text-gray-900 dark:text-gray-900 " +
+  "lesson-cast-line mb-2 pl-3 border-l-4 border-indigo-400 bg-indigo-50 rounded-r-lg py-2.5 pr-3 list-none ml-0 text-[15px] text-gray-900 dark:bg-zinc-900 dark:text-slate-200 " +
   "read-mode:border-[var(--read-border)] read-mode:bg-[var(--read-callout-bg)] read-mode:text-[var(--read-text)]";
 
 export function createLessonMarkdownComponents() {
@@ -59,7 +59,7 @@ export function createLessonMarkdownComponents() {
     code: ({ inline, children, ...props }) =>
       inline ? (
         <code
-          className="bg-gray-200 px-1.5 py-0.5 rounded text-xs font-mono text-gray-900 read-mode:bg-[var(--read-surface)] read-mode:text-[var(--read-text)]"
+          className="bg-gray-200 px-1.5 py-0.5 rounded text-xs font-mono text-gray-900 dark:bg-zinc-800 dark:text-slate-200 read-mode:bg-[var(--read-surface)] read-mode:text-[var(--read-text)]"
           {...props}
         >
           {children}

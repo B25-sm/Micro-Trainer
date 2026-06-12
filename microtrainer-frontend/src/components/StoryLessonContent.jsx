@@ -56,24 +56,24 @@ export default function StoryLessonContent({
           </motion.div>
         )}
 
-        {isTerse ? (
-          <div className="space-y-3">
-            {normalized.split("\n").filter((l) => l.trim()).map((line, i) => (
-              <div
-                key={i}
-                className={`text-[15px] leading-relaxed read-mode:text-[1.125rem] read-mode:leading-[1.85] ${themeStyles.prose}`}
-              >
-                <ReactMarkdown components={mdComponents}>{line}</ReactMarkdown>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <motion.div
-            className={`lesson-prose prose prose-base prose-neutral max-w-none leading-relaxed [&_p]:leading-relaxed read-mode:prose-lg read-mode:text-[var(--read-text)] ${themeStyles.prose}`}
-          >
-            <ReactMarkdown components={mdComponents}>{normalized}</ReactMarkdown>
-          </motion.div>
-        )}
+        <motion.div
+          className={`lesson-prose prose prose-base prose-neutral dark:prose-invert max-w-none leading-relaxed [&_p]:leading-relaxed read-mode:prose-lg ${themeStyles.prose} ${
+            isTerse ? "space-y-3 [&_p]:mb-0" : ""
+          }`}
+        >
+          {isTerse
+            ? normalized
+                .split("\n")
+                .filter((l) => l.trim())
+                .map((line, i) => (
+                  <ReactMarkdown key={i} components={mdComponents}>
+                    {line}
+                  </ReactMarkdown>
+                ))
+            : (
+              <ReactMarkdown components={mdComponents}>{normalized}</ReactMarkdown>
+            )}
+        </motion.div>
       </motion.div>
     </article>
   );

@@ -1,12 +1,17 @@
 import { motion } from "framer-motion";
 import { LESSON_CARD_THEMES } from "../utils/lessonCardTheme";
+import { useDisplayMode } from "../hooks/useDisplayMode";
 
 const THEME_ORDER = ["white", "yellow", "mint", "sky", "lavender"];
 
 /**
- * Compact card background picker — sits beside Reading / Lucid controls.
+ * Compact card background picker — light mode only (dark mode uses a fixed black card).
  */
 export default function LessonCardThemeToggle({ theme, onChange }) {
+  const { darkMode } = useDisplayMode();
+
+  if (darkMode) return null;
+
   return (
     <motion.div
       className="flex items-center justify-between gap-3 py-2 px-3 sm:px-4 mb-3 rounded-xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-600/80 read-mode:bg-[var(--read-surface-elevated)] read-mode:border-[var(--read-border)]"
