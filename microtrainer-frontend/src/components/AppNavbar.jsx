@@ -60,7 +60,7 @@ function navLinkClass(active, collapsed) {
 function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { collapsed, closeMobile } = useSidebar();
+  const { isCollapsed, closeMobile } = useSidebar();
   const [userName, setUserName] = useState("");
   const showTrainerNav = isTrainerSession();
 
@@ -100,30 +100,30 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
     <div className="flex h-full flex-col">
       <div
         className={`flex items-center border-b border-gray-200 dark:border-gray-700 ${
-          collapsed ? "justify-center px-2 py-4" : "gap-2 px-4 py-4"
+          isCollapsed ? "justify-center px-2 py-4" : "gap-2 px-4 py-4"
         }`}
       >
         <button
           type="button"
           onClick={() => go("/")}
           className={`font-semibold text-gray-800 dark:text-gray-100 read-mode:text-[var(--read-text-heading)] hover:text-blue-600 dark:hover:text-blue-400 transition ${
-            collapsed ? "text-sm" : "text-lg"
+            isCollapsed ? "text-sm" : "text-lg"
           }`}
           title="MicroTrainer home"
         >
-          {collapsed ? "MT" : "MicroTrainer"}
+          {isCollapsed ? "MT" : "MicroTrainer"}
         </button>
       </div>
 
       <nav className="flex-1 overflow-y-auto px-2 py-3 space-y-4" aria-label="Main">
         {NAV_SECTIONS.map((section, idx) => (
           <div key={section.label || `section-${idx}`}>
-            {section.label && !collapsed && (
+            {section.label && !isCollapsed && (
               <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
                 {section.label}
               </p>
             )}
-            {section.label && collapsed && (
+            {section.label && isCollapsed && (
               <div className="mx-auto mb-2 h-px w-8 bg-gray-200 dark:bg-gray-700" aria-hidden />
             )}
             <ul className="space-y-0.5">
@@ -132,11 +132,11 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
                   <button
                     type="button"
                     onClick={() => go(path)}
-                    className={navLinkClass(isActive(path), collapsed)}
-                    title={collapsed ? label : undefined}
+                    className={navLinkClass(isActive(path), isCollapsed)}
+                    title={isCollapsed ? label : undefined}
                   >
                     <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={1.75} aria-hidden />
-                    {!collapsed && <span className="text-sm truncate">{label}</span>}
+                    {!isCollapsed && <span className="text-sm truncate">{label}</span>}
                   </button>
                 </li>
               ))}
@@ -146,22 +146,22 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
 
         {showTrainerNav && (
           <div>
-            {!collapsed && (
+            {!isCollapsed && (
               <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
                 Staff
               </p>
             )}
-            {collapsed && (
+            {isCollapsed && (
               <div className="mx-auto mb-2 h-px w-8 bg-gray-200 dark:bg-gray-700" aria-hidden />
             )}
             <button
               type="button"
               onClick={() => go("/trainer")}
-              className={navLinkClass(isActive("/trainer"), collapsed)}
-              title={collapsed ? "Trainer" : undefined}
+              className={navLinkClass(isActive("/trainer"), isCollapsed)}
+              title={isCollapsed ? "Trainer" : undefined}
             >
               <GraduationCap className="h-[18px] w-[18px] shrink-0" strokeWidth={1.75} aria-hidden />
-              {!collapsed && <span className="text-sm truncate">Trainer</span>}
+              {!isCollapsed && <span className="text-sm truncate">Trainer</span>}
             </button>
           </div>
         )}
@@ -169,21 +169,21 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
 
       <div
         className={`border-t border-gray-200 dark:border-gray-700 ${
-          collapsed ? "px-2 py-3 space-y-2" : "px-3 py-3 space-y-3"
+          isCollapsed ? "px-2 py-3 space-y-2" : "px-3 py-3 space-y-3"
         }`}
       >
-        <div className={collapsed ? "flex justify-center" : ""}>
-          <DisplayModeToggle variant={collapsed ? "icon" : "compact"} />
+        <div className={isCollapsed ? "flex justify-center" : ""}>
+          <DisplayModeToggle variant={isCollapsed ? "icon" : "compact"} />
         </div>
 
-        {showLevelBadge && currentLevel && !collapsed && (
+        {showLevelBadge && currentLevel && !isCollapsed && (
           <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300">
             {currentLevel.charAt(0).toUpperCase() + currentLevel.slice(1)}
           </span>
         )}
 
         <div
-          className={`flex items-center gap-2.5 ${collapsed ? "justify-center" : ""}`}
+          className={`flex items-center gap-2.5 ${isCollapsed ? "justify-center" : ""}`}
           title={userName || "Guest"}
         >
           <span
@@ -192,7 +192,7 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
           >
             {(userName || "G").charAt(0).toUpperCase()}
           </span>
-          {!collapsed && (
+          {!isCollapsed && (
             <span className="min-w-0 flex-1 truncate text-sm text-gray-700 dark:text-gray-200 leading-tight">
               {userName || "Guest"}
             </span>
@@ -204,12 +204,12 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
           onClick={handleLogout}
           aria-label="Sign out of MicroTrainer"
           className={`w-full inline-flex items-center rounded-lg text-sm font-normal text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-100/90 dark:hover:bg-white/[0.06] transition-colors ${
-            collapsed ? "justify-center p-2" : "gap-2 px-3 py-2"
+            isCollapsed ? "justify-center p-2" : "gap-2 px-3 py-2"
           }`}
-          title={collapsed ? "Sign out" : undefined}
+          title={isCollapsed ? "Sign out" : undefined}
         >
           <LogOut className="h-4 w-4 shrink-0 opacity-80" strokeWidth={1.75} aria-hidden />
-          {!collapsed && <span>Sign out</span>}
+          {!isCollapsed && <span>Sign out</span>}
         </button>
       </div>
     </div>
@@ -217,7 +217,23 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
 }
 
 export default function AppNavbar({ showLevelBadge = false, currentLevel = null }) {
-  const { collapsed, mobileOpen, toggleCollapsed, openMobile, closeMobile } = useSidebar();
+  const {
+    collapsed,
+    isCollapsed,
+    setHoverExpanded,
+    mobileOpen,
+    toggleCollapsed,
+    openMobile,
+    closeMobile,
+  } = useSidebar();
+
+  const handleSidebarMouseEnter = () => {
+    if (collapsed) setHoverExpanded(true);
+  };
+
+  const handleSidebarMouseLeave = () => {
+    setHoverExpanded(false);
+  };
 
   return (
     <>
@@ -246,16 +262,18 @@ export default function AppNavbar({ showLevelBadge = false, currentLevel = null 
 
       {/* Sidebar */}
       <aside
+        onMouseEnter={handleSidebarMouseEnter}
+        onMouseLeave={handleSidebarMouseLeave}
         className={`
           fixed top-0 left-0 z-50 h-full border-r border-gray-200 dark:border-gray-700
           bg-white dark:bg-[#292a2d] read-mode:bg-[var(--read-surface-elevated)] read-mode:border-[var(--read-border)]
           transition-all duration-300 ease-in-out
-          ${collapsed ? "w-[72px]" : "w-60"}
+          ${isCollapsed ? "w-[72px]" : "w-60"}
           ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0
         `}
       >
-        <div className="relative h-full">
+        <div className="relative h-full lg:pr-3">
           <button
             type="button"
             onClick={closeMobile}
@@ -275,9 +293,9 @@ export default function AppNavbar({ showLevelBadge = false, currentLevel = null 
             type="button"
             onClick={toggleCollapsed}
             className="hidden lg:flex absolute -right-3 top-16 z-10 h-6 w-6 items-center justify-center rounded-full border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#292a2d] text-gray-500 dark:text-gray-400 shadow-sm hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
-            {collapsed ? (
+            {isCollapsed ? (
               <PanelLeftOpen className="h-3.5 w-3.5" />
             ) : (
               <PanelLeftClose className="h-3.5 w-3.5" />

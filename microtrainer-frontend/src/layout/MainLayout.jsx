@@ -5,7 +5,7 @@ import { SidebarProvider, useSidebar } from "../context/SidebarContext";
 
 function MainLayoutInner({ children }) {
   const location = useLocation();
-  const { collapsed } = useSidebar();
+  const { isCollapsed } = useSidebar();
 
   const isHomePage = location.pathname === "/";
   const isLearnPage = location.pathname === "/learn";
@@ -20,7 +20,7 @@ function MainLayoutInner({ children }) {
 
       <div
         className={`min-h-screen flex flex-col transition-[margin] duration-300 ease-in-out ${
-          collapsed ? "lg:ml-[72px]" : "lg:ml-60"
+          isCollapsed ? "lg:ml-[72px]" : "lg:ml-60"
         }`}
       >
         <motion.div

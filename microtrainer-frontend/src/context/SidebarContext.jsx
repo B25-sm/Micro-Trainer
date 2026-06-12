@@ -13,6 +13,10 @@ export function SidebarProvider({ children }) {
     }
   });
   const [mobileOpen, setMobileOpen] = useState(false);
+  /** Temporary expand on hover when sidebar is collapsed (desktop only) */
+  const [hoverExpanded, setHoverExpanded] = useState(false);
+
+  const isCollapsed = collapsed && !hoverExpanded;
 
   useEffect(() => {
     try {
@@ -33,11 +37,17 @@ export function SidebarProvider({ children }) {
 
   const value = {
     collapsed,
+    isCollapsed,
+    hoverExpanded,
+    setHoverExpanded,
     mobileOpen,
-    toggleCollapsed: () => setCollapsed((c) => !c),
+    toggleCollapsed: () => {
+      setHoverExpanded(false);
+      setCollapsed((c) => !c);
+    },
     openMobile: () => setMobileOpen(true),
     closeMobile: () => setMobileOpen(false),
-    sidebarWidth: collapsed ? 72 : 240,
+    sidebarWidth: isCollapsed ? 72 : 240,
   };
 
   return (
