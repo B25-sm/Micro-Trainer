@@ -62,10 +62,11 @@ export default function DisplayModeToggle({ variant = "panel" }) {
 
 function ThemeSegment({ darkMode, setDarkMode, iconOnly = false, compact = false }) {
   const small = iconOnly && compact;
+  const pad = small ? 1 : 2;
 
   return (
     <div
-      className={`relative inline-flex items-center rounded-full border bg-slate-100/95 dark:bg-[#303134] ${
+      className={`relative inline-grid grid-cols-2 items-stretch rounded-full border bg-slate-100/95 dark:bg-[#303134] ${
         small
           ? "border-slate-200/70 dark:border-slate-600/60 p-px"
           : "border-slate-200/90 dark:border-slate-600/80 p-0.5 shadow-sm"
@@ -74,11 +75,13 @@ function ThemeSegment({ darkMode, setDarkMode, iconOnly = false, compact = false
       aria-label="Theme"
     >
       <span
-        className={`pointer-events-none absolute rounded-full bg-white dark:bg-[#3c4043] transition-transform duration-200 ease-out ${
-          small
-            ? "top-px bottom-px left-px w-6 ring-1 ring-slate-200/60 dark:ring-slate-500/30"
-            : "top-0.5 bottom-0.5 left-0.5 w-9 shadow-md ring-1 ring-slate-200/80 dark:ring-slate-500/40"
-        } ${darkMode ? (small ? "translate-x-6" : "translate-x-9") : "translate-x-0"}`}
+        className={`pointer-events-none absolute rounded-full bg-white dark:bg-[#3c4043] shadow-md ring-1 ring-slate-200/80 dark:ring-slate-500/40 transition-[left] duration-200 ease-out ${
+          small ? "top-px bottom-px" : "top-0.5 bottom-0.5"
+        }`}
+        style={{
+          width: `calc(50% - ${pad}px)`,
+          left: darkMode ? `calc(50% + ${pad / 2}px)` : `${pad}px`,
+        }}
         aria-hidden
       />
       <ThemeOption
@@ -137,8 +140,12 @@ function ThemeOption({ active, onClick, label, iconOnly, compact = false, childr
       aria-pressed={active}
       aria-label={label}
       title={label}
-      className={`relative z-[1] inline-flex items-center justify-center rounded-full font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1a73e8] dark:focus-visible:ring-[#8ab4f8] focus-visible:ring-offset-1 dark:focus-visible:ring-offset-[#202124] ${
-        small ? "h-6 w-6" : iconOnly ? "h-8 w-9" : "h-8 px-3 gap-1.5 min-w-[2.75rem]"
+      className={`relative z-[1] inline-flex w-full items-center justify-center rounded-full font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1a73e8] dark:focus-visible:ring-[#8ab4f8] focus-visible:ring-offset-1 dark:focus-visible:ring-offset-[#202124] ${
+        small
+          ? "h-6 px-2 gap-1"
+          : iconOnly
+            ? "h-8 px-3 gap-1"
+            : "h-8 px-3 sm:px-4 gap-1.5"
       }`}
     >
       {children}
