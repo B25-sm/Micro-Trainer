@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import Header from "../components/Header";
 import CategoryModal from "../components/personalSchedule/CategoryModal";
 import ScheduleDiagnostic from "../components/personalSchedule/ScheduleDiagnostic";
 import SchedulePlanView from "../components/personalSchedule/SchedulePlanView";
@@ -161,7 +160,6 @@ export default function PersonalSchedule() {
   if (!studentId) {
     return (
       <div className={pageShell}>
-        <Header />
         <main className="max-w-lg mx-auto px-6 py-16 text-center">
           <p className={textMuted}>Sign in and complete your profile to use Personal Schedule.</p>
           <button type="button" className={`${btnPrimary} mt-4`} onClick={() => navigate("/login")}>
@@ -177,8 +175,6 @@ export default function PersonalSchedule() {
 
   return (
     <div className={`flex flex-col min-h-screen ${pageShell}`}>
-      <Header />
-
       <main className="flex-1 max-w-3xl mx-auto w-full px-6 py-8">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className={`${headingSection} text-2xl mb-1`}>Personal Schedule</h1>

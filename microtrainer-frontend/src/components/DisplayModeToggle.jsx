@@ -4,11 +4,22 @@ import { useDisplayMode } from "../hooks/useDisplayMode";
 /**
  * Theme + read mode controls.
  * compact: icon-only pill for nav bars
+ * icon: stacked icon controls for narrow sidebars
  * panel: full-width bar for lesson pages
  */
 export default function DisplayModeToggle({ variant = "panel" }) {
   const { darkMode, readMode, setDarkMode, toggleReadMode } = useDisplayMode();
   const isCompact = variant === "compact";
+  const isIcon = variant === "icon";
+
+  if (isIcon) {
+    return (
+      <div className="flex flex-col items-center gap-1.5" role="group" aria-label="Display settings">
+        <ThemeSegment darkMode={darkMode} setDarkMode={setDarkMode} iconOnly />
+        <ReadModeButton readMode={readMode} toggleReadMode={toggleReadMode} iconOnly />
+      </div>
+    );
+  }
 
   if (isCompact) {
     return (

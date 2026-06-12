@@ -1,33 +1,47 @@
 import Navbar from "./Navbar";
 import { motion } from "framer-motion";
 import { useLocation } from "react-router-dom";
+import { SidebarProvider, useSidebar } from "../context/SidebarContext";
 
-const MainLayout = ({ children }) => {
+function MainLayoutInner({ children }) {
   const location = useLocation();
-  
-  // Home page doesn't need layout constraints
+  const { collapsed } = useSidebar();
+
   const isHomePage = location.pathname === "/";
   const isLearnPage = location.pathname === "/learn";
+  const isInterviewPage = location.pathname === "/interview";
+  const isFullWidth = isHomePage || isLearnPage || isInterviewPage;
+
+  const contentPad = isFullWidth ? "w-full" : "max-w-6xl mx-auto w-full px-4 py-4";
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#202124] text-gray-800 dark:text-gray-200 read-mode:bg-[var(--read-surface)] read-mode:text-[var(--read-text)] transition-colors duration-300">
-      {/* Navbar - only show on non-home pages */}
-      {!isHomePage && !isLearnPage && <Navbar />}
+      <Navbar />
 
-      {/* Page Transition Wrapper */}
-      <motion.div
-        key={location.pathname}
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -8 }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        className={isHomePage || isLearnPage ? "w-full" : "max-w-6xl mx-auto w-full px-4 py-4"}
+      <div
+        className={`min-h-screen flex flex-col transition-[margin] duration-300 ease-in-out ${
+          collapsed ? "lg:ml-[72px]" : "lg:ml-60"
+        }`}
       >
-        {children}
-      </motion.div>
-
+        <motion.div
+          key={location.pathname}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+          className={`flex-1 ${contentPad}`}
+        >
+          {children}
+        </motion.div>
+      </div>
     </div>
   );
-};
+}
+
+const MainLayout = ({ children }) => (
+  <SidebarProvider>
+    <MainLayoutInner>{children}</MainLayoutInner>
+  </SidebarProvider>
+);
 
 export default MainLayout;

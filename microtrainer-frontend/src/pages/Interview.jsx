@@ -647,8 +647,8 @@ IMPORTANT:
   }
 
   return (
-    /* Navbar + layout padding already consume viewport height — filling another full screen pushes the composer below the fold */
-    <div className="flex flex-col w-full overflow-hidden bg-white dark:bg-[#202124] h-[calc(100dvh-8rem)] min-h-[28rem] sm:h-[calc(100dvh-7rem)] sm:min-h-[360px]">
+    /* Sidebar layout: mobile top bar + interview header consume viewport height */
+    <div className="flex flex-col w-full overflow-hidden bg-white dark:bg-[#202124] h-[calc(100dvh-3rem-3.5rem)] min-h-[28rem] lg:h-[calc(100dvh-3.5rem)] lg:min-h-[360px]">
       
       {/* 🔒 WEBCAM PROCTORING */}
       <WebcamProctor 

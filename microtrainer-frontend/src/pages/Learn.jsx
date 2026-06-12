@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import axios from "axios";
 import { askAI } from "../api";
-import Header from "../components/Header";
 import { getStudentId } from "../utils/studentAuth";
 import { isTrainerSession } from "../utils/trainerAuth";
 
@@ -247,11 +246,13 @@ const Learn = () => {
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-[#202124] read-mode:bg-[var(--read-surface)] transition-colors duration-300">
       
-      {/* Unified Header */}
-      <Header showLevelBadge={true} currentLevel={currentLevel} />
-
       {/* Main Content */}
       <main className="flex-1 flex flex-col items-center px-6 py-8 max-w-4xl mx-auto w-full">
+        {currentLevel && (
+          <span className="mb-4 inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300">
+            {currentLevel.charAt(0).toUpperCase() + currentLevel.slice(1)} level
+          </span>
+        )}
         
         {/* Mode Selection - Show when no conversation in ask-anything mode */}
         {learningMode === "ask-anything" && conversation.length === 0 && (

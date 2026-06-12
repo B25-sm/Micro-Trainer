@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { chatWithMicroTrainer } from "../api";
-import Header from "../components/Header";
 import { pageShell, headingSection, textMuted, chipButton, chipButtonSm, inputShell } from "../lib/ui";
 
 const Home = () => {
@@ -85,9 +84,6 @@ const Home = () => {
   return (
     <div className={`flex flex-col ${pageShell}`}>
       
-      {/* Unified Header */}
-      <Header />
-
       {/* Main Content - Centered Gemini Style */}
       <main className="flex-1 flex flex-col items-center justify-center px-6 py-12 max-w-2xl mx-auto w-full">
         

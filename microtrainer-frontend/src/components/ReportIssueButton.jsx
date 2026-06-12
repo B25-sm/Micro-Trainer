@@ -148,16 +148,10 @@ export default function ReportIssueButton() {
 
   const isSending = status === "sending";
   const canSubmit = message.trim().length > 0 || screenshots.length > 0;
-  const isHome = location.pathname === "/";
-
   return (
     <div
       ref={panelRef}
-      className={`fixed z-[120] flex flex-col gap-3 ${
-        isHome
-          ? "bottom-24 right-6 items-end"
-          : "bottom-6 left-6 items-start"
-      }`}
+      className="fixed z-[120] bottom-6 right-6 flex flex-col gap-3 items-end"
       style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
       aria-live="polite"
     >
