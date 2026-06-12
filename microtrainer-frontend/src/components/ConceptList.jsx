@@ -2,7 +2,15 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { learningPathAPI } from "../api/learningPath";
 
-const ConceptList = ({ technology, studentId, onConceptSelect, onBack }) => {
+const ConceptList = ({
+  technology,
+  studentId,
+  studyMode = "guided",
+  onStudyModeChange,
+  onConceptSelect,
+  onBack,
+}) => {
+  const freeStudy = studyMode === "browse";
   const [curriculum, setCurriculum] = useState(null);
   const [progress, setProgress] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -53,9 +61,14 @@ const ConceptList = ({ technology, studentId, onConceptSelect, onBack }) => {
   }, [technology, studentId]);
 
   const getConceptStatus = (concept) => {
-    if (!progress) return "locked";
+    if (!progress) return freeStudy ? "available" : "locked";
 
     const isCompleted = progress.completedConcepts?.includes(concept.id);
+    if (freeStudy) {
+      if (isCompleted) return "completed";
+      return "available";
+    }
+
     const isCurrent = concept.order === progress.currentConceptOrder;
     const isLocked = concept.order > progress.currentConceptOrder;
 
@@ -79,7 +92,7 @@ const ConceptList = ({ technology, studentId, onConceptSelect, onBack }) => {
     return (
       <div className="w-full py-20 text-center">
         <div className="inline-block w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-        <p className="mt-4 text-gray-600">Loading curriculum...</p>
+        <p className="mt-4 text-gray-600 dark:text-gray-400">Loading curriculum...</p>
       </div>
     );
   }
@@ -87,8 +100,8 @@ const ConceptList = ({ technology, studentId, onConceptSelect, onBack }) => {
   if (error) {
     return (
       <div className="w-full py-20 text-center">
-        <p className="text-gray-800 font-medium mb-2">Oops! Something went wrong</p>
-        <p className="text-gray-600 mb-4">{error}</p>
+        <p className="text-gray-800 dark:text-gray-100 font-medium mb-2">Oops! Something went wrong</p>
+        <p className="text-gray-600 dark:text-gray-400 mb-4">{error}</p>
         <button
           type="button"
           onClick={onBack}
@@ -136,12 +149,12 @@ const ConceptList = ({ technology, studentId, onConceptSelect, onBack }) => {
         transition={{ delay: concept.order * 0.05 }}
         className={`relative rounded-xl border-2 p-5 transition-all ${
           status === "completed"
-            ? "border-green-300 bg-green-50 hover:border-green-400 cursor-pointer"
+            ? "border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-950/30 hover:border-green-400 cursor-pointer"
             : status === "current"
-            ? "border-blue-400 bg-blue-50 hover:border-blue-500 cursor-pointer shadow-md"
+            ? "border-blue-400 dark:border-blue-600 bg-blue-50 dark:bg-blue-950/30 hover:border-blue-500 cursor-pointer shadow-md"
             : status === "locked"
-            ? "border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed"
-            : "border-gray-300 bg-white hover:border-blue-300 cursor-pointer"
+            ? "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/40 opacity-60 cursor-not-allowed"
+            : "border-gray-300 dark:border-gray-600 bg-white dark:bg-[#292a2d] hover:border-blue-300 dark:hover:border-blue-500 cursor-pointer"
         }`}
         onClick={() => handleConceptClick(concept)}
       >
@@ -155,10 +168,10 @@ const ConceptList = ({ technology, studentId, onConceptSelect, onBack }) => {
           <div className="flex-1">
             <div className="flex items-start justify-between mb-2">
               <div>
-                <h3 className="text-lg font-semibold text-gray-800">
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                   {concept.order}. {displayTitle}
                 </h3>
-                <p className="text-sm text-gray-600 mt-1">{concept.description}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{concept.description}</p>
                 {concept.project && (
                   <p className="text-xs text-purple-700 mt-1 font-medium">
                     {"\uD83D\uDCC1"} Project: {concept.project}
@@ -197,17 +210,22 @@ const ConceptList = ({ technology, studentId, onConceptSelect, onBack }) => {
 
             <div className="mt-4">
               {status === "completed" && (
-                <span className="text-sm text-green-600 font-medium">
+                <span className="text-sm text-green-600 dark:text-green-400 font-medium">
                   {"\u2713"} Completed • Click to review
                 </span>
               )}
               {status === "current" && (
-                <span className="text-sm text-blue-600 font-medium">
+                <span className="text-sm text-blue-600 dark:text-blue-400 font-medium">
                   {"\u2192"} Start learning this module
                 </span>
               )}
+              {status === "available" && (
+                <span className="text-sm text-indigo-600 dark:text-indigo-400 font-medium">
+                  {"\u2192"} Study this topic
+                </span>
+              )}
               {status === "locked" && (
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-gray-500 dark:text-gray-400">
                   {"\uD83D\uDD12"} Complete previous modules first
                 </span>
               )}
@@ -228,19 +246,36 @@ const ConceptList = ({ technology, studentId, onConceptSelect, onBack }) => {
         <button
           type="button"
           onClick={onBack}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4 transition"
+          className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 mb-4 transition"
         >
           {"\u2190"} Back to Technologies
         </button>
 
-        <h2 className="text-3xl font-semibold text-gray-800 mb-2">
-          {curriculum?.technology} Course
-        </h2>
+        <div className="flex flex-wrap items-start justify-between gap-3 mb-2">
+          <h2 className="text-3xl font-semibold text-gray-800 dark:text-gray-100">
+            {curriculum?.technology} Course
+          </h2>
+          {onStudyModeChange && (
+            <button
+              type="button"
+              onClick={() => onStudyModeChange(freeStudy ? "guided" : "browse")}
+              className="text-sm font-medium text-[#1a73e8] dark:text-[#8ab4f8] hover:underline shrink-0"
+            >
+              {freeStudy ? "Switch to guided path" : "Browse all topics"}
+            </button>
+          )}
+        </div>
 
-        <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
+        {freeStudy && (
+          <p className="text-sm text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 rounded-lg px-3 py-2 mb-4">
+            Free study mode — open any topic. Quiz progress still saves when you pass.
+          </p>
+        )}
+
+        <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-4">
           <span>
             Progress:{" "}
-            <span className="font-medium text-gray-800">
+            <span className="font-medium text-gray-800 dark:text-gray-200">
               {progress?.overallProgress || 0}%
             </span>
           </span>
@@ -251,7 +286,7 @@ const ConceptList = ({ technology, studentId, onConceptSelect, onBack }) => {
           </span>
         </div>
 
-        <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+        <div className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${progress?.overallProgress || 0}%` }}
@@ -265,11 +300,11 @@ const ConceptList = ({ technology, studentId, onConceptSelect, onBack }) => {
         {groupedConcepts.map((group) => (
           <div key={group.sectionId || group.sectionTitle || "all"}>
             {group.sectionTitle && (
-              <div className="mb-4 pb-2 border-b border-gray-200">
-                <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wide">
+              <div className="mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+                <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">
                   Section {group.sectionId}
                 </p>
-                <h3 className="text-lg font-semibold text-gray-800">
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                   {group.sectionTitle}
                 </h3>
               </div>
@@ -283,7 +318,7 @@ const ConceptList = ({ technology, studentId, onConceptSelect, onBack }) => {
 
       {!curriculum?.concepts?.length && (
         <div className="text-center py-12">
-          <p className="text-gray-600">No modules available for this path yet.</p>
+          <p className="text-gray-600 dark:text-gray-400">No modules available for this path yet.</p>
         </div>
       )}
     </motion.div>

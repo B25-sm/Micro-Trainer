@@ -32,6 +32,8 @@ const Learn = () => {
   const [selectedTechnology, setSelectedTechnology] = useState(null);
   const [selectedConceptOrder, setSelectedConceptOrder] = useState(null);
   const [isReviewMode, setIsReviewMode] = useState(false);
+  /** guided = sequential unlock | browse = study any topic */
+  const [studyMode, setStudyMode] = useState("guided");
   
   // Ask Anything mode state
   const [concept, setConcept] = useState("");
@@ -204,8 +206,9 @@ const Learn = () => {
     }
   };
 
-  const handleTechnologySelect = (technology) => {
+  const handleTechnologySelect = (technology, mode = "guided") => {
     setSelectedTechnology(technology);
+    setStudyMode(mode);
     setCurrentView("concept-list");
   };
 
@@ -226,6 +229,7 @@ const Learn = () => {
     setCurrentView("technology-selection");
     setSelectedTechnology(null);
     setSelectedConceptOrder(null);
+    setStudyMode("guided");
   };
 
   const handleBackToConcepts = () => {
@@ -433,6 +437,8 @@ const Learn = () => {
               <ConceptList
                 technology={selectedTechnology}
                 studentId={studentId}
+                studyMode={studyMode}
+                onStudyModeChange={setStudyMode}
                 onConceptSelect={handleConceptSelect}
                 onBack={handleBackToTechnologies}
               />

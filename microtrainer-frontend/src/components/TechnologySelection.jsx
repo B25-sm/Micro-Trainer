@@ -160,7 +160,7 @@ const TechnologySelection = ({ studentId: studentIdProp, onTechnologySelect }) =
         Choose your learning path
       </h2>
       <p className="text-gray-600 dark:text-gray-400 text-center mb-6">
-        Select a technology to start your structured learning journey
+        Follow the guided path step-by-step, or browse and study any topic you want
       </p>
 
       {trainerPreview && (
@@ -174,18 +174,15 @@ const TechnologySelection = ({ studentId: studentIdProp, onTechnologySelect }) =
           const progressInfo = getProgressInfo(tech.id, tech.totalConcepts);
 
           return (
-            <motion.button
+            <motion.div
               key={tech.id}
-              type="button"
-              whileHover={{ scale: 1.02, y: -4 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => onTechnologySelect(tech.id)}
+              whileHover={{ scale: 1.01, y: -2 }}
               className={`p-6 rounded-2xl border-2 transition-all text-left relative overflow-hidden ${
                 progressInfo.status === "completed"
-                  ? "border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-950/30 hover:border-green-400"
+                  ? "border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-950/30"
                   : progressInfo.status === "in-progress"
-                    ? "border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-950/30 hover:border-blue-400"
-                    : "border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] hover:border-blue-300 dark:hover:border-blue-600"
+                    ? "border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-950/30"
+                    : "border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d]"
               }`}
             >
               {progressInfo.status === "completed" && (
@@ -240,24 +237,27 @@ const TechnologySelection = ({ studentId: studentIdProp, onTechnologySelect }) =
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 mt-4">
-                {progressInfo.status === "not-started" && (
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
-                    Start course
-                  </span>
-                )}
-                {progressInfo.status === "in-progress" && (
-                  <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">
-                    Continue learning
-                  </span>
-                )}
-                {progressInfo.status === "completed" && (
-                  <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">
-                    Review concepts
-                  </span>
-                )}
+              <div className="flex flex-col sm:flex-row gap-2 mt-4">
+                <button
+                  type="button"
+                  onClick={() => onTechnologySelect(tech.id, "guided")}
+                  className="flex-1 px-4 py-2.5 rounded-lg text-sm font-medium bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 hover:opacity-90 transition"
+                >
+                  {progressInfo.status === "not-started"
+                    ? "Start guided course"
+                    : progressInfo.status === "completed"
+                      ? "Review guided path"
+                      : "Continue guided course"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onTechnologySelect(tech.id, "browse")}
+                  className="flex-1 px-4 py-2.5 rounded-lg text-sm font-medium border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition"
+                >
+                  Browse all topics
+                </button>
               </div>
-            </motion.button>
+            </motion.div>
           );
         })}
       </div>
