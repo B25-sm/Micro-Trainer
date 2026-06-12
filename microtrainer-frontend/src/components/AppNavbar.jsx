@@ -35,7 +35,7 @@ const NAV_SECTIONS = [
     label: "Learn",
     items: [
       { path: "/learn", label: "Courses", icon: BookOpen },
-      { path: "/schedule", label: "My Schedule", icon: Calendar },
+      { path: "/schedule", label: "Personal Schedule", icon: Calendar },
     ],
   },
   {

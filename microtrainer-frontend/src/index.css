@@ -93,10 +93,11 @@
 }
 
 /* Dark contrast safety net for legacy light-mode utility classes.
-   Many existing screens use bg-white/text-gray-* without a dark:* pair. */
-.dark :where(.bg-white),
-.dark :where(.bg-gray-50),
-.dark :where(.bg-slate-50) {
+   Many existing screens use bg-white/text-gray-* without a dark:* pair.
+   Lesson cards (.lesson-card-surface) keep their chosen pastel surface — see below. */
+.dark :where(.bg-white):not(.lesson-card-surface),
+.dark :where(.bg-gray-50):not(.lesson-card-surface),
+.dark :where(.bg-slate-50):not(.lesson-card-surface) {
   background-color: var(--bg-elevated) !important;
 }
 
@@ -205,13 +206,13 @@ html.dark .lesson-prose.dark\:prose-invert,
 }
 
 /* Legacy pastel Tailwind boxes — fix bg + text together */
-.dark :where(.bg-yellow-50, .bg-amber-50) {
+.dark :where(.bg-yellow-50, .bg-amber-50):not(.lesson-card-surface) {
   background-color: #422006 !important;
   border-color: #b45309 !important;
   color: #fde68a !important;
 }
 
-.dark :where(.bg-green-50, .bg-emerald-50) {
+.dark :where(.bg-green-50, .bg-emerald-50):not(.lesson-card-surface) {
   background-color: #052e16 !important;
   border-color: #15803d !important;
   color: #bbf7d0 !important;
@@ -578,9 +579,9 @@ textarea:focus {
   color: var(--read-text) !important;
 }
 
-.read-mode :where(.bg-white),
-.read-mode :where(.bg-gray-50),
-.read-mode :where(.bg-slate-50) {
+.read-mode :where(.bg-white):not(.lesson-card-surface),
+.read-mode :where(.bg-gray-50):not(.lesson-card-surface),
+.read-mode :where(.bg-slate-50):not(.lesson-card-surface) {
   background-color: var(--read-surface-elevated) !important;
 }
 
