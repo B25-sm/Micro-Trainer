@@ -9,9 +9,12 @@ const {
   BASE_PERSONA,
   TEACHING_STRUCTURE,
   GUIDED_LESSON_FORMAT,
+  BEGINNER_GUIDED_LESSON_FORMAT,
   TERSE_SUMMARY_FORMAT,
+  BEGINNER_TERSE_SUMMARY_FORMAT,
   QUIZ_STYLE_RULES,
   TECHNOLOGY_ANALOGY_HINTS,
+  BEGINNER_TECHNOLOGY_ANALOGY_HINTS,
   ADAPTIVE_TEACHING_PERSONA,
 } = require("./personaConfig");
 const {
@@ -67,35 +70,64 @@ async function generateGuidedStoryOnly({
   }
 
   const reteachNote = reteach
-    ? `The student failed the quiz. Keep the SAME analogy domain and SAME cast names from the reference below — only use simpler words and shorter sentences. Do NOT switch hospital↔restaurant or rename characters.\n`
+    ? normalizedLevel === "beginner"
+      ? `The student failed the quiz. Re-teach the SAME concept with even simpler plain English and shorter sentences. Keep the same real-world example app.\n`
+      : `The student failed the quiz. Keep the SAME analogy domain and SAME cast names from the reference below — only use simpler words and shorter sentences. Do NOT switch hospital↔restaurant or rename characters.\n`
     : "";
+
+  const isBeginner = normalizedLevel === "beginner";
+  const lessonFormat = isBeginner
+    ? BEGINNER_GUIDED_LESSON_FORMAT
+    : GUIDED_LESSON_FORMAT;
 
   const mappingBar = `
 - **What** concept map is mandatory: 4-6 bullets, **Plain label** = **Technical term** (role)`;
 
-  const levelExtras =
-    normalizedLevel === "beginner"
-      ? `${mappingBar}
-- Open **Why** with a real engineering problem; optional 1–2 sentence analogy hook only
-- **How** uses technical terms — not a long story; up to 3 inline commands with "This means…"
-- No huge code blocks; explain every technical word the first time`
-      : normalizedLevel === "intermediate"
-      ? `${mappingBar}
+  const levelExtras = isBeginner
+    ? `
+- **What** ends with 3-5 plain-English idea bullets (use "—" not "=" between label and explanation)
+- **How** stays in everyday language — describe what the user/browser experiences
+- No code blocks unless absolutely necessary (max 3 lines with plain comments)
+- If a technical term appears, explain it in the same sentence — never stack jargon`
+    : normalizedLevel === "intermediate"
+    ? `${mappingBar}
 - After **How**, add **Example** with ONE commented code block (8-15 lines)
 - Tie code to technical terms from **What**, not story characters`
-      : `${mappingBar}
+    : `${mappingBar}
 - **Example** with substantive code; **How** uses technical terms and includes one "gotcha"`;
 
   const techKey = (technology || "").toLowerCase();
+  const hintSource = isBeginner
+    ? BEGINNER_TECHNOLOGY_ANALOGY_HINTS
+    : TECHNOLOGY_ANALOGY_HINTS;
   const analogyHint =
-    TECHNOLOGY_ANALOGY_HINTS[techKey] ||
-    TECHNOLOGY_ANALOGY_HINTS[techKey.replace(/\.js$/, "")] ||
-    `
+    hintSource[techKey] ||
+    hintSource[techKey.replace(/\.js$/, "")] ||
+    (isBeginner
+      ? `
+Pick a relatable analogy for "${title}" if it helps (decorating a room, organizing a closet, traffic rules).
+**What** MUST end with 3-5 bullets: **Plain idea** — simple explanation in everyday words (no "X = Y" mapping lines).`
+      : `
 Pick an analogy that fits "${title}" (restaurant, post office, school, factory — not always restaurant).
 **What** MUST end with 4-6 bullets: **Simple name** = **Technical term** (what it does in one phrase).
 Example bullets:
 - **Customer** = person using the site (you)
-- **Waiter** = **View** (handles requests and returns responses)`;
+- **Waiter** = **View** (handles requests and returns responses)`);
+
+  const levelBars = isBeginner
+    ? `
+PLAIN LANGUAGE BAR: Write for someone smart who has never coded. Simple and correct beats exhaustive and confusing.
+${lessonBrief ? "\nCAREER MODULE BAR: In **How**, briefly contrast Data Analyst vs Data Scientist vs ML Engineer in plain words — what each does on a typical day.\n" : ""}
+ENGAGEMENT BAR: Relatable problem first; a short analogy is welcome if it helps the idea land.
+HOW FLOW BAR: Numbered steps in plain English — what goes in → what happens → what you see on screen.
+REAL-TIME BAR: Real website/app — what you see vs what happens behind the scenes, still in simple words.`
+    : `
+DEPTH BAR: Strong enough that a student never needs Google. Shallow = failure.
+${lessonBrief ? "\nCAREER MODULE BAR: In **How**, explicitly contrast Data Analyst vs Data Scientist vs ML Engineer vs Data Engineer with what each does on a typical workday.\n" : ""}
+ENGAGEMENT BAR: Lead with real problems and products. Max 2 sentences of analogy in **Why** — then teach like an engineer.
+MAPPING CLARITY BAR: In **What**, print 4-6 bullets: **Plain label** = **Tech term** (role).
+HOW FLOW BAR: In **How**, numbered steps use **technical terms** from **What**. Show input → storage → processing → output.
+REAL-TIME BAR: In **Real-time use case** use a REAL website/app with "What user sees" vs "What happens internally" — NO story characters.`;
 
   const prompt = `${reteachNote}Teach this guided-course lesson as Sai Mahendra for **${technology}**.
 
@@ -104,20 +136,10 @@ Topic summary: ${description}
 
 Learning objectives — EACH must appear clearly in **How** (say which step covers which):
 ${objectivesText}
+${levelBars}
 
-DEPTH BAR: Strong enough that a beginner never opens Google. Shallow = failure. Boring kiddish story = failure.
-${lessonBrief ? "\nCAREER MODULE BAR: In **How**, explicitly contrast Data Analyst vs Data Scientist vs ML Engineer vs Data Engineer with what each does on a typical workday.\n" : ""}
-
-ENGAGEMENT BAR: Lead with real problems and products. Max 2 sentences of analogy in **Why** — then teach like an engineer.
-
-MAPPING CLARITY BAR: In **What**, print 4-6 bullets: **Plain label** = **Tech term** (role). Prefer direct labels over story characters.
-
-HOW FLOW BAR: In **How**, numbered steps use **technical terms** from **What**. Show input → storage → processing → output. Quiz must be answerable without remembering a metaphor.
-
-REAL-TIME BAR: In **Real-time use case** use a REAL website/app with "What user sees" vs "What happens internally" — NO story characters in this section.
-
-${GUIDED_LESSON_FORMAT}
-${analogyHint ? `\nTECH-SPECIFIC CAST HINT:\n${analogyHint}` : ""}
+${lessonFormat}
+${analogyHint ? `\nTECH-SPECIFIC HINT:\n${analogyHint}` : ""}
 ${levelExtras}
 
 ${TEACHING_STRUCTURE}
@@ -147,11 +169,12 @@ Return ONLY the formatted lesson markdown.`;
     explanation,
     technology,
     objectives,
+    level: normalizedLevel,
   });
 
   if (!quality.ok) {
     console.warn(`⚠️ Lesson quality failed (${technology}/${title}):`, quality.errors);
-    const repairPrompt = `${buildRepairPrompt(quality.errors, technology, title)}\n\nReference:\n${buildCurriculumReferenceBlock(curriculumReference, lessonBrief).substring(0, 2000)}`;
+    const repairPrompt = `${buildRepairPrompt(quality.errors, technology, title, normalizedLevel)}\n\nReference:\n${buildCurriculumReferenceBlock(curriculumReference, lessonBrief).substring(0, 2000)}`;
     const repaired = await requestLesson(repairPrompt, 0.5);
     if (repaired && repaired.length > 400) {
       explanation = stripForbiddenTerms(repaired, technology);
@@ -159,6 +182,7 @@ Return ONLY the formatted lesson markdown.`;
         explanation,
         technology,
         objectives,
+        level: normalizedLevel,
       });
     }
   }
@@ -229,14 +253,24 @@ function buildTerseFallback(lucidExplanation) {
   return [line1, line2, line3, `${String(line4).trim()}.`].join("\n");
 }
 
-async function generateTerseSummary({ technology, title, lucidExplanation }) {
+async function generateTerseSummary({
+  technology,
+  title,
+  lucidExplanation,
+  level = "beginner",
+}) {
+  const terseFormat =
+    (level || "beginner").toLowerCase() === "beginner"
+      ? BEGINNER_TERSE_SUMMARY_FORMAT
+      : TERSE_SUMMARY_FORMAT;
+
   const prompt = `Technology: ${technology}
 Concept: ${title}
 
 Lucid lesson (compress this — do not add new topics):
 ${lucidExplanation.substring(0, 2200)}
 
-${TERSE_SUMMARY_FORMAT}
+${terseFormat}
 
 Return ONLY 4 lines of plain text (see TERSE format — line 3 must be the flow chain).`;
 
@@ -288,21 +322,20 @@ ${ADAPTIVE_TEACHING_PERSONA}
 You are teaching a COMPLETE BEGINNER who knows NOTHING about programming.
 
 TEACHING STYLE:
-- Real problem first; optional 1–2 sentence analogy hook in **Why** only
+- Plain English first — like explaining to a smart friend, not reading API docs
 - Structured sections: **Why**, **What**, **How**, **Real-time use case**, **Key takeaway**
-- **What** includes concept map: **Plain label** = **Technical term** (role)
-- **How** is the longest section — uses real technical terms, not story dialogue
-- **Real-time use case** = real app only: user sees vs internal plumbing
-- Fierce, energetic, practical — respect intelligence; never sound like a children's book
+- **What** uses simple idea bullets (plain label — explanation), NOT "**X** = **Y**" mapping lines
+- **How** is the longest section — everyday language, what the user/browser actually experiences
+- **Real-time use case** = real app: what you see on screen vs what happens behind the scenes
+- Energetic and clear — respect intelligence; never childish, never jargon-heavy
 
 FORBIDDEN:
-- Long fairy-tale analogies that dominate the lesson
-- Quiz-style questions about story props (backpack, waiter, locker)
+- Textbook definitions ("CSS declaration", "stylesheet block", "parser engine") without instant plain-English translation
+- Cast-mapping lines like "**CSS Rule** = **CSS declaration**"
 - Shallow 1-sentence sections
-- Listing commands without explaining what they DO
-- Wikipedia tone
+- Wikipedia or documentation tone
 
-${GUIDED_LESSON_FORMAT}
+${BEGINNER_GUIDED_LESSON_FORMAT}
 `;
 
 const LEVEL_2_PERSONA = `
@@ -619,6 +652,7 @@ async function generateGuidedCourseLesson({
         technology,
         title,
         lucidExplanation: explanation,
+        level: normalizedLevel,
       }),
       generateLessonDiagram({
         technology,

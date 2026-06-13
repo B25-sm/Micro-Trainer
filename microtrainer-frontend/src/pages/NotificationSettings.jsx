@@ -87,9 +87,11 @@ export default function NotificationSettings() {
     permission,
     isSubscribed,
     loading: pushLoading,
-    requestPermission,
+    error: pushError,
+    enableNotifications,
     unsubscribe,
     sendTestNotification,
+    clearError: clearPushError,
   } = usePushNotifications(preferenceUserId || "anonymous");
 
   const [preferences, setPreferences] = useState(DEFAULT_PREFERENCES);
@@ -177,9 +179,10 @@ export default function NotificationSettings() {
 
   async function handleBrowserNotificationToggle(enabled) {
     if (pushLoading) return;
+    clearPushError();
     try {
       if (enabled) {
-        await requestPermission();
+        await enableNotifications();
       } else {
         await unsubscribe();
       }
@@ -277,7 +280,19 @@ export default function NotificationSettings() {
               />
             </SettingRow>
 
-            {permission === "denied" && (
+            {pushLoading && (
+              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                Setting up notifications…
+              </p>
+            )}
+
+            {pushError && (
+              <p className="mt-3 text-sm text-red-600 dark:text-red-400" role="alert">
+                {pushError}
+              </p>
+            )}
+
+            {permission === "denied" && !pushError && (
               <p className="mt-3 text-sm text-red-600 dark:text-red-400">
                 Permission denied — enable notifications in your browser settings, then try again.
               </p>

@@ -113,6 +113,68 @@
   color: var(--text) !important;
 }
 
+/* Toggle switches — always visible in dark + read mode */
+.setting-switch {
+  isolation: isolate;
+  min-width: 2.75rem;
+  min-height: 1.5rem;
+}
+
+.setting-switch-track {
+  border: 1px solid rgba(60, 64, 67, 0.35);
+  box-sizing: border-box;
+}
+
+.setting-switch-track--off {
+  background-color: #9aa0a6 !important;
+}
+
+.dark .setting-switch-track--off {
+  background-color: #80868b !important;
+  border-color: #bdc1c6 !important;
+}
+
+.setting-switch-track--on {
+  background-color: #1a73e8 !important;
+  border-color: #1557b0 !important;
+}
+
+.dark .setting-switch-track--on {
+  background-color: #8ab4f8 !important;
+  border-color: #669df6 !important;
+}
+
+.setting-switch-knob {
+  background-color: #ffffff !important;
+  border: 1px solid #dadce0 !important;
+  box-shadow: 0 1px 3px rgba(60, 64, 67, 0.45) !important;
+}
+
+.read-mode .setting-switch-track--off {
+  background-color: #9aa0a6 !important;
+}
+
+.read-mode.dark .setting-switch-track--off {
+  background-color: #9aa0a6 !important;
+  border-color: #bdc1c6 !important;
+}
+
+.read-mode .setting-switch-track--on {
+  background-color: #1a73e8 !important;
+  border-color: #1557b0 !important;
+}
+
+.read-mode.dark .setting-switch-track--on {
+  background-color: #8ab4f8 !important;
+  border-color: #669df6 !important;
+}
+
+.read-mode .setting-switch-knob,
+.read-mode.dark .setting-switch-knob {
+  background-color: #ffffff !important;
+  border-color: #dadce0 !important;
+}
+
 /* Callouts — paired background + text (fixes invisible title on pastel boxes) */
 .mt-callout {
   border-radius: 0.75rem;

@@ -1969,6 +1969,7 @@ const {
   broadcastBadgeEarned,
   broadcastAtRiskAlert
 } = require("./services/eventBroadcaster");
+const { notifyBadgeEarned, notifyAssessmentAvailable } = require("./services/notificationOrchestratorService");
 
 // ===== ENGAGEMENT ENDPOINTS =====
 
@@ -2005,8 +2006,12 @@ app.post("/api/engagement/activity", (req, res) => {
     
     // Broadcast badge earned if any
     if (badges && badges.length > 0) {
-      badges.forEach(badge => {
+      badges.forEach((badge) => {
         broadcastBadgeEarned(studentId, badge);
+        notifyBadgeEarned(studentId, {
+          badgeName: badge.name || badge.title || badge.badgeId,
+          badgeIcon: badge.icon,
+        }).catch((err) => console.warn("Badge notification:", err.message));
       });
     }
     
@@ -2086,6 +2091,13 @@ app.get("/api/assessment/mini-assessment/:studentId", (req, res) => {
     }
     
     const assessment = getTodayMiniAssessment(studentId, technology);
+
+    if (assessment.isNew) {
+      notifyAssessmentAvailable(studentId, { technology }).catch((err) =>
+        console.warn("Assessment notification:", err.message)
+      );
+    }
+
     res.json(assessment);
   } catch (error) {
     console.error("GET MINI-ASSESSMENT ERROR:", error.message);
@@ -2131,6 +2143,16 @@ app.post("/api/assessment/mini-assessment/submit", async (req, res) => {
       lastScore: result.score,
       totalActivities: activityResult.todaySummary.activitiesCompleted
     });
+
+    if (badges && badges.length > 0) {
+      badges.forEach((badge) => {
+        broadcastBadgeEarned(studentId, badge);
+        notifyBadgeEarned(studentId, {
+          badgeName: badge.name || badge.title || badge.badgeId,
+          badgeIcon: badge.icon,
+        }).catch((err) => console.warn("Badge notification:", err.message));
+      });
+    }
     
     res.json({
       ...result,
@@ -2222,8 +2244,9 @@ app.get("/api/badges/definitions/all", (req, res) => {
 const {
   subscribe: subscribePush,
   unsubscribe: unsubscribePush,
-  sendTestNotification
 } = require('./services/pushNotificationService');
+const { notifyTest } = require('./services/notificationOrchestratorService');
+const { setBrowserNotificationsEnabled } = require('./services/notificationPreferencesService');
 
 // ===== STUDENT FEEDBACK / BUG REPORTS =====
 const { requireAuth, optionalAuth } = require("./routes/authRoutes");
@@ -2294,6 +2317,7 @@ app.post("/api/notifications/subscribe", (req, res) => {
     }
     
     subscribePush(studentId, subscription);
+    setBrowserNotificationsEnabled(studentId, true);
     res.json({ success: true, message: "Subscribed to push notifications" });
   } catch (error) {
     console.error("SUBSCRIBE PUSH ERROR:", error.message);
@@ -2311,6 +2335,7 @@ app.post("/api/notifications/unsubscribe", (req, res) => {
     }
     
     unsubscribePush(studentId);
+    setBrowserNotificationsEnabled(studentId, false);
     res.json({ success: true, message: "Unsubscribed from push notifications" });
   } catch (error) {
     console.error("UNSUBSCRIBE PUSH ERROR:", error.message);
@@ -2327,7 +2352,7 @@ app.post("/api/notifications/test", async (req, res) => {
       return res.status(400).json({ error: "studentId required" });
     }
     
-    const result = await sendTestNotification(studentId);
+    const result = await notifyTest(studentId);
     res.json(result);
   } catch (error) {
     console.error("TEST NOTIFICATION ERROR:", error.message);

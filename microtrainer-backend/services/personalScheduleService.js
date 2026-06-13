@@ -526,17 +526,27 @@ async function sendScheduleReminder(studentId) {
   }
 
   try {
-    const { sendPushNotification } = require("./pushNotificationService");
-    await sendPushNotification(studentId, {
-      title: reminder.title,
-      body: reminder.body,
-      icon: "/logo.png",
-      tag: `schedule-${reminder.type}`,
-      url: reminder.url,
-      data: { type: "personal_schedule", reminderType: reminder.type },
-    });
-  } catch {
-    // Push optional
+    const {
+      notifyScheduleReminder,
+      scheduleReminderNotificationType,
+    } = require("./notificationOrchestratorService");
+    const { canSendNotification } = require("./notificationPreferencesService");
+
+    const notificationType = scheduleReminderNotificationType(reminder.type);
+    if (!canSendNotification(studentId, notificationType, "browser")) {
+      return { sent: false, reason: "preferences" };
+    }
+
+    const result = await notifyScheduleReminder(studentId, reminder, notificationType);
+    if (result.browser.skipped) {
+      return { sent: false, reason: "preferences" };
+    }
+    if (!result.browser.sent) {
+      return { sent: false, reason: result.browser.error || "push_failed" };
+    }
+  } catch (error) {
+    console.error(`Schedule push failed for ${studentId}:`, error.message);
+    return { sent: false, reason: error.message };
   }
 
   schedule.progress.lastReminderAt = new Date().toISOString();

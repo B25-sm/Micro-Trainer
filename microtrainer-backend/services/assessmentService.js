@@ -231,12 +231,13 @@ function getTodayMiniAssessment(studentId, technology) {
       })),
       timeLimit: todayAssessment.timeLimit,
       conceptsCovered: todayAssessment.conceptsCovered,
-      status: todayAssessment.status
+      status: todayAssessment.status,
+      isNew: false,
     };
   }
-  
-  // Generate new assessment if none exists
-  return generateMiniAssessment(studentId, technology);
+
+  const created = generateMiniAssessment(studentId, technology);
+  return { ...created, isNew: true };
 }
 
 /**
@@ -516,11 +517,30 @@ async function submitMockTest(mockTestId, studentId, answers) {
 /**
  * Generate daily assessments for all active students (cron job)
  */
-function generateDailyAssessments() {
-  // This would be called by a cron job
-  // For now, assessments are generated on-demand
-  console.log('✅ Daily assessment generation completed');
-  return { generated: 0 };
+async function generateDailyAssessments() {
+  const { getAllStudentsEngagement } = require("./engagementService");
+  const { notifyAssessmentAvailable } = require("./notificationOrchestratorService");
+
+  const students = getAllStudentsEngagement();
+  let generated = 0;
+  let notified = 0;
+
+  for (const student of students) {
+    if (student.status === "Inactive") continue;
+    const technology = student.activeTechnology || "JavaScript";
+
+    const existing = getTodayMiniAssessment(student.studentId, technology);
+    if (existing?.assessmentId) {
+      generated++;
+      if (existing.isNew) {
+        const result = await notifyAssessmentAvailable(student.studentId, { technology });
+        if (result.browser.sent) notified++;
+      }
+    }
+  }
+
+  console.log(`✅ Daily assessment generation: ${generated} students processed`);
+  return { generated, notified };
 }
 
 module.exports = {

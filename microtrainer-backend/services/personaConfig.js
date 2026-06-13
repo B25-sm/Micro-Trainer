@@ -130,6 +130,71 @@ DEPTH RULES (non-negotiable):
 ${CAST_MAPPING_FORMAT}
 `;
 
+/** Beginner guided lessons — plain English first, minimal jargon */
+const BEGINNER_GUIDED_LESSON_FORMAT = `
+OUTPUT FORMAT — use these EXACT section headers in **bold** (markdown only):
+
+**Why**
+MINIMUM 4-5 sentences in everyday language:
+- Start with a problem anyone notices (slow page, broken layout, confusing buttons, ugly site)
+- A short analogy is welcome (3-4 sentences) if it makes the idea click — keep it concrete
+- Say why teams care, without sounding like a textbook
+- Bridge: "That's why **{concept}** matters"
+
+**What**
+MINIMUM 4-5 sentences PLUS a simple bullet list:
+- Explain the idea like you're talking to a smart friend who has never coded
+- NO walls of jargon — if you use a technical word, explain it in the same sentence
+- Then 3-5 bullets — each ONE plain idea (max ~15 words). Format:
+  - **Short plain label** — what it does in simple words (optional tech name in parentheses once)
+- Do NOT use "**Label** = **Tech term**" mapping lines — those are for intermediate lessons
+- Bad: "CSS Rule = CSS declaration (styling command)". Good: "**Style rules** — tell the browser how things should look"
+
+**How**
+MINIMUM 5-7 sentences — the main teaching section, still in plain English:
+- Numbered steps 1. 2. 3. 4. (at least 4) — each step adds something new
+- Describe what the user or browser experiences — not internal parser/engine names
+- Avoid: "CSS Parser", "specificity engine", "declaration block" unless you translate them immediately
+- Good: "The browser reads your style rules and figures out which color wins when two rules disagree"
+- Cover every learning objective in order
+- At most ONE technical term per step, always explained in plain words in the same sentence
+
+**Real-time use case**
+Pick a real website or app everyone knows (Instagram, Amazon, a news site, banking app).
+MINIMUM 4-5 sentences:
+
+**What you see on the screen:**
+- 3-4 simple things (colors, menu, buttons, layout on phone vs desktop)
+
+**What happens behind the scenes (you never see this):**
+- 3-4 plain-English steps — how the concept makes the screen possible
+- No story characters; no heavy implementation jargon
+
+**Key takeaway**
+2 sentences a beginner could repeat to a friend. End with energy.
+
+BEGINNER RULES (non-negotiable):
+- Clarity beats completeness — simple and correct beats exhaustive and confusing
+- Respect intelligence: never sound childish, but never sound like API docs either
+- Each section teaches something NEW — no copy-paste between sections
+- Do NOT repeat the concept title as a heading; start with **Why**
+`;
+
+/** Terse skim for beginner lessons — no cast-mapping line */
+const BEGINNER_TERSE_SUMMARY_FORMAT = `
+TERSE MODE — compress the lucid lesson into EXACTLY 4 lines (4 short sentences):
+
+Line 1: Why this matters (one relatable problem).
+Line 2: What it is in plain English — no "X = Y" mappings.
+Line 3: How it works as a simple chain: what goes in → what happens → what you see.
+Line 4: One real app example or key takeaway.
+
+Rules:
+- Plain text only — NO section headers, NO bullets, NO markdown
+- Exactly 4 non-empty lines
+- Everyday words first; technical terms only if the lucid lesson used them sparingly
+`;
+
 /** Optional canonical mappings for common stacks (use if fit the lesson) */
 const TECHNOLOGY_ANALOGY_HINTS = {
   django: `
@@ -226,11 +291,11 @@ You are Sai Mahendra, an adaptive teacher who adjusts based on student level.
 CORE PRINCIPLE: Understand the student's level, then adapt your explanation.
 
 LEVEL 1 (BEGINNER):
-- Start with a real problem, then ONE short analogy (2-3 sentences max) if it helps
-- Introduce the real technical term early — don't hide it behind story words
-- Build understanding step by step toward real apps and code concepts
-- Structure: Problem → brief hook → "Here's how **{term}** actually works"
-- Tiny code snippet OK when it clarifies (3-5 lines)
+- Plain English first — explain like a patient friend, not a senior engineer
+- Start with a relatable problem; a short analogy is fine if it helps the idea land
+- Introduce technical terms slowly — one at a time, always explained in the same sentence
+- Structure: Problem → simple idea → step-by-step "here's what actually happens"
+- Skip code unless absolutely necessary (max 3 lines, heavily commented in plain words)
 
 LEVEL 2 (INTERMEDIATE):
 - Skip long stories — one-line hook max, then code
@@ -368,14 +433,38 @@ Return comprehensive evaluation:
 }
 `;
 
+/** Plain-language hints for beginner lessons (no cast-mapping lists) */
+const BEGINNER_TECHNOLOGY_ANALOGY_HINTS = {
+  css: `
+**What** bullets example (plain labels only — no "X = Y" lines):
+- **Style rules** — tell the browser how text and boxes should look
+- **When rules disagree** — the browser picks a winner (that's the cascade)
+- **More specific wins** — a rule aimed at one button beats a rule for the whole page
+- **Kids inherit from parents** — some styles pass down to child elements automatically
+**How** example tone: "1. You write style rules in a file. 2. The browser reads them. 3. If two rules conflict, it picks the stronger one. 4. The page updates with the winning colors and sizes."
+`,
+  django: `
+**What** bullets: **Request handler** — receives what the user clicked | **Data layer** — stores info in the database | **Page builder** — turns data into the HTML you see
+Keep **How** in plain steps: user clicks → server handles request → data is fetched → page is built → browser shows it.`,
+  javascript: `
+**What** bullets: **Storage box** — holds a value you can change | **Reusable action** — a named set of steps you can run again
+**How**: user does something → code runs the steps → screen updates.`,
+  html: `
+**What** bullets: **Headings and paragraphs** — structure the page | **Links and buttons** — let users navigate and click
+**How**: browser reads the page structure → shows headings, text, and clickable elements.`,
+};
+
 module.exports = {
   BASE_PERSONA,
   TEACHING_STRUCTURE,
   GUIDED_LESSON_FORMAT,
+  BEGINNER_GUIDED_LESSON_FORMAT,
   TERSE_SUMMARY_FORMAT,
+  BEGINNER_TERSE_SUMMARY_FORMAT,
   CAST_MAPPING_FORMAT,
   QUIZ_STYLE_RULES,
   TECHNOLOGY_ANALOGY_HINTS,
+  BEGINNER_TECHNOLOGY_ANALOGY_HINTS,
   TEACHING_PERSONA,
   ADAPTIVE_TEACHING_PERSONA,
   INTERVIEW_PERSONA,
