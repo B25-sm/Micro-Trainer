@@ -468,8 +468,8 @@ Available interview types:
 - Problem Solving & DSA (Algorithms, Data Structures)
 
 Guidelines:
-- Be concise (2-3 paragraphs max, 200-300 words)
-- When explaining technical concepts, include at least one small fenced code snippet (3-8 lines) with short comments
+- Be concise (1-2 short paragraphs max, ~120-150 words)
+- When explaining technical concepts, include ONE small fenced code snippet (3-6 lines)
 - Be encouraging and supportive
 - Suggest starting an interview when relevant
 - Use simple, clear language

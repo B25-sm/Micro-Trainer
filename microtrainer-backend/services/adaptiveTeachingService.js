@@ -40,7 +40,7 @@ function buildCurriculumReferenceBlock(curriculumReference, lessonBrief) {
   const brief = lessonBrief ? String(lessonBrief).trim() : "";
   const ref = String(curriculumReference || "").trim();
   const combined = brief ? `${brief}\n\n---\n\n${ref}` : ref;
-  const limit = brief ? 3200 : 1200;
+  const limit = brief ? 1200 : 600;
   return combined.substring(0, limit);
 }
 
@@ -62,14 +62,14 @@ async function generateGuidedStoryOnly({
 
   const normalizedLevel = (level || "beginner").toLowerCase();
   let persona = LEVEL_1_PERSONA;
-  let maxTokens = 1800;
+  let maxTokens = 1100;
 
   if (normalizedLevel === "intermediate") {
     persona = LEVEL_2_PERSONA;
-    maxTokens = 1600;
+    maxTokens = 950;
   } else if (normalizedLevel === "advanced") {
     persona = LEVEL_3_PERSONA;
-    maxTokens = 2000;
+    maxTokens = 1200;
   }
 
   const reteachNote = reteach
@@ -84,22 +84,26 @@ async function generateGuidedStoryOnly({
     : GUIDED_LESSON_FORMAT;
 
   const mappingBar = `
-- **What** concept map is mandatory: 4-6 bullets, **Plain label** = **Technical term** (role)`;
+- **What** concept map: 3-4 bullets, **Plain label** = **Technical term** (role)`;
 
   const levelExtras = isBeginner
     ? `
-- **What** ends with 3-5 plain-English idea bullets (use "—" not "=" between label and explanation)
-- **How** stays in everyday language — describe what the user/browser experiences
-- **How** must end with ONE tiny fenced code snippet (3-6 lines, plain-English comment on every line)
-- If a technical term appears, explain it in the same sentence — never stack jargon`
+- **What**: 2-3 plain-English bullets (use "—" not "=")
+- **How**: 3 short steps + ONE tiny snippet (3-5 lines)`
     : normalizedLevel === "intermediate"
     ? `${mappingBar}
-- **How** must include 1-2 small fenced snippets (5-10 lines each) placed right after the steps they illustrate
-- After **How**, add **Example** with ONE commented code block (8-15 lines) tying all steps together
-- Tie every snippet to technical terms from **What**, not story characters`
+- **How**: 3 steps + ONE snippet (5-8 lines) — no separate **Example** section`
     : `${mappingBar}
-- **How** includes 2-3 small snippets plus one "gotcha" callout
-- **Example** with a substantive fenced block (12-20 lines) students can copy and run`;
+- **How**: 3 steps + ONE snippet; one optional gotcha sentence`;
+
+  const levelBars = isBeginner
+    ? `
+BREVITY BAR: Under 90 seconds to read. Short sentences. No filler.
+${lessonBrief ? "\nCAREER MODULE: One sentence each on Analyst vs Scientist vs ML Engineer — only if relevant.\n" : ""}`
+    : `
+BREVITY BAR: Scannable micro-lesson — fierce and short, not a textbook chapter.
+${lessonBrief ? "\nCAREER MODULE: One sentence each on role differences — only if relevant.\n" : ""}
+MAPPING BAR: 3-4 bullets in **What**. **How**: 3 steps max.`;
 
   const techKey = (technology || "").toLowerCase();
   const hintSource = isBeginner
@@ -108,38 +112,14 @@ async function generateGuidedStoryOnly({
   const analogyHint =
     hintSource[techKey] ||
     hintSource[techKey.replace(/\.js$/, "")] ||
-    (isBeginner
-      ? `
-Pick a relatable analogy for "${title}" if it helps (decorating a room, organizing a closet, traffic rules).
-**What** MUST end with 3-5 bullets: **Plain idea** — simple explanation in everyday words (no "X = Y" mapping lines).`
-      : `
-Pick an analogy that fits "${title}" (restaurant, post office, school, factory — not always restaurant).
-**What** MUST end with 4-6 bullets: **Simple name** = **Technical term** (what it does in one phrase).
-Example bullets:
-- **Customer** = person using the site (you)
-- **Waiter** = **View** (handles requests and returns responses)`);
-
-  const levelBars = isBeginner
-    ? `
-PLAIN LANGUAGE BAR: Write for someone smart who has never coded. Simple and correct beats exhaustive and confusing.
-${lessonBrief ? "\nCAREER MODULE BAR: In **How**, briefly contrast Data Analyst vs Data Scientist vs ML Engineer in plain words — what each does on a typical day.\n" : ""}
-ENGAGEMENT BAR: Relatable problem first; a short analogy is welcome if it helps the idea land.
-HOW FLOW BAR: Numbered steps in plain English — what goes in → what happens → what you see on screen.
-REAL-TIME BAR: Real website/app — what you see vs what happens behind the scenes, still in simple words.`
-    : `
-DEPTH BAR: Strong enough that a student never needs Google. Shallow = failure.
-${lessonBrief ? "\nCAREER MODULE BAR: In **How**, explicitly contrast Data Analyst vs Data Scientist vs ML Engineer vs Data Engineer with what each does on a typical workday.\n" : ""}
-ENGAGEMENT BAR: Lead with real problems and products. Max 2 sentences of analogy in **Why** — then teach like an engineer.
-MAPPING CLARITY BAR: In **What**, print 4-6 bullets: **Plain label** = **Tech term** (role).
-HOW FLOW BAR: In **How**, numbered steps use **technical terms** from **What**. Show input → storage → processing → output.
-REAL-TIME BAR: In **Real-time use case** use a REAL website/app with "What user sees" vs "What happens internally" — NO story characters.`;
+    "";
 
   const prompt = `${reteachNote}Teach this guided-course lesson as Sai Mahendra for **${technology}**.
 
 Concept: ${title}
 Topic summary: ${description}
 
-Learning objectives — EACH must appear clearly in **How** (say which step covers which):
+Learning objectives — touch each briefly inside **How** (do not add extra sections):
 ${objectivesText}
 ${levelBars}
 
@@ -195,7 +175,7 @@ Return ONLY the formatted lesson markdown.`;
   if (!quality.ok) {
     console.warn(`⚠️ Lesson still has issues after repair:`, quality.errors);
     // Allow through only if minimally structured — else throw
-    const minLength = normalizedLevel === "beginner" ? 900 : 700;
+    const minLength = normalizedLevel === "beginner" ? 400 : 350;
     if (!explanation || explanation.length < minLength) {
       throw new Error(
         `Lesson quality check failed: ${quality.errors.join("; ")}`
@@ -327,12 +307,8 @@ ${ADAPTIVE_TEACHING_PERSONA}
 You are teaching a COMPLETE BEGINNER who knows NOTHING about programming.
 
 TEACHING STYLE:
-- Plain English first — like explaining to a smart friend, not reading API docs
-- Structured sections: **Why**, **What**, **How**, **Real-time use case**, **Key takeaway**
-- **What** uses simple idea bullets (plain label — explanation), NOT "**X** = **Y**" mapping lines
-- **How** is the longest section — everyday language, what the user/browser actually experiences
-- **Real-time use case** = real app: what you see on screen vs what happens behind the scenes
-- Energetic and clear — respect intelligence; never childish, never jargon-heavy
+- Plain English, short sections — student should finish in under 90 seconds
+- **How** is the main section but still only 3 steps + one tiny snippet
 
 FORBIDDEN:
 - Textbook definitions ("CSS declaration", "stylesheet block", "parser engine") without instant plain-English translation
@@ -500,12 +476,13 @@ async function generateBeginnerExplanation(concept) {
   try {
     const prompt = `Generate a beginner-friendly explanation for: ${concept}
 
+Keep it LIGHT — under 120 words in EXPLANATION.
+
 Structure:
-1. Open with the REAL problem this concept solves (1-2 sentences)
-2. Optional: ONE short analogy hook (max 2 sentences) — then introduce the real technical term
-3. Explain how it works in plain English with a concrete app scenario
-4. Include ONE small fenced code snippet (3-6 lines) with plain-English comments on every line
-5. End with when you'd use it in a real project
+1. One sentence: the real problem this solves
+2. Two sentences: how it works in plain English
+3. ONE fenced code snippet (3-5 lines, plain comments)
+4. One sentence: when you'd use it
 
 ${CODE_SNIPPET_RULES_BEGINNER}
 
@@ -530,7 +507,7 @@ CROSS_QUESTION:
           { role: "user", content: prompt }
         ],
         temperature: 0.7,
-        max_tokens: 750
+        max_tokens: 450
       },
       {
         headers: {
@@ -571,13 +548,13 @@ async function generateLeveledExplanation(concept, level, studentAnswer, history
     
     if (level === "beginner") {
       persona = LEVEL_1_PERSONA;
-      maxTokens = 750;
+      maxTokens = 450;
     } else if (level === "intermediate") {
       persona = LEVEL_2_PERSONA;
-      maxTokens = 700;
+      maxTokens = 500;
     } else {
       persona = LEVEL_3_PERSONA;
-      maxTokens = 900;
+      maxTokens = 600;
     }
     
     // Build context from conversation history
@@ -597,7 +574,7 @@ async function generateLeveledExplanation(concept, level, studentAnswer, history
 Student's answer to cross-question: ${studentAnswer}
 Detected level: ${level}
 
-Now provide a ${level}-appropriate explanation.
+Now provide a ${level}-appropriate explanation. Keep it short — beginner ~120 words, intermediate ~150, advanced ~200 unless the student asked for depth.
 ${snippetRules}`;
 
     const response = await axios.post(

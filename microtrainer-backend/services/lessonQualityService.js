@@ -106,8 +106,8 @@ function validateHowFlow(howSection, mappings, { beginner = false } = {}) {
   const errors = [];
 
   const numberedSteps = (howSection.match(/^\s*\d+\./gm) || []).length;
-  if (numberedSteps < 3) {
-    errors.push("How needs at least 3 numbered steps (1. 2. 3.)");
+  if (numberedSteps < 2) {
+    errors.push("How needs at least 2 numbered steps (1. 2.)");
   }
 
   if (!beginner) {
@@ -121,7 +121,7 @@ function validateHowFlow(howSection, mappings, { beginner = false } = {}) {
     });
     const uniqueLabels = [...new Set(mappingLabels)];
     const referenced = uniqueLabels.filter((label) => how.includes(label));
-    if (mappings.length >= 4 && referenced.length < 2) {
+    if (mappings.length >= 3 && referenced.length < 1) {
       errors.push(
         "How must reference technical terms or mapping labels from the What list"
       );
@@ -193,7 +193,7 @@ function validateLessonQuality({
   const errors = [];
   const warnings = [];
   const beginner = (level || "beginner").toLowerCase() === "beginner";
-  const minLength = beginner ? 650 : 700;
+  const minLength = beginner ? 280 : 320;
 
   if (!explanation || explanation.length < minLength) {
     errors.push(`Lesson too short (${explanation?.length || 0} chars)`);
@@ -214,14 +214,14 @@ function validateLessonQuality({
   const ideaBullets = extractWhatBullets(whatSection);
 
   if (beginner) {
-    if (ideaBullets.length < 3 && mappings.length < 3) {
+    if (ideaBullets.length < 2 && mappings.length < 2) {
       errors.push(
-        "What section needs at least 3 plain-English idea bullets (**Label** — explanation)"
+        "What section needs at least 2 plain-English idea bullets (**Label** — explanation)"
       );
     }
-  } else if (mappings.length < 4) {
+  } else if (mappings.length < 3) {
     errors.push(
-      "What section needs at least 4 cast-mapping bullets (**X** = **Y** (role))"
+      "What section needs at least 3 cast-mapping bullets (**X** = **Y** (role))"
     );
   }
 
@@ -267,20 +267,18 @@ function validateLessonQuality({
 function buildRepairPrompt(errors, technology, title, level = "beginner") {
   const beginner = (level || "beginner").toLowerCase() === "beginner";
   const whatRule = beginner
-    ? "What must have 3-5 plain-English bullets (**Label** — explanation), NOT cast-mapping lines."
-    : "What must have 4-6 cast-mapping bullets (**X** = **Y**).";
+    ? "What must have 2-3 plain-English bullets (**Label** — explanation), NOT cast-mapping lines."
+    : "What must have 3-4 cast-mapping bullets (**X** = **Y**).";
 
-  return `Your previous lesson for ${technology} — "${title}" — failed quality checks. Rewrite the FULL lesson fixing ALL issues:
+  return `Your previous lesson for ${technology} — "${title}" — failed quality checks. Rewrite the FULL lesson fixing ALL issues. Keep it LIGHT — under 90 seconds to read.
 
 ${errors.map((e, i) => `${i + 1}. ${e}`).join("\n")}
 
-Keep Sai Mahendra tone. Same sections: **Why**, **What**, **How**, **Real-time use case**, **Key takeaway**${
-    beginner ? "" : ", **Example**"
-  }.
-${whatRule} How must have 4-6 numbered steps with a clear flow and NO repeated sentences.${
+Keep Sai Mahendra tone. Same sections: **Why**, **What**, **How**, **Real-time use case**, **Key takeaway**.
+${whatRule} How must have 2-3 numbered steps with a clear flow and NO repeated sentences.${
     beginner
-      ? " End **How** with one tiny fenced code snippet (3-6 lines, plain comments)."
-      : " Include 1-2 small code snippets in **How** and an **Example** block tying steps together."
+      ? " End **How** with one tiny fenced code snippet (3-5 lines, plain comments)."
+      : " End **How** with one small code snippet — no separate **Example** section."
   }${
     beginner ? " Use plain English — avoid jargon walls." : ""
   }`;

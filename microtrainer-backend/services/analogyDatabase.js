@@ -333,6 +333,52 @@ function injectSnippet(story, key) {
   return story.replace(/\n\nMake sense\?$/, `\n\n${snippet}\n\nMake sense?`);
 }
 
+/** Compress long analogy stories into a quick read for Ask Anything */
+function lightenAnalogyStory(story, concept) {
+  const withSnippet = story;
+  const exactlyIdx = withSnippet.search(/That's EXACTLY/i);
+  const makeSenseIdx = withSnippet.lastIndexOf("Make sense?");
+
+  if (exactlyIdx === -1 || makeSenseIdx === -1) {
+    return withSnippet;
+  }
+
+  const hook = withSnippet
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .slice(0, 3)
+    .join(" ");
+
+  const bridge = withSnippet
+    .slice(exactlyIdx, makeSenseIdx)
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l.length > 10)
+    .slice(0, 2)
+    .join(" ");
+
+  const snippetBlock = withSnippet.includes("```")
+    ? withSnippet.slice(
+        withSnippet.indexOf("Here's what"),
+        withSnippet.lastIndexOf("```") + 3
+      )
+    : "";
+
+  return [
+    `**${concept}** — quick take:`,
+    "",
+    hook,
+    "",
+    bridge,
+    snippetBlock ? `\n${snippetBlock}` : "",
+    "",
+    "Make sense?",
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
 // =======================================================
 // 🎓 CROSS-QUESTION BANK (For Level Detection)
 // =======================================================
@@ -395,18 +441,21 @@ function getAnalogy(concept) {
   
   // Direct match
   if (BEGINNER_ANALOGIES[normalized]) {
+    const entry = BEGINNER_ANALOGIES[normalized];
+    const story = injectSnippet(entry.story, normalized);
     return {
-      ...BEGINNER_ANALOGIES[normalized],
-      story: injectSnippet(BEGINNER_ANALOGIES[normalized].story, normalized),
+      ...entry,
+      story: lightenAnalogyStory(story, entry.concept),
     };
   }
   
   // Fuzzy match
   for (const [key, value] of Object.entries(BEGINNER_ANALOGIES)) {
     if (normalized.includes(key) || key.includes(normalized)) {
+      const story = injectSnippet(value.story, key);
       return {
         ...value,
-        story: injectSnippet(value.story, key),
+        story: lightenAnalogyStory(story, value.concept),
       };
     }
   }
