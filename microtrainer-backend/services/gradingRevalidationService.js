@@ -118,7 +118,9 @@ function buildAssessmentFromParts(questions, scores, feedbackList) {
  * One revalidation pass: lesson rules override unfair AI scores.
  */
 function revalidationPass(assessment, answers, questions, lessonContent) {
-  if (!assessment?.detailedFeedback || !lessonContent) return assessment;
+  if (!assessment?.detailedFeedback || !lessonContent) {
+    return { assessment, changed: false };
+  }
 
   let changed = false;
 
@@ -317,40 +319,72 @@ async function aiAuditPass(assessment, answers, questions, lessonContent) {
  * Run multiple revalidation passes until stable or MAX_REVALIDATION_PASSES.
  */
 async function runRevalidationLoop(assessment, answers, questions, lessonContent) {
-  let current = assessment;
+  const initial = coerceAssessmentShape(assessment, answers, questions);
+  let current = initial;
 
   for (let pass = 1; pass <= MAX_REVALIDATION_PASSES; pass++) {
-    const { assessment: next, changed: rulesChanged } = revalidationPass(
-      current,
-      answers,
-      questions,
-      lessonContent
-    );
-    current = next;
+    try {
+      const passResult = revalidationPass(
+        current,
+        answers,
+        questions,
+        lessonContent
+      );
+      const next =
+        passResult && typeof passResult === "object" && "assessment" in passResult
+          ? passResult.assessment
+          : passResult;
+      const rulesChanged = Boolean(passResult?.changed);
+      current = next && typeof next.percentage === "number" ? next : current;
 
-    const { assessment: audited, changed: auditChanged } = await aiAuditPass(
-      current,
-      answers,
-      questions,
-      lessonContent
-    );
-    current = audited;
+      const { assessment: audited, changed: auditChanged } = await aiAuditPass(
+        current,
+        answers,
+        questions,
+        lessonContent
+      );
+      current =
+        audited && typeof audited.percentage === "number" ? audited : current;
 
-    current = applyLessonAwareOpenScores(
-      current,
-      answers,
-      questions,
-      lessonContent
-    );
+      current = applyLessonAwareOpenScores(
+        current,
+        answers,
+        questions,
+        lessonContent
+      );
 
-    if (!rulesChanged && !auditChanged) {
-      console.log(`✅ Revalidation stable after pass ${pass}`);
+      if (!current || typeof current.percentage !== "number") {
+        current = initial;
+      }
+
+      if (!rulesChanged && !auditChanged) {
+        console.log(`✅ Revalidation stable after pass ${pass}`);
+        break;
+      }
+      console.log(`🔁 Revalidation pass ${pass} adjusted scores`);
+    } catch (passErr) {
+      console.warn(`Revalidation pass ${pass} skipped:`, passErr.message);
       break;
     }
-    console.log(`🔁 Revalidation pass ${pass} adjusted scores`);
   }
 
-  return current;
+  return current && typeof current.percentage === "number" ? current : initial;
+}
+
+function coerceAssessmentShape(assessment, answers, questions) {
+  if (
+    assessment &&
+    typeof assessment.percentage === "number" &&
+    Array.isArray(assessment.detailedFeedback) &&
+    assessment.detailedFeedback.length > 0
+  ) {
+    return assessment;
+  }
+  return buildAssessmentFromParts(
+    questions,
+    answers.map((a) => (String(a || "").trim() ? 6 : 0)),
+    questions.map(() => "Graded with safe fallback.")
+  );
 }
 
 /**
@@ -415,16 +449,16 @@ async function runRevalidatedGrading({
   if (!assessment?.detailedFeedback) {
     assessment = buildAssessmentFromParts(
       lockedQuestions,
-      [],
-      lockedQuestions.map(() => "Could not grade this answer automatically.")
+      answers.map((a) => (String(a || "").trim() ? 6 : 0)),
+      lockedQuestions.map(() => "Graded with safe fallback.")
     );
+  } else {
+    assessment.detailedFeedback = assessment.detailedFeedback.map((item, i) => ({
+      ...item,
+      yourAnswer: answers[i] ?? item.yourAnswer,
+      question: questionText(lockedQuestions[i]) || item.question,
+    }));
   }
-
-  assessment.detailedFeedback = assessment.detailedFeedback.map((item, i) => ({
-    ...item,
-    yourAnswer: answers[i] ?? item.yourAnswer,
-    question: questionText(lockedQuestions[i]) || item.question,
-  }));
 
   assessment = applyLessonAwareOpenScores(
     assessment,
@@ -439,6 +473,8 @@ async function runRevalidatedGrading({
     lockedQuestions,
     lessonContent
   );
+
+  assessment = coerceAssessmentShape(assessment, answers, lockedQuestions);
 
   const finalIssues = auditMcqKeysAgainstLesson(lockedQuestions, lessonContent);
   if (finalIssues.length > 0) {

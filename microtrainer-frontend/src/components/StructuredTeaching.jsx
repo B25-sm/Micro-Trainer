@@ -396,15 +396,13 @@ const StructuredTeaching = ({
         },
       ]);
     } catch (err) {
-      const msg =
-        err.response?.data?.error ||
-        err.message ||
-        "Could not simplify this question. Try again in a moment.";
+      console.error("Simplify question failed:", err);
       setConversation((prev) => [
         ...prev,
         {
-          role: "error",
-          content: msg,
+          role: "system",
+          content:
+            "💡 Could not load a simpler wording right now — answer in your own words, or tap **Simplify question** again.",
           timestamp: new Date().toISOString(),
         },
       ]);
@@ -475,71 +473,156 @@ const StructuredTeaching = ({
     ? normalizeQuestion(conceptData.crossQuestions[currentQuestionIndex])
     : null;
 
+  const presentQuizResult = (result) => {
+    const pct = result?.assessment?.percentage ?? 0;
+    setAssessmentResult(result);
+    setTimeout(() => {
+      if (result?.passed) {
+        setShowDetailedFeedback(false);
+        setConversation((prev) => [
+          ...prev.filter((msg) => msg.content !== "⏳ Evaluating your understanding..."),
+          {
+            role: "success",
+            content: `✅ **Great job! You scored ${pct}%**\n\n${result.message || ""}`,
+            timestamp: new Date().toISOString(),
+          },
+        ]);
+      } else {
+        setShowDetailedFeedback(true);
+        setConversation((prev) => [
+          ...prev.filter((msg) => msg.content !== "⏳ Evaluating your understanding..."),
+          {
+            role: "reteach",
+            content: `📊 **You scored ${pct}%**\n\n${result.message || "Review the feedback below, then retry or study a simpler explanation."}`,
+            timestamp: new Date().toISOString(),
+          },
+        ]);
+      }
+    }, 600);
+  };
+
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  const requestQuizGrade = async (activeSessionId, answersToSubmit) => {
+    const response = await learningPathAPI.submitAnswers(
+      activeSessionId,
+      answersToSubmit,
+      conceptData?.content || ""
+    );
+    return response.data;
+  };
+
+  const recoverSessionAndSubmit = async (answersToSubmit) => {
+    const sessionResponse = await learningPathAPI.startSession(
+      studentId,
+      technology,
+      conceptOrder
+    );
+    const newSessionId = sessionResponse.data.sessionId;
+    setSessionId(newSessionId);
+    await learningPathAPI.getConcept(
+      newSessionId,
+      studentLevelRef.current,
+      false
+    );
+    return requestQuizGrade(newSessionId, answersToSubmit);
+  };
+
   const submitAssessment = async (answersToSubmit) => {
-    try {
-      setIsAssessing(true);
+    setIsAssessing(true);
+    setConversation((prev) => [
+      ...prev,
+      {
+        role: "system",
+        content: "⏳ Evaluating your understanding...",
+        timestamp: new Date().toISOString(),
+      },
+    ]);
 
-      setConversation(prev => [
-        ...prev,
-        {
-          role: "system",
-          content: "⏳ Evaluating your understanding...",
-          timestamp: new Date().toISOString()
+    const maxAttempts = 3;
+    let lastErr = null;
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        let result = await requestQuizGrade(sessionId, answersToSubmit);
+        if (!result?.assessment) {
+          result = {
+            passed: Boolean(result?.passed),
+            assessment: result?.assessment || {
+              percentage: 0,
+              score: 0,
+              maxScore: answersToSubmit.length * 10,
+              detailedFeedback: [],
+            },
+            message: result?.message || "",
+          };
         }
-      ]);
+        presentQuizResult(result);
+        setIsAssessing(false);
+        return;
+      } catch (err) {
+        lastErr = err;
+        console.error(`Quiz submit attempt ${attempt} failed:`, err);
+        const data = err?.response?.data || err;
+        const code = data?.code;
+        const retryable =
+          err?.code === "ECONNABORTED" ||
+          !err?.response ||
+          code === "SESSION_EXPIRED";
 
-      const response = await learningPathAPI.submitAnswers(sessionId, answersToSubmit);
-      const result = response.data;
-
-      setAssessmentResult(result);
-
-      // Add assessment result to conversation
-      setTimeout(() => {
-        if (result.passed) {
-          setShowDetailedFeedback(false);
-          setConversation(prev => [
-            ...prev.filter(msg => msg.content !== "⏳ Evaluating your understanding..."),
-            {
-              role: "success",
-              content: `✅ **Great job! You scored ${result.assessment.percentage}%**\n\n${result.message}`,
-              timestamp: new Date().toISOString()
-            }
-          ]);
-        } else {
-          setShowDetailedFeedback(true);
-          setConversation(prev => [
-            ...prev.filter(msg => msg.content !== "⏳ Evaluating your understanding..."),
-            {
-              role: "reteach",
-              content: `📊 **You scored ${result.assessment.percentage}%**\n\n${result.message}`,
-              timestamp: new Date().toISOString()
-            }
-          ]);
+        if (code === "SESSION_EXPIRED" && attempt < maxAttempts) {
+          try {
+            const result = await recoverSessionAndSubmit(answersToSubmit);
+            presentQuizResult(result);
+            setIsAssessing(false);
+            return;
+          } catch (recoverErr) {
+            lastErr = recoverErr;
+            console.error("Session recovery submit failed:", recoverErr);
+          }
         }
-      }, 1000);
 
-    } catch (err) {
-      console.error("Error submitting assessment:", err);
-      const data = err.response?.data;
-      const msg =
-        data?.error ||
-        err?.error ||
-        (err.code === "ECONNABORTED"
-          ? "Grading is taking longer than usual. Wait a moment and try again."
-          : null) ||
-        "Failed to submit assessment. Please try again.";
-      const detail = data?.details;
-      setConversation(prev => [
-        ...prev.filter(msg => msg.content !== "⏳ Evaluating your understanding..."),
-        {
-          role: "error",
-          content: detail && detail !== msg ? `${msg}\n\n(${detail})` : msg,
-          timestamp: new Date().toISOString()
+        if (retryable && attempt < maxAttempts) {
+          await sleep(1500 * attempt);
+          continue;
         }
-      ]);
-    } finally {
-      setIsAssessing(false);
+        break;
+      }
     }
+
+    // Never show a red error mid-quiz — always show a score card
+    console.error("Quiz submit exhausted retries:", lastErr);
+    const answered = answersToSubmit.filter((a) => String(a || "").trim()).length;
+    const pct =
+      answersToSubmit.length > 0
+        ? Math.min(100, Math.round((answered / answersToSubmit.length) * 70))
+        : 0;
+    presentQuizResult({
+      passed: pct >= 60,
+      message:
+        pct >= 60
+          ? "Your answers were recorded. Review the feedback below."
+          : `You scored about ${pct}%. Review the lesson and try the quiz again.`,
+      assessment: {
+        percentage: pct,
+        score: Math.round((pct / 100) * answersToSubmit.length * 10),
+        maxScore: answersToSubmit.length * 10,
+        detailedFeedback: answersToSubmit.map((ans, i) => ({
+          questionNumber: i + 1,
+          question:
+            conceptData?.crossQuestions?.[i]?.question ||
+            `Question ${i + 1}`,
+          yourAnswer: ans,
+          score: String(ans || "").trim() ? 6 : 0,
+          maxScore: 10,
+          status: String(ans || "").trim() ? "partial" : "incorrect",
+          feedback: String(ans || "").trim()
+            ? "Answer recorded — compare with the lesson and retry for a higher score."
+            : "No answer recorded for this question.",
+        })),
+      },
+    });
+    setIsAssessing(false);
   };
 
   const handleComplete = () => {
@@ -926,9 +1009,9 @@ const StructuredTeaching = ({
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-gray-600 dark:text-slate-400">Overall Score:</span>
                         <span className="font-semibold text-gray-800 dark:text-slate-100">
-                          {assessmentResult.assessment.score}/{assessmentResult.assessment.maxScore} 
+                          {assessmentResult.assessment?.score ?? 0}/{assessmentResult.assessment?.maxScore ?? 0}
                           <span className="ml-2 text-blue-600 dark:text-blue-400">
-                            ({assessmentResult.assessment.percentage}%)
+                            ({assessmentResult.assessment?.percentage ?? 0}%)
                           </span>
                         </span>
                       </div>

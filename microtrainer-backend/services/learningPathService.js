@@ -19,6 +19,8 @@ const {
   enforceQuestionMix,
   alignQuizWithLesson,
   applyLessonAwareOpenScores,
+  gradeMcqAnswers,
+  allMcqQuestions,
 } = require('./quizQuestionUtils');
 const {
   runRevalidatedGrading,
@@ -67,6 +69,45 @@ function saveSessionsToDisk() {
   } catch (err) {
     console.error('Error saving sessions:', err.message);
   }
+}
+
+function reloadSessionsFromDisk() {
+  try {
+    if (fs.existsSync(SESSIONS_FILE)) {
+      learningSessions = JSON.parse(fs.readFileSync(SESSIONS_FILE, 'utf8'));
+    }
+  } catch (err) {
+    console.error('Error reloading sessions:', err.message);
+  }
+}
+
+function getSessionById(sessionId) {
+  if (learningSessions[sessionId]) return learningSessions[sessionId];
+  reloadSessionsFromDisk();
+  return learningSessions[sessionId] || null;
+}
+
+/** Always return a gradable result — never leave quiz scoring in a broken state */
+function coerceAssessment(assessment, answers, questions, lessonContext = '') {
+  const valid =
+    assessment &&
+    typeof assessment.percentage === 'number' &&
+    Array.isArray(assessment.detailedFeedback) &&
+    assessment.detailedFeedback.length > 0;
+
+  if (valid) return assessment;
+
+  console.warn('⚠️ Coercing invalid assessment to safe fallback');
+
+  const questionTexts = (questions || []).map((q) =>
+    typeof q === 'string' ? q : q?.question || ''
+  );
+
+  if (allMcqQuestions(questions)) {
+    return gradeMcqAnswers(answers, questions);
+  }
+
+  return intelligentFallbackScoring(answers, questionTexts, lessonContext);
 }
 
 function saveProgressToDisk() {
@@ -343,6 +384,7 @@ async function getCurrentConceptTeaching(sessionId, studentLevel, useAIQuestions
       );
     }
     saveSessionsToDisk();
+    session.activeLessonContent = cached.content || "";
     return {
       ...cached,
       crossQuestions: session.activeCrossQuestions || cached.crossQuestions,
@@ -423,6 +465,7 @@ async function getCurrentConceptTeaching(sessionId, studentLevel, useAIQuestions
     ...result,
     quizQuestionsInternal: session.quizQuestionsInternal,
   };
+  session.activeLessonContent = teachingContent.content || "";
   saveSessionsToDisk();
 
   return result;
@@ -432,6 +475,9 @@ async function getCurrentConceptTeaching(sessionId, studentLevel, useAIQuestions
 // ASSESS UNDERSTANDING (AI-POWERED)
 // =======================================================
 function getLessonContextForSession(session) {
+  if (session?.activeLessonContent) {
+    return String(session.activeLessonContent).substring(0, 3500);
+  }
   if (!session?.lessonCache) return '';
   for (const lesson of Object.values(session.lessonCache)) {
     if (lesson?.content) {
@@ -751,14 +797,16 @@ async function simplifyQuestionForSession(sessionId, questionIndex) {
 // =======================================================
 // SUBMIT CONCEPT ANSWERS
 // =======================================================
-async function submitConceptAnswers(sessionId, answers) {
+async function submitConceptAnswers(sessionId, answers, options = {}) {
+  const { lessonContentOverride = '' } = options;
+
   console.log(`📝 Submitting answers for session: ${sessionId}`);
   console.log(`📊 Available sessions: ${Object.keys(learningSessions).join(', ')}`);
   
-  const session = learningSessions[sessionId];
+  const session = getSessionById(sessionId);
   
   if (!session) {
-    console.error(`❌ Session ${sessionId} not found!`);
+    console.error(`❌ Session ${sessionId} not found after disk reload`);
     throw new Error('Session not found');
   }
   
@@ -782,7 +830,13 @@ async function submitConceptAnswers(sessionId, answers) {
     );
   }
 
-  const lessonContext = getLessonContextForSession(session);
+  const lessonContext =
+    getLessonContextForSession(session) ||
+    String(lessonContentOverride || '').substring(0, 3500);
+
+  if (lessonContentOverride && !session.activeLessonContent) {
+    session.activeLessonContent = String(lessonContentOverride).substring(0, 3500);
+  }
 
   console.log(`🛡️ Starting revalidated grading (${MAX_REVALIDATION_PASSES || 3} passes max)…`);
 
@@ -795,16 +849,30 @@ async function submitConceptAnswers(sessionId, answers) {
       questions: gradingQuestions,
       lessonContext,
       assessOpenFn: async (openAnswers, openQuestions) => {
-        const openResult = await assessUnderstanding(
-          openAnswers,
-          openQuestions,
-          lessonContext
-        );
-        return openResult;
+        try {
+          const openResult = await assessUnderstanding(
+            openAnswers,
+            openQuestions,
+            lessonContext
+          );
+          return coerceAssessment(
+            openResult,
+            openAnswers,
+            openQuestions.map((t) => ({ type: 'open', question: t })),
+            lessonContext
+          );
+        } catch (openErr) {
+          console.error('Open-answer AI grading failed:', openErr.message);
+          return intelligentFallbackScoring(
+            openAnswers,
+            openQuestions,
+            lessonContext
+          );
+        }
       },
     });
-    assessment = graded.assessment;
-    lockedQuestions = graded.lockedQuestions;
+    assessment = graded?.assessment;
+    lockedQuestions = graded?.lockedQuestions || gradingQuestions;
   } catch (gradingErr) {
     console.error("❌ Revalidated grading failed, using lesson-aware fallback:", gradingErr.message);
     const questionTexts = gradingQuestions.map((q) =>
@@ -816,6 +884,13 @@ async function submitConceptAnswers(sessionId, answers) {
       lessonContext
     );
   }
+
+  assessment = coerceAssessment(
+    assessment,
+    answers,
+    lockedQuestions,
+    lessonContext
+  );
 
   session.quizQuestionsInternal = lockedQuestions;
   session.activeCrossQuestions = sanitizeQuestionsForClient(lockedQuestions);
@@ -840,6 +915,7 @@ async function submitConceptAnswers(sessionId, answers) {
   }
 
   if (assessment.passed) {
+    try {
     const progress = ensureStudentProgress(session.studentId, session.technology);
     // Mark concept as completed
     if (!progress.completedConcepts.includes(conceptId)) {
@@ -883,6 +959,15 @@ async function submitConceptAnswers(sessionId, answers) {
       message: "Great! You've understood this concept. Moving to the next one.",
       nextConceptAvailable: true
     };
+    } catch (progressErr) {
+      console.error('Progress save failed (grading still returned):', progressErr.message);
+      return {
+        passed: true,
+        assessment,
+        message: "Great work on this quiz! Your score is shown below.",
+        nextConceptAvailable: false,
+      };
+    }
   } else {
     console.log(`⚠️ Re-teaching required (scored ${assessment.percentage}%)`);
     

@@ -67,10 +67,12 @@ export const learningPathAPI = {
    * @param {Array<string>} answers - Array of student answers
    * @returns {Promise} Assessment result with passed status and percentage
    */
-  submitAnswers: (sessionId, answers) =>
-    axios.post(`${API_URL}/learning-path/submit`, { sessionId, answers }, {
-      timeout: SUBMIT_TIMEOUT_MS,
-    }),
+  submitAnswers: (sessionId, answers, lessonContent = "") =>
+    axios.post(
+      `${API_URL}/learning-path/submit`,
+      { sessionId, answers, lessonContent },
+      { timeout: SUBMIT_TIMEOUT_MS }
+    ),
 
   /**
    * Re-phrase the current Quick Check question in simpler language
@@ -78,10 +80,11 @@ export const learningPathAPI = {
    * @param {number} questionIndex - 0-based index of the active question
    */
   simplifyQuestion: (sessionId, questionIndex) =>
-    axios.post(`${API_URL}/learning-path/simplify-question`, {
-      sessionId,
-      questionIndex,
-    }),
+    axios.post(
+      `${API_URL}/learning-path/simplify-question`,
+      { sessionId, questionIndex },
+      { timeout: 45000 }
+    ),
   
   /**
    * Get student progress for a specific technology
