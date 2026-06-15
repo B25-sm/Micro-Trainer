@@ -31,56 +31,59 @@ const LOW_LIGHT_LUMA = 58;
 
 /**
  * Normal vs dim room.
- * Pose checks are lenient: reading the screen (not staring at the lens) is expected.
- * Warnings require sustained clear turns — not landmark jitter or off-center framing.
+ * Pose checks only flag a clear side turn — looking at the screen or keyboard is expected.
+ * While typing, pose checks are off; only sustained "left the frame" triggers a warning.
  */
-function getProctorRules(lowLight) {
-  if (lowLight) {
+function getProctorRules(lowLight, typing) {
+  const base = lowLight
+    ? {
+        noFaceStreakMin: 8,
+        noFaceHoldMs: 12_000,
+        poseStreakMin: 9,
+        lookingAwayDelayMs: 6000,
+        headTurnDelayMs: 7000,
+        yawAbsMin: 0.34,
+        profileAspectMax: 0.62,
+        profileEyeRatioMax: 0.36,
+        multipleFacesConfirmSecs: 5,
+        noFaceMessage:
+          "Face left the frame — stay visible (dim lighting — add front light if needed)",
+      }
+    : {
+        noFaceStreakMin: 6,
+        noFaceHoldMs: 10_000,
+        poseStreakMin: 8,
+        lookingAwayDelayMs: 5500,
+        headTurnDelayMs: 6500,
+        yawAbsMin: 0.32,
+        profileAspectMax: 0.64,
+        profileEyeRatioMax: 0.38,
+        multipleFacesConfirmSecs: 3,
+        noFaceMessage: "Face left the frame — stay visible while answering",
+      };
+
+  if (typing) {
     return {
-      noFaceStreakMin: 6,
-      noFaceHoldMs: 9000,
-      poseStreakMin: 7,
-      lookingAwayDelayMs: 4500,
-      headTurnDelayMs: 5000,
-      lookingAwayMulX: 1.15,
-      lookingAwayMulY: 1.2,
-      headTurnEyeRatioMax: 0.34,
-      headTurnNormXMin: 0.2,
-      headTurnNormYMin: 0.18,
-      yawAbsMin: 0.26,
-      pitchAbsMin: 0.32,
-      profileAspectMax: 0.68,
-      profileEyeRatioMax: 0.4,
-      multipleFacesConfirmSecs: 4,
+      ...base,
+      noFaceStreakMin: base.noFaceStreakMin + 6,
+      noFaceHoldMs: base.noFaceHoldMs + 8000,
+      skipPoseChecks: true,
       noFaceMessage:
-        "Face not visible — look at the camera (dim lighting — add front light)",
+        "Face left the frame — stay in view while typing (looking at your answer is fine)",
     };
   }
-  return {
-    noFaceStreakMin: 4,
-    noFaceHoldMs: 6000,
-    poseStreakMin: 6,
-    lookingAwayDelayMs: 4000,
-    headTurnDelayMs: 4500,
-    lookingAwayMulX: 1.1,
-    lookingAwayMulY: 1.15,
-    headTurnEyeRatioMax: 0.36,
-    headTurnNormXMin: 0.19,
-    headTurnNormYMin: 0.17,
-    yawAbsMin: 0.24,
-    pitchAbsMin: 0.3,
-    profileAspectMax: 0.7,
-    profileEyeRatioMax: 0.42,
-    multipleFacesConfirmSecs: 2,
-    noFaceMessage:
-      "Face not visible — look at the camera and stay in frame",
-  };
+
+  return { ...base, skipPoseChecks: false };
 }
 
-const WebcamProctor = ({ onViolation, isActive }) => {
+const WebcamProctor = ({ onViolation, isActive, relaxForTyping = false }) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const faceapiRef = useRef(null);
+  /** Holds the live MediaStream so we can stop tracks even after the <video> unmounts */
+  const streamRef = useRef(null);
+  const isActiveRef = useRef(isActive);
+  isActiveRef.current = isActive;
   /** Stable callback reference — parent handlers often change each render (typing updates state).
    *  Including `onViolation` in effect deps was restarting getUserMedia on every keystroke → blink.
    */
@@ -114,6 +117,17 @@ const WebcamProctor = ({ onViolation, isActive }) => {
     looking_away: 15_000,
     multiple_faces: 8_000,
     no_face_detected: 15_000,
+  };
+
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+    setCameraActive(false);
   };
 
   const reportViolation = (type, points, reason) => {
@@ -175,7 +189,12 @@ const WebcamProctor = ({ onViolation, isActive }) => {
 
   // Start webcam
   useEffect(() => {
-    if (!isActive || !modelsLoaded) return;
+    if (!isActive || !modelsLoaded) {
+      stopCamera();
+      return undefined;
+    }
+
+    let cancelled = false;
 
     const startWebcam = async () => {
       try {
@@ -188,6 +207,12 @@ const WebcamProctor = ({ onViolation, isActive }) => {
           audio: false,
         });
 
+        if (cancelled || !isActiveRef.current) {
+          stream.getTracks().forEach((track) => track.stop());
+          return;
+        }
+
+        streamRef.current = stream;
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
           setCameraActive(true);
@@ -202,11 +227,8 @@ const WebcamProctor = ({ onViolation, isActive }) => {
     startWebcam();
 
     return () => {
-      const v = videoRef.current;
-      if (v && v.srcObject) {
-        const tracks = v.srcObject.getTracks();
-        tracks.forEach((track) => track.stop());
-      }
+      cancelled = true;
+      stopCamera();
     };
   }, [isActive, modelsLoaded]);
 
@@ -232,11 +254,11 @@ const WebcamProctor = ({ onViolation, isActive }) => {
           setLowLightActive(lowLight);
         }
 
-        const rules = getProctorRules(lowLight);
+        const rules = getProctorRules(lowLight, relaxForTyping);
 
         const detectorOpts = new faceapi.TinyFaceDetectorOptions({
-          inputSize: lowLight ? 608 : 416,
-          scoreThreshold: lowLight ? 0.22 : 0.35,
+          inputSize: lowLight ? 608 : 512,
+          scoreThreshold: lowLight ? 0.18 : 0.26,
         });
 
         const detections = await faceapi
@@ -314,51 +336,31 @@ const WebcamProctor = ({ onViolation, isActive }) => {
           consecutiveMultipleFacesRef.current = 0;
         }
 
-        if (faceCount === 1) {
+        if (faceCount === 1 && !rules.skipPoseChecks) {
           const landmarks = detections[0].landmarks;
           const nose = landmarks.getNose();
           const leftEye = landmarks.getLeftEye();
           const rightEye = landmarks.getRightEye();
 
           const faceBox = detections[0].detection.box;
-          const faceCenterX = faceBox.x + faceBox.width / 2;
-          const faceCenterY = faceBox.y + faceBox.height / 2;
-
-          const noseX = nose[3].x;
-          const noseY = nose[3].y;
-
-          const offsetX = Math.abs(noseX - faceCenterX);
-          const offsetY = Math.abs(noseY - faceCenterY);
-
-          const normX = offsetX / Math.max(faceBox.width, 1);
-          const normY = offsetY / Math.max(faceBox.height, 1);
-
           const faceWidth = Math.max(faceBox.width, 1);
           const faceHeight = Math.max(faceBox.height, 1);
           const eyeDistance = Math.abs(leftEye[0].x - rightEye[3].x);
           const eyeDistRatio = eyeDistance / faceWidth;
           const eyeMidX = (leftEye[0].x + rightEye[3].x) / 2;
-          const eyeMidY = (leftEye[2].y + rightEye[2].y) / 2;
+          const noseX = nose[3].x;
           const yawNorm = (noseX - eyeMidX) / faceWidth;
-          const pitchNorm = (noseY - eyeMidY) / faceHeight;
-
-          const lookingAwayThresholdX = faceBox.width * 0.14 * rules.lookingAwayMulX;
-          const lookingAwayThresholdY = faceBox.height * 0.16 * rules.lookingAwayMulY;
-
-          const noseOffsetSuspected =
-            offsetX > lookingAwayThresholdX || offsetY > lookingAwayThresholdY;
 
           const extremeYaw = Math.abs(yawNorm) > rules.yawAbsMin;
-          const extremePitch = Math.abs(pitchNorm) > rules.pitchAbsMin;
 
           const profileAspect = faceWidth / faceHeight;
           const profileLike =
             profileAspect < rules.profileAspectMax &&
             eyeDistRatio < rules.profileEyeRatioMax;
 
-          // Looking at the question on-screen is OK — only flag a clear side turn / gaze away.
-          const lookingAwaySuspected =
-            extremeYaw || (noseOffsetSuspected && extremePitch);
+          // Only a sustained clear side turn — not looking down at the answer box or keyboard.
+          const lookingAwaySuspected = extremeYaw;
+          const headTurnSuspected = extremeYaw || profileLike;
 
           if (lookingAwaySuspected) {
             consecutiveLookingAwayRef.current += 1;
@@ -370,7 +372,7 @@ const WebcamProctor = ({ onViolation, isActive }) => {
                 reportViolation(
                   "looking_away",
                   lowLight ? 12 : 15,
-                  "Not facing the screen — keep your attention on the interview"
+                  "Turned away from the screen for several seconds"
                 );
                 lookingAwayTimerRef.current = null;
               }, rules.lookingAwayDelayMs);
@@ -383,13 +385,6 @@ const WebcamProctor = ({ onViolation, isActive }) => {
             }
           }
 
-          const headTurnSuspected =
-            eyeDistRatio < rules.headTurnEyeRatioMax ||
-            normX > rules.headTurnNormXMin ||
-            normY > rules.headTurnNormYMin ||
-            extremeYaw ||
-            profileLike;
-
           if (headTurnSuspected) {
             consecutiveHeadTurnRef.current += 1;
             if (
@@ -400,9 +395,7 @@ const WebcamProctor = ({ onViolation, isActive }) => {
                 reportViolation(
                   "head_turned",
                   lowLight ? 22 : 25,
-                  lowLight
-                    ? "Head turned away for several seconds — face the screen"
-                    : "Head turned away for several seconds — stay facing the screen"
+                  "Head turned to the side for several seconds — stay facing the screen"
                 );
                 headTurnTimerRef.current = null;
               }, rules.headTurnDelayMs);
@@ -413,6 +406,17 @@ const WebcamProctor = ({ onViolation, isActive }) => {
               clearTimeout(headTurnTimerRef.current);
               headTurnTimerRef.current = null;
             }
+          }
+        } else if (faceCount === 1 && rules.skipPoseChecks) {
+          consecutiveLookingAwayRef.current = 0;
+          consecutiveHeadTurnRef.current = 0;
+          if (lookingAwayTimerRef.current) {
+            clearTimeout(lookingAwayTimerRef.current);
+            lookingAwayTimerRef.current = null;
+          }
+          if (headTurnTimerRef.current) {
+            clearTimeout(headTurnTimerRef.current);
+            headTurnTimerRef.current = null;
           }
         }
       } catch (error) {
@@ -441,7 +445,7 @@ const WebcamProctor = ({ onViolation, isActive }) => {
       consecutiveLookingAwayRef.current = 0;
       consecutiveHeadTurnRef.current = 0;
     };
-  }, [cameraActive, modelsLoaded, isActive]);
+  }, [cameraActive, modelsLoaded, isActive, relaxForTyping]);
 
   if (!isActive) return null;
 
@@ -491,12 +495,20 @@ const WebcamProctor = ({ onViolation, isActive }) => {
           </div>
         )}
 
-        {lowLightActive && modelsLoaded && !liveAlert && (
+        {relaxForTyping && modelsLoaded && !liveAlert && (
+          <div className="px-3 py-2 bg-emerald-50 border-t border-emerald-100 dark:bg-emerald-950/40 dark:border-emerald-900">
+            <p className="text-xs text-emerald-950 dark:text-emerald-100 leading-snug">
+              <span className="font-semibold">Typing mode.</span> Look at your answer freely —
+              only leaving the frame for a long time triggers a warning.
+            </p>
+          </div>
+        )}
+
+        {lowLightActive && modelsLoaded && !liveAlert && !relaxForTyping && (
           <div className="px-3 py-2 bg-amber-50 border-t border-amber-100 dark:bg-amber-950/40 dark:border-amber-900">
             <p className="text-xs text-amber-950 dark:text-amber-100 leading-snug">
-              <span className="font-semibold">Dim lighting.</span> Looking at the screen is
-              fine — warnings only fire after several seconds of a clear turn away. Add front
-              light if the camera loses your face.
+              <span className="font-semibold">Dim lighting.</span> Looking at the screen or
+              keyboard is fine. Add front light if the camera briefly loses your face.
             </p>
           </div>
         )}

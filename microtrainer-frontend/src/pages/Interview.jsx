@@ -35,6 +35,7 @@ const Interview = () => {
   const [suspicionScore, setSuspicionScore] = useState(0);
   const [warningCount, setWarningCount] = useState(0);
   const [proctorBanner, setProctorBanner] = useState(null);
+  const [answerInputFocused, setAnswerInputFocused] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
   const [isAbandoned, setIsAbandoned] = useState(false);
   const [abandonSummary, setAbandonSummary] = useState(null);
@@ -653,6 +654,7 @@ IMPORTANT:
       {/* 🔒 WEBCAM PROCTORING */}
       <WebcamProctor 
         isActive={session && !session.completed && !isDismissed && !isAbandoned}
+        relaxForTyping={answerInputFocused}
         onViolation={handleWebcamViolation}
       />
 
@@ -784,6 +786,8 @@ IMPORTANT:
                 ref={inputRef}
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
+                onFocus={() => setAnswerInputFocused(true)}
+                onBlur={() => setAnswerInputFocused(false)}
                 onKeyDown={handleKeyDown}
                 placeholder={session?.completed ? "Ask me about your feedback..." : "Type your answer..."}
                 rows={3}
