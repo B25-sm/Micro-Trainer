@@ -4,6 +4,9 @@ import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { chatWithMicroTrainer } from "../api";
 import { pageShell, headingSection, textMuted, chipButton, chipButtonSm, inputShell } from "../lib/ui";
+import { createLessonMarkdownComponents } from "../utils/lessonMarkdown";
+
+const chatMdComponents = createLessonMarkdownComponents();
 
 const Home = () => {
   const navigate = useNavigate();
@@ -257,25 +260,7 @@ const Home = () => {
                       </div>
                     ) : (
                       <div className="prose prose-sm max-w-none text-gray-800">
-                        <ReactMarkdown
-                          components={{
-                            code: ({ inline, children, ...props }) => {
-                              return inline ? (
-                                <code className="bg-gray-200 px-1.5 py-0.5 rounded text-xs font-mono" {...props}>
-                                  {children}
-                                </code>
-                              ) : (
-                                <code className="block bg-gray-800 text-gray-100 p-3 rounded-lg text-xs font-mono overflow-x-auto" {...props}>
-                                  {children}
-                                </code>
-                              );
-                            },
-                            p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                            ul: ({ children }) => <ul className="list-disc pl-5 mb-2 space-y-1">{children}</ul>,
-                            ol: ({ children }) => <ol className="list-decimal pl-5 mb-2 space-y-1">{children}</ol>,
-                            strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
-                          }}
-                        >
+                        <ReactMarkdown components={chatMdComponents}>
                           {message.content}
                         </ReactMarkdown>
                       </div>

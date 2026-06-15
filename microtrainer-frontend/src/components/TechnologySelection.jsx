@@ -20,7 +20,7 @@ const TechnologySelection = ({ studentId: studentIdProp, onTechnologySelect }) =
 
   const resolvedStudentId = studentIdProp || getStudentId() || "";
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (isRetry = false) => {
     setIsLoading(true);
     setError(null);
     setTrainerPreview(false);
@@ -58,11 +58,28 @@ const TechnologySelection = ({ studentId: studentIdProp, onTechnologySelect }) =
       }
     } catch (err) {
       console.error("Error fetching technologies:", err);
-      const msg =
+      const timedOut =
+        err?.code === "ECONNABORTED" || /timeout/i.test(err?.message || "");
+
+      if (!isRetry && timedOut) {
+        await fetchData(true);
+        return;
+      }
+
+      let msg =
         err?.response?.data?.error ||
         err?.error ||
         err?.message ||
         "Failed to load technologies. Please try again.";
+
+      if (timedOut) {
+        msg =
+          "The server took too long to respond — this often happens when the hosted backend is waking up (can take up to a minute). Click Try Again and wait a moment.";
+      } else if (err?.code === "ERR_NETWORK" || !err?.response) {
+        msg =
+          "Could not reach the MicroTrainer server. Check your connection, or try again in a minute if the backend is starting up.";
+      }
+
       setError(msg);
       setTechnologies([]);
     } finally {
@@ -118,7 +135,12 @@ const TechnologySelection = ({ studentId: studentIdProp, onTechnologySelect }) =
     return (
       <div className="w-full py-20 text-center">
         <div className="inline-block w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-        <p className="mt-4 text-gray-600 dark:text-gray-400">Loading technologies…</p>
+        <p className="mt-4 text-gray-600 dark:text-gray-400">
+          Loading technologies…
+        </p>
+        <p className="mt-2 text-gray-500 dark:text-gray-500 text-xs max-w-sm mx-auto">
+          First load after idle can take up to a minute while the server wakes up.
+        </p>
       </div>
     );
   }

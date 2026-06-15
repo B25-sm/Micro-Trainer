@@ -33,6 +33,10 @@ export function normalizeLessonMarkdown(content) {
     "\n\n$1"
   );
 
+  // Keep fenced code blocks separated from surrounding prose
+  text = text.replace(/([^\n])\n(```)/g, "$1\n\n$2");
+  text = text.replace(/(```[^\n]*\n[\s\S]*?```)\n([^\n])/g, "$1\n\n$2");
+
   // Cast mapping lines without bullets → proper list items
   text = text.replace(/^(\*\*[^*\n]+\*\*\s*=\s*.+)$/gm, "- $1");
 
@@ -56,7 +60,17 @@ const CAST_LINE_CLASS =
 
 export function createLessonMarkdownComponents() {
   return {
-    code: ({ inline, children, ...props }) =>
+    pre: ({ children }) => (
+      <div className="my-4">
+        <div className="text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400 mb-1.5 read-mode:text-[var(--read-text-muted)]">
+          Code snippet
+        </div>
+        <pre className="bg-gray-800 text-gray-100 dark:bg-slate-950 dark:text-slate-100 p-3 rounded-lg text-xs font-mono overflow-x-auto m-0">
+          {children}
+        </pre>
+      </div>
+    ),
+    code: ({ inline, className, children, ...props }) =>
       inline ? (
         <code
           className="bg-gray-200 px-1.5 py-0.5 rounded text-xs font-mono text-gray-900 dark:bg-zinc-800 dark:text-slate-200 read-mode:bg-[var(--read-surface)] read-mode:text-[var(--read-text)]"
@@ -65,10 +79,7 @@ export function createLessonMarkdownComponents() {
           {children}
         </code>
       ) : (
-        <code
-          className="block bg-gray-800 text-gray-100 dark:bg-slate-950 dark:text-slate-100 p-3 rounded-lg text-xs font-mono overflow-x-auto my-3"
-          {...props}
-        >
+        <code className={`${className || ""} block whitespace-pre`} {...props}>
           {children}
         </code>
       ),
@@ -119,6 +130,13 @@ export function createLessonMarkdownComponents() {
       if (SECTION_HEADERS.includes(label)) {
         return (
           <strong className="lesson-section-heading block text-blue-800 dark:text-blue-300 font-bold text-base mt-6 mb-2 first:mt-0 read-mode:text-[var(--read-text-heading)]">
+            {children}
+          </strong>
+        );
+      }
+      if (label === "Example") {
+        return (
+          <strong className="lesson-section-heading block text-emerald-800 dark:text-emerald-300 font-bold text-base mt-6 mb-2 first:mt-0 read-mode:text-[var(--read-text-heading)]">
             {children}
           </strong>
         );

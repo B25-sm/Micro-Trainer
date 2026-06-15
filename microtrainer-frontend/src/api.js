@@ -60,7 +60,7 @@ export const askAI = (data) =>
 // =======================================================
 
 export const chatWithMicroTrainer = (data) =>
-  API.post("/chat/ask", data);
+  API.post("/chat/ask", data, { timeout: 60000 });
 
 
 // =======================================================

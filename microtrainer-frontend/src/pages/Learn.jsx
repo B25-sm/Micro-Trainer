@@ -5,6 +5,9 @@ import axios from "axios";
 import { askAI } from "../api";
 import { getStudentId } from "../utils/studentAuth";
 import { isTrainerSession } from "../utils/trainerAuth";
+import { createLessonMarkdownComponents } from "../utils/lessonMarkdown";
+
+const teachingMdComponents = createLessonMarkdownComponents();
 
 function resolveLearnStudentId() {
   const id = getStudentId();
@@ -381,25 +384,7 @@ const Learn = () => {
 
                         {/* Explanation */}
                         <div className="prose prose-sm max-w-none text-gray-800 mb-4">
-                          <ReactMarkdown
-                            components={{
-                              code: ({ inline, children, ...props }) => {
-                                return inline ? (
-                                  <code className="bg-gray-200 px-1.5 py-0.5 rounded text-xs font-mono" {...props}>
-                                    {children}
-                                  </code>
-                                ) : (
-                                  <code className="block bg-gray-800 text-gray-100 p-3 rounded-lg text-xs font-mono overflow-x-auto" {...props}>
-                                    {children}
-                                  </code>
-                                );
-                              },
-                              p: ({ children }) => <p className="mb-3 last:mb-0 leading-relaxed">{children}</p>,
-                              ul: ({ children }) => <ul className="list-disc pl-5 mb-3 space-y-1">{children}</ul>,
-                              ol: ({ children }) => <ol className="list-decimal pl-5 mb-3 space-y-1">{children}</ol>,
-                              strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
-                            }}
-                          >
+                          <ReactMarkdown components={teachingMdComponents}>
                             {message.content}
                           </ReactMarkdown>
                         </div>

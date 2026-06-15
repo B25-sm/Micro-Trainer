@@ -3,7 +3,8 @@ const axios = require("axios");
 // 🔹 Persona Import (NEW)
 const {
   BASE_PERSONA,
-  TEACHING_PERSONA
+  TEACHING_PERSONA,
+  CODE_SNIPPET_RULES_CHAT,
 } = require("./personaConfig");
 
 // 🔹 Safe imports
@@ -74,6 +75,7 @@ STRICT RULES:
 - Push clarity
 - No boring explanations
 - Make the student understand deeply
+${CODE_SNIPPET_RULES_CHAT}
 
 If question is unclear:
 Respond ONLY with:

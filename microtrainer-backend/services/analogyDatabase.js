@@ -230,6 +230,109 @@ Make sense?`,
   }
 };
 
+const CONCEPT_SNIPPETS = {
+  closure: `Here's what that looks like in code:
+
+\`\`\`javascript
+function createCounter() {
+  let count = 0; // "packed in the backpack" from home
+  return function () {
+    count++; // inner function still reaches count
+    return count;
+  };
+}
+\`\`\``,
+
+  promise: `Here's what that looks like in code:
+
+\`\`\`javascript
+fetch("/api/menu") // order the pizza — don't freeze the app
+  .then((res) => res.json()) // when it's ready, handle it
+  .then((data) => showMenu(data)); // UI updates when data arrives
+\`\`\``,
+
+  variable: `Here's what that looks like in code:
+
+\`\`\`javascript
+let score = 10; // pencil — you can change it later
+score = 20;
+
+const apiUrl = "https://api.example.com"; // permanent marker — cannot reassign
+\`\`\``,
+
+  array: `Here's what that looks like in code:
+
+\`\`\`javascript
+const lockers = ["book", "jacket", "lunch"]; // row of lockers
+console.log(lockers[0]); // open locker 0 → "book"
+lockers[2] = "water bottle"; // put something in locker 2
+\`\`\``,
+
+  function: `Here's what that looks like in code:
+
+\`\`\`javascript
+function bakeCookies(flour, sugar) {
+  // recipe: same inputs → same steps → same result
+  return flour + sugar + " + chocolate chips → cookies";
+}
+bakeCookies(2, 1); // follow the recipe again anytime
+\`\`\``,
+
+  loop: `Here's what that looks like in code:
+
+\`\`\`javascript
+const plates = 10;
+for (let i = 0; i < plates; i++) {
+  washPlate(i); // same action repeated for each plate
+}
+\`\`\``,
+
+  object: `Here's what that looks like in code:
+
+\`\`\`javascript
+const john = {
+  name: "John",
+  age: 25,
+  job: "teacher",
+};
+console.log(john.age); // ask for one property of the person
+\`\`\``,
+
+  callback: `Here's what that looks like in code:
+
+\`\`\`javascript
+orderPackage(() => {
+  ringDoorbell(); // run this ONLY when delivery arrives
+});
+// app keeps doing other work while waiting
+\`\`\``,
+
+  scope: `Here's what that looks like in code:
+
+\`\`\`javascript
+function kitchen() {
+  const pan = "stove pan"; // only exists in this "room"
+  return pan;
+}
+// console.log(pan); // error — can't reach kitchen stuff from outside
+\`\`\``,
+
+  hoisting: `Here's what that looks like in code:
+
+\`\`\`javascript
+sayHi(); // works — JS already knows this function exists
+function sayHi() {
+  console.log("Hello!");
+}
+\`\`\``,
+};
+
+function injectSnippet(story, key) {
+  const snippet = CONCEPT_SNIPPETS[key];
+  if (!snippet) return story;
+  return story.replace(/\n\nMake sense\?$/, `\n\n${snippet}\n\nMake sense?`);
+}
+
 // =======================================================
 // 🎓 CROSS-QUESTION BANK (For Level Detection)
 // =======================================================
@@ -292,13 +395,19 @@ function getAnalogy(concept) {
   
   // Direct match
   if (BEGINNER_ANALOGIES[normalized]) {
-    return BEGINNER_ANALOGIES[normalized];
+    return {
+      ...BEGINNER_ANALOGIES[normalized],
+      story: injectSnippet(BEGINNER_ANALOGIES[normalized].story, normalized),
+    };
   }
   
   // Fuzzy match
   for (const [key, value] of Object.entries(BEGINNER_ANALOGIES)) {
     if (normalized.includes(key) || key.includes(normalized)) {
-      return value;
+      return {
+        ...value,
+        story: injectSnippet(value.story, key),
+      };
     }
   }
   

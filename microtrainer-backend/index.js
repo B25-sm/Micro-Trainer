@@ -273,6 +273,7 @@ app.get("/trainer/sync-status", trainerOnly, (req, res) => {
 // 🔹 TEACHING MODE (ADAPTIVE)
 // =======================================================
 const { adaptiveTeach } = require("./services/adaptiveTeachingService");
+const { CODE_SNIPPET_RULES_CHAT } = require("./services/personaConfig");
 const { saveStudentLevel, getStudentLevel } = require("./services/memoryService");
 const {
   logAskTopic,
@@ -468,12 +469,14 @@ Available interview types:
 
 Guidelines:
 - Be concise (2-3 paragraphs max, 200-300 words)
-- Use examples and code snippets when helpful (keep code short)
+- When explaining technical concepts, include at least one small fenced code snippet (3-8 lines) with short comments
 - Be encouraging and supportive
 - Suggest starting an interview when relevant
 - Use simple, clear language
 - Format responses with markdown (bold, lists, code blocks)
 - If asked about platform features: scoring system tracks correctness, completeness, clarity, and code quality
+
+${CODE_SNIPPET_RULES_CHAT}
 
 Don't:
 - Give overly long explanations
@@ -495,7 +498,7 @@ Don't:
         model: "llama-3.1-8b-instant",
         messages: messages,
         temperature: 0.7,
-        max_tokens: 500
+        max_tokens: 650
       },
       {
         headers: {

@@ -5,6 +5,8 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 /** Lesson generation (Groq story + terse + wireframe + quiz) — parallel on server */
 const CONCEPT_TIMEOUT_MS = 180000;
+/** Render free tier cold starts can exceed 30s — allow time for server wake-up */
+const TECHNOLOGIES_TIMEOUT_MS = 90000;
 const SESSION_TIMEOUT_MS = 20000;
 /** Groq grading + revalidation for 4 questions can take 60–90s on cold start */
 const SUBMIT_TIMEOUT_MS = 120000;
@@ -19,15 +21,19 @@ export const learningPathAPI = {
    * @returns {Promise} Array of technologies with id, name, totalConcepts
    */
   getTechnologies: () =>
-    axios.get(`${API_URL}/learning-path/technologies`, { timeout: 30000 }),
+    axios.get(`${API_URL}/learning-path/technologies`, {
+      timeout: TECHNOLOGIES_TIMEOUT_MS,
+    }),
   
   /**
    * Get curriculum for a specific technology
    * @param {string} technology - Technology ID (e.g., "javascript")
    * @returns {Promise} Curriculum object with concepts array
    */
-  getCurriculum: (technology) => 
-    axios.get(`${API_URL}/learning-path/curriculum/${technology}`),
+  getCurriculum: (technology) =>
+    axios.get(`${API_URL}/learning-path/curriculum/${technology}`, {
+      timeout: TECHNOLOGIES_TIMEOUT_MS,
+    }),
   
   /**
    * Start a new learning session

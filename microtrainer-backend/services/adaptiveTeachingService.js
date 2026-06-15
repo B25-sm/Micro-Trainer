@@ -16,6 +16,9 @@ const {
   TECHNOLOGY_ANALOGY_HINTS,
   BEGINNER_TECHNOLOGY_ANALOGY_HINTS,
   ADAPTIVE_TEACHING_PERSONA,
+  CODE_SNIPPET_RULES_BEGINNER,
+  CODE_SNIPPET_RULES_INTERMEDIATE,
+  CODE_SNIPPET_RULES_ADVANCED,
 } = require("./personaConfig");
 const {
   normalizeQuizQuestions,
@@ -87,14 +90,16 @@ async function generateGuidedStoryOnly({
     ? `
 - **What** ends with 3-5 plain-English idea bullets (use "—" not "=" between label and explanation)
 - **How** stays in everyday language — describe what the user/browser experiences
-- No code blocks unless absolutely necessary (max 3 lines with plain comments)
+- **How** must end with ONE tiny fenced code snippet (3-6 lines, plain-English comment on every line)
 - If a technical term appears, explain it in the same sentence — never stack jargon`
     : normalizedLevel === "intermediate"
     ? `${mappingBar}
-- After **How**, add **Example** with ONE commented code block (8-15 lines)
-- Tie code to technical terms from **What**, not story characters`
+- **How** must include 1-2 small fenced snippets (5-10 lines each) placed right after the steps they illustrate
+- After **How**, add **Example** with ONE commented code block (8-15 lines) tying all steps together
+- Tie every snippet to technical terms from **What**, not story characters`
     : `${mappingBar}
-- **Example** with substantive code; **How** uses technical terms and includes one "gotcha"`;
+- **How** includes 2-3 small snippets plus one "gotcha" callout
+- **Example** with a substantive fenced block (12-20 lines) students can copy and run`;
 
   const techKey = (technology || "").toLowerCase();
   const hintSource = isBeginner
@@ -334,6 +339,9 @@ FORBIDDEN:
 - Cast-mapping lines like "**CSS Rule** = **CSS declaration**"
 - Shallow 1-sentence sections
 - Wikipedia or documentation tone
+- Lessons with zero code — **How** must end with one tiny fenced snippet (3-6 lines, plain comments)
+
+${CODE_SNIPPET_RULES_BEGINNER}
 
 ${BEGINNER_GUIDED_LESSON_FORMAT}
 `;
@@ -363,6 +371,8 @@ CODE RULES:
 - Add comments explaining each part
 - Use clear variable names
 - Show practical, working code
+
+${CODE_SNIPPET_RULES_INTERMEDIATE}
 
 REMEMBER: They understand concepts, now show them HOW to use it.
 `;
@@ -394,6 +404,8 @@ TOPICS TO COVER:
 - Performance implications
 - Common pitfalls
 - Advanced patterns
+
+${CODE_SNIPPET_RULES_ADVANCED}
 
 REMEMBER: They want depth. Don't hold back on technical details.
 `;
@@ -491,8 +503,11 @@ async function generateBeginnerExplanation(concept) {
 Structure:
 1. Open with the REAL problem this concept solves (1-2 sentences)
 2. Optional: ONE short analogy hook (max 2 sentences) — then introduce the real technical term
-3. Explain how it works in plain English with a concrete app or code scenario
-4. End with when you'd use it in a real project
+3. Explain how it works in plain English with a concrete app scenario
+4. Include ONE small fenced code snippet (3-6 lines) with plain-English comments on every line
+5. End with when you'd use it in a real project
+
+${CODE_SNIPPET_RULES_BEGINNER}
 
 Cross-question rules:
 - Ask about the REAL concept (purpose, trade-off, what breaks without it)
@@ -515,7 +530,7 @@ CROSS_QUESTION:
           { role: "user", content: prompt }
         ],
         temperature: 0.7,
-        max_tokens: 600
+        max_tokens: 750
       },
       {
         headers: {
@@ -556,13 +571,13 @@ async function generateLeveledExplanation(concept, level, studentAnswer, history
     
     if (level === "beginner") {
       persona = LEVEL_1_PERSONA;
-      maxTokens = 600;
+      maxTokens = 750;
     } else if (level === "intermediate") {
       persona = LEVEL_2_PERSONA;
-      maxTokens = 500;
+      maxTokens = 700;
     } else {
       persona = LEVEL_3_PERSONA;
-      maxTokens = 700;
+      maxTokens = 900;
     }
     
     // Build context from conversation history
@@ -571,11 +586,19 @@ async function generateLeveledExplanation(concept, level, studentAnswer, history
       content: msg.content
     }));
     
+    const snippetRules =
+      level === "beginner"
+        ? CODE_SNIPPET_RULES_BEGINNER
+        : level === "intermediate"
+        ? CODE_SNIPPET_RULES_INTERMEDIATE
+        : CODE_SNIPPET_RULES_ADVANCED;
+
     const prompt = `Student asked about: ${concept}
 Student's answer to cross-question: ${studentAnswer}
 Detected level: ${level}
 
-Now provide a ${level}-appropriate explanation.`;
+Now provide a ${level}-appropriate explanation.
+${snippetRules}`;
 
     const response = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",

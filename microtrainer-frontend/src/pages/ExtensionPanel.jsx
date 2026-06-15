@@ -4,11 +4,14 @@ import ReactMarkdown from "react-markdown";
 import { chatWithMicroTrainer } from "../api";
 import SyncRequiredBanner from "../components/SyncRequiredBanner";
 import { getStudentId } from "../utils/studentAuth";
+import { createLessonMarkdownComponents } from "../utils/lessonMarkdown";
+
+const panelMdComponents = createLessonMarkdownComponents();
 
 const QUICK_PROMPTS = [
-  "Explain this concept simply with one example.",
-  "Give me a quick interview answer for this topic.",
-  "Turn this into a step-by-step explanation.",
+  "Explain this concept simply with a small code example.",
+  "Give me a quick interview answer for this topic with code.",
+  "Turn this into a step-by-step explanation with snippets.",
 ];
 
 export default function ExtensionPanel() {
@@ -157,7 +160,7 @@ export default function ExtensionPanel() {
                       : "bg-slate-100 text-slate-800"
                 }`}
               >
-                <ReactMarkdown>{message.content}</ReactMarkdown>
+                <ReactMarkdown components={panelMdComponents}>{message.content}</ReactMarkdown>
               </div>
             ))}
             <div ref={chatEndRef} />

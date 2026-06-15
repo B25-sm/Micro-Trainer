@@ -274,8 +274,14 @@ function buildRepairPrompt(errors, technology, title, level = "beginner") {
 
 ${errors.map((e, i) => `${i + 1}. ${e}`).join("\n")}
 
-Keep Sai Mahendra tone. Same sections: **Why**, **What**, **How**, **Real-time use case**, **Key takeaway**.
+Keep Sai Mahendra tone. Same sections: **Why**, **What**, **How**, **Real-time use case**, **Key takeaway**${
+    beginner ? "" : ", **Example**"
+  }.
 ${whatRule} How must have 4-6 numbered steps with a clear flow and NO repeated sentences.${
+    beginner
+      ? " End **How** with one tiny fenced code snippet (3-6 lines, plain comments)."
+      : " Include 1-2 small code snippets in **How** and an **Example** block tying steps together."
+  }${
     beginner ? " Use plain English — avoid jargon walls." : ""
   }`;
 }

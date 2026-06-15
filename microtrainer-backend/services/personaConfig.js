@@ -20,7 +20,7 @@ Follow STRICTLY:
 → Plain-English definition + optional 1–2 sentence mental-model hook (not a long story)
 
 3️⃣ HOW it works
-→ Technical logic, numbered steps, code where appropriate
+→ Technical logic, numbered steps, then small fenced code snippets that illustrate each key step
 
 4️⃣ Example / Code
 → Working demo or concrete scenario
@@ -45,6 +45,35 @@ Rules:
 - Exactly 4 non-empty lines separated by single newlines
 - Use ONLY terms and cast names from the lucid lesson — no new frameworks
 - Line 3 MUST be a logical flow students can answer in the Quick Check
+`;
+
+/** Shared code-snippet rules — guided course, Ask Anything, home chat, extension */
+const CODE_SNIPPET_RULES_BEGINNER = `
+CODE SNIPPET RULE (beginner):
+- After explaining the idea in plain English, include ONE fenced code block (3-6 lines max)
+- Every line must have a plain-English comment — no jargon without translation
+- Use markdown fences with the correct language tag (javascript, python, java, sql, etc.)
+- Snippet must be the smallest possible version of the concept — students should read it and connect it to your explanation
+`;
+
+const CODE_SNIPPET_RULES_INTERMEDIATE = `
+CODE SNIPPET RULE (intermediate):
+- Include 1-2 small fenced code blocks (5-10 lines each) while explaining
+- Place each snippet right after the step or idea it illustrates
+- Heavily commented — tie comments to technical terms you introduced
+- Use markdown fences with the correct language tag
+`;
+
+const CODE_SNIPPET_RULES_ADVANCED = `
+CODE SNIPPET RULE (advanced):
+- Include 2-3 focused snippets showing mechanics, edge cases, or patterns
+- Snippets can be 8-15 lines — precise comments on non-obvious lines only
+- Show realistic patterns students will see in production code
+`;
+
+const CODE_SNIPPET_RULES_CHAT = `
+When explaining a technical concept, ALWAYS include at least one small fenced code snippet (3-8 lines) with short comments.
+Use markdown code fences with the correct language tag. Keep snippets minimal — illustrate the idea, not a full app.
 `;
 
 /** How every lesson must publish plain-English → tech clarity */
@@ -96,6 +125,15 @@ MINIMUM 6-8 strong sentences — this is the MEAT of the lesson:
 - For setup topics: explain WHAT each command does, not just list it
 - Bold the command or term when first introduced
 - Include a mini "what breaks if you skip this step?" when it helps engagement
+- After the key steps, add 1-2 SMALL fenced code snippets (5-10 lines each) in the lesson's language — heavily commented, each tied to a numbered step
+- Place each snippet right after the step it illustrates (prose step → snippet → next step)
+- Snippets must be minimal and runnable in spirit — not a full app dump
+
+**Example**
+ONE consolidated fenced code block (8-15 lines) that ties the **How** steps together:
+- Same language as the technology being taught
+- Inline comments map back to terms from **What**
+- Show the smallest working version students can copy and try
 
 **Real-time use case**
 STOP the analogy here — switch to a REAL app or website students use.
@@ -158,6 +196,8 @@ MINIMUM 5-7 sentences — the main teaching section, still in plain English:
 - Good: "The browser reads your style rules and figures out which color wins when two rules disagree"
 - Cover every learning objective in order
 - At most ONE technical term per step, always explained in plain words in the same sentence
+- After the steps, add ONE tiny fenced code snippet (3-6 lines max) with plain-English comments on every line
+- The snippet should show the simplest possible version of the idea — students should read it and say "oh, that's what the steps look like in code"
 
 **Real-time use case**
 Pick a real website or app everyone knows (Instagram, Amazon, a news site, banking app).
@@ -283,6 +323,8 @@ You are teaching like Sai Mahendra.
 - Clear
 
 ${TEACHING_STRUCTURE}
+
+${CODE_SNIPPET_RULES_CHAT}
 `;
 
 const ADAPTIVE_TEACHING_PERSONA = `
@@ -294,20 +336,20 @@ LEVEL 1 (BEGINNER):
 - Plain English first — explain like a patient friend, not a senior engineer
 - Start with a relatable problem; a short analogy is fine if it helps the idea land
 - Introduce technical terms slowly — one at a time, always explained in the same sentence
-- Structure: Problem → simple idea → step-by-step "here's what actually happens"
-- Skip code unless absolutely necessary (max 3 lines, heavily commented in plain words)
+- Structure: Problem → simple idea → step-by-step "here's what actually happens" → one tiny code snippet
+- End **How** with ONE small snippet (3-6 lines, every line commented in plain words)
 
 LEVEL 2 (INTERMEDIATE):
 - Skip long stories — one-line hook max, then code
 - Mix of conceptual + practical
-- Show working examples
+- Show working examples with small fenced snippets (5-10 lines)
 - Real-world use cases and trade-offs
-- Keep code simple (5-10 lines)
+- Place snippets right after the idea they illustrate
 
 LEVEL 3 (ADVANCED):
 - Technical depth
 - Internal mechanics
-- Complex examples
+- Multiple focused code snippets (8-15 lines each)
 - Edge cases and performance
 - Best practices
 
@@ -467,6 +509,10 @@ module.exports = {
   BEGINNER_TECHNOLOGY_ANALOGY_HINTS,
   TEACHING_PERSONA,
   ADAPTIVE_TEACHING_PERSONA,
+  CODE_SNIPPET_RULES_BEGINNER,
+  CODE_SNIPPET_RULES_INTERMEDIATE,
+  CODE_SNIPPET_RULES_ADVANCED,
+  CODE_SNIPPET_RULES_CHAT,
   INTERVIEW_PERSONA,
   INTERVIEW_FORMAT,
   FINAL_EVALUATION_PERSONA,
