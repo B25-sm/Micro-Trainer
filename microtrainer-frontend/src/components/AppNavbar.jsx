@@ -14,6 +14,7 @@ import {
   PanelLeftOpen,
   Menu,
   X,
+  MessageSquareText,
 } from "lucide-react";
 import DisplayModeToggle from "./DisplayModeToggle";
 import { clearAuthSession } from "../utils/authSession";
@@ -28,6 +29,7 @@ const NAV_SECTIONS = [
     label: "Practice",
     items: [
       { path: "/interview", label: "Interview", icon: Mic },
+      { path: "/communication", label: "Communication", icon: MessageSquareText },
       { path: "/problems", label: "Code Practice", icon: Code2 },
     ],
   },

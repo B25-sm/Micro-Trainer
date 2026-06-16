@@ -16,6 +16,7 @@ const {
   TECHNOLOGY_ANALOGY_HINTS,
   BEGINNER_TECHNOLOGY_ANALOGY_HINTS,
   ADAPTIVE_TEACHING_PERSONA,
+  CONCEPT_QA_RESPONSE_STRUCTURE,
   CODE_SNIPPET_RULES_BEGINNER,
   CODE_SNIPPET_RULES_INTERMEDIATE,
   CODE_SNIPPET_RULES_ADVANCED,
@@ -397,28 +398,19 @@ async function adaptiveTeach({
   detectedLevel = null
 }) {
   
-  // STEP 1: First interaction - Give simple explanation + cross question
+  // STEP 1: First interaction — structured concept explanation + cross question
   if (!studentAnswer && !detectedLevel) {
     const analogy = getAnalogy(concept);
-    
-    if (analogy) {
-      // We have a pre-written analogy
-      return {
-        explanation: analogy.story,
-        crossQuestion: analogy.crossQuestion,
-        awaitingLevelDetection: true,
-        level: null
-      };
-    } else {
-      // Generate analogy using AI
-      const generated = await generateBeginnerExplanation(concept);
-      return {
-        explanation: generated.explanation,
-        crossQuestion: generated.crossQuestion,
-        awaitingLevelDetection: true,
-        level: null
-      };
-    }
+    const generated = await generateBeginnerExplanation(
+      concept,
+      analogy?.story ? `Optional context (do not copy verbatim): ${analogy.story}` : null
+    );
+    return {
+      explanation: generated.explanation,
+      crossQuestion: generated.crossQuestion,
+      awaitingLevelDetection: true,
+      level: null,
+    };
   }
   
   // STEP 2: Student answered cross question - Detect level
@@ -472,28 +464,23 @@ async function adaptiveTeach({
 // 🎓 GENERATE BEGINNER EXPLANATION (AI)
 // =======================================================
 
-async function generateBeginnerExplanation(concept) {
+async function generateBeginnerExplanation(concept, extraContext = null) {
   try {
-    const prompt = `Generate a beginner-friendly explanation for: ${concept}
+    const prompt = `Explain this concept for a beginner: ${concept}
+${extraContext ? `\n${extraContext}\n` : ""}
+Use this EXACT response structure in EXPLANATION (markdown headers required):
+${CONCEPT_QA_RESPONSE_STRUCTURE}
 
-Keep it LIGHT — under 120 words in EXPLANATION.
-
-Structure:
-1. One sentence: the real problem this solves
-2. Two sentences: how it works in plain English
-3. ONE fenced code snippet (3-5 lines, plain comments)
-4. One sentence: when you'd use it
-
-${CODE_SNIPPET_RULES_BEGINNER}
+Keep total EXPLANATION under ~150 words.
 
 Cross-question rules:
 - Ask about the REAL concept (purpose, trade-off, what breaks without it)
 - NEVER ask about story props or "in our analogy what is…"
-- Sound like a curious engineer, not a primary-school teacher
+- Sound like a curious engineer
 
 Return in this format:
 EXPLANATION:
-[Your explanation]
+[Your full answer with **Concept Explanation**, **Real-World Application**, **Code Example**]
 
 CROSS_QUESTION:
 [A practical question about the real concept — no story references]`;
@@ -507,7 +494,7 @@ CROSS_QUESTION:
           { role: "user", content: prompt }
         ],
         temperature: 0.7,
-        max_tokens: 450
+        max_tokens: 700
       },
       {
         headers: {
@@ -548,13 +535,13 @@ async function generateLeveledExplanation(concept, level, studentAnswer, history
     
     if (level === "beginner") {
       persona = LEVEL_1_PERSONA;
-      maxTokens = 450;
+      maxTokens = 700;
     } else if (level === "intermediate") {
       persona = LEVEL_2_PERSONA;
-      maxTokens = 500;
+      maxTokens = 700;
     } else {
       persona = LEVEL_3_PERSONA;
-      maxTokens = 600;
+      maxTokens = 800;
     }
     
     // Build context from conversation history
@@ -574,7 +561,10 @@ async function generateLeveledExplanation(concept, level, studentAnswer, history
 Student's answer to cross-question: ${studentAnswer}
 Detected level: ${level}
 
-Now provide a ${level}-appropriate explanation. Keep it short — beginner ~120 words, intermediate ~150, advanced ~200 unless the student asked for depth.
+Provide a ${level}-appropriate explanation using this EXACT structure:
+${CONCEPT_QA_RESPONSE_STRUCTURE}
+
+Word limits: beginner ~120, intermediate ~150, advanced ~200 (unless student asked for depth).
 ${snippetRules}`;
 
     const response = await axios.post(
@@ -737,7 +727,7 @@ ${QUIZ_STYLE_RULES}`,
         },
       ],
       temperature: 0.35,
-      max_tokens: 500,
+        max_tokens: 700,
       response_format: { type: "json_object" },
     });
 

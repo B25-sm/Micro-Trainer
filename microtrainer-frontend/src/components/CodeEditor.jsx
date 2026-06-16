@@ -10,13 +10,13 @@ import {
   normalizeJudgeOutput,
   runCodeInBrowser,
   supportsBrowserExecution,
-  unsupportedBrowserExecutionResult,
 } from '../lib/browserCodeRunner.js';
+import { runCodeOnServer, submitProblemOnServer } from '../lib/serverCodeRunner.js';
 
 const PROBLEM_SOLVING_LANGUAGES = [
   { value: 'javascript', label: 'JavaScript' },
   { value: 'python', label: 'Python' },
-  { value: 'java', label: 'Java (server runner required)' },
+  { value: 'java', label: 'Java' },
 ];
 
 const CodeEditor = ({ problem, onSubmit, blockClipboard = true }) => {
@@ -105,22 +105,25 @@ const CodeEditor = ({ problem, onSubmit, blockClipboard = true }) => {
     setOutput({ mode: 'run', pending: true, stdout: '', stderr: '' });
 
     try {
-      if (!supportsBrowserExecution(language)) {
-        setOutput({
-          ...unsupportedBrowserExecutionResult(language, 'run'),
-          input: sampleInput,
-        });
-        return;
-      }
+      const sampleInput = problem?.testCases?.[0]?.input ?? null;
 
-      const result = await runCodeInBrowser({
-        language,
-        code,
-        mode: 'run',
-        input: sampleInput,
-        testCases: sampleInput !== null ? [{ input: sampleInput }] : [],
-        timeout: 3000,
-      });
+      const result = supportsBrowserExecution(language)
+        ? await runCodeInBrowser({
+            language,
+            code,
+            mode: 'run',
+            input: sampleInput,
+            testCases: sampleInput !== null ? [{ input: sampleInput }] : [],
+            timeout: 3000,
+          })
+        : await runCodeOnServer({
+            language,
+            code,
+            mode: 'run',
+            input: sampleInput,
+            testCases: sampleInput !== null ? [{ input: sampleInput }] : [],
+            timeout: 12000,
+          });
 
       setOutput({ ...result, mode: 'run', input: result.input ?? sampleInput });
     } catch (error) {
@@ -155,25 +158,29 @@ const CodeEditor = ({ problem, onSubmit, blockClipboard = true }) => {
     setOutput({ mode: 'submit', pending: true, passedTests: 0, totalTests: problem.testCases?.length || 0, results: [] });
 
     try {
-      if (!supportsBrowserExecution(language)) {
-        setOutput(unsupportedBrowserExecutionResult(language, 'submit'));
-        return;
-      }
+      const studentId = localStorage.getItem('studentId') || 'anonymous';
 
-      const result = normalizeJudgeOutput(
-        await runCodeInBrowser({
-          language,
-          code,
-          mode: 'submit',
-          testCases: problem.testCases || [],
-          timeout: 5000,
-        }),
-        'submit'
-      );
+      const result = supportsBrowserExecution(language)
+        ? normalizeJudgeOutput(
+            await runCodeInBrowser({
+              language,
+              code,
+              mode: 'submit',
+              testCases: problem.testCases || [],
+              timeout: 5000,
+            }),
+            'submit'
+          )
+        : await submitProblemOnServer({
+            problemId: problem.id,
+            language,
+            code,
+            studentId,
+          });
 
       const payload = {
         language,
-        studentId: localStorage.getItem('studentId') || 'anonymous',
+        studentId,
         result: {
           passedTests: result.passedTests,
           totalTests: result.totalTests,
@@ -188,14 +195,16 @@ const CodeEditor = ({ problem, onSubmit, blockClipboard = true }) => {
 
       setOutput(result);
 
-      try {
-        await fetch(`${API_BASE}/problems/${problem.id}/browser-submit`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-      } catch (recordError) {
-        console.warn('Problem submission was graded locally but not recorded:', recordError);
+      if (supportsBrowserExecution(language)) {
+        try {
+          await fetch(`${API_BASE}/problems/${problem.id}/browser-submit`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+        } catch (recordError) {
+          console.warn('Problem submission was graded locally but not recorded:', recordError);
+        }
       }
 
       if (onSubmit) {

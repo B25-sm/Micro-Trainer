@@ -365,6 +365,9 @@ Return ONLY the question, nothing else.`;
 // 🔹 SHOULD ASK FOLLOW-UP?
 // =======================================================
 function shouldAskFollowUp(answer, score) {
+  const { isClarificationRequest } = require("./interviewClarificationService");
+  if (isClarificationRequest(answer)) return false;
+
   // Ask follow-up if:
   // 1. Answer is vague
   // 2. Score is medium (5-7) - test deeper understanding

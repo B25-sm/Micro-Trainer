@@ -10,7 +10,8 @@ function MainLayoutInner({ children }) {
   const isHomePage = location.pathname === "/";
   const isLearnPage = location.pathname === "/learn";
   const isInterviewPage = location.pathname === "/interview";
-  const isFullWidth = isHomePage || isLearnPage || isInterviewPage;
+  const isCommunicationPage = location.pathname === "/communication";
+  const isFullWidth = isHomePage || isLearnPage || isInterviewPage || isCommunicationPage;
 
   const contentPad = isFullWidth ? "w-full" : "max-w-6xl mx-auto w-full px-4 py-4";
 

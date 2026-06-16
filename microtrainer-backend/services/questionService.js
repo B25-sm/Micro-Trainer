@@ -1,25 +1,18 @@
 const axios = require("axios");
 
-// 🔹 Persona
-const {
-  BASE_PERSONA,
-  INTERVIEW_PERSONA
-} = require("./personaConfig");
-
-// 🔹 Memory (NEW)
+const { BASE_PERSONA, INTERVIEW_PERSONA } = require("./personaConfig");
 const { getStudentMemory } = require("./memoryService");
 
-// 🔹 JavaScript Question Bank
-const { getRandomJSQuestion } = require("./javascriptQuestionBank");
-
-// 🔹 React Question Bank
-const { getRandomReactQuestion } = require("./reactQuestionBank");
-
-// 🔹 Node.js Question Bank
-const { getRandomNodeQuestion } = require("./nodejsQuestionBank");
-
-// 🔹 Java Question Bank
-const { getRandomJavaQuestion } = require("./javaQuestionBank");
+const {
+  getRandomMongoQuestion,
+  getRandomExpressQuestion,
+  getRandomReactQuestionCurated,
+  getRandomNodeQuestionCurated,
+  getRandomJSQuestionCurated,
+  getRandomJavaQuestionCurated,
+  getRandomPythonQuestionCurated,
+  getRandomSQLQuestionCurated,
+} = require("./curatedInterviewBanks");
 
 const {
   pickInterviewTopic,
@@ -31,203 +24,95 @@ const {
   matchesRoleSubject,
 } = require("./aiMlQuestionBank");
 
+const {
+  isInterviewQualityQuestion,
+  ensureInterviewQuestion,
+  getCuratedFallback,
+  pickCuratedQuestion,
+  normalizeQuestion,
+  isAbsurdQuestion,
+} = require("./interviewQuestionQuality");
 
-// =======================================================
-// 🔹 ADAPTIVE DIFFICULTY
-// =======================================================
 function getAdaptiveDifficulty(history = []) {
   if (history.length === 0) return "easy";
-
   const recent = history.slice(-3);
-
-  const avg =
-    recent.reduce((sum, h) => sum + (h.score || 0), 0) / recent.length;
-
+  const avg = recent.reduce((sum, h) => sum + (h.score || 0), 0) / recent.length;
   if (avg >= 7) return "hard";
   if (avg >= 4) return "medium";
   return "easy";
 }
 
-
-// =======================================================
-// 🔹 WEAK AREA DETECTION (SESSION LEVEL)
-// =======================================================
 function getWeakFocus(history = []) {
   if (!history.length) return "";
-
-  const mistakes = history
-    .map(h => h.mistakes || "")
-    .join(" ")
-    .toLowerCase();
-
+  const mistakes = history.map((h) => h.mistakes || "").join(" ").toLowerCase();
   if (mistakes.includes("state")) return "state management";
   if (mistakes.includes("hook")) return "react hooks";
   if (mistakes.includes("api")) return "api handling";
   if (mistakes.includes("render")) return "rendering";
   if (mistakes.includes("props")) return "props usage";
-
   return "";
 }
 
-
-// =======================================================
-// 🔹 FALLBACK QUESTION
-// =======================================================
-function getFallbackQuestion(subject, difficulty) {
-  if (difficulty === "easy") {
-    return `What is ${subject}? Where is it used?`;
-  }
-
-  if (difficulty === "medium") {
-    return `Give one real-world use of ${subject}.`;
-  }
-
-  return `Why do we need ${subject}? Give a real example.`;
-}
-
-
-// =======================================================
-// 🔹 CLEAN OUTPUT
-// =======================================================
 function cleanQuestion(q) {
-  if (!q) return null;
-
-  let cleaned = q
-    .replace(/^["'\n]+|["'\n]+$/g, "")
-    .trim();
-
-  if (cleaned.length > 140) {
-    cleaned = cleaned.split(".")[0];
-  }
-
+  const cleaned = normalizeQuestion(q);
+  if (!cleaned) return null;
+  if (cleaned.length > 200) return cleaned.split(/[.!?]/)[0].trim();
   return cleaned;
 }
 
-
-// =======================================================
-// 🔹 TRANSFORM QUESTION TO SAI MAHENDRA'S STYLE
-// =======================================================
-function transformToSaiMahendraStyle(question) {
-  // Randomly decide if this should be a CODE/SYNTAX question (40% chance)
-  const shouldBePractical = Math.random() < 0.4;
-  
-  // If question starts with "What is", transform it
-  if (question.startsWith("What is ")) {
-    const concept = question.replace("What is ", "").replace("?", "").trim();
-    
-    if (shouldBePractical) {
-      // PRACTICAL - Ask for code/syntax
-      const practicalTransformations = [
-        `Write the syntax for ${concept} with a real example`,
-        `Show me the code for ${concept}`,
-        `Write a working example of ${concept}`,
-        `Give me the syntax of ${concept} with live data`,
-        `Code ${concept} - show me a practical implementation`
-      ];
-      return practicalTransformations[Math.floor(Math.random() * practicalTransformations.length)];
-    } else {
-      // THEORETICAL - But still practical
-      const theoreticalTransformations = [
-        `${concept} - explain with a real-time use case`,
-        `${concept} - give me a practical example`,
-        `${concept} - where do you use this in real projects?`,
-        `${concept} - how does it work internally?`,
-        `Purpose of ${concept} - explain with an example`
-      ];
-      return theoreticalTransformations[Math.floor(Math.random() * theoreticalTransformations.length)];
-    }
-  }
-  
-  // If question starts with "Explain", make it more direct
-  if (question.startsWith("Explain ")) {
-    const concept = question.replace("Explain ", "").replace("?", "").replace(".", "").trim();
-    
-    if (shouldBePractical) {
-      return `Write the code for ${concept} with a real example`;
-    } else {
-      return `${concept} - give me a live example`;
-    }
-  }
-  
-  // If question has "difference between", keep it but add example requirement
-  if (question.includes("difference between")) {
-    if (shouldBePractical) {
-      return question.replace("?", "") + " - show me with code examples";
-    } else {
-      return question.replace("?", "") + " - with practical examples";
-    }
-  }
-  
-  // If question asks "How do you", it's already practical - keep it
-  if (question.startsWith("How do you") || question.startsWith("How does")) {
-    return question;
-  }
-  
-  // Otherwise return as is
-  return question;
+function questionPack(questionText, difficulty, subject = "") {
+  return {
+    question: ensureInterviewQuestion(questionText, subject, difficulty),
+    difficulty,
+  };
 }
 
-
-// =======================================================
-// 🔹 GENERATE QUESTION (FINAL)
-// =======================================================
-function questionPack(questionText, difficulty) {
-  return { question: questionText, difficulty };
+function pickMernQuestion(difficulty) {
+  const techs = [
+    { getter: getRandomMongoQuestion, subject: "MongoDB" },
+    { getter: getRandomExpressQuestion, subject: "Express" },
+    { getter: getRandomReactQuestionCurated, subject: "React" },
+    { getter: getRandomNodeQuestionCurated, subject: "Node.js" },
+  ];
+  const pick = techs[Math.floor(Math.random() * techs.length)];
+  return questionPack(
+    pickCuratedQuestion(pick.getter, pick.subject, difficulty),
+    difficulty,
+    pick.subject
+  );
 }
 
 async function generateQuestion({ subject, history = [], studentId }) {
   try {
     const difficulty = getAdaptiveDifficulty(history);
-    
-    // 🔥 FULL STACK DETECTION
-    const isFullStack = subject.toLowerCase().includes("full stack") || subject.toLowerCase().includes("fullstack");
-    
-    // 🔥 MERN Stack - Mix of MongoDB, Express, React, Node.js
-    if (subject.toLowerCase().includes("mern")) {
-      const technologies = ["MongoDB", "Express", "React", "Node.js"];
-      const randomTech = technologies[Math.floor(Math.random() * technologies.length)];
-      
-      if (randomTech === "React") {
-        const question = getRandomReactQuestion(difficulty);
-        return questionPack(transformToSaiMahendraStyle(question), difficulty);
-      } else if (randomTech === "Node.js" || randomTech === "Express") {
-        const question = getRandomNodeQuestion(difficulty);
-        return questionPack(transformToSaiMahendraStyle(question), difficulty);
-      } else {
-        // MongoDB or general MERN question - use AI
-        subject = randomTech; // Override subject for AI generation
-      }
+    const subjectLower = subject.toLowerCase();
+    const isFullStack =
+      subjectLower.includes("full stack") || subjectLower.includes("fullstack");
+
+    if (subjectLower.includes("mern")) {
+      return pickMernQuestion(difficulty);
     }
-    
-    // 🔥 Java Full Stack - Mix of Java backend + frontend
-    if (subject.toLowerCase().includes("java") && isFullStack) {
-      const technologies = ["Java", "Spring Boot", "Hibernate", "REST API", "React", "Angular"];
-      const randomTech = technologies[Math.floor(Math.random() * technologies.length)];
-      
-      if (randomTech === "Java" || randomTech === "Spring Boot" || randomTech === "Hibernate") {
-        const question = getRandomJavaQuestion(difficulty);
-        return questionPack(transformToSaiMahendraStyle(question), difficulty);
-      } else if (randomTech === "React") {
-        const question = getRandomReactQuestion(difficulty);
-        return questionPack(transformToSaiMahendraStyle(question), difficulty);
-      } else {
-        // REST API or Angular - use AI
-        subject = randomTech;
-      }
+
+    if (subjectLower.includes("java") && isFullStack) {
+      const stack = [
+        { getter: getRandomJavaQuestionCurated, subject: "Java" },
+        { getter: getRandomReactQuestionCurated, subject: "React" },
+      ];
+      const pick = stack[Math.floor(Math.random() * stack.length)];
+      return questionPack(
+        pickCuratedQuestion(pick.getter, pick.subject, difficulty),
+        difficulty,
+        pick.subject
+      );
     }
-    
-    // Data / AI-ML roles — topic pools + 535-question master bank
+
     const originalSubject = subject;
     const useAiMlBank =
-      isAiMlMasterSubject(originalSubject) ||
-      matchesRoleSubject(originalSubject);
+      isAiMlMasterSubject(originalSubject) || matchesRoleSubject(originalSubject);
 
-    let dsTopic = null;
     if (!isAiMlMasterSubject(originalSubject)) {
-      dsTopic = pickInterviewTopic(subject);
-      if (dsTopic) {
-        subject = dsTopic;
-      }
+      const dsTopic = pickInterviewTopic(subject);
+      if (dsTopic) subject = dsTopic;
     }
     const dsRoleHint = getRolePromptHint(originalSubject);
 
@@ -237,127 +122,60 @@ async function generateQuestion({ subject, history = [], studentId }) {
       else if (difficulty === "hard") tier = Math.random() < 0.45 ? 3 : 2;
       else tier = Math.random() < 0.65 ? 1 : 2;
 
-      const question = getRandomAiMlQuestion(difficulty, { tier });
-      return questionPack(transformToSaiMahendraStyle(question), difficulty);
+      const raw = getRandomAiMlQuestion(difficulty, { tier });
+      return questionPack(raw, difficulty, originalSubject);
     }
 
-    // 🔥 Python Full Stack - Mix of Python backend + frontend
-    if (subject.toLowerCase().includes("python") && isFullStack) {
-      const technologies = ["Python", "Django", "Flask", "PostgreSQL", "REST API", "React"];
-      const randomTech = technologies[Math.floor(Math.random() * technologies.length)];
-      
-      if (randomTech === "React") {
-        const question = getRandomReactQuestion(difficulty);
-        return questionPack(transformToSaiMahendraStyle(question), difficulty);
-      } else {
-        // Python, Django, Flask, PostgreSQL - use AI
-        subject = randomTech;
+    if (subjectLower.includes("python") && isFullStack) {
+      const stack = [
+        { getter: getRandomPythonQuestionCurated, subject: "Python" },
+        { getter: getRandomReactQuestionCurated, subject: "React" },
+      ];
+      const pick = stack[Math.floor(Math.random() * stack.length)];
+      return questionPack(
+        pickCuratedQuestion(pick.getter, pick.subject, difficulty),
+        difficulty,
+        pick.subject
+      );
+    }
+
+    const curatedRoutes = [
+      { match: (s) => s === "javascript" || s === "js", getter: getRandomJSQuestionCurated, label: "JavaScript" },
+      { match: (s) => s === "react" || s === "reactjs", getter: getRandomReactQuestionCurated, label: "React" },
+      { match: (s) => s === "mongodb", getter: getRandomMongoQuestion, label: "MongoDB" },
+      { match: (s) => s === "express", getter: getRandomExpressQuestion, label: "Express" },
+      { match: (s) => s === "node" || s === "nodejs" || s === "node.js", getter: getRandomNodeQuestionCurated, label: "Node.js" },
+      { match: (s) => s === "java", getter: getRandomJavaQuestionCurated, label: "Java" },
+      { match: (s) => s === "python", getter: getRandomPythonQuestionCurated, label: "Python" },
+      { match: (s) => s === "sql", getter: getRandomSQLQuestionCurated, label: "SQL" },
+    ];
+
+    for (const route of curatedRoutes) {
+      if (route.match(subjectLower)) {
+        return questionPack(
+          pickCuratedQuestion(route.getter, route.label, difficulty),
+          difficulty,
+          route.label
+        );
       }
     }
-    
-    // 🔥 Individual Technologies
-    if (subject.toLowerCase() === "javascript" || subject.toLowerCase() === "js") {
-      const question = getRandomJSQuestion(difficulty);
-      return questionPack(transformToSaiMahendraStyle(question), difficulty);
-    }
-    
-    if (subject.toLowerCase() === "react" || subject.toLowerCase() === "reactjs") {
-      const question = getRandomReactQuestion(difficulty);
-      return questionPack(transformToSaiMahendraStyle(question), difficulty);
-    }
-    
-    if (subject.toLowerCase() === "node" || subject.toLowerCase() === "nodejs" || subject.toLowerCase() === "node.js") {
-      const question = getRandomNodeQuestion(difficulty);
-      return questionPack(transformToSaiMahendraStyle(question), difficulty);
-    }
-    
-    if (subject.toLowerCase() === "java") {
-      const question = getRandomJavaQuestion(difficulty);
-      return questionPack(transformToSaiMahendraStyle(question), difficulty);
-    }
-    
-    const weakFocus = getWeakFocus(history);
 
-    // 🔹 MEMORY FETCH (NEW)
     const memory = await getStudentMemory(studentId);
-
-    const weakConcepts = memory?.weakConcepts?.join(", ") || "";
-    const strongConcepts = memory?.strongConcepts?.join(", ") || "";
-
-    const previousQuestions = history
-      .map(h => h.question)
-      .filter(Boolean)
-      .slice(-10);
+    const previousQuestions = history.map((h) => h.question).filter(Boolean).slice(-10);
 
     const prompt = `
 Subject: ${subject}
 Difficulty: ${difficulty}
 ${dsRoleHint ? `\n${dsRoleHint}\n` : ""}
+Weak: ${memory?.weakConcepts?.join(", ") || "None"}
+Previous: ${previousQuestions.map((q) => "- " + q).join("\n") || "None"}
 
-Weak Concepts (Long-Term):
-${weakConcepts || "None"}
+Generate ONE specific technical interview question with a clear task.
 
-Strong Concepts:
-${strongConcepts || "None"}
+NEVER: "What is [technology]?", "Show code for [framework]", vague prompts.
+MUST: concrete skill, answerable in 1–5 minutes, real interview tone.
 
-Session Weak Focus:
-${weakFocus || "None"}
-
-Previous Questions:
-${previousQuestions.map(q => "- " + q).join("\n") || "None"}
-
-Generate ONE interview question in Sai Mahendra's style.
-
-CRITICAL RULES - YOUR QUESTIONING STYLE:
-- PRACTICAL, not theoretical
-- SPECIFIC, not vague  
-- MUST demand a REAL EXAMPLE or LIVE SCENARIO
-- Test DEPTH and UNDERSTANDING
-- Ask about PURPOSE, WHEN TO USE, HOW IT WORKS
-
-GOOD EXAMPLES (Your Style):
-✓ "Purpose of Self in Python - explain with an example"
-✓ "Inner Join - give me a live example with two tables"
-✓ "Correlated subquery - explain with a real scenario"
-✓ "Virtual Environment - why do we need it? When?"
-✓ "Garbage Collector in Python - how does it work?"
-✓ "Runtime vs compile time polymorphism - where do you use each?"
-✓ "useEffect cleanup function - give me a practical use case"
-✓ "Second Highest Salary in SQL - write the query"
-
-BAD EXAMPLES (Not Your Style):
-✗ "What is closure?" (too vague)
-✗ "Explain React" (too broad)
-✗ "What is SQL?" (too basic)
-✗ "Define polymorphism" (theoretical)
-
-ADAPTIVE RULES:
-- Focus on weak concepts first
-- If student is strong → ask about edge cases and internals
-- If weak → ask about purpose and basic usage
-- Do NOT repeat previous questions
-
-QUESTION FORMAT:
-- One line only
-- Max 15 words
-- Must be answerable within the timer budget for its difficulty (about 1–5 minutes: easy/medium/hard)
-- Must test practical understanding
-
-Return ONLY the question text.
-`;
-
-    const SYSTEM_PROMPT = `
-${BASE_PERSONA}
-
-${INTERVIEW_PERSONA}
-
-You generate questions like Sai Mahendra:
-
-- Sharp
-- Direct
-- No fluff
-- Real-world focused
-- Adaptive to student performance
+Return ONLY the question (one line, max 22 words).
 `;
 
     const response = await axios.post(
@@ -365,42 +183,39 @@ You generate questions like Sai Mahendra:
       {
         model: "llama-3.1-8b-instant",
         messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: prompt }
+          { role: "system", content: `${BASE_PERSONA}\n\n${INTERVIEW_PERSONA}` },
+          { role: "user", content: prompt },
         ],
-        temperature: 0.6,
-        max_tokens: 60
+        temperature: 0.4,
+        max_tokens: 80,
       },
       {
         headers: {
           Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       }
     );
 
-    let question = response?.data?.choices?.[0]?.message?.content;
+    let question = cleanQuestion(response?.data?.choices?.[0]?.message?.content);
 
-    question = cleanQuestion(question);
-
-    // =======================================================
-    // 🔥 SAFETY CHECKS
-    // =======================================================
-
-    if (!question) {
-      return questionPack(getFallbackQuestion(subject, difficulty), difficulty);
+    if (!question || !isInterviewQualityQuestion(question, subject)) {
+      return questionPack(getCuratedFallback(subject, difficulty), difficulty, subject);
     }
-
     if (previousQuestions.includes(question)) {
-      return questionPack(getFallbackQuestion(subject, difficulty), difficulty);
+      return questionPack(getCuratedFallback(subject, difficulty), difficulty, subject);
     }
 
-    return questionPack(question, difficulty);
-
+    return questionPack(question, difficulty, subject);
   } catch (error) {
     console.error("Question Generation Error:", error.message);
-    return questionPack(getFallbackQuestion(subject, "easy"), "easy");
+    return questionPack(getCuratedFallback(subject, "easy"), "easy", subject);
   }
 }
 
-module.exports = { generateQuestion };
+module.exports = {
+  generateQuestion,
+  isAbsurdQuestion,
+  isInterviewQualityQuestion,
+  ensureInterviewQuestion,
+};

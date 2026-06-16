@@ -368,6 +368,31 @@ const Interview = () => {
         answer: currentAnswer,
       });
 
+      // Candidate asked to clarify — stay on same question, friendly reply
+      if (response.data.isClarification) {
+        setChatHistory((prev) => [
+          ...prev,
+          {
+            type: "ai",
+            content: response.data.interviewerMessage,
+            isClarification: true,
+            timestamp: new Date(),
+          },
+        ]);
+        if (response.data.nextQuestion) {
+          setCurrentQuestion(response.data.nextQuestion);
+        }
+        if (response.data.bonusSeconds) {
+          setQuestionSecondsLeft((prev) =>
+            Math.min(
+              (response.data.questionTimeSeconds ?? questionSecondsTotal) + 30,
+              prev + response.data.bonusSeconds
+            )
+          );
+        }
+        return;
+      }
+
       // During interview: NO feedback, just next question
       const aiMessages = [];
       
@@ -789,7 +814,11 @@ IMPORTANT:
                 onFocus={() => setAnswerInputFocused(true)}
                 onBlur={() => setAnswerInputFocused(false)}
                 onKeyDown={handleKeyDown}
-                placeholder={session?.completed ? "Ask me about your feedback..." : "Type your answer..."}
+                placeholder={
+                  session?.completed
+                    ? "Ask me about your feedback..."
+                    : "Type your answer — or ask to clarify the question..."
+                }
                 rows={3}
                 disabled={loading}
                 className="flex-1 bg-transparent text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 outline-none text-base resize-none max-h-32 disabled:opacity-50 disabled:cursor-not-allowed select-none"
@@ -819,8 +848,8 @@ IMPORTANT:
           <p className="text-xs text-gray-500 text-center mt-2 leading-relaxed">
             Press Enter for a new line. Ctrl+Enter (⌘+Enter on Mac) to send.
             <span className="block mt-1 text-gray-400">
-              Answers are scored by AI on clarity and correctness (including code snippets if you paste them).
-              Code is not executed here — use Problems for runnable coding.
+              Stuck on the question? Say &quot;can you rephrase?&quot; — the interviewer will clarify without skipping ahead.
+              Answers are scored on clarity and correctness.
             </span>
           </p>
         </div>
@@ -878,6 +907,7 @@ const ChatMessage = ({ message }) => {
   const isUser = message.type === "user";
   const isFeedback = message.isFeedback;
   const isFinalFeedback = message.isFinalFeedback;
+  const isClarification = message.isClarification;
 
   return (
     <motion.div
@@ -900,6 +930,8 @@ const ChatMessage = ({ message }) => {
               ? "bg-gray-800 dark:bg-gray-700 text-gray-100"
               : isFinalFeedback
               ? "bg-gray-50 dark:bg-[#292a2d] border border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200"
+              : isClarification
+              ? "bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 text-gray-800 dark:text-gray-200"
               : isFeedback
               ? "bg-gray-50 dark:bg-[#292a2d] border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200"
               : "bg-gray-100 dark:bg-gray-800/60 text-gray-800 dark:text-gray-200"
@@ -914,6 +946,13 @@ const ChatMessage = ({ message }) => {
                 <span className="text-base font-bold text-green-800 uppercase tracking-wide">Final Feedback</span>
               </div>
               <pre className="text-sm leading-relaxed whitespace-pre-wrap font-mono">{message.content}</pre>
+            </div>
+          ) : isClarification ? (
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-sm font-medium text-blue-700 dark:text-blue-300">Interviewer</span>
+              </div>
+              <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
             </div>
           ) : isFeedback ? (
             <div>

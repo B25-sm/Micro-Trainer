@@ -613,6 +613,36 @@ function preparePythonStudentCode(code) {
 // =======================================================
 // 🔹 WRAP CODE FOR EXECUTION
 // =======================================================
+function wrapJavaForExecution(code, inputJsonLiteral) {
+  const escapedInput = inputJsonLiteral.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  const stripped = String(code || '').replace(/\bpublic\s+/g, '');
+
+  if (/\bclass\s+Solution\b/.test(stripped)) {
+    return `import com.google.gson.*;
+${stripped}
+class MainRunner {
+    public static void main(String[] args) {
+        Gson gson = new Gson();
+        Object input = gson.fromJson("${escapedInput}", Object.class);
+        Solution solver = new Solution();
+        Object result = solver.solution(input);
+        System.out.println(gson.toJson(result));
+    }
+}`;
+  }
+
+  return `import com.google.gson.*;
+public class Main {
+    ${stripped}
+    public static void main(String[] args) {
+        Main m = new Main();
+        Gson gson = new Gson();
+        Object result = m.solution(gson.fromJson("${escapedInput}", Object.class));
+        System.out.println(gson.toJson(result));
+    }
+}`;
+}
+
 function wrapCodeForExecution(language, code, input) {
   const inputStr = JSON.stringify(input);
 
@@ -626,16 +656,7 @@ function wrapCodeForExecution(language, code, input) {
       return `import json\n${preparePythonStudentCode(code)}\nprint(json.dumps(solution(${inputStr})))`;
 
     case 'java':
-      return `import com.google.gson.*;
-public class Main {
-    ${code.replace(/public\s+/g, '')}
-    public static void main(String[] args) {
-        Main m = new Main();
-        Gson gson = new Gson();
-        Object result = m.solution(gson.fromJson("${inputStr.replace(/"/g, '\\"')}", Object.class));
-        System.out.println(gson.toJson(result));
-    }
-}`;
+      return wrapJavaForExecution(code, inputStr);
 
     default:
       throw new Error(

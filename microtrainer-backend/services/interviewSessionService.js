@@ -1,3 +1,7 @@
+const {
+  isClarificationRequest,
+  generateClarification,
+} = require("./interviewClarificationService");
 const { evaluateAnswer } = require("./interviewService");
 const { generateQuestion } = require("./questionService");
 const { generateCoachReport } = require("./coachService"); // ✅ NEW
@@ -87,6 +91,38 @@ async function submitAnswer(sessionId, answer) {
 
   if (!currentEntry || !currentEntry.question) {
     throw new Error("No active question found");
+  }
+
+  // 🔹 Clarification — real interviews allow "can you repeat that?"
+  if (isClarificationRequest(answer)) {
+    currentEntry.clarificationCount = (currentEntry.clarificationCount || 0) + 1;
+
+    const clarification = await generateClarification({
+      question: currentEntry.question,
+      subject: session.subject,
+      studentMessage: answer,
+      clarificationCount: currentEntry.clarificationCount,
+    });
+
+    if (clarification.revisedQuestion) {
+      currentEntry.question = clarification.revisedQuestion;
+    }
+
+    console.log(
+      `💬 Clarification #${currentEntry.clarificationCount} for: ${currentEntry.question}`
+    );
+
+    return {
+      completed: false,
+      isClarification: true,
+      interviewerMessage: clarification.message,
+      nextQuestion: currentEntry.question,
+      difficulty: currentEntry.difficulty,
+      questionTimeSeconds: secondsForDifficulty(currentEntry.difficulty),
+      bonusSeconds: 45,
+      currentQuestion: session.currentQuestion + 1,
+      totalQuestions: session.totalQuestions,
+    };
   }
 
   // 🔹 Evaluate Answer

@@ -98,7 +98,7 @@ Respond ONLY with:
           }
         ],
         temperature: 0.6, // slightly more expressive
-        max_tokens: 700
+        max_tokens: 800,
       },
       {
         headers: {

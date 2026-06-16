@@ -2,11 +2,32 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
+import { Mic, Code2, BookOpen, BarChart3, Sparkles, ArrowUp, MessageSquareText } from "lucide-react";
 import { chatWithMicroTrainer } from "../api";
-import { pageShell, headingSection, textMuted, chipButton, chipButtonSm, inputShell } from "../lib/ui";
+import { pageShell, textMuted } from "../lib/ui";
 import { createLessonMarkdownComponents } from "../utils/lessonMarkdown";
+import ChatHistorySidebar from "../components/ChatHistorySidebar";
+import { useChatHistoryPersistence } from "../hooks/useChatHistoryPersistence";
 
 const chatMdComponents = createLessonMarkdownComponents();
+const HOME_CHAT_STORAGE = "microtrainer-chat-history-home";
+
+const STARTER_PROMPTS = [
+  "Explain React hooks with a real-world example",
+  "What MERN stack questions come up in interviews?",
+  "How do SQL JOINs work? Show me with a query",
+  "Walk me through solving a two-pointer problem",
+  "What's the difference between let, const, and var?",
+  "Help me prepare for a Java OOP interview",
+];
+
+const QUICK_ACTIONS = [
+  { label: "Mock interview", path: "/interview", icon: Mic },
+  { label: "Communication", path: "/communication", icon: MessageSquareText },
+  { label: "Guided course", path: "/learn", icon: BookOpen },
+  { label: "Code practice", path: "/problems", icon: Code2 },
+  { label: "My progress", path: "/dashboard", icon: BarChart3 },
+];
 
 const Home = () => {
   const navigate = useNavigate();
@@ -14,391 +35,520 @@ const Home = () => {
   const [chatHistory, setChatHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState(null);
+  const [highlightedIndex, setHighlightedIndex] = useState(null);
   const chatEndRef = useRef(null);
+  const messageRefs = useRef({});
+  const inputRef = useRef(null);
 
-  // Auto-scroll to bottom when new messages arrive
+  const {
+    sessions,
+    activeSessionId,
+    persistConversation,
+    beginNewSession,
+    selectSession,
+    removeSession,
+  } = useChatHistoryPersistence(HOME_CHAT_STORAGE);
+
+  const isChatting = chatHistory.length > 0;
+  const showHistorySidebar = sessions.length > 0 || isChatting;
+
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chatHistory]);
+    if (chatHistory.length > 0) {
+      persistConversation({ messages: chatHistory, sessionId });
+    }
+  }, [chatHistory, sessionId, persistConversation]);
 
-  const handleSubmit = async (e) => {
-    e?.preventDefault();
-    
-    if (!question.trim() || isLoading) return;
+  useEffect(() => {
+    if (!isChatting) {
+      inputRef.current?.focus();
+    }
+  }, [isChatting]);
 
-    const userQuestion = question.trim();
+  useEffect(() => {
+    if (highlightedIndex == null) {
+      chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chatHistory, highlightedIndex]);
+
+  const sendMessage = async (rawText) => {
+    const userQuestion = rawText.trim();
+    if (!userQuestion || isLoading) return;
+
     setQuestion("");
 
-    // Add user message to chat
-    setChatHistory(prev => [...prev, { 
-      role: "user", 
-      content: userQuestion,
-      timestamp: new Date().toISOString()
-    }]);
+    setChatHistory((prev) => [
+      ...prev,
+      {
+        role: "user",
+        content: userQuestion,
+        timestamp: new Date().toISOString(),
+      },
+    ]);
 
     setIsLoading(true);
 
     try {
       const response = await chatWithMicroTrainer({
         question: userQuestion,
-        sessionId: sessionId
+        sessionId: sessionId,
       });
 
-      // Update session ID
       if (response.data.sessionId && !sessionId) {
         setSessionId(response.data.sessionId);
       }
 
-      // Add AI response to chat
-      setChatHistory(prev => [...prev, {
-        role: "assistant",
-        content: response.data.answer,
-        timestamp: response.data.timestamp
-      }]);
-
+      setChatHistory((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: response.data.answer,
+          timestamp: response.data.timestamp,
+        },
+      ]);
     } catch (err) {
       console.error("Chat error:", err);
-      const errorMessage = err?.response?.data?.error || err?.message || "Something went wrong. Please try again.";
-      
-      // Add error message to chat
-      setChatHistory(prev => [...prev, {
-        role: "error",
-        content: errorMessage,
-        timestamp: new Date().toISOString()
-      }]);
+      const errorMessage =
+        err?.response?.data?.error ||
+        err?.message ||
+        "Something went wrong. Please try again.";
+
+      setChatHistory((prev) => [
+        ...prev,
+        {
+          role: "error",
+          content: errorMessage,
+          timestamp: new Date().toISOString(),
+        },
+      ]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleKeyPress = (e) => {
+  const handleSubmit = (e, promptOverride) => {
+    e?.preventDefault();
+    sendMessage(promptOverride ?? question);
+  };
+
+  const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSubmit();
+      handleSubmit(e);
     }
   };
 
-  const clearChat = () => {
+  const startNewChat = () => {
+    beginNewSession();
     setChatHistory([]);
     setSessionId(null);
     setQuestion("");
+    setHighlightedIndex(null);
+  };
+
+  const handleSelectSession = (session) => {
+    selectSession(session.id);
+    setChatHistory(session.messages || []);
+    setSessionId(session.sessionId ?? null);
+    setHighlightedIndex(null);
+  };
+
+  const handleSelectQuestion = (session, messageIndex) => {
+    handleSelectSession(session);
+    setTimeout(() => {
+      messageRefs.current[messageIndex]?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      setHighlightedIndex(messageIndex);
+    }, 150);
+  };
+
+  const handleDeleteSession = (id) => {
+    removeSession(id);
+    if (activeSessionId === id) {
+      setChatHistory([]);
+      setSessionId(null);
+      setHighlightedIndex(null);
+    }
   };
 
   return (
-    <div className={`flex flex-col ${pageShell}`}>
-      
-      {/* Main Content - Centered Gemini Style */}
-      <main className="flex-1 flex flex-col items-center justify-center px-6 py-12 max-w-2xl mx-auto w-full">
-        
-        {/* Hero Title - Large Blue Text */}
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-3xl md:text-4xl font-medium text-gray-900 dark:text-gray-100 text-center mb-3 leading-tight tracking-tight"
-        >
-          Practice technical interviews
-        </motion.h2>
-        
-        <p className={`${textMuted} text-center mb-10 text-base`}>
-          Choose full stack roles or individual technologies
-        </p>
-
-        {/* Full Stack Interviews */}
-        <div className="w-full mb-8">
-          <h3 className={`${headingSection} mb-3 px-2`}>
-            Full Stack Developer Roles
-          </h3>
-          <div className="space-y-3">
-            <SuggestionChip
-              text="MERN Stack Developer"
-              subtitle="MongoDB, Express, React, Node.js"
-              onClick={() => navigate("/interview?subject=MERN Stack")}
-            />
-            <SuggestionChip
-              text="Java Full Stack Developer"
-              subtitle="Spring Boot, Hibernate, React/Angular"
-              onClick={() => navigate("/interview?subject=Java Full Stack")}
-            />
-            <SuggestionChip
-              text="Python Full Stack Developer"
-              subtitle="Django/Flask, PostgreSQL, React"
-              onClick={() => navigate("/interview?subject=Python Full Stack")}
-            />
-          </div>
-        </div>
-
-        {/* Data & ML Roles */}
-        <div className="w-full mb-8">
-          <h3 className={`${headingSection} mb-3 px-2`}>
-            Data & ML Roles
-          </h3>
-          <div className="space-y-3">
-            <SuggestionChip
-              text="Data Analyst"
-              subtitle="SQL, Excel, dashboards, A/B tests & storytelling"
-              onClick={() => navigate("/interview?subject=Data Analyst")}
-            />
-            <SuggestionChip
-              text="ML Engineer"
-              subtitle="Models, deployment, MLOps, LLMs & pipelines"
-              onClick={() => navigate("/interview?subject=ML Engineer")}
-            />
-            <SuggestionChip
-              text="Data Scientist"
-              subtitle="Full-stack DS: Python, stats, ML & analytics"
-              onClick={() => navigate("/interview?subject=Data Science")}
-            />
-            <SuggestionChip
-              text="AI / ML Master"
-              subtitle="535 questions · Python, ML, LLMs, RAG, Agents, MLOps"
-              onClick={() => navigate("/interview?subject=AI/ML Master")}
-            />
-          </div>
-        </div>
-
-        {/* Individual Technologies */}
-        <div className="w-full mb-8">
-          <h3 className={`${headingSection} mb-3 px-2`}>
-            Individual Technologies
-          </h3>
-          <div className="grid grid-cols-2 gap-3">
-            <TechChip
-              text="React"
-              onClick={() => navigate("/interview?subject=React")}
-            />
-            <TechChip
-              text="JavaScript"
-              onClick={() => navigate("/interview?subject=JavaScript")}
-            />
-            <TechChip
-              text="Java"
-              onClick={() => navigate("/interview?subject=Java")}
-            />
-            <TechChip
-              text="Python"
-              onClick={() => navigate("/interview?subject=Python")}
-            />
-            <TechChip
-              text="SQL"
-              onClick={() => navigate("/interview?subject=SQL")}
-            />
-            <TechChip
-              text="Node.js"
-              onClick={() => navigate("/interview?subject=Node.js")}
-            />
-            <TechChip
-              text="Angular"
-              onClick={() => navigate("/interview?subject=Angular")}
-            />
-            <TechChip
-              text="TypeScript"
-              onClick={() => navigate("/interview?subject=TypeScript")}
-            />
-            <TechChip
-              text="Data Analyst"
-              onClick={() => navigate("/interview?subject=Data Analyst")}
-            />
-            <TechChip
-              text="ML Engineer"
-              onClick={() => navigate("/interview?subject=ML Engineer")}
-            />
-          </div>
-        </div>
-
-        {/* Other Options */}
-        <div className="w-full space-y-3 mb-8">
-          <SuggestionChip
-            text="Personal Schedule"
-            subtitle="Skill check → your day-by-day interview prep plan"
-            onClick={() => navigate("/schedule")}
+    <div className={`flex flex-col flex-1 min-h-0 ${pageShell}`}>
+      <div className="flex flex-1 min-h-0 w-full max-w-6xl mx-auto">
+        {showHistorySidebar && (
+          <ChatHistorySidebar
+            sessions={sessions}
+            activeSessionId={activeSessionId}
+            onSelectSession={handleSelectSession}
+            onSelectQuestion={handleSelectQuestion}
+            onNewChat={startNewChat}
+            onDeleteSession={handleDeleteSession}
+            title="Your questions"
+            emptyHint="Questions you ask are saved here so you can reopen them anytime."
           />
-          <SuggestionChip
-            text="Guided course"
-            subtitle="Adaptive teaching that matches your level"
-            onClick={() => navigate("/learn")}
-          />
-          <SuggestionChip
-            text="Problem solving"
-            subtitle="Algorithms, Data Structures, Coding Challenges"
-            onClick={() => navigate("/problems")}
-          />
-          <SuggestionChip
-            text="Performance dashboard"
-            subtitle="Track your progress and scores"
-            onClick={() => navigate("/dashboard")}
-          />
-        </div>
+        )}
 
-        {/* Input Area - Gemini Style */}
-        <div className="w-full">
-          {/* Chat History */}
-          {chatHistory.length > 0 && (
-            <div className="mb-6 space-y-4 max-h-96 overflow-y-auto">
-              <AnimatePresence>
-                {chatHistory.map((message, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className={`p-4 rounded-xl ${
-                      message.role === "user"
-                        ? "bg-gray-100 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700 ml-8"
-                        : message.role === "error"
-                        ? "bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 mr-8"
-                        : "bg-gray-50 dark:bg-[#292a2d] border border-gray-200 dark:border-gray-700 mr-8"
-                    }`}
-                  >
-                    {message.role === "user" ? (
-                      <div className="text-gray-800 text-sm">{message.content}</div>
-                    ) : message.role === "error" ? (
-                      <div className="text-red-600 text-sm flex items-start gap-2">
-                        <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                        </svg>
-                        <span>{message.content}</span>
-                      </div>
-                    ) : (
-                      <div className="prose prose-sm max-w-none text-gray-800">
-                        <ReactMarkdown components={chatMdComponents}>
-                          {message.content}
-                        </ReactMarkdown>
-                      </div>
-                    )}
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-              <div ref={chatEndRef} />
-            </div>
+        <main className="flex-1 flex flex-col min-h-0 min-w-0">
+          {isChatting ? (
+            <ActiveChatView
+              chatHistory={chatHistory}
+              highlightedIndex={highlightedIndex}
+              messageRefs={messageRefs}
+              chatEndRef={chatEndRef}
+              question={question}
+              setQuestion={setQuestion}
+              isLoading={isLoading}
+              inputRef={inputRef}
+              onSubmit={handleSubmit}
+              onKeyDown={handleKeyDown}
+              onNewChat={startNewChat}
+            />
+          ) : (
+            <WelcomeView
+              question={question}
+              setQuestion={setQuestion}
+              isLoading={isLoading}
+              inputRef={inputRef}
+              onSubmit={handleSubmit}
+              onKeyDown={handleKeyDown}
+              onStarterClick={(text) => handleSubmit(null, text)}
+              onNavigate={navigate}
+            />
           )}
-
-          {/* Input Box */}
-          <form onSubmit={handleSubmit} className={`w-full rounded-full ${inputShell}`}>
-            <div className="flex items-center gap-3 px-6 py-4">
-              <input
-                type="text"
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Ask MicroTrainer anything..."
-                disabled={isLoading}
-                maxLength={500}
-                className="flex-1 bg-transparent text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 text-base disabled:opacity-50 py-1"
-                style={{ 
-                  border: 'none',
-                  outline: 'none',
-                  boxShadow: 'none',
-                  WebkitAppearance: 'none',
-                  MozAppearance: 'none',
-                  appearance: 'none'
-                }}
-              />
-              <div className="flex items-center gap-1">
-                {/* Clear button - only show when there's chat history */}
-                {chatHistory.length > 0 && (
-                  <button
-                    type="button"
-                    onClick={clearChat}
-                    className="p-2.5 hover:bg-gray-100 rounded-full transition-colors"
-                    title="Clear chat"
-                  >
-                    <svg className="w-5 h-5 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                )}
-                
-                {/* Send button */}
-                <button
-                  type="submit"
-                  disabled={!question.trim() || isLoading}
-                  className="p-2.5 hover:bg-blue-50 rounded-full transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
-                  title="Send message"
-                >
-                  {isLoading ? (
-                    <svg className="w-5 h-5 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                  ) : (
-                    <svg className="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                    </svg>
-                  )}
-                </button>
-              </div>
-            </div>
-            
-            {/* Character count */}
-            {question.length > 400 && (
-              <div className="px-5 pb-2 text-xs text-gray-400 text-right">
-                {question.length}/500
-              </div>
-            )}
-          </form>
-        </div>
-
-        {/* Beta Badge & Footer Text */}
-        <div className="mt-6 text-center">
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            MicroTrainer can make mistakes.{" "}
-            <a href="#" className="underline hover:text-gray-700 dark:hover:text-gray-300">Learn more</a>
-          </p>
-        </div>
-
-      </main>
-
-      {/* Floating Action Button - Gemini Gradient Style */}
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => navigate("/interview")}
-        className="fixed bottom-6 right-6 z-[100] w-14 h-14 rounded-full bg-[#1a73e8] dark:bg-[#8ab4f8] shadow-lg hover:opacity-90 transition flex items-center justify-center"
-        aria-label="Start interview"
-      >
-        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-      </motion.button>
-
+        </main>
+      </div>
     </div>
   );
 };
 
 export default Home;
 
-/* ================= COMPONENTS ================= */
+/* ================= WELCOME (EMPTY STATE) ================= */
 
-const SuggestionChip = ({ text, subtitle, onClick }) => (
-  <motion.button
-    type="button"
-    whileHover={{ scale: 1.005 }}
-    onClick={onClick}
-    className={chipButton}
-  >
-    <svg 
-      className="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition flex-shrink-0" 
-      fill="none" 
-      stroke="currentColor" 
-      viewBox="0 0 24 24"
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-    </svg>
-    <div className="flex-1">
-      <div className="text-gray-800 dark:text-gray-200 text-sm font-medium">{text}</div>
-      {subtitle && <div className="text-gray-500 dark:text-gray-400 text-xs mt-0.5">{subtitle}</div>}
+function WelcomeView({
+  question,
+  setQuestion,
+  isLoading,
+  inputRef,
+  onSubmit,
+  onKeyDown,
+  onStarterClick,
+  onNavigate,
+}) {
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-10 overflow-y-auto">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="w-full max-w-2xl flex flex-col items-center"
+      >
+        {/* Brand mark */}
+        <div className="mb-6 flex flex-col items-center gap-3">
+          <div className="relative">
+            <div
+              className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#1a73e8]/20 to-violet-500/20 blur-xl scale-110"
+              aria-hidden
+            />
+            <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#292a2d] shadow-sm">
+              <Sparkles
+                className="h-7 w-7 text-[#1a73e8] dark:text-[#8ab4f8]"
+                strokeWidth={1.5}
+              />
+            </div>
+          </div>
+          <div className="text-center">
+            <h1 className="text-2xl sm:text-3xl font-medium text-gray-900 dark:text-gray-100 tracking-tight">
+              What do you want to practice?
+            </h1>
+            <p className={`${textMuted} mt-2 max-w-md mx-auto`}>
+              Ask about any concept, interview topic, or coding problem — no menus required.
+            </p>
+          </div>
+        </div>
+
+        {/* Primary input */}
+        <HomeChatInput
+          question={question}
+          setQuestion={setQuestion}
+          isLoading={isLoading}
+          inputRef={inputRef}
+          onSubmit={onSubmit}
+          onKeyDown={onKeyDown}
+          placeholder="Ask a question..."
+          size="large"
+          className="w-full"
+        />
+
+        {/* Starter prompts */}
+        <div className="w-full mt-6">
+          <p className="text-xs font-medium text-gray-400 dark:text-gray-500 text-center mb-3 uppercase tracking-wide">
+            Try asking
+          </p>
+          <div className="flex flex-wrap justify-center gap-2">
+            {STARTER_PROMPTS.map((prompt) => (
+              <button
+                key={prompt}
+                type="button"
+                disabled={isLoading}
+                onClick={() => onStarterClick(prompt)}
+                className="text-left text-sm px-3.5 py-2 rounded-full border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#292a2d] text-gray-700 dark:text-gray-300 hover:border-[#1a73e8]/40 dark:hover:border-[#8ab4f8]/40 hover:bg-blue-50/50 dark:hover:bg-blue-950/20 transition disabled:opacity-50 max-w-full truncate"
+              >
+                {prompt}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Quick actions — secondary, not overwhelming */}
+        <div className="w-full mt-10 pt-6 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-xs text-gray-400 dark:text-gray-500 text-center mb-3">
+            Or jump to a dedicated space
+          </p>
+          <div className="flex flex-wrap justify-center gap-2">
+            {QUICK_ACTIONS.map(({ label, path, icon: Icon }) => (
+              <button
+                key={path}
+                type="button"
+                onClick={() => onNavigate(path)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-[#1a73e8] dark:hover:text-[#8ab4f8] hover:bg-gray-50 dark:hover:bg-gray-800/60 transition"
+              >
+                <Icon className="h-3.5 w-3.5" strokeWidth={1.75} />
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <p className="text-[11px] text-gray-400 dark:text-gray-500 text-center mt-8">
+          MicroTrainer adapts to your level. Answers may need a quick sanity check.
+        </p>
+      </motion.div>
     </div>
-  </motion.button>
-);
+  );
+}
 
-const TechChip = ({ text, onClick }) => (
-  <motion.button
-    type="button"
-    whileHover={{ scale: 1.01 }}
-    whileTap={{ scale: 0.99 }}
-    onClick={onClick}
-    className={chipButtonSm}
-  >
-    {text}
-  </motion.button>
-);
+/* ================= ACTIVE CHAT ================= */
+
+function ActiveChatView({
+  chatHistory,
+  highlightedIndex,
+  messageRefs,
+  chatEndRef,
+  question,
+  setQuestion,
+  isLoading,
+  inputRef,
+  onSubmit,
+  onKeyDown,
+  onNewChat,
+}) {
+  return (
+    <div className="flex-1 flex flex-col min-h-0">
+      {/* Top bar */}
+      <div className="flex-shrink-0 flex items-center justify-between px-4 sm:px-6 py-3 border-b border-gray-100 dark:border-gray-800">
+        <p className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate">
+          Practice chat
+        </p>
+        <button
+          type="button"
+          onClick={onNewChat}
+          className="text-xs font-medium px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+        >
+          New question
+        </button>
+      </div>
+
+      {/* Messages */}
+      <div className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-6">
+        <div className="max-w-3xl mx-auto space-y-5">
+          <AnimatePresence>
+            {chatHistory.map((message, index) => (
+              <motion.div
+                key={index}
+                ref={(el) => {
+                  messageRefs.current[index] = el;
+                }}
+                data-chat-message-index={index}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className={
+                  message.role === "user"
+                    ? "flex justify-end"
+                    : "flex justify-start"
+                }
+              >
+                {message.role === "user" ? (
+                  <div
+                    className={`max-w-[85%] sm:max-w-[75%] px-4 py-3 rounded-2xl rounded-br-md bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 text-sm leading-relaxed transition-shadow ${
+                      highlightedIndex === index
+                        ? "ring-2 ring-blue-300 dark:ring-blue-600 ring-offset-2 dark:ring-offset-[#202124]"
+                        : ""
+                    }`}
+                  >
+                    {message.content}
+                  </div>
+                ) : message.role === "error" ? (
+                  <div className="max-w-[90%] px-4 py-3 rounded-2xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 text-sm flex items-start gap-2">
+                    <svg
+                      className="w-4 h-4 flex-shrink-0 mt-0.5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <span>{message.content}</span>
+                  </div>
+                ) : (
+                  <div
+                    className={`max-w-[90%] px-4 py-4 rounded-2xl rounded-bl-md bg-gray-50 dark:bg-[#292a2d] border border-gray-200 dark:border-gray-700 transition-shadow ${
+                      highlightedIndex === index
+                        ? "ring-2 ring-blue-300 dark:ring-blue-600"
+                        : ""
+                    }`}
+                  >
+                    <div className="prose prose-sm dark:prose-invert max-w-none text-gray-800 dark:text-gray-200">
+                      <ReactMarkdown components={chatMdComponents}>
+                        {message.content}
+                      </ReactMarkdown>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            ))}
+          </AnimatePresence>
+
+          {isLoading && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex justify-start"
+            >
+              <div className="px-4 py-3 rounded-2xl bg-gray-50 dark:bg-[#292a2d] border border-gray-200 dark:border-gray-700">
+                <div className="flex gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500 animate-bounce [animation-delay:0ms]" />
+                  <span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500 animate-bounce [animation-delay:150ms]" />
+                  <span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500 animate-bounce [animation-delay:300ms]" />
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          <div ref={chatEndRef} />
+        </div>
+      </div>
+
+      {/* Pinned input */}
+      <div className="flex-shrink-0 px-4 sm:px-6 py-4 border-t border-gray-100 dark:border-gray-800 bg-white/80 dark:bg-[#202124]/80 backdrop-blur-sm">
+        <div className="max-w-3xl mx-auto">
+          <HomeChatInput
+            question={question}
+            setQuestion={setQuestion}
+            isLoading={isLoading}
+            inputRef={inputRef}
+            onSubmit={onSubmit}
+            onKeyDown={onKeyDown}
+            placeholder="Ask a follow-up..."
+            size="compact"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ================= SHARED INPUT ================= */
+
+function HomeChatInput({
+  question,
+  setQuestion,
+  isLoading,
+  inputRef,
+  onSubmit,
+  onKeyDown,
+  placeholder,
+  size = "compact",
+  className = "",
+}) {
+  const isLarge = size === "large";
+
+  return (
+    <form
+      onSubmit={onSubmit}
+      className={`relative ${className} ${
+        isLarge
+          ? "rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#292a2d] shadow-lg shadow-gray-200/50 dark:shadow-none focus-within:border-[#1a73e8]/50 dark:focus-within:border-[#8ab4f8]/50 focus-within:ring-2 focus-within:ring-[#1a73e8]/10 dark:focus-within:ring-[#8ab4f8]/10 transition"
+          : "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] shadow-sm focus-within:border-gray-300 dark:focus-within:border-gray-600 transition"
+      }`}
+    >
+      <div
+        className={`flex items-end gap-2 ${
+          isLarge ? "px-4 py-3 sm:px-5 sm:py-4" : "px-3 py-2.5"
+        }`}
+      >
+        <textarea
+          ref={inputRef}
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          onKeyDown={onKeyDown}
+          placeholder={placeholder}
+          disabled={isLoading}
+          maxLength={500}
+          rows={isLarge ? 2 : 1}
+          className={`flex-1 resize-none bg-transparent text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 disabled:opacity-50 border-0 outline-none focus:ring-0 ${
+            isLarge ? "text-base sm:text-lg leading-relaxed" : "text-sm py-1"
+          }`}
+          style={{
+            boxShadow: "none",
+            WebkitAppearance: "none",
+          }}
+        />
+        <button
+          type="submit"
+          disabled={!question.trim() || isLoading}
+          className={`flex-shrink-0 flex items-center justify-center rounded-xl bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 hover:opacity-90 transition disabled:opacity-30 disabled:cursor-not-allowed ${
+            isLarge ? "h-10 w-10 sm:h-11 sm:w-11" : "h-8 w-8"
+          }`}
+          title="Send"
+        >
+          {isLoading ? (
+            <svg
+              className={`animate-spin ${isLarge ? "h-5 w-5" : "h-4 w-4"}`}
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+          ) : (
+            <ArrowUp
+              className={isLarge ? "h-5 w-5" : "h-4 w-4"}
+              strokeWidth={2.5}
+            />
+          )}
+        </button>
+      </div>
+      {question.length > 400 && (
+        <div className="px-4 pb-2 text-xs text-gray-400 text-right">
+          {question.length}/500
+        </div>
+      )}
+    </form>
+  );
+}

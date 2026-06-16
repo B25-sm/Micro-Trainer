@@ -21,6 +21,7 @@ import EngagementDashboard from "./pages/EngagementDashboard.jsx";
 import AdminEngagementDashboard from "./pages/AdminEngagementDashboard.jsx";
 import NotificationSettings from "./pages/NotificationSettings.jsx";
 import PersonalSchedule from "./pages/PersonalSchedule.jsx";
+import CommunicationReview from "./pages/CommunicationReview.jsx";
 import ExtensionPanel from "./pages/ExtensionPanel.jsx";
 
 // Protected Route Component
@@ -186,6 +187,18 @@ function App() {
               <RequireAuth>
                 <MainLayout>
                   <PersonalSchedule />
+                </MainLayout>
+              </RequireAuth>
+            }
+          />
+
+          {/* Communication Review */}
+          <Route
+            path="/communication"
+            element={
+              <RequireAuth>
+                <MainLayout>
+                  <CommunicationReview />
                 </MainLayout>
               </RequireAuth>
             }

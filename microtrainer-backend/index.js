@@ -273,7 +273,7 @@ app.get("/trainer/sync-status", trainerOnly, (req, res) => {
 // 🔹 TEACHING MODE (ADAPTIVE)
 // =======================================================
 const { adaptiveTeach } = require("./services/adaptiveTeachingService");
-const { CODE_SNIPPET_RULES_CHAT } = require("./services/personaConfig");
+const { CODE_SNIPPET_RULES_CHAT, CONCEPT_QA_RESPONSE_STRUCTURE } = require("./services/personaConfig");
 const { saveStudentLevel, getStudentLevel } = require("./services/memoryService");
 const {
   logAskTopic,
@@ -452,9 +452,16 @@ app.post("/chat/ask", async (req, res) => {
 
 Your role:
 - Answer questions about interview preparation
-- Explain technical concepts clearly and concisely
+- Explain technical concepts clearly
 - Provide career guidance
 - Help students understand the platform
+
+When the student asks about a SPECIFIC technical concept, you MUST follow this structure:
+${CONCEPT_QA_RESPONSE_STRUCTURE}
+
+For non-concept questions (career tips, platform help, "how do I start"):
+- Answer directly in 1-2 short paragraphs (~120 words)
+- No forced code block unless relevant
 
 Available interview types:
 - MERN Stack Developer (MongoDB, Express, React, Node.js)
@@ -468,21 +475,18 @@ Available interview types:
 - Problem Solving & DSA (Algorithms, Data Structures)
 
 Guidelines:
-- Be concise (1-2 short paragraphs max, ~120-150 words)
-- When explaining technical concepts, include ONE small fenced code snippet (3-6 lines)
 - Be encouraging and supportive
+- Use markdown (bold headers, lists, fenced code)
 - Suggest starting an interview when relevant
-- Use simple, clear language
-- Format responses with markdown (bold, lists, code blocks)
-- If asked about platform features: scoring system tracks correctness, completeness, clarity, and code quality
+- If asked about platform features: scoring tracks correctness, completeness, clarity, and code quality
 
 ${CODE_SNIPPET_RULES_CHAT}
 
 Don't:
-- Give overly long explanations
 - Use complex jargon without explanation
 - Discourage students
-- Provide incorrect information`
+- Provide incorrect information
+- Skip or reorder the three concept sections when explaining a concept`
       },
       ...session.history.slice(-6), // Last 3 exchanges
       {
@@ -498,7 +502,7 @@ Don't:
         model: "llama-3.1-8b-instant",
         messages: messages,
         temperature: 0.7,
-        max_tokens: 650
+        max_tokens: 850
       },
       {
         headers: {
@@ -1741,6 +1745,45 @@ const {
   DIAGNOSTIC_QUESTIONS_PER_TECH,
 } = require("./services/personalScheduleService");
 const { getSchedule: getStoredSchedule } = require("./services/personalScheduleStore");
+
+const {
+  getScenarios,
+  reviewCommunication,
+  getStudentHistory,
+} = require("./services/communicationReviewService");
+
+app.get("/api/communication-review/scenarios", (req, res) => {
+  try {
+    res.json({ scenarios: getScenarios() });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/api/communication-review/review", async (req, res) => {
+  try {
+    const { studentId, scenarioId, customPrompt, response } = req.body;
+    const review = await reviewCommunication({
+      studentId: studentId || "anonymous",
+      scenarioId,
+      customPrompt,
+      response,
+    });
+    res.json({ review });
+  } catch (error) {
+    const status = error.message?.includes("required") ? 400 : 500;
+    res.status(status).json({ error: error.message });
+  }
+});
+
+app.get("/api/communication-review/history/:studentId", studentSelfOrTrainer, (req, res) => {
+  try {
+    const history = getStudentHistory(req.params.studentId);
+    res.json({ history });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // =======================================================
 // 🤖 AI / ML MASTER INTERVIEW BANK (535 questions)

@@ -6,8 +6,11 @@ import { askAI } from "../api";
 import { getStudentId } from "../utils/studentAuth";
 import { isTrainerSession } from "../utils/trainerAuth";
 import { createLessonMarkdownComponents } from "../utils/lessonMarkdown";
+import ChatHistorySidebar from "../components/ChatHistorySidebar";
+import { useChatHistoryPersistence } from "../hooks/useChatHistoryPersistence";
 
 const teachingMdComponents = createLessonMarkdownComponents();
+const ASK_CHAT_STORAGE = "microtrainer-chat-history-ask";
 
 function resolveLearnStudentId() {
   const id = getStudentId();
@@ -45,9 +48,24 @@ const Learn = () => {
   const [sessionId, setSessionId] = useState(null);
   const [currentLevel, setCurrentLevel] = useState(null);
   const [awaitingAnswer, setAwaitingAnswer] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(null);
   const [studentId] = useState(() => resolveLearnStudentId());
   const chatEndRef = useRef(null);
   const inputRef = useRef(null);
+  const messageRefs = useRef({});
+
+  const {
+    sessions,
+    activeSessionId,
+    persistConversation,
+    beginNewSession,
+    selectSession,
+    removeSession,
+  } = useChatHistoryPersistence(ASK_CHAT_STORAGE);
+
+  const showHistorySidebar =
+    learningMode === "ask-anything" &&
+    (sessions.length > 0 || conversation.length > 0);
 
   const isAnsweringCheck =
     awaitingAnswer ||
@@ -61,8 +79,27 @@ const Learn = () => {
 
   // Auto-scroll to bottom
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [conversation]);
+    if (highlightedIndex == null) {
+      chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [conversation, highlightedIndex]);
+
+  useEffect(() => {
+    if (learningMode === "ask-anything" && conversation.length > 0) {
+      persistConversation({
+        messages: conversation,
+        sessionId,
+        meta: { currentLevel, awaitingAnswer },
+      });
+    }
+  }, [
+    conversation,
+    sessionId,
+    currentLevel,
+    awaitingAnswer,
+    learningMode,
+    persistConversation,
+  ]);
 
   // Block copy/paste when answering Quick Check questions
   useEffect(() => {
@@ -176,11 +213,44 @@ const Learn = () => {
   };
 
   const startNewTopic = () => {
+    beginNewSession();
     setConversation([]);
     setSessionId(null);
     setCurrentLevel(null);
     setAwaitingAnswer(false);
     setConcept("");
+    setHighlightedIndex(null);
+  };
+
+  const handleSelectSession = (session) => {
+    selectSession(session.id);
+    setConversation(session.messages || []);
+    setSessionId(session.sessionId ?? null);
+    setCurrentLevel(session.meta?.currentLevel ?? null);
+    setAwaitingAnswer(session.meta?.awaitingAnswer ?? false);
+    setHighlightedIndex(null);
+  };
+
+  const handleSelectQuestion = (session, messageIndex) => {
+    handleSelectSession(session);
+    setTimeout(() => {
+      messageRefs.current[messageIndex]?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      setHighlightedIndex(messageIndex);
+    }, 150);
+  };
+
+  const handleDeleteSession = (id) => {
+    removeSession(id);
+    if (activeSessionId === id) {
+      setConversation([]);
+      setSessionId(null);
+      setCurrentLevel(null);
+      setAwaitingAnswer(false);
+      setHighlightedIndex(null);
+    }
   };
 
   // Guided Course handlers
@@ -252,9 +322,22 @@ const Learn = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-[#202124] read-mode:bg-[var(--read-surface)] transition-colors duration-300">
-      
+      <div className="flex flex-1 min-h-0 w-full">
+        {showHistorySidebar && (
+          <ChatHistorySidebar
+            sessions={sessions}
+            activeSessionId={activeSessionId}
+            onSelectSession={handleSelectSession}
+            onSelectQuestion={handleSelectQuestion}
+            onNewChat={startNewTopic}
+            onDeleteSession={handleDeleteSession}
+            title="Learning history"
+            emptyHint="Concepts you ask about are saved here so you can pick up where you left off."
+          />
+        )}
+
       {/* Main Content */}
-      <main className="flex-1 flex flex-col items-center px-6 py-8 max-w-4xl mx-auto w-full">
+      <main className="flex-1 flex flex-col items-center px-6 py-8 max-w-4xl mx-auto w-full min-h-0 overflow-y-auto">
         {currentLevel && (
           <span className="mb-4 inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300">
             {currentLevel.charAt(0).toUpperCase() + currentLevel.slice(1)} level
@@ -347,10 +430,18 @@ const Learn = () => {
                 {conversation.map((message, index) => (
                   <motion.div
                     key={index}
+                    ref={(el) => {
+                      messageRefs.current[index] = el;
+                    }}
+                    data-chat-message-index={index}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
                     className={`${
+                      highlightedIndex === index
+                        ? "ring-2 ring-blue-400 dark:ring-blue-500 rounded-2xl"
+                        : ""
+                    } ${
                       message.role === "user"
                         ? "flex justify-end"
                         : message.role === "error"
@@ -510,6 +601,7 @@ const Learn = () => {
         )}
 
       </main>
+      </div>
     </div>
   );
 };
