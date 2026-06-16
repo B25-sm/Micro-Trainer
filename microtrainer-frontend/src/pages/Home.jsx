@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import { Mic, Code2, BookOpen, BarChart3, ArrowUp, MessageSquareText } from "lucide-react";
 import { chatWithMicroTrainer } from "../api";
@@ -8,17 +8,22 @@ import { pageShell, textMuted } from "../lib/ui";
 import { createLessonMarkdownComponents } from "../utils/lessonMarkdown";
 import ChatHistorySidebar from "../components/ChatHistorySidebar";
 import { useChatHistoryPersistence } from "../hooks/useChatHistoryPersistence";
+import { filterStarterPrompts } from "../utils/chatHistoryStorage";
 
 const chatMdComponents = createLessonMarkdownComponents();
 const HOME_CHAT_STORAGE = "microtrainer-chat-history-home";
 
-const STARTER_PROMPTS = [
+const STARTER_PROMPT_POOL = [
   "Explain React hooks with a real-world example",
   "What MERN stack questions come up in interviews?",
   "How do SQL JOINs work? Show me with a query",
   "Walk me through solving a two-pointer problem",
   "What's the difference between let, const, and var?",
   "Help me prepare for a Java OOP interview",
+  "How does async/await work in JavaScript?",
+  "Explain REST APIs in simple terms",
+  "What is the difference between SQL and NoSQL?",
+  "How do I approach a binary search problem?",
 ];
 
 const QUICK_ACTIONS = [
@@ -52,6 +57,11 @@ const Home = () => {
   const isChatting = chatHistory.length > 0;
   const hasSavedSessions = sessions.length > 0;
   const [historyOpen, setHistoryOpen] = useState(false);
+
+  const starterPrompts = useMemo(
+    () => filterStarterPrompts(STARTER_PROMPT_POOL, sessions, 6),
+    [sessions]
+  );
 
   useEffect(() => {
     if (chatHistory.length > 0) {
@@ -217,9 +227,7 @@ const Home = () => {
               onKeyDown={handleKeyDown}
               onStarterClick={(text) => handleSubmit(null, text)}
               onNavigate={navigate}
-              sessions={sessions}
-              onResumeSession={handleSelectSession}
-              onOpenHistory={() => setHistoryOpen(true)}
+              starterPrompts={starterPrompts}
             />
           )}
         </main>
@@ -241,9 +249,7 @@ function WelcomeView({
   onKeyDown,
   onStarterClick,
   onNavigate,
-  sessions = [],
-  onResumeSession,
-  onOpenHistory,
+  starterPrompts = [],
 }) {
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-10 overflow-y-auto">
@@ -268,37 +274,6 @@ function WelcomeView({
           </div>
         </div>
 
-        {sessions.length > 0 && (
-          <div className="w-full mb-5 text-left">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                Pick up where you left off
-              </p>
-              {sessions.length > 2 && (
-                <button
-                  type="button"
-                  onClick={onOpenHistory}
-                  className="text-xs font-medium text-[#1a73e8] dark:text-[#8ab4f8] hover:underline"
-                >
-                  See all ({sessions.length})
-                </button>
-              )}
-            </div>
-            <div className="space-y-1.5">
-              {sessions.slice(0, 2).map((session) => (
-                <button
-                  key={session.id}
-                  type="button"
-                  onClick={() => onResumeSession?.(session)}
-                  className="w-full text-left text-sm px-3 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white/80 dark:bg-[#292a2d]/80 text-gray-700 dark:text-gray-300 hover:border-[#1a73e8]/40 dark:hover:border-[#8ab4f8]/40 transition line-clamp-1"
-                >
-                  {session.title}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Primary input */}
         <HomeChatInput
           question={question}
@@ -318,7 +293,7 @@ function WelcomeView({
             Try asking
           </p>
           <div className="flex flex-wrap justify-center gap-2">
-            {STARTER_PROMPTS.map((prompt) => (
+            {starterPrompts.map((prompt) => (
               <button
                 key={prompt}
                 type="button"

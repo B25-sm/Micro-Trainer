@@ -34,6 +34,34 @@ export function deleteChatSession(storageKey, sessionId) {
   return sessions;
 }
 
+export function normalizePromptText(text) {
+  return String(text || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+}
+
+export function collectSavedPrompts(sessions = []) {
+  const saved = new Set();
+  for (const session of sessions) {
+    const firstUser = session.messages?.find(
+      (m) => m.role === "user" && m.content?.trim()
+    )?.content;
+    if (firstUser) saved.add(normalizePromptText(firstUser));
+    if (session.title && session.title !== "New conversation") {
+      saved.add(normalizePromptText(session.title));
+    }
+  }
+  return saved;
+}
+
+export function filterStarterPrompts(promptPool, sessions = [], limit = 6) {
+  const saved = collectSavedPrompts(sessions);
+  return promptPool
+    .filter((prompt) => !saved.has(normalizePromptText(prompt)))
+    .slice(0, limit);
+}
+
 export function listUserQuestions(messages = []) {
   return messages
     .map((m, index) => ({ ...m, index }))

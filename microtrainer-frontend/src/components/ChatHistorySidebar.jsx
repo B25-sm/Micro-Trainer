@@ -180,14 +180,10 @@ export default function ChatHistorySidebar({
         <button
           type="button"
           onClick={() => setMobileOpen(true)}
-          className="fixed bottom-24 left-4 lg:left-auto lg:bottom-auto lg:top-20 lg:right-6 z-40 flex items-center gap-2 px-3 py-2 rounded-lg bg-white dark:bg-[#292a2d] border border-gray-200 dark:border-gray-600 shadow-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:border-[#1a73e8]/40 dark:hover:border-[#8ab4f8]/40 transition"
+          className="fixed bottom-20 left-4 lg:left-auto lg:bottom-6 lg:right-8 z-30 text-xs text-gray-500 dark:text-gray-400 hover:text-[#1a73e8] dark:hover:text-[#8ab4f8] underline-offset-2 hover:underline transition"
           aria-label="Open question history"
         >
-          <span className="text-xs font-bold text-[#1a73e8] dark:text-[#8ab4f8]">MT</span>
-          Past questions
-          <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 px-1.5 py-0.5 rounded-full">
-            {sessions.length}
-          </span>
+          Past questions ({sessions.length})
         </button>
       )}
 
