@@ -8,6 +8,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { communicationReviewAPI } from "../api/communicationReview";
+import { COMMUNICATION_REVIEW_SCENARIOS } from "../data/communicationReviewScenarios";
 import { getStudentId } from "../utils/studentAuth";
 import {
   pageShell,
@@ -43,6 +44,14 @@ function verdictStyle(verdict = "") {
   return "bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-200 border-amber-200 dark:border-amber-800";
 }
 
+function apiErrorMessage(err, fallback = "Something went wrong. Please try again.") {
+  const status = err?.response?.status;
+  if (status === 404) {
+    return "Communication Review is not available on the live server yet. Redeploy the MicroTrainer backend on Render (latest main branch), then try again.";
+  }
+  return err?.response?.data?.error || err?.error || err?.message || fallback;
+}
+
 export default function CommunicationReview() {
   const studentId = getStudentId();
   const [scenarios, setScenarios] = useState([]);
@@ -55,6 +64,7 @@ export default function CommunicationReview() {
   const [error, setError] = useState("");
   const [result, setResult] = useState(null);
   const [showHistory, setShowHistory] = useState(false);
+  const [apiUnavailable, setApiUnavailable] = useState(false);
 
   const selectedScenario = useMemo(
     () => scenarios.find((s) => s.id === selectedId) || null,
@@ -76,20 +86,48 @@ export default function CommunicationReview() {
   const loadData = useCallback(async () => {
     setLoading(true);
     setError("");
+    setApiUnavailable(false);
+    let serverMissing = false;
+
     try {
-      const [scenRes, histRes] = await Promise.all([
-        communicationReviewAPI.getScenarios(),
-        studentId
-          ? communicationReviewAPI.getHistory(studentId)
-          : Promise.resolve({ data: { history: [] } }),
-      ]);
-      setScenarios(scenRes.data.scenarios || []);
-      setHistory(histRes.data.history || []);
-      if (!selectedId && scenRes.data.scenarios?.length) {
-        setSelectedId(scenRes.data.scenarios[0].id);
+      let loadedScenarios = COMMUNICATION_REVIEW_SCENARIOS;
+      try {
+        const scenRes = await communicationReviewAPI.getScenarios();
+        loadedScenarios = scenRes.data.scenarios?.length
+          ? scenRes.data.scenarios
+          : COMMUNICATION_REVIEW_SCENARIOS;
+      } catch (err) {
+        if (err?.response?.status === 404) {
+          serverMissing = true;
+          setApiUnavailable(true);
+        } else {
+          throw err;
+        }
+      }
+
+      setScenarios(loadedScenarios);
+      setSelectedId((prev) => prev || loadedScenarios[0]?.id || null);
+
+      if (studentId && !serverMissing) {
+        try {
+          const histRes = await communicationReviewAPI.getHistory(studentId);
+          setHistory(histRes.data.history || []);
+        } catch (err) {
+          if (err?.response?.status === 404) {
+            serverMissing = true;
+            setApiUnavailable(true);
+            setHistory([]);
+          } else {
+            throw err;
+          }
+        }
+      } else {
+        setHistory([]);
       }
     } catch (err) {
-      setError(err?.error || err?.message || "Failed to load communication review.");
+      setError(apiErrorMessage(err, "Failed to load communication review."));
+      setScenarios(COMMUNICATION_REVIEW_SCENARIOS);
+      setSelectedId((prev) => prev || COMMUNICATION_REVIEW_SCENARIOS[0]?.id || null);
     } finally {
       setLoading(false);
     }
@@ -120,7 +158,7 @@ export default function CommunicationReview() {
         setHistory(histRes.data.history || []);
       }
     } catch (err) {
-      setError(err?.error || err?.message || "Review failed. Please try again.");
+      setError(apiErrorMessage(err, "Review failed. Please try again."));
     } finally {
       setSubmitting(false);
     }
@@ -192,6 +230,14 @@ export default function CommunicationReview() {
             )}
           </div>
         </header>
+
+        {apiUnavailable && (
+          <div className="mb-4 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-4 py-3 text-sm text-amber-900 dark:text-amber-100">
+            Practice prompts are loaded, but AI review needs a backend update. Redeploy{" "}
+            <strong>micro-trainer</strong> on Render from the latest <code className="text-xs">main</code> branch,
+            then submit again.
+          </div>
+        )}
 
         <div className="flex flex-1 min-h-0 gap-6 flex-col lg:flex-row">
           {/* Scenario picker */}
