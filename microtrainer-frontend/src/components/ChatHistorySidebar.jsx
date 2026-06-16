@@ -32,7 +32,7 @@ export default function ChatHistorySidebar({
             onNewChat?.();
             setMobileOpen(false);
           }}
-          className="text-xs font-medium px-2.5 py-1.5 rounded-lg bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 hover:opacity-90"
+          className="text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
         >
           New
         </button>
@@ -151,13 +151,11 @@ export default function ChatHistorySidebar({
       <button
         type="button"
         onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed bottom-24 left-4 z-40 flex items-center gap-2 px-3 py-2 rounded-full bg-white dark:bg-[#292a2d] border border-gray-200 dark:border-gray-600 shadow-md text-sm font-medium text-gray-800 dark:text-gray-100"
-        aria-label="Open chat history"
+        className="lg:hidden fixed bottom-24 left-4 z-40 flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#292a2d] shadow-md text-sm font-semibold text-gray-800 dark:text-gray-100"
+        aria-label="Open past questions"
       >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        History
+        <span className="text-xs font-bold text-[#1a73e8] dark:text-[#8ab4f8]">MT</span>
+        Past questions
         {sessions.length > 0 && (
           <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 px-1.5 py-0.5 rounded-full">
             {sessions.length}
