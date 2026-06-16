@@ -11,13 +11,20 @@ export default function ChatHistorySidebar({
   title = "Chat history",
   emptyHint = "Questions you ask will appear here so you can reopen them anytime.",
   className = "",
+  docked = false,
+  open: controlledOpen,
+  onOpenChange,
 }) {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const mobileOpen = controlledOpen ?? internalOpen;
+  const setMobileOpen = onOpenChange ?? setInternalOpen;
   const [expandedId, setExpandedId] = useState(null);
 
   const panel = (
     <aside
-      className={`flex flex-col h-full min-h-0 bg-white dark:bg-[#292a2d] border-r border-gray-200 dark:border-gray-700 ${className}`}
+      className={`flex flex-col max-h-full min-h-0 bg-white dark:bg-[#292a2d] border-r border-gray-200 dark:border-gray-700 ${className} ${
+        docked ? "h-full" : "h-full shadow-xl"
+      }`}
     >
       <div className="flex-shrink-0 px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between gap-2">
         <div>
@@ -26,16 +33,30 @@ export default function ChatHistorySidebar({
             {sessions.length} saved
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            onNewChat?.();
-            setMobileOpen(false);
-          }}
-          className="text-xs font-medium px-2.5 py-1.5 rounded-lg bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 hover:opacity-90"
-        >
-          New
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => {
+              onNewChat?.();
+              setMobileOpen(false);
+            }}
+            className="text-xs font-medium px-2.5 py-1.5 rounded-lg bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 hover:opacity-90"
+          >
+            New
+          </button>
+          {!docked && (
+            <button
+              type="button"
+              onClick={() => setMobileOpen(false)}
+              className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+              aria-label="Close"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="flex-1 min-h-0 overflow-y-auto px-2 py-2 space-y-1">
@@ -147,37 +168,41 @@ export default function ChatHistorySidebar({
 
   return (
     <>
-      {/* Mobile toggle */}
-      <button
-        type="button"
-        onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed bottom-24 left-4 z-40 flex items-center gap-2 px-3 py-2 rounded-full bg-white dark:bg-[#292a2d] border border-gray-200 dark:border-gray-600 shadow-md text-sm font-medium text-gray-800 dark:text-gray-100"
-        aria-label="Open chat history"
-      >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        History
-        {sessions.length > 0 && (
+      {/* Docked desktop column — only when explicitly enabled */}
+      {docked && (
+        <div className="hidden lg:flex w-60 flex-shrink-0 min-h-0 self-start sticky top-0 max-h-[min(70vh,28rem)] rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden ml-1">
+          {panel}
+        </div>
+      )}
+
+      {/* Drawer toggle — no permanent empty column */}
+      {!docked && sessions.length > 0 && !mobileOpen && (
+        <button
+          type="button"
+          onClick={() => setMobileOpen(true)}
+          className="fixed bottom-24 left-4 lg:left-auto lg:bottom-auto lg:top-20 lg:right-6 z-40 flex items-center gap-2 px-3 py-2 rounded-lg bg-white dark:bg-[#292a2d] border border-gray-200 dark:border-gray-600 shadow-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:border-[#1a73e8]/40 dark:hover:border-[#8ab4f8]/40 transition"
+          aria-label="Open question history"
+        >
+          <span className="text-xs font-bold text-[#1a73e8] dark:text-[#8ab4f8]">MT</span>
+          Past questions
           <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 px-1.5 py-0.5 rounded-full">
             {sessions.length}
           </span>
-        )}
-      </button>
+        </button>
+      )}
 
-      {/* Desktop sidebar */}
-      <div className="hidden lg:flex w-72 flex-shrink-0 min-h-0">{panel}</div>
-
-      {/* Mobile drawer */}
-      {mobileOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 flex">
+      {/* Slide-over drawer (mobile + desktop when not docked) */}
+      {!docked && mobileOpen && (
+        <div className="fixed inset-0 z-50 flex lg:justify-end">
           <button
             type="button"
             className="absolute inset-0 bg-black/40"
             aria-label="Close history"
             onClick={() => setMobileOpen(false)}
           />
-          <div className="relative w-[min(100%,20rem)] h-full shadow-xl">{panel}</div>
+          <div className="relative w-[min(100%,18rem)] lg:w-72 h-full lg:max-h-screen lg:shadow-2xl">
+            {panel}
+          </div>
         </div>
       )}
     </>

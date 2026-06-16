@@ -63,9 +63,9 @@ const Learn = () => {
     removeSession,
   } = useChatHistoryPersistence(ASK_CHAT_STORAGE);
 
-  const showHistorySidebar =
-    learningMode === "ask-anything" &&
-    (sessions.length > 0 || conversation.length > 0);
+  const showHistoryDrawer =
+    learningMode === "ask-anything" && sessions.length > 0;
+  const [historyOpen, setHistoryOpen] = useState(false);
 
   const isAnsweringCheck =
     awaitingAnswer ||
@@ -322,8 +322,8 @@ const Learn = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-[#202124] read-mode:bg-[var(--read-surface)] transition-colors duration-300">
-      <div className="flex flex-1 min-h-0 w-full">
-        {showHistorySidebar && (
+      <div className="flex flex-1 min-h-0 w-full relative">
+        {showHistoryDrawer && (
           <ChatHistorySidebar
             sessions={sessions}
             activeSessionId={activeSessionId}
@@ -333,6 +333,9 @@ const Learn = () => {
             onDeleteSession={handleDeleteSession}
             title="Learning history"
             emptyHint="Concepts you ask about are saved here so you can pick up where you left off."
+            open={historyOpen}
+            onOpenChange={setHistoryOpen}
+            docked={false}
           />
         )}
 

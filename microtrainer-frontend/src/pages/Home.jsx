@@ -50,7 +50,8 @@ const Home = () => {
   } = useChatHistoryPersistence(HOME_CHAT_STORAGE);
 
   const isChatting = chatHistory.length > 0;
-  const showHistorySidebar = sessions.length > 0 || isChatting;
+  const hasSavedSessions = sessions.length > 0;
+  const [historyOpen, setHistoryOpen] = useState(false);
 
   useEffect(() => {
     if (chatHistory.length > 0) {
@@ -174,8 +175,8 @@ const Home = () => {
 
   return (
     <div className={`flex flex-col flex-1 min-h-0 ${pageShell}`}>
-      <div className="flex flex-1 min-h-0 w-full max-w-6xl mx-auto">
-        {showHistorySidebar && (
+      <div className="flex flex-1 min-h-0 w-full max-w-2xl mx-auto relative">
+        {hasSavedSessions && (
           <ChatHistorySidebar
             sessions={sessions}
             activeSessionId={activeSessionId}
@@ -185,10 +186,13 @@ const Home = () => {
             onDeleteSession={handleDeleteSession}
             title="Your questions"
             emptyHint="Questions you ask are saved here so you can reopen them anytime."
+            open={historyOpen}
+            onOpenChange={setHistoryOpen}
+            docked={false}
           />
         )}
 
-        <main className="flex-1 flex flex-col min-h-0 min-w-0">
+        <main className="flex-1 flex flex-col min-h-0 min-w-0 w-full">
           {isChatting ? (
             <ActiveChatView
               chatHistory={chatHistory}
@@ -213,6 +217,9 @@ const Home = () => {
               onKeyDown={handleKeyDown}
               onStarterClick={(text) => handleSubmit(null, text)}
               onNavigate={navigate}
+              sessions={sessions}
+              onResumeSession={handleSelectSession}
+              onOpenHistory={() => setHistoryOpen(true)}
             />
           )}
         </main>
@@ -234,6 +241,9 @@ function WelcomeView({
   onKeyDown,
   onStarterClick,
   onNavigate,
+  sessions = [],
+  onResumeSession,
+  onOpenHistory,
 }) {
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-10 overflow-y-auto">
@@ -257,6 +267,37 @@ function WelcomeView({
             </p>
           </div>
         </div>
+
+        {sessions.length > 0 && (
+          <div className="w-full mb-5 text-left">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                Pick up where you left off
+              </p>
+              {sessions.length > 2 && (
+                <button
+                  type="button"
+                  onClick={onOpenHistory}
+                  className="text-xs font-medium text-[#1a73e8] dark:text-[#8ab4f8] hover:underline"
+                >
+                  See all ({sessions.length})
+                </button>
+              )}
+            </div>
+            <div className="space-y-1.5">
+              {sessions.slice(0, 2).map((session) => (
+                <button
+                  key={session.id}
+                  type="button"
+                  onClick={() => onResumeSession?.(session)}
+                  className="w-full text-left text-sm px-3 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white/80 dark:bg-[#292a2d]/80 text-gray-700 dark:text-gray-300 hover:border-[#1a73e8]/40 dark:hover:border-[#8ab4f8]/40 transition line-clamp-1"
+                >
+                  {session.title}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Primary input */}
         <HomeChatInput
