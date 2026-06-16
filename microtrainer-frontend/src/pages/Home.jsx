@@ -2,91 +2,31 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
+import { Mic, Code2, BookOpen, BarChart3, ArrowUp, MessageSquareText } from "lucide-react";
 import { chatWithMicroTrainer } from "../api";
-import { pageShell, textMuted, card } from "../lib/ui";
+import { pageShell, textMuted } from "../lib/ui";
 import { createLessonMarkdownComponents } from "../utils/lessonMarkdown";
 import ChatHistorySidebar from "../components/ChatHistorySidebar";
 import { useChatHistoryPersistence } from "../hooks/useChatHistoryPersistence";
-import MicroTrainerMark from "../components/brand/MicroTrainerMark";
 
 const chatMdComponents = createLessonMarkdownComponents();
 const HOME_CHAT_STORAGE = "microtrainer-chat-history-home";
 
-const STARTER_CARDS = [
-  {
-    tag: "Concept",
-    title: "React hooks",
-    prompt: "Explain React hooks with a real-world example",
-    accent: "border-l-[#1a73e8] dark:border-l-[#8ab4f8]",
-  },
-  {
-    tag: "Interview",
-    title: "MERN prep",
-    prompt: "What MERN stack questions come up in interviews?",
-    accent: "border-l-amber-500",
-  },
-  {
-    tag: "SQL",
-    title: "JOINs",
-    prompt: "How do SQL JOINs work? Show me with a query",
-    accent: "border-l-emerald-500",
-  },
-  {
-    tag: "Code",
-    title: "Two pointers",
-    prompt: "Walk me through solving a two-pointer problem",
-    accent: "border-l-violet-500",
-  },
-  {
-    tag: "JavaScript",
-    title: "let vs const",
-    prompt: "What's the difference between let, const, and var?",
-    accent: "border-l-sky-500",
-  },
-  {
-    tag: "Interview",
-    title: "Java OOP",
-    prompt: "Help me prepare for a Java OOP interview",
-    accent: "border-l-orange-500",
-  },
+const STARTER_PROMPTS = [
+  "Explain React hooks with a real-world example",
+  "What MERN stack questions come up in interviews?",
+  "How do SQL JOINs work? Show me with a query",
+  "Walk me through solving a two-pointer problem",
+  "What's the difference between let, const, and var?",
+  "Help me prepare for a Java OOP interview",
 ];
 
 const QUICK_ACTIONS = [
-  {
-    label: "Mock interview",
-    desc: "Timed Q&A with feedback",
-    path: "/interview",
-    accent: "bg-amber-500/10 text-amber-700 dark:text-amber-300 ring-amber-500/20",
-    glyph: "🎙",
-  },
-  {
-    label: "Communication",
-    desc: "How you say it",
-    path: "/communication",
-    accent: "bg-teal-500/10 text-teal-700 dark:text-teal-300 ring-teal-500/20",
-    glyph: "💬",
-  },
-  {
-    label: "Guided course",
-    desc: "Step-by-step paths",
-    path: "/learn",
-    accent: "bg-blue-500/10 text-blue-700 dark:text-blue-300 ring-blue-500/20",
-    glyph: "📘",
-  },
-  {
-    label: "Code practice",
-    desc: "Problems & run code",
-    path: "/problems",
-    accent: "bg-violet-500/10 text-violet-700 dark:text-violet-300 ring-violet-500/20",
-    glyph: "⌨",
-  },
-  {
-    label: "My progress",
-    desc: "Scores & streaks",
-    path: "/dashboard",
-    accent: "bg-slate-500/10 text-slate-700 dark:text-slate-300 ring-slate-500/20",
-    glyph: "📊",
-  },
+  { label: "Mock interview", path: "/interview", icon: Mic },
+  { label: "Communication", path: "/communication", icon: MessageSquareText },
+  { label: "Guided course", path: "/learn", icon: BookOpen },
+  { label: "Code practice", path: "/problems", icon: Code2 },
+  { label: "My progress", path: "/dashboard", icon: BarChart3 },
 ];
 
 const Home = () => {
@@ -243,8 +183,8 @@ const Home = () => {
             onSelectQuestion={handleSelectQuestion}
             onNewChat={startNewChat}
             onDeleteSession={handleDeleteSession}
-            title="Past questions"
-            emptyHint="Your practice questions are saved here — reopen any session anytime."
+            title="Your questions"
+            emptyHint="Questions you ask are saved here so you can reopen them anytime."
           />
         )}
 
@@ -296,110 +236,85 @@ function WelcomeView({
   onNavigate,
 }) {
   return (
-    <div className="home-practice-bg flex-1 flex flex-col min-h-0 overflow-y-auto">
-      <div className="flex-1 flex flex-col lg:flex-row gap-8 lg:gap-12 px-4 sm:px-8 py-8 lg:py-12 max-w-5xl mx-auto w-full">
-        {/* Hero — left-aligned, training-batch voice */}
-        <motion.div
-          initial={{ opacity: 0, x: -12 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.35 }}
-          className="lg:w-[42%] flex flex-col justify-center"
-        >
-          <MicroTrainerMark size="lg" className="mb-5" />
-          <p className="text-xs font-semibold uppercase tracking-widest text-[#1a73e8] dark:text-[#8ab4f8] mb-2">
-            Practice desk
-          </p>
-          <h1 className="text-2xl sm:text-3xl lg:text-[2rem] font-semibold text-gray-900 dark:text-gray-100 leading-tight tracking-tight">
-            Ask. Practice. Get coached.
-          </h1>
-          <p className={`${textMuted} mt-3 text-base leading-relaxed`}>
-            Built for technical training batches — concepts, interviews, and code in one place.
-            Type a question below or pick a starter card.
-          </p>
-          <ul className="mt-6 space-y-2 text-sm text-gray-600 dark:text-gray-400 hidden sm:block">
-            <li className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#1a73e8] dark:bg-[#8ab4f8]" />
-              Answers adapt to your level
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-              Saved in your question history
-            </li>
-          </ul>
-        </motion.div>
-
-        {/* Interaction column */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.05 }}
-          className="flex-1 flex flex-col gap-5 min-w-0"
-        >
-          <HomeChatInput
-            question={question}
-            setQuestion={setQuestion}
-            isLoading={isLoading}
-            inputRef={inputRef}
-            onSubmit={onSubmit}
-            onKeyDown={onKeyDown}
-            placeholder="What do you want to practice today?"
-            size="large"
-            className="w-full"
-          />
-
-          <div>
-            <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-3">
-              Quick starts
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              {STARTER_CARDS.map((item) => (
-                <button
-                  key={item.prompt}
-                  type="button"
-                  disabled={isLoading}
-                  onClick={() => onStarterClick(item.prompt)}
-                  className={`${card} border-l-4 ${item.accent} text-left px-3.5 py-3 hover:shadow-md transition disabled:opacity-50 group`}
-                >
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">
-                    {item.tag}
-                  </span>
-                  <p className="text-sm font-medium text-gray-800 dark:text-gray-200 mt-0.5 group-hover:text-[#1a73e8] dark:group-hover:text-[#8ab4f8] transition-colors">
-                    {item.title}
-                  </p>
-                </button>
-              ))}
-            </div>
+    <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-10 overflow-y-auto">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="w-full max-w-2xl flex flex-col items-center"
+      >
+        {/* Brand mark */}
+        <div className="mb-6 flex flex-col items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-[#202124] text-sm font-bold shadow-sm">
+            MT
           </div>
-
-          <div>
-            <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-3">
-              Dedicated spaces
+          <div className="text-center">
+            <h1 className="text-2xl sm:text-3xl font-medium text-gray-900 dark:text-gray-100 tracking-tight">
+              What do you want to practice?
+            </h1>
+            <p className={`${textMuted} mt-2 max-w-md mx-auto`}>
+              Ask about any concept, interview topic, or coding problem — no menus required.
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
-              {QUICK_ACTIONS.map((action) => (
-                <button
-                  key={action.path}
-                  type="button"
-                  onClick={() => onNavigate(action.path)}
-                  className={`rounded-xl px-3 py-3 text-left ring-1 ring-inset transition hover:scale-[1.02] active:scale-[0.98] ${action.accent}`}
-                >
-                  <span className="text-lg leading-none" aria-hidden>
-                    {action.glyph}
-                  </span>
-                  <p className="text-xs font-semibold mt-2 leading-tight">{action.label}</p>
-                  <p className="text-[10px] opacity-75 mt-0.5 leading-snug hidden sm:block">
-                    {action.desc}
-                  </p>
-                </button>
-              ))}
-            </div>
           </div>
+        </div>
 
-          <p className="text-[11px] text-gray-400 dark:text-gray-500">
-            MicroTrainer coaches like a trainer, not a search engine — verify critical facts before interviews.
+        {/* Primary input */}
+        <HomeChatInput
+          question={question}
+          setQuestion={setQuestion}
+          isLoading={isLoading}
+          inputRef={inputRef}
+          onSubmit={onSubmit}
+          onKeyDown={onKeyDown}
+          placeholder="Ask a question..."
+          size="large"
+          className="w-full"
+        />
+
+        {/* Starter prompts */}
+        <div className="w-full mt-6">
+          <p className="text-xs font-medium text-gray-400 dark:text-gray-500 text-center mb-3 uppercase tracking-wide">
+            Try asking
           </p>
-        </motion.div>
-      </div>
+          <div className="flex flex-wrap justify-center gap-2">
+            {STARTER_PROMPTS.map((prompt) => (
+              <button
+                key={prompt}
+                type="button"
+                disabled={isLoading}
+                onClick={() => onStarterClick(prompt)}
+                className="text-left text-sm px-3.5 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#292a2d] text-gray-700 dark:text-gray-300 hover:border-[#1a73e8]/40 dark:hover:border-[#8ab4f8]/40 hover:bg-blue-50/50 dark:hover:bg-blue-950/20 transition disabled:opacity-50 max-w-full"
+              >
+                {prompt}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Quick actions — secondary, not overwhelming */}
+        <div className="w-full mt-10 pt-6 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-xs text-gray-400 dark:text-gray-500 text-center mb-3">
+            Or jump to a dedicated space
+          </p>
+          <div className="flex flex-wrap justify-center gap-2">
+            {QUICK_ACTIONS.map(({ label, path, icon: Icon }) => (
+              <button
+                key={path}
+                type="button"
+                onClick={() => onNavigate(path)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-[#1a73e8] dark:hover:text-[#8ab4f8] hover:bg-gray-50 dark:hover:bg-gray-800/60 transition"
+              >
+                <Icon className="h-3.5 w-3.5" strokeWidth={1.75} />
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <p className="text-[11px] text-gray-400 dark:text-gray-500 text-center mt-8">
+          MicroTrainer adapts to your level. Answers may need a quick sanity check.
+        </p>
+      </motion.div>
     </div>
   );
 }
@@ -420,28 +335,24 @@ function ActiveChatView({
   onNewChat,
 }) {
   return (
-    <div className="flex-1 flex flex-col min-h-0 home-practice-bg">
-      <div className="flex-shrink-0 flex items-center justify-between gap-3 px-4 sm:px-6 py-3 border-b border-gray-200/80 dark:border-gray-800 bg-white/70 dark:bg-[#202124]/70 backdrop-blur-sm">
-        <div className="flex items-center gap-3 min-w-0">
-          <MicroTrainerMark size="sm" />
-          <div className="min-w-0">
-            <p className="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate">
-              Practice desk
-            </p>
-            <p className="text-[11px] text-gray-500 dark:text-gray-400">Live coaching session</p>
-          </div>
-        </div>
+    <div className="flex-1 flex flex-col min-h-0">
+      {/* Top bar */}
+      <div className="flex-shrink-0 flex items-center justify-between px-4 sm:px-6 py-3 border-b border-gray-100 dark:border-gray-800">
+        <p className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate">
+          Practice chat
+        </p>
         <button
           type="button"
           onClick={onNewChat}
-          className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition shrink-0"
+          className="text-xs font-medium px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
         >
-          New topic
+          New question
         </button>
       </div>
 
+      {/* Messages */}
       <div className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-6">
-        <div className="max-w-3xl mx-auto space-y-6">
+        <div className="max-w-3xl mx-auto space-y-5">
           <AnimatePresence>
             {chatHistory.map((message, index) => (
               <motion.div
@@ -456,41 +367,42 @@ function ActiveChatView({
                 className={
                   message.role === "user"
                     ? "flex justify-end"
-                    : "flex gap-3 items-start"
+                    : "flex justify-start"
                 }
               >
-                {message.role !== "user" && message.role !== "error" && (
-                  <MicroTrainerMark size="sm" className="mt-1 hidden sm:flex" />
-                )}
                 {message.role === "user" ? (
                   <div
-                    className={`max-w-[85%] sm:max-w-[75%] px-4 py-3 rounded-2xl rounded-tr-sm bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-sm leading-relaxed border border-gray-800/10 dark:border-gray-300 transition-shadow ${
+                    className={`max-w-[85%] sm:max-w-[75%] px-4 py-3 rounded-2xl rounded-br-md bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 text-sm leading-relaxed transition-shadow ${
                       highlightedIndex === index
-                        ? "ring-2 ring-[#1a73e8] dark:ring-[#8ab4f8] ring-offset-2 dark:ring-offset-[#202124]"
+                        ? "ring-2 ring-blue-300 dark:ring-blue-600 ring-offset-2 dark:ring-offset-[#202124]"
                         : ""
                     }`}
                   >
-                    <p className="text-[10px] font-semibold uppercase tracking-wider opacity-60 mb-1">
-                      You
-                    </p>
                     {message.content}
                   </div>
                 ) : message.role === "error" ? (
-                  <div className="flex-1 max-w-[90%] px-4 py-3 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 text-sm flex items-start gap-2">
-                    <span className="font-semibold shrink-0">!</span>
+                  <div className="max-w-[90%] px-4 py-3 rounded-2xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 text-sm flex items-start gap-2">
+                    <svg
+                      className="w-4 h-4 flex-shrink-0 mt-0.5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
                     <span>{message.content}</span>
                   </div>
                 ) : (
                   <div
-                    className={`flex-1 max-w-[90%] px-4 py-4 rounded-2xl rounded-tl-sm bg-white dark:bg-[#292a2d] border border-gray-200 dark:border-gray-700 shadow-sm transition-shadow ${
+                    className={`max-w-[90%] px-4 py-4 rounded-2xl rounded-bl-md bg-gray-50 dark:bg-[#292a2d] border border-gray-200 dark:border-gray-700 transition-shadow ${
                       highlightedIndex === index
-                        ? "ring-2 ring-[#1a73e8]/50 dark:ring-[#8ab4f8]/50"
+                        ? "ring-2 ring-blue-300 dark:ring-blue-600"
                         : ""
                     }`}
                   >
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-[#1a73e8] dark:text-[#8ab4f8] mb-2">
-                      Coach
-                    </p>
                     <div className="prose prose-sm dark:prose-invert max-w-none text-gray-800 dark:text-gray-200">
                       <ReactMarkdown components={chatMdComponents}>
                         {message.content}
@@ -506,17 +418,13 @@ function ActiveChatView({
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="flex gap-3 items-start"
+              className="flex justify-start"
             >
-              <MicroTrainerMark size="sm" className="hidden sm:flex" />
-              <div className="px-4 py-3 rounded-2xl rounded-tl-sm bg-white dark:bg-[#292a2d] border border-gray-200 dark:border-gray-700 shadow-sm">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-[#1a73e8] dark:text-[#8ab4f8] mb-2">
-                  Coach
-                </p>
-                <div className="flex gap-1">
-                  <span className="h-2 w-2 rounded-full bg-[#1a73e8]/60 animate-pulse" />
-                  <span className="h-2 w-2 rounded-full bg-[#1a73e8]/40 animate-pulse [animation-delay:200ms]" />
-                  <span className="h-2 w-2 rounded-full bg-[#1a73e8]/25 animate-pulse [animation-delay:400ms]" />
+              <div className="px-4 py-3 rounded-2xl bg-gray-50 dark:bg-[#292a2d] border border-gray-200 dark:border-gray-700">
+                <div className="flex gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500 animate-bounce [animation-delay:0ms]" />
+                  <span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500 animate-bounce [animation-delay:150ms]" />
+                  <span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500 animate-bounce [animation-delay:300ms]" />
                 </div>
               </div>
             </motion.div>
@@ -526,7 +434,8 @@ function ActiveChatView({
         </div>
       </div>
 
-      <div className="flex-shrink-0 px-4 sm:px-6 py-4 border-t border-gray-200/80 dark:border-gray-800 bg-white/90 dark:bg-[#202124]/90 backdrop-blur-sm">
+      {/* Pinned input */}
+      <div className="flex-shrink-0 px-4 sm:px-6 py-4 border-t border-gray-100 dark:border-gray-800 bg-white/80 dark:bg-[#202124]/80 backdrop-blur-sm">
         <div className="max-w-3xl mx-auto">
           <HomeChatInput
             question={question}
@@ -535,7 +444,7 @@ function ActiveChatView({
             inputRef={inputRef}
             onSubmit={onSubmit}
             onKeyDown={onKeyDown}
-            placeholder="Follow up or ask something new..."
+            placeholder="Ask a follow-up..."
             size="compact"
           />
         </div>
@@ -562,24 +471,17 @@ function HomeChatInput({
   return (
     <form
       onSubmit={onSubmit}
-      className={`relative overflow-hidden ${className} ${
+      className={`relative ${className} ${
         isLarge
-          ? "rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-[#292a2d] shadow-md focus-within:border-[#1a73e8] dark:focus-within:border-[#8ab4f8] transition-colors"
-          : "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] focus-within:border-gray-300 dark:focus-within:border-gray-600 transition"
+          ? "rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#292a2d] shadow-lg shadow-gray-200/50 dark:shadow-none focus-within:border-[#1a73e8]/50 dark:focus-within:border-[#8ab4f8]/50 focus-within:ring-2 focus-within:ring-[#1a73e8]/10 dark:focus-within:ring-[#8ab4f8]/10 transition"
+          : "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] shadow-sm focus-within:border-gray-300 dark:focus-within:border-gray-600 transition"
       }`}
     >
-      {isLarge && (
-        <div
-          className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#1a73e8] via-[#2563eb] to-[#ea580c] dark:from-[#8ab4f8] dark:via-[#60a5fa] dark:to-[#fb923c]"
-          aria-hidden
-        />
-      )}
       <div
-        className={`flex items-end gap-3 ${
-          isLarge ? "px-4 py-3 sm:px-4 sm:py-4" : "px-3 py-2.5"
+        className={`flex items-end gap-2 ${
+          isLarge ? "px-4 py-3 sm:px-5 sm:py-4" : "px-3 py-2.5"
         }`}
       >
-        {isLarge && <MicroTrainerMark size="sm" className="mb-0.5 hidden sm:flex" />}
         <textarea
           ref={inputRef}
           value={question}
@@ -590,7 +492,7 @@ function HomeChatInput({
           maxLength={500}
           rows={isLarge ? 2 : 1}
           className={`flex-1 resize-none bg-transparent text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 disabled:opacity-50 border-0 outline-none focus:ring-0 ${
-            isLarge ? "text-base leading-relaxed pt-1" : "text-sm py-1"
+            isLarge ? "text-base sm:text-lg leading-relaxed" : "text-sm py-1"
           }`}
           style={{
             boxShadow: "none",
@@ -600,13 +502,37 @@ function HomeChatInput({
         <button
           type="submit"
           disabled={!question.trim() || isLoading}
-          className={`flex-shrink-0 font-semibold transition disabled:opacity-30 disabled:cursor-not-allowed ${
-            isLarge
-              ? "px-4 py-2 rounded-lg bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 text-sm hover:opacity-90"
-              : "px-3 py-1.5 rounded-lg bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs hover:opacity-90"
+          className={`flex-shrink-0 flex items-center justify-center rounded-xl bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 hover:opacity-90 transition disabled:opacity-30 disabled:cursor-not-allowed ${
+            isLarge ? "h-10 w-10 sm:h-11 sm:w-11" : "h-8 w-8"
           }`}
+          title="Send"
         >
-          {isLoading ? "…" : "Ask →"}
+          {isLoading ? (
+            <svg
+              className={`animate-spin ${isLarge ? "h-5 w-5" : "h-4 w-4"}`}
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+          ) : (
+            <ArrowUp
+              className={isLarge ? "h-5 w-5" : "h-4 w-4"}
+              strokeWidth={2.5}
+            />
+          )}
         </button>
       </div>
       {question.length > 400 && (
