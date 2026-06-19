@@ -67,10 +67,10 @@ export const learningPathAPI = {
    * @param {Array<string>} answers - Array of student answers
    * @returns {Promise} Assessment result with passed status and percentage
    */
-  submitAnswers: (sessionId, answers, lessonContent = "") =>
+  submitAnswers: (sessionId, answers, lessonContent = "", questionsSnapshot = null) =>
     axios.post(
       `${API_URL}/learning-path/submit`,
-      { sessionId, answers, lessonContent },
+      { sessionId, answers, lessonContent, questionsSnapshot },
       { timeout: SUBMIT_TIMEOUT_MS }
     ),
 

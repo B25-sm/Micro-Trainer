@@ -27,6 +27,7 @@ const {
   lockMcqKeysFromLesson,
   MAX_REVALIDATION_PASSES,
 } = require('./gradingRevalidationService');
+const { getConceptReference } = require('./conceptReferenceService');
 const fs = require('fs');
 const path = require('path');
 
@@ -85,6 +86,31 @@ function getSessionById(sessionId) {
   if (learningSessions[sessionId]) return learningSessions[sessionId];
   reloadSessionsFromDisk();
   return learningSessions[sessionId] || null;
+}
+
+/** Grade against the exact questions the browser displayed, with MCQ keys from internal store. */
+function mergeClientQuestionsWithMcqKeys(clientQuestions, internalQuestions) {
+  const client = Array.isArray(clientQuestions) ? clientQuestions : [];
+  const internal = Array.isArray(internalQuestions) ? internalQuestions : [];
+
+  if (client.length === 0) return internal;
+
+  return client.map((cq, i) => {
+    const match =
+      internal.find((iq) => iq?.question === cq?.question) || internal[i];
+
+    if (cq?.type === "mcq" && Array.isArray(cq.options)) {
+      return {
+        type: "mcq",
+        question: cq.question,
+        options: cq.options,
+        correctIndex:
+          typeof match?.correctIndex === "number" ? match.correctIndex : 0,
+      };
+    }
+
+    return { type: "open", question: cq.question || match?.question || "" };
+  });
 }
 
 /** Always return a gradable result — never leave quiz scoring in a broken state */
@@ -355,28 +381,18 @@ async function getCurrentConceptTeaching(sessionId, studentLevel, useAIQuestions
   if (!reteach && session.lessonCache?.[cacheKey]) {
     console.log(`📦 Serving cached lesson: ${cacheKey}`);
     const cached = session.lessonCache[cacheKey];
-    // Keep quiz grading aligned with questions shown in the lesson (cache used to skip this)
+    // Use cached questions as shown — only refresh MCQ keys, never re-align (reorder) at serve time
     if (cached.quizQuestionsInternal?.length) {
-      session.quizQuestionsInternal = alignQuizWithLesson(
-        cached.quizQuestionsInternal,
-        cached.content || "",
-        getMaxQuestionsForLevel(level)
-      );
       session.quizQuestionsInternal = lockMcqKeysFromLesson(
-        session.quizQuestionsInternal,
+        cached.quizQuestionsInternal,
         cached.content || ""
       );
       session.activeCrossQuestions = sanitizeQuestionsForClient(
         session.quizQuestionsInternal
       );
     } else if (cached.crossQuestions?.length) {
-      const normalized = alignQuizWithLesson(
-        cached.crossQuestions,
-        cached.content || "",
-        getMaxQuestionsForLevel(level)
-      );
       session.quizQuestionsInternal = lockMcqKeysFromLesson(
-        normalized,
+        normalizeQuizQuestions(cached.crossQuestions),
         cached.content || ""
       );
       session.activeCrossQuestions = sanitizeQuestionsForClient(
@@ -410,6 +426,7 @@ async function getCurrentConceptTeaching(sessionId, studentLevel, useAIQuestions
       questionCount: maxQuestions,
       reteach: Boolean(reteach),
       previousExplanation: priorLesson || null,
+      conceptId: concept.id,
     });
 
     teachingContent.content = lesson.explanation;
@@ -487,12 +504,21 @@ function getLessonContextForSession(session) {
   return '';
 }
 
-async function assessUnderstanding(answers, crossQuestions, lessonContext = '') {
+async function assessUnderstanding(answers, crossQuestions, lessonContext = '', options = {}) {
   console.log(`🤖 Starting AI assessment for ${answers.length} answers`);
   console.log(`📝 Answers:`, answers);
 
+  const { technology, conceptId } = options;
+  const referenceFacts = getConceptReference(
+    `${lessonContext} ${(crossQuestions || []).join(' ')}`,
+    { technology, conceptId }
+  );
+
   const lessonBlock = lessonContext
     ? `\n\nLESSON CONTENT (grade ONLY against what was taught here — accept synonymous wording):\n${lessonContext}\n`
+    : '';
+  const referenceBlock = referenceFacts
+    ? `\n\nCURRICULUM REFERENCE (authoritative scope — do not penalize answers that match these facts):\n${referenceFacts}\n`
     : '';
 
   let evaluationText = `You are evaluating student answers like a FAIR human interviewer — score MEANING only, never length.
@@ -512,7 +538,7 @@ IMPORTANT SCORING RULES:
 - Netflix/real-time: mentioning algorithms, collaborative filtering, embeddings, or backend recommendations = 8-10/10 if the lesson Real-time section mentions them — do NOT require extra algorithm depth not in the lesson
 - Data Analyst = reports/insights/SQL/dashboards; Data Scientist = models/EDA/experiments; ML Engineer = deploy/production/API; Data Engineer = pipelines/warehouse/ETL
 - Managing a data warehouse alone is NOT the primary role of a Data Scientist unless the lesson explicitly says so
-${lessonBlock}
+${lessonBlock}${referenceBlock}
 
 Questions and Answers:
 `;
@@ -798,7 +824,7 @@ async function simplifyQuestionForSession(sessionId, questionIndex) {
 // SUBMIT CONCEPT ANSWERS
 // =======================================================
 async function submitConceptAnswers(sessionId, answers, options = {}) {
-  const { lessonContentOverride = '' } = options;
+  const { lessonContentOverride = '', questionsSnapshot = null } = options;
 
   console.log(`📝 Submitting answers for session: ${sessionId}`);
   console.log(`📊 Available sessions: ${Object.keys(learningSessions).join(', ')}`);
@@ -816,18 +842,38 @@ async function submitConceptAnswers(sessionId, answers, options = {}) {
   
   const concept = getSessionConcept(session.technology, session.currentConceptOrder);
   const conceptId = concept.id;
+
+  if (
+    Array.isArray(questionsSnapshot) &&
+    questionsSnapshot.length > 0 &&
+    questionsSnapshot.length === answers.length
+  ) {
+    session.activeCrossQuestions = sanitizeQuestionsForClient(questionsSnapshot);
+    if (!session.quizQuestionsInternal?.length) {
+      session.quizQuestionsInternal = normalizeQuizQuestions(questionsSnapshot);
+    }
+  }
+
   const gradingQuestions =
-    session.quizQuestionsInternal?.length > 0
-      ? session.quizQuestionsInternal
-      : normalizeQuizQuestions(
-          session.activeCrossQuestions ||
+    session.activeCrossQuestions?.length > 0
+      ? mergeClientQuestionsWithMcqKeys(
+          session.activeCrossQuestions,
+          session.quizQuestionsInternal
+        )
+      : session.quizQuestionsInternal?.length > 0
+        ? session.quizQuestionsInternal
+        : normalizeQuizQuestions(
             concept.crossQuestions.slice(0, getMaxQuestionsForLevel('beginner'))
-        );
+          );
 
   if (answers.length !== gradingQuestions.length) {
     console.warn(
-      `⚠️ Answer count (${answers.length}) != question count (${gradingQuestions.length})`
+      `⚠️ Answer count (${answers.length}) != question count (${gradingQuestions.length}) — scores may not match what the student saw`
     );
+  }
+
+  if (gradingQuestions.length === 0) {
+    throw new Error('No quiz questions found for this session');
   }
 
   const lessonContext =
@@ -847,13 +893,14 @@ async function submitConceptAnswers(sessionId, answers, options = {}) {
     const graded = await runRevalidatedGrading({
       answers,
       questions: gradingQuestions,
-      lessonContext,
+      lessonContent: lessonContext,
       assessOpenFn: async (openAnswers, openQuestions) => {
         try {
           const openResult = await assessUnderstanding(
             openAnswers,
             openQuestions,
-            lessonContext
+            lessonContext,
+            { technology: session.technology, conceptId }
           );
           return coerceAssessment(
             openResult,
@@ -892,8 +939,17 @@ async function submitConceptAnswers(sessionId, answers, options = {}) {
     lessonContext
   );
 
-  session.quizQuestionsInternal = lockedQuestions;
-  session.activeCrossQuestions = sanitizeQuestionsForClient(lockedQuestions);
+  // Keep the question set the student answered; grading may only adjust MCQ correctIndex in-place
+  session.quizQuestionsInternal = gradingQuestions.map((q, i) => {
+    const locked = lockedQuestions[i];
+    if (locked?.type === "mcq" && q?.type === "mcq") {
+      return { ...q, correctIndex: locked.correctIndex };
+    }
+    return q;
+  });
+  session.activeCrossQuestions = sanitizeQuestionsForClient(
+    session.quizQuestionsInternal
+  );
   saveSessionsToDisk();
 
   console.log(

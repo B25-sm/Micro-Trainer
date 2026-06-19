@@ -22,6 +22,8 @@ import AdminEngagementDashboard from "./pages/AdminEngagementDashboard.jsx";
 import NotificationSettings from "./pages/NotificationSettings.jsx";
 import PersonalSchedule from "./pages/PersonalSchedule.jsx";
 import CommunicationReview from "./pages/CommunicationReview.jsx";
+import CompanyInterviews from "./pages/CompanyInterviews.jsx";
+import CompanyInterview from "./pages/CompanyInterview.jsx";
 import ExtensionPanel from "./pages/ExtensionPanel.jsx";
 
 // Protected Route Component
@@ -199,6 +201,27 @@ function App() {
               <RequireAuth>
                 <MainLayout>
                   <CommunicationReview />
+                </MainLayout>
+              </RequireAuth>
+            }
+          />
+
+          <Route
+            path="/company-interviews"
+            element={
+              <RequireAuth>
+                <MainLayout>
+                  <CompanyInterviews />
+                </MainLayout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/company-interviews/:companyId"
+            element={
+              <RequireAuth>
+                <MainLayout>
+                  <CompanyInterview />
                 </MainLayout>
               </RequireAuth>
             }

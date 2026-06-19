@@ -1,0 +1,144 @@
+{
+  "version": 1,
+  "source": "seed",
+  "companies": [
+    {
+      "id": "tcs",
+      "name": "TCS",
+      "tagline": "Ninja / Digital / Graduate roles — OOP, DBMS, HR mix",
+      "role": "Graduate Trainee / Ninja",
+      "defaultQuestionCount": 10,
+      "fitThresholds": { "strong": 7.5, "borderline": 6.0 },
+      "topics": ["OOP", "DBMS", "Java basics", "HR", "Aptitude logic"],
+      "questions": [
+        { "id": "tcs-1", "category": "Technical", "topic": "OOP", "pattern": "Explain the four pillars of OOP with a simple Java example", "difficulty": "easy" },
+        { "id": "tcs-2", "category": "Technical", "topic": "OOP", "pattern": "Difference between abstract class and interface — when would you use each?", "difficulty": "medium" },
+        { "id": "tcs-3", "category": "Technical", "topic": "Java basics", "pattern": "Explain method overloading vs method overriding with examples", "difficulty": "medium" },
+        { "id": "tcs-4", "category": "Technical", "topic": "DBMS", "pattern": "What is normalization? Explain 1NF, 2NF, and 3NF briefly", "difficulty": "medium" },
+        { "id": "tcs-5", "category": "Technical", "topic": "DBMS", "pattern": "Write a SQL query to find the second highest salary from an employee table", "difficulty": "medium" },
+        { "id": "tcs-6", "category": "Technical", "topic": "DBMS", "pattern": "Difference between DELETE, TRUNCATE, and DROP", "difficulty": "easy" },
+        { "id": "tcs-7", "category": "HR", "topic": "Introduction", "pattern": "Tell me about yourself in under two minutes", "difficulty": "easy" },
+        { "id": "tcs-8", "category": "HR", "topic": "Motivation", "pattern": "Why do you want to join TCS?", "difficulty": "easy" },
+        { "id": "tcs-9", "category": "HR", "topic": "Strengths", "pattern": "What are your strengths and weaknesses?", "difficulty": "easy" },
+        { "id": "tcs-10", "category": "Situational", "topic": "Teamwork", "pattern": "Describe a time you worked in a team under a tight deadline", "difficulty": "medium" },
+        { "id": "tcs-11", "category": "Aptitude", "topic": "Logic", "pattern": "If 5 machines make 5 widgets in 5 minutes, how long for 100 machines to make 100 widgets?", "difficulty": "medium" },
+        { "id": "tcs-12", "category": "Technical", "topic": "Collections", "pattern": "Difference between ArrayList and LinkedList — when to use which?", "difficulty": "medium" }
+      ]
+    },
+    {
+      "id": "infosys",
+      "name": "Infosys",
+      "tagline": "System Engineer — puzzles, DBMS, communication",
+      "role": "System Engineer",
+      "defaultQuestionCount": 10,
+      "fitThresholds": { "strong": 7.5, "borderline": 6.0 },
+      "topics": ["Puzzles", "DBMS", "OOP", "HR", "Communication"],
+      "questions": [
+        { "id": "inf-1", "category": "Technical", "topic": "OOP", "pattern": "Explain encapsulation and give a real-world analogy", "difficulty": "easy" },
+        { "id": "inf-2", "category": "Technical", "topic": "DBMS", "pattern": "What are primary key, foreign key, and unique key?", "difficulty": "easy" },
+        { "id": "inf-3", "category": "Technical", "topic": "DBMS", "pattern": "Explain INNER JOIN vs LEFT JOIN with an example", "difficulty": "medium" },
+        { "id": "inf-4", "category": "Technical", "topic": "Java basics", "pattern": "What is the difference between == and equals() in Java?", "difficulty": "medium" },
+        { "id": "inf-5", "category": "Aptitude", "topic": "Puzzles", "pattern": "You have 8 balls; one is heavier. Find it using a balance scale in minimum weighings", "difficulty": "hard" },
+        { "id": "inf-6", "category": "HR", "topic": "Introduction", "pattern": "Walk me through your resume — education, projects, skills", "difficulty": "easy" },
+        { "id": "inf-7", "category": "HR", "topic": "Motivation", "pattern": "Why Infosys and not another IT company?", "difficulty": "easy" },
+        { "id": "inf-8", "category": "Situational", "topic": "Conflict", "pattern": "Tell me about a disagreement with a teammate and how you resolved it", "difficulty": "medium" },
+        { "id": "inf-9", "category": "Technical", "topic": "SDLC", "pattern": "Explain SDLC phases and where testing fits", "difficulty": "medium" },
+        { "id": "inf-10", "category": "Technical", "topic": "Networks", "pattern": "Difference between TCP and UDP — when would you pick each?", "difficulty": "medium" },
+        { "id": "inf-11", "category": "HR", "topic": "Goals", "pattern": "Where do you see yourself in five years?", "difficulty": "easy" },
+        { "id": "inf-12", "category": "Technical", "topic": "Exception handling", "pattern": "Explain try-catch-finally with a scenario from your project", "difficulty": "medium" }
+      ]
+    },
+    {
+      "id": "wipro",
+      "name": "Wipro",
+      "tagline": "Project Engineer — fundamentals + HR",
+      "role": "Project Engineer",
+      "defaultQuestionCount": 10,
+      "fitThresholds": { "strong": 7.0, "borderline": 5.5 },
+      "topics": ["C/Java basics", "DBMS", "HR", "Projects"],
+      "questions": [
+        { "id": "wip-1", "category": "Technical", "topic": "C basics", "pattern": "Difference between call by value and call by reference in C", "difficulty": "medium" },
+        { "id": "wip-2", "category": "Technical", "topic": "Pointers", "pattern": "What is a pointer? Why do we use pointers?", "difficulty": "medium" },
+        { "id": "wip-3", "category": "Technical", "topic": "DBMS", "pattern": "What is a view in SQL? How is it different from a table?", "difficulty": "medium" },
+        { "id": "wip-4", "category": "Technical", "topic": "OOP", "pattern": "Explain inheritance with a simple class diagram example", "difficulty": "easy" },
+        { "id": "wip-5", "category": "HR", "topic": "Introduction", "pattern": "Tell me about yourself", "difficulty": "easy" },
+        { "id": "wip-6", "category": "HR", "topic": "Motivation", "pattern": "Why should we hire you for Wipro?", "difficulty": "easy" },
+        { "id": "wip-7", "category": "Projects", "topic": "Academic", "pattern": "Explain your final year or best academic project — your role and tech stack", "difficulty": "medium" },
+        { "id": "wip-8", "category": "Situational", "topic": "Pressure", "pattern": "How do you handle pressure when multiple deadlines clash?", "difficulty": "medium" },
+        { "id": "wip-9", "category": "Technical", "topic": "OS", "pattern": "Difference between process and thread", "difficulty": "medium" },
+        { "id": "wip-10", "category": "HR", "topic": "Relocation", "pattern": "Are you willing to relocate? How do you adapt to new cities?", "difficulty": "easy" },
+        { "id": "wip-11", "category": "Technical", "topic": "Data structures", "pattern": "Explain stack vs queue — give one use case each", "difficulty": "easy" },
+        { "id": "wip-12", "category": "Aptitude", "topic": "Logic", "pattern": "A clock shows 3:15 — what is the angle between hour and minute hands?", "difficulty": "medium" }
+      ]
+    },
+    {
+      "id": "cognizant",
+      "name": "Cognizant",
+      "tagline": "GenC / Programmer — coding + communication",
+      "role": "GenC Programmer",
+      "defaultQuestionCount": 10,
+      "fitThresholds": { "strong": 7.5, "borderline": 6.0 },
+      "topics": ["Programming", "DBMS", "HR", "Problem solving"],
+      "questions": [
+        { "id": "cog-1", "category": "Technical", "topic": "Programming", "pattern": "Reverse a string without using built-in reverse functions", "difficulty": "medium" },
+        { "id": "cog-2", "category": "Technical", "topic": "Programming", "pattern": "Check if a number is prime — explain your approach", "difficulty": "medium" },
+        { "id": "cog-3", "category": "Technical", "topic": "DBMS", "pattern": "What is an index in a database? Pros and cons", "difficulty": "medium" },
+        { "id": "cog-4", "category": "Technical", "topic": "OOP", "pattern": "Explain polymorphism with compile-time and runtime examples", "difficulty": "medium" },
+        { "id": "cog-5", "category": "HR", "topic": "Introduction", "pattern": "Tell me about yourself — focus on skills relevant to IT", "difficulty": "easy" },
+        { "id": "cog-6", "category": "HR", "topic": "Motivation", "pattern": "Why Cognizant?", "difficulty": "easy" },
+        { "id": "cog-7", "category": "Situational", "topic": "Learning", "pattern": "Describe a time you had to learn a new technology quickly for a task", "difficulty": "medium" },
+        { "id": "cog-8", "category": "Technical", "topic": "Web basics", "pattern": "Difference between HTTP and HTTPS", "difficulty": "easy" },
+        { "id": "cog-9", "category": "Technical", "topic": "SQL", "pattern": "Find duplicate emails in a users table using SQL", "difficulty": "medium" },
+        { "id": "cog-10", "category": "HR", "topic": "Weakness", "pattern": "What is your greatest weakness and how are you improving it?", "difficulty": "easy" },
+        { "id": "cog-11", "category": "Aptitude", "topic": "Series", "pattern": "Complete the series: 2, 6, 12, 20, 30, ? — explain the pattern", "difficulty": "medium" },
+        { "id": "cog-12", "category": "Projects", "topic": "Academic", "pattern": "Walk through one project — problem, solution, and what you would improve", "difficulty": "medium" }
+      ]
+    },
+    {
+      "id": "capgemini",
+      "name": "Capgemini",
+      "tagline": "Associate / Analyst — aptitude-heavy + tech basics",
+      "role": "Associate Consultant",
+      "defaultQuestionCount": 10,
+      "fitThresholds": { "strong": 7.0, "borderline": 5.5 },
+      "topics": ["Aptitude", "Java", "HR", "Communication"],
+      "questions": [
+        { "id": "cap-1", "category": "Aptitude", "topic": "Percentages", "pattern": "If price increases 20% then decreases 20%, is the final price same? Explain", "difficulty": "medium" },
+        { "id": "cap-2", "category": "Aptitude", "topic": "Time & work", "pattern": "A can finish work in 10 days, B in 15 days — how long together?", "difficulty": "medium" },
+        { "id": "cap-3", "category": "Technical", "topic": "Java", "pattern": "Explain JVM, JRE, and JDK — how do they relate?", "difficulty": "medium" },
+        { "id": "cap-4", "category": "Technical", "topic": "OOP", "pattern": "What is constructor chaining?", "difficulty": "easy" },
+        { "id": "cap-5", "category": "HR", "topic": "Introduction", "pattern": "Tell me about yourself", "difficulty": "easy" },
+        { "id": "cap-6", "category": "HR", "topic": "Motivation", "pattern": "Why Capgemini?", "difficulty": "easy" },
+        { "id": "cap-7", "category": "Technical", "topic": "SQL", "pattern": "Difference between WHERE and HAVING in SQL", "difficulty": "medium" },
+        { "id": "cap-8", "category": "Situational", "topic": "Ethics", "pattern": "What would you do if you saw a teammate copying code in an exam or project?", "difficulty": "medium" },
+        { "id": "cap-9", "category": "Technical", "topic": "Git", "pattern": "Explain git pull vs git fetch in simple terms", "difficulty": "easy" },
+        { "id": "cap-10", "category": "HR", "topic": "Flexibility", "pattern": "Are you open to night shifts or client calls if the project needs it?", "difficulty": "easy" },
+        { "id": "cap-11", "category": "Technical", "topic": "Testing", "pattern": "Difference between unit testing and integration testing", "difficulty": "medium" },
+        { "id": "cap-12", "category": "Communication", "topic": "Explanation", "pattern": "Explain your favorite project to a non-technical friend in one minute", "difficulty": "medium" }
+      ]
+    },
+    {
+      "id": "accenture",
+      "name": "Accenture",
+      "tagline": "Associate Software Engineer — communication + fundamentals",
+      "role": "Associate Software Engineer",
+      "defaultQuestionCount": 10,
+      "fitThresholds": { "strong": 7.5, "borderline": 6.0 },
+      "topics": ["Communication", "Java/OOP", "HR", "Logical reasoning"],
+      "questions": [
+        { "id": "acc-1", "category": "HR", "topic": "Introduction", "pattern": "Tell me about yourself — education, projects, why IT", "difficulty": "easy" },
+        { "id": "acc-2", "category": "HR", "topic": "Motivation", "pattern": "Why Accenture?", "difficulty": "easy" },
+        { "id": "acc-3", "category": "Technical", "topic": "OOP", "pattern": "Explain abstraction with a real software example", "difficulty": "medium" },
+        { "id": "acc-4", "category": "Technical", "topic": "DBMS", "pattern": "ACID properties in databases — explain each briefly", "difficulty": "medium" },
+        { "id": "acc-5", "category": "Technical", "topic": "Programming", "pattern": "Find the largest element in an array — describe approach and complexity", "difficulty": "easy" },
+        { "id": "acc-6", "category": "Situational", "topic": "Teamwork", "pattern": "Describe a group project where someone was not contributing — what did you do?", "difficulty": "medium" },
+        { "id": "acc-7", "category": "Communication", "topic": "Clarity", "pattern": "Explain cloud computing to someone who has never used it", "difficulty": "medium" },
+        { "id": "acc-8", "category": "Aptitude", "topic": "Logic", "pattern": "If all roses are flowers and some flowers fade quickly, can we say some roses fade quickly?", "difficulty": "medium" },
+        { "id": "acc-9", "category": "Technical", "topic": "SDLC", "pattern": "What is Agile? How is a sprint different from a waterfall phase?", "difficulty": "medium" },
+        { "id": "acc-10", "category": "HR", "topic": "Gap", "pattern": "Is there any gap in your education? How did you use that time productively?", "difficulty": "easy" },
+        { "id": "acc-11", "category": "Technical", "topic": "APIs", "pattern": "What is a REST API? Name common HTTP methods", "difficulty": "medium" },
+        { "id": "acc-12", "category": "Projects", "topic": "Academic", "pattern": "Pick your strongest project — tech stack, challenges, outcome", "difficulty": "medium" }
+      ]
+    }
+  ]
+}

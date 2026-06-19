@@ -504,10 +504,12 @@ const StructuredTeaching = ({
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const requestQuizGrade = async (activeSessionId, answersToSubmit) => {
+    const questionsSnapshot = conceptData?.crossQuestions || null;
     const response = await learningPathAPI.submitAnswers(
       activeSessionId,
       answersToSubmit,
-      conceptData?.content || ""
+      conceptData?.content || "",
+      questionsSnapshot
     );
     return response.data;
   };

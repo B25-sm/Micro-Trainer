@@ -17,6 +17,7 @@ const {
   BEGINNER_TECHNOLOGY_ANALOGY_HINTS,
   ADAPTIVE_TEACHING_PERSONA,
   CONCEPT_QA_RESPONSE_STRUCTURE,
+  TECHNICAL_ACCURACY_RULES,
   CODE_SNIPPET_RULES_BEGINNER,
   CODE_SNIPPET_RULES_INTERMEDIATE,
   CODE_SNIPPET_RULES_ADVANCED,
@@ -27,6 +28,7 @@ const {
   getQuestionMixCounts,
 } = require("./quizQuestionUtils");
 const { callGroq } = require("./groqClient");
+const { getConceptReference, detectTechnologies } = require("./conceptReferenceService");
 const {
   generateLessonDiagram,
   buildDiagramFallback,
@@ -55,6 +57,7 @@ async function generateGuidedStoryOnly({
   lessonBrief = null,
   level = "beginner",
   reteach = false,
+  conceptId = null,
 }) {
   const objectivesText =
     objectives.length > 0
@@ -115,6 +118,11 @@ MAPPING BAR: 3-4 bullets in **What**. **How**: 3 steps max.`;
     hintSource[techKey.replace(/\.js$/, "")] ||
     "";
 
+  const referenceFacts = getConceptReference(
+    `${technology} ${title} ${description} ${objectivesText}`,
+    { technology, conceptId }
+  );
+
   const prompt = `${reteachNote}Teach this guided-course lesson as Sai Mahendra for **${technology}**.
 
 Concept: ${title}
@@ -123,6 +131,9 @@ Topic summary: ${description}
 Learning objectives — touch each briefly inside **How** (do not add extra sections):
 ${objectivesText}
 ${levelBars}
+
+${TECHNICAL_ACCURACY_RULES}
+${referenceFacts ? `\n${referenceFacts}\n` : ""}
 
 ${lessonFormat}
 ${analogyHint ? `\nTECH-SPECIFIC HINT:\n${analogyHint}` : ""}
@@ -466,12 +477,16 @@ async function adaptiveTeach({
 
 async function generateBeginnerExplanation(concept, extraContext = null) {
   try {
+    const referenceFacts = getConceptReference(concept, {
+      technology: detectTechnologies(concept)[0],
+    });
     const prompt = `Explain this concept for a beginner: ${concept}
 ${extraContext ? `\n${extraContext}\n` : ""}
+${referenceFacts ? `\n${referenceFacts}\n` : ""}
 Use this EXACT response structure in EXPLANATION (markdown headers required):
 ${CONCEPT_QA_RESPONSE_STRUCTURE}
 
-Keep total EXPLANATION under ~150 words.
+Keep total EXPLANATION under ~200 words if listing multiple types/categories.
 
 Cross-question rules:
 - Ask about the REAL concept (purpose, trade-off, what breaks without it)
@@ -493,8 +508,8 @@ CROSS_QUESTION:
           { role: "system", content: LEVEL_1_PERSONA },
           { role: "user", content: prompt }
         ],
-        temperature: 0.7,
-        max_tokens: 700
+        temperature: referenceFacts ? 0.35 : 0.55,
+        max_tokens: 800
       },
       {
         headers: {
@@ -557,14 +572,18 @@ async function generateLeveledExplanation(concept, level, studentAnswer, history
         ? CODE_SNIPPET_RULES_INTERMEDIATE
         : CODE_SNIPPET_RULES_ADVANCED;
 
+    const referenceFacts = getConceptReference(concept, {
+      technology: detectTechnologies(concept)[0],
+    });
     const prompt = `Student asked about: ${concept}
 Student's answer to cross-question: ${studentAnswer}
 Detected level: ${level}
+${referenceFacts ? `\n${referenceFacts}\n` : ""}
 
 Provide a ${level}-appropriate explanation using this EXACT structure:
 ${CONCEPT_QA_RESPONSE_STRUCTURE}
 
-Word limits: beginner ~120, intermediate ~150, advanced ~200 (unless student asked for depth).
+Word limits: beginner ~150, intermediate ~180, advanced ~220 (extend if listing standard types/categories).
 ${snippetRules}`;
 
     const response = await axios.post(
@@ -576,7 +595,7 @@ ${snippetRules}`;
           ...contextMessages,
           { role: "user", content: prompt }
         ],
-        temperature: 0.7,
+        temperature: referenceFacts ? 0.35 : 0.55,
         max_tokens: maxTokens
       },
       {
@@ -611,6 +630,7 @@ async function generateGuidedCourseLesson({
   questionCount = 4,
   reteach = false,
   previousExplanation = null,
+  conceptId = null,
 }) {
   const normalizedLevel = (level || "beginner").toLowerCase();
   const objectivesText =
@@ -634,7 +654,13 @@ async function generateGuidedCourseLesson({
       lessonBrief,
       level: normalizedLevel,
       reteach,
+      conceptId,
     });
+
+    const questionReference = getConceptReference(
+      `${technology} ${title} ${explanation}`,
+      { technology, conceptId }
+    );
 
     // Terse summary, wireframe, and quiz are independent — run in parallel
     const [contentTerse, diagram, questionsRaw] = await Promise.all([
@@ -653,22 +679,16 @@ async function generateGuidedCourseLesson({
         technology,
         title,
         explanation,
-        questionCount
+        questionCount,
+        questionReference
       ),
     ]);
-
-    const { alignQuizWithLesson } = require("./quizQuestionUtils");
-    let questions = alignQuizWithLesson(
-      questionsRaw,
-      explanation,
-      questionCount
-    );
 
     return {
       explanation,
       contentTerse,
       diagram,
-      questions,
+      questions: questionsRaw,
       contentSource: "sai-mahendra-guided",
       level: normalizedLevel,
     };
@@ -703,7 +723,13 @@ async function generateGuidedCourseLesson({
   }
 }
 
-async function generateLessonQuestions(technology, title, explanation, count) {
+async function generateLessonQuestions(
+  technology,
+  title,
+  explanation,
+  count,
+  referenceFacts = ""
+) {
   const { openCount, mcqCount } = getQuestionMixCounts(count);
   try {
     const response = await callGroq({
@@ -723,7 +749,7 @@ ${QUIZ_STYLE_RULES}`,
         },
         {
           role: "user",
-          content: `Technology: ${technology}\nConcept: ${title}\n\nFull lesson:\n${explanation.substring(0, 2800)}\n\nGenerate ${count} questions (${openCount} open, ${mcqCount} mcq). Use **What** cast mappings and **Real-time use case** only if those sections exist in the lesson above.`,
+          content: `${referenceFacts ? `${referenceFacts}\n\n---\n\n` : ""}Technology: ${technology}\nConcept: ${title}\n\nFull lesson:\n${explanation.substring(0, 2800)}\n\nGenerate ${count} questions (${openCount} open, ${mcqCount} mcq). Use **What** cast mappings and **Real-time use case** only if those sections exist in the lesson above.`,
         },
       ],
       temperature: 0.35,
@@ -734,10 +760,7 @@ ${QUIZ_STYLE_RULES}`,
     const parsed = JSON.parse(
       response?.data?.choices?.[0]?.message?.content || "{}"
     );
-    return enforceQuestionMix(
-      Array.isArray(parsed.questions) ? parsed.questions : [],
-      count
-    );
+    return Array.isArray(parsed.questions) ? parsed.questions : [];
   } catch {
     return [
       {

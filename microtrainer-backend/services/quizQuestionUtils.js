@@ -646,18 +646,33 @@ function normalizeQuizQuestions(questions) {
     .filter(Boolean);
 }
 
-/** Strip correct answers before sending to the browser */
+/** Strip correct answers before sending to the browser — preserve order/count (no re-filter). */
 function sanitizeQuestionsForClient(questions) {
-  return normalizeQuizQuestions(questions).map((q) => {
-    if (q.type === "mcq") {
-      return {
-        type: "mcq",
-        question: q.question,
-        options: q.options,
-      };
-    }
-    return { type: "open", question: q.question };
-  });
+  return (Array.isArray(questions) ? questions : [])
+    .map((q) => {
+      if (!q) return null;
+
+      if (typeof q === "string") {
+        const question = stripAnswerLeak(q);
+        return question.length > 0 ? { type: "open", question } : null;
+      }
+
+      const question = stripAnswerLeak(q.question || q.text || "");
+      if (!question) return null;
+
+      if (q.type === "mcq" && Array.isArray(q.options) && q.options.length >= 2) {
+        return {
+          type: "mcq",
+          question,
+          options: q.options.map((o) =>
+            typeof o === "string" ? o.replace(/^[A-D]\)\s*/i, "").trim() : String(o)
+          ),
+        };
+      }
+
+      return { type: "open", question };
+    })
+    .filter(Boolean);
 }
 
 function gradeMcqAnswers(answers, questions) {
@@ -855,6 +870,7 @@ async function gradeMixedAnswers(answers, questions, assessOpenFn) {
 module.exports = {
   stripAnswerLeak,
   normalizeQuizQuestions,
+  normalizeQuizQuestion,
   sanitizeQuestionsForClient,
   gradeMcqAnswers,
   gradeMixedAnswers,

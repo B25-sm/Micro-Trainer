@@ -5,19 +5,49 @@
 
 const { callGroq } = require("./groqClient");
 const {
-  alignQuizWithLesson,
   alignMcqCorrectIndexWithLesson,
   gradeMcqAnswers,
   gradeMixedAnswers,
   allMcqQuestions,
   scoreOpenAnswerWithLesson,
   applyLessonAwareOpenScores,
+  normalizeQuizQuestion,
+  stripAnswerLeak,
 } = require("./quizQuestionUtils");
 
 const MAX_REVALIDATION_PASSES = 3;
 
 function questionText(q) {
   return typeof q === "string" ? q : q?.question || "";
+}
+
+/**
+ * Prepare session questions for grading — same order and count the student saw.
+ * NEVER call alignQuizWithLesson here; re-filtering/reordering causes answer↔question mismatches.
+ */
+function prepareQuestionsForGrading(questions, lessonContent) {
+  const list = Array.isArray(questions) ? questions : [];
+
+  const prepared = list.map((q) => {
+    if (q && typeof q === "object" && q.question) {
+      if (q.type === "mcq" && Array.isArray(q.options)) {
+        return {
+          type: "mcq",
+          question: q.question,
+          options: q.options,
+          correctIndex: q.correctIndex,
+        };
+      }
+      return { type: q.type || "open", question: q.question };
+    }
+    if (typeof q === "string") {
+      const norm = normalizeQuizQuestion(q);
+      return norm || { type: "open", question: stripAnswerLeak(q) || q };
+    }
+    return { type: "open", question: "" };
+  });
+
+  return lockMcqKeysFromLesson(prepared, lessonContent);
 }
 
 /**
@@ -400,12 +430,13 @@ async function runRevalidatedGrading({
     console.warn("⚠️ No lesson context — grading without revalidation lock");
   }
 
-  let lockedQuestions = alignQuizWithLesson(
-    questions,
-    lessonContent || "",
-    questions.length
-  );
-  lockedQuestions = lockMcqKeysFromLesson(lockedQuestions, lessonContent);
+  let lockedQuestions = prepareQuestionsForGrading(questions, lessonContent);
+
+  if (lockedQuestions.length !== answers.length) {
+    console.warn(
+      `⚠️ Grading question count (${lockedQuestions.length}) != answer count (${answers.length})`
+    );
+  }
 
   const keyIssues = auditMcqKeysAgainstLesson(lockedQuestions, lessonContent);
   if (keyIssues.length > 0) {
@@ -489,6 +520,7 @@ async function runRevalidatedGrading({
 module.exports = {
   MAX_REVALIDATION_PASSES,
   lockMcqKeysFromLesson,
+  prepareQuestionsForGrading,
   auditMcqKeysAgainstLesson,
   runRevalidatedGrading,
   runRevalidationLoop,

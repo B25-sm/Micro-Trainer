@@ -17,6 +17,9 @@ console.log(
     : "❌ GROQ_API_KEY missing — lessons will use fallback content only"
 );
 
+const { buildIndex: buildConceptReferenceIndex } = require("./services/conceptReferenceIndex");
+buildConceptReferenceIndex();
+
 // =======================================================
 // 🔒 LICENSE VALIDATION (MUST BE FIRST)
 // =======================================================
@@ -273,7 +276,8 @@ app.get("/trainer/sync-status", trainerOnly, (req, res) => {
 // 🔹 TEACHING MODE (ADAPTIVE)
 // =======================================================
 const { adaptiveTeach } = require("./services/adaptiveTeachingService");
-const { CODE_SNIPPET_RULES_CHAT, CONCEPT_QA_RESPONSE_STRUCTURE } = require("./services/personaConfig");
+const { CODE_SNIPPET_RULES_CHAT, CONCEPT_QA_RESPONSE_STRUCTURE, TECHNICAL_ACCURACY_RULES } = require("./services/personaConfig");
+const { getConceptReference, detectTechnologies } = require("./services/conceptReferenceService");
 const { saveStudentLevel, getStudentLevel } = require("./services/memoryService");
 const {
   logAskTopic,
@@ -445,6 +449,9 @@ app.post("/chat/ask", async (req, res) => {
     }
 
     // Build conversation history
+    const referenceFacts = getConceptReference(question, {
+      technology: detectTechnologies(question)[0],
+    });
     const messages = [
       {
         role: "system",
@@ -480,18 +487,21 @@ Guidelines:
 - Suggest starting an interview when relevant
 - If asked about platform features: scoring tracks correctness, completeness, clarity, and code quality
 
+${TECHNICAL_ACCURACY_RULES}
 ${CODE_SNIPPET_RULES_CHAT}
 
 Don't:
 - Use complex jargon without explanation
 - Discourage students
-- Provide incorrect information
+- Provide incorrect or incomplete information (especially partial type lists)
 - Skip or reorder the three concept sections when explaining a concept`
       },
       ...session.history.slice(-6), // Last 3 exchanges
       {
         role: "user",
-        content: question
+        content: referenceFacts
+          ? `${referenceFacts}\n\n---\n\nStudent question:\n${question}`
+          : question
       }
     ];
 
@@ -501,8 +511,8 @@ Don't:
       {
         model: "llama-3.1-8b-instant",
         messages: messages,
-        temperature: 0.7,
-        max_tokens: 850
+        temperature: referenceFacts ? 0.35 : 0.5,
+        max_tokens: 950
       },
       {
         headers: {
@@ -1637,7 +1647,7 @@ app.post("/learning-path/simplify-question", async (req, res) => {
 // Submit concept answers for assessment
 app.post("/learning-path/submit", async (req, res) => {
   try {
-    const { sessionId, answers, lessonContent } = req.body;
+    const { sessionId, answers, lessonContent, questionsSnapshot } = req.body;
     
     console.log(`📥 Received submit request:`, { sessionId, answerCount: answers?.length });
     
@@ -1648,6 +1658,7 @@ app.post("/learning-path/submit", async (req, res) => {
     
     const result = await submitConceptAnswers(sessionId, answers, {
       lessonContentOverride: lessonContent || "",
+      questionsSnapshot: Array.isArray(questionsSnapshot) ? questionsSnapshot : null,
     });
     console.log(`✅ Assessment complete:`, result);
     res.json(result);
@@ -1779,6 +1790,84 @@ app.post("/api/communication-review/review", async (req, res) => {
 app.get("/api/communication-review/history/:studentId", studentSelfOrTrainer, (req, res) => {
   try {
     const history = getStudentHistory(req.params.studentId);
+    res.json({ history });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// =======================================================
+// 🏢 COMPANY INTERVIEWS — company-specific mock + fit
+// =======================================================
+const { listCompanies, reloadBank } = require("./services/companyInterviewBank");
+const {
+  createSession: createCompanySession,
+  submitAnswer: submitCompanyAnswer,
+  abandonSession: abandonCompanySession,
+} = require("./services/companyInterviewSessionService");
+const { getHistory: getCompanyInterviewHistory } = require("./services/companyInterviewStore");
+
+app.get("/api/company-interviews/companies", (req, res) => {
+  try {
+    if (req.query.reload === "1") reloadBank();
+    res.json({ companies: listCompanies() });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/api/company-interviews/start", async (req, res) => {
+  try {
+    const { companyId, studentId, totalQuestions } = req.body;
+    if (!companyId) {
+      return res.status(400).json({ error: "companyId is required" });
+    }
+    const session = await createCompanySession({
+      companyId,
+      studentId: studentId || "anonymous",
+      totalQuestions,
+    });
+    res.json(session);
+  } catch (error) {
+    const status = error.message?.includes("not found") ? 404 : 500;
+    res.status(status).json({ error: error.message });
+  }
+});
+
+app.post("/api/company-interviews/answer", async (req, res) => {
+  try {
+    const { sessionId, answer } = req.body;
+    if (!sessionId) {
+      return res.status(400).json({ error: "sessionId is required" });
+    }
+    const result = await submitCompanyAnswer(sessionId, answer);
+    res.json(result);
+  } catch (error) {
+    const status = error.message?.includes("Invalid") ? 400 : 500;
+    res.status(status).json({ error: error.message });
+  }
+});
+
+app.post("/api/company-interviews/abandon", async (req, res) => {
+  try {
+    const { sessionId, reason } = req.body;
+    if (!sessionId) {
+      return res.status(400).json({ error: "sessionId is required" });
+    }
+    const result = await abandonCompanySession(
+      sessionId,
+      reason || "Student ended company mock"
+    );
+    res.json(result);
+  } catch (error) {
+    const status = error.message?.includes("Invalid") ? 400 : 500;
+    res.status(status).json({ error: error.message });
+  }
+});
+
+app.get("/api/company-interviews/history/:studentId", studentSelfOrTrainer, (req, res) => {
+  try {
+    const history = getCompanyInterviewHistory(req.params.studentId);
     res.json({ history });
   } catch (error) {
     res.status(500).json({ error: error.message });

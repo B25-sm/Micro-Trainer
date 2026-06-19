@@ -81,6 +81,18 @@ CODE in **Code Example**: ONE fenced block (3-8 lines), correct syntax for the t
 `;
 
 /**
+ * Factual completeness — prevents incomplete lists (e.g. "only 3 SQL JOIN types").
+ */
+const TECHNICAL_ACCURACY_RULES = `
+TECHNICAL ACCURACY (non-negotiable — students rely on this for interviews):
+- When listing types, categories, principles, or steps for a standard topic, give the COMPLETE standard set — do NOT stop early (e.g. SQL has 6 join types, not 3; SOLID has 5 letters, not 2)
+- Never invent facts; if a feature is DB-specific (FULL OUTER JOIN in MySQL), say which databases support it
+- If REFERENCE FACTS are provided below, follow them exactly — they override your default training data
+- Prefer "X, Y, Z, and also A, B" over incomplete short lists
+- Wrong or incomplete teaching is worse than saying "I will keep this brief but here are all N types…"
+`;
+
+/**
  * Strict hierarchy when a student asks about a specific concept (Ask, Home chat, extension).
  * Order is mandatory — do not skip or reorder sections.
  */
@@ -90,6 +102,7 @@ CONCEPT Q&A — when the student asks about a specific concept, respond in this 
 **Concept Explanation**
 - 2-3 short sentences: clear high-level definition in plain language
 - State what it is and why it matters — no filler ("Let me explain…")
+- If the topic has standard types/categories, name ALL of them (see TECHNICAL ACCURACY rules)
 
 **Real-World Application**
 - 2-4 sentences: how teams use this in real apps, APIs, databases, or workflows
@@ -105,6 +118,7 @@ RULES:
 - Never put code before the real-world section
 - Stay on the concept asked — no tangents or platform ads
 - ~150-250 words total unless the student asks for more depth
+${TECHNICAL_ACCURACY_RULES}
 `;
 
 const TEACHING_PERSONA = `
@@ -490,6 +504,7 @@ module.exports = {
   CODE_SNIPPET_RULES_ADVANCED,
   CODE_SNIPPET_RULES_CHAT,
   CONCEPT_QA_RESPONSE_STRUCTURE,
+  TECHNICAL_ACCURACY_RULES,
   INTERVIEW_PERSONA,
   INTERVIEW_FORMAT,
   FINAL_EVALUATION_PERSONA,
