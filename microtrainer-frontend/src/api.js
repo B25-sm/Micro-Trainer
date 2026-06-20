@@ -27,6 +27,10 @@ API.interceptors.response.use(
   (error) => {
     console.error("API ERROR:", error?.response || error.message);
 
+    if (error.code === "ECONNABORTED") {
+      return Promise.reject({ error: "Request timed out — please try again." });
+    }
+
     return Promise.reject(
       error?.response?.data || { error: "Something went wrong" }
     );
@@ -41,7 +45,7 @@ export const startInterview = (data) =>
   API.post("/interview/start", data);
 
 export const sendAnswer = (data) =>
-  API.post("/interview/answer", data);
+  API.post("/interview/answer", data, { timeout: 120000 });
 
 export const abandonInterview = (data) =>
   API.post("/interview/abandon", data);

@@ -29,6 +29,8 @@ const Interview = () => {
   const [questionSecondsLeft, setQuestionSecondsLeft] = useState(90);
   const [questionDifficulty, setQuestionDifficulty] = useState("easy");
   const chatEndRef = useRef(null);
+  const chatMainRef = useRef(null);
+  const stickToBottomRef = useRef(true);
   const inputRef = useRef(null); // For auto-focus
 
   // 🔒 ANTI-CHEAT STATE
@@ -57,9 +59,23 @@ const Interview = () => {
     }
   };
 
-  const scrollToBottom = () => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  const scrollToBottom = (force = false) => {
+    const el = chatMainRef.current;
+    if (!el) return;
+    if (!force && !stickToBottomRef.current) return;
+    el.scrollTo({ top: el.scrollHeight, behavior: force ? "smooth" : "auto" });
   };
+
+  useEffect(() => {
+    const el = chatMainRef.current;
+    if (!el) return undefined;
+    const onScroll = () => {
+      const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+      stickToBottomRef.current = distanceFromBottom < 96;
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [session?.sessionId]);
 
   useEffect(() => {
     const fromUrl = searchParams.get("subject");
@@ -75,7 +91,7 @@ const Interview = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [chatHistory]);
+  }, [chatHistory, loading]);
 
   useEffect(() => {
     if (!session || session.completed || isDismissed || loading) return undefined;
@@ -351,6 +367,7 @@ const Interview = () => {
 
     // Immediately set loading to prevent race conditions
     setLoading(true);
+    stickToBottomRef.current = true;
 
     // Add user message to chat
     const userMessage = {
@@ -370,9 +387,6 @@ const Interview = () => {
         return;
       }
 
-      // Add 2-second delay to prevent rate limiting
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
       const response = await sendAnswer({
         sessionId: session.sessionId,
         answer: currentAnswer,
@@ -452,7 +466,12 @@ const Interview = () => {
       setCurrentQuestion(response.data.nextQuestion);
     } catch (error) {
       console.error("Failed to submit answer:", error);
-      alert("Failed to submit answer. Please try again.");
+      setAnswer(currentAnswer);
+      setChatHistory((prev) => prev.slice(0, -1));
+      const msg =
+        error?.error ||
+        (typeof error === "string" ? error : "Failed to submit answer. Please try again.");
+      alert(msg);
     } finally {
       setLoading(false);
     }
@@ -770,13 +789,38 @@ IMPORTANT:
       </header>
 
       {/* Chat scrolls; input stays visible (flex footer — min-h-0 lets flex-1 shrink inside viewport) */}
-      <main className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 pt-4 pb-10 overscroll-contain">
-        <div className="max-w-3xl mx-auto space-y-6 pb-4">
-          
-          <AnimatePresence>
-            {chatHistory.map((message, index) => (
-              <ChatMessage key={index} message={message} />
-            ))}
+      <main
+        ref={chatMainRef}
+        className={`flex-1 min-h-0 overflow-y-auto scroll-smooth px-4 sm:px-6 pt-2 pb-12 overscroll-contain ${
+          session && !session.completed && !isDismissed ? "pr-44 sm:pr-52" : ""
+        }`}
+      >
+        <div className="max-w-3xl mx-auto space-y-8 pb-6">
+          {chatHistory.length > 2 && (
+            <p className="text-xs text-center text-gray-400 dark:text-gray-500 sticky top-0 z-10 py-2 bg-white/90 dark:bg-[#202124]/90 backdrop-blur-sm rounded-lg">
+              Scroll up to review earlier questions and your answers
+            </p>
+          )}
+
+          <AnimatePresence initial={false}>
+            {(() => {
+              let questionNum = 0;
+              return chatHistory.map((message, index) => {
+                const isInterviewerQuestion =
+                  message.type === "ai" &&
+                  !message.isClarification &&
+                  !message.isFinalFeedback &&
+                  !message.isFeedback;
+                if (isInterviewerQuestion) questionNum += 1;
+                return (
+                  <ChatMessage
+                    key={`msg-${index}-${String(message.content || "").slice(0, 24)}`}
+                    message={message}
+                    questionNumber={isInterviewerQuestion ? questionNum : null}
+                  />
+                );
+              });
+            })()}
           </AnimatePresence>
 
           {loading && (
@@ -800,22 +844,12 @@ IMPORTANT:
       </main>
 
       {/* Composer pinned to bottom of interview panel (not below viewport) */}
-      <div className="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] px-4 sm:px-6 pt-5 pb-4">
+      <div className="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] px-4 sm:px-6 pt-3 pb-3">
         <div className="max-w-3xl mx-auto">
           {session && !session.completed && (
-            <div className="flex items-center justify-between gap-3 mb-3">
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                Need to leave? End the interview — progress is saved to your history.
-              </p>
-              <button
-                type="button"
-                onClick={handleEndInterview}
-                disabled={loading}
-                className="flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-lg border border-red-300 dark:border-red-800 text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-950/70 disabled:opacity-50"
-              >
-                End interview
-              </button>
-            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 lg:hidden">
+              Need to leave? Use End interview above — progress is saved.
+            </p>
           )}
           <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#202124] shadow-sm transition-shadow">
             <div className="flex items-end gap-3 px-5 py-3">
@@ -857,12 +891,8 @@ IMPORTANT:
               </button>
             </div>
           </div>
-          <p className="text-xs text-gray-500 text-center mt-2 leading-relaxed">
-            Press Enter for a new line. Ctrl+Enter (⌘+Enter on Mac) to send.
-            <span className="block mt-1 text-gray-400">
-              Stuck on the question? Say &quot;can you rephrase?&quot; — the interviewer will clarify without skipping ahead.
-              Answers are scored on clarity and correctness.
-            </span>
+          <p className="text-xs text-gray-500 text-center mt-2 leading-relaxed hidden sm:block">
+            Ctrl+Enter (⌘+Enter) to send · Say &quot;can you rephrase?&quot; to clarify the question
           </p>
         </div>
       </div>
@@ -915,18 +945,34 @@ You can now ask questions about this feedback.`;
 
 /* ================= CHAT MESSAGE COMPONENT ================= */
 
-const ChatMessage = ({ message }) => {
+const ChatMessage = ({ message, questionNumber = null }) => {
   const isUser = message.type === "user";
   const isFeedback = message.isFeedback;
   const isFinalFeedback = message.isFinalFeedback;
   const isClarification = message.isClarification;
-  const isQuestion = message.isQuestion;
+  const isQuestion =
+    message.isQuestion ||
+    (message.type === "ai" && !isClarification && !isFinalFeedback && !isFeedback);
+
+  const label = isUser
+    ? "Your answer"
+    : isClarification
+      ? "Clarification"
+      : isFinalFeedback
+        ? "Final feedback"
+        : isFeedback
+          ? "Feedback"
+          : isQuestion && questionNumber
+            ? `Question ${questionNumber}`
+            : isQuestion
+              ? "Question"
+              : null;
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`flex gap-4 ${isUser ? "justify-end" : "justify-start"} ${isQuestion ? "mb-2" : ""}`}
+      className={`flex gap-3 scroll-mt-4 ${isUser ? "justify-end" : "justify-start"}`}
     >
       {!isUser && (
         <div className="w-8 h-8 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 flex items-center justify-center flex-shrink-0">
@@ -936,9 +982,22 @@ const ChatMessage = ({ message }) => {
         </div>
       )}
       
-      <div className={`max-w-2xl ${isUser ? "ml-auto" : ""}`}>
+      <div className={`max-w-[85%] sm:max-w-2xl ${isUser ? "ml-auto" : ""}`}>
+        {label && (
+          <p
+            className={`text-xs font-semibold uppercase tracking-wide mb-1.5 ${
+              isUser
+                ? "text-right text-gray-500 dark:text-gray-400"
+                : isQuestion
+                  ? "text-blue-600 dark:text-blue-400"
+                  : "text-gray-500 dark:text-gray-400"
+            }`}
+          >
+            {label}
+          </p>
+        )}
         <div
-          className={`rounded-2xl px-5 py-3 ${
+          className={`rounded-2xl px-5 py-3.5 ${
             isUser
               ? "bg-gray-800 dark:bg-gray-700 text-gray-100"
               : isFinalFeedback
@@ -947,6 +1006,8 @@ const ChatMessage = ({ message }) => {
               ? "bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 text-gray-800 dark:text-gray-200"
               : isFeedback
               ? "bg-gray-50 dark:bg-[#292a2d] border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200"
+              : isQuestion
+              ? "bg-blue-50/80 dark:bg-blue-950/25 border border-blue-100 dark:border-blue-900/50 text-gray-900 dark:text-gray-100"
               : "bg-gray-100 dark:bg-gray-800/60 text-gray-800 dark:text-gray-200"
           }`}
         >
@@ -978,7 +1039,13 @@ const ChatMessage = ({ message }) => {
               <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
             </div>
           ) : (
-            <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+            <p
+              className={`leading-relaxed whitespace-pre-wrap ${
+                isQuestion ? "text-base font-medium" : isUser ? "text-base" : "text-sm"
+              }`}
+            >
+              {message.content}
+            </p>
           )}
         </div>
       </div>

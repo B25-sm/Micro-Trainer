@@ -187,15 +187,15 @@ Real interviews reward understanding, not essay length.
       }
 
       // =======================================================
-      // 🔹 Logging
+      // 🔹 Logging (non-blocking — do not delay the interview response)
       // =======================================================
-      await logInterview({
+      logInterview({
         studentId: studentId || "anonymous",
         question,
         answer,
         subject,
         ...parsed
-      });
+      }).catch((err) => console.error("Sheets log failed:", err.message));
 
       // During interview: NO feedback, just store the evaluation
       return {
@@ -237,13 +237,13 @@ Real interviews reward understanding, not essay length.
 
   const fallback = getFallback("API failure - please try again");
 
-  await logInterview({
+  logInterview({
     studentId: studentId || "anonymous",
     question,
     answer,
     subject,
     ...fallback
-  });
+  }).catch((err) => console.error("Sheets log failed:", err.message));
 
   return {
     score: 0,

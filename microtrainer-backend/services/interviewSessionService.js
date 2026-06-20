@@ -9,9 +9,50 @@ const { generateCoachReport } = require("./coachService"); // ✅ NEW
 const { generateFollowUp } = require("./adaptiveFollowupService"); // 🔥 ADAPTIVE
 const { syncInterviewToCentral } = require("./centralPlatformSync"); // 🔄 SYNC
 
+const fs = require("fs");
+const path = require("path");
+
 const sessions = {};
+const SESSIONS_FILE = path.join(__dirname, "../data/interview-sessions-active.json");
+const SESSION_TTL_MS = 6 * 60 * 60 * 1000;
 const { recordInterviewSession } = require("./interviewHistoryService");
 const antiCheatService = require("./antiCheatService");
+
+function pruneExpiredSessions() {
+  const now = Date.now();
+  for (const [id, session] of Object.entries(sessions)) {
+    const started = session.startedAt ? new Date(session.startedAt).getTime() : 0;
+    if (!started || now - started > SESSION_TTL_MS) {
+      delete sessions[id];
+    }
+  }
+}
+
+function loadSessionsFromDisk() {
+  try {
+    if (!fs.existsSync(SESSIONS_FILE)) return;
+    const raw = JSON.parse(fs.readFileSync(SESSIONS_FILE, "utf8"));
+    if (raw && typeof raw === "object") {
+      Object.assign(sessions, raw);
+      pruneExpiredSessions();
+      console.log(`📂 Loaded ${Object.keys(sessions).length} active interview sessions`);
+    }
+  } catch (err) {
+    console.error("Error loading interview sessions:", err.message);
+  }
+}
+
+function saveSessionsToDisk() {
+  try {
+    const dir = path.dirname(SESSIONS_FILE);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(SESSIONS_FILE, JSON.stringify(sessions, null, 2));
+  } catch (err) {
+    console.error("Error saving interview sessions:", err.message);
+  }
+}
+
+loadSessionsFromDisk();
 
 function secondsForDifficulty(difficulty) {
   const d = String(difficulty || "easy").toLowerCase();
@@ -79,6 +120,7 @@ async function createSession(subject, totalQuestions = 20, studentId) {
 
   console.log("✅ Session created:", sessionId);
   console.log("📊 Total sessions:", Object.keys(sessions).length);
+  saveSessionsToDisk();
 
   return {
     sessionId,
@@ -130,6 +172,8 @@ async function submitAnswer(sessionId, answer) {
       `💬 Clarification #${currentEntry.clarificationCount} for: ${currentEntry.question}`
     );
 
+    saveSessionsToDisk();
+
     return {
       completed: false,
       isClarification: true,
@@ -142,7 +186,6 @@ async function submitAnswer(sessionId, answer) {
       totalQuestions: session.totalQuestions,
     };
   }
-
   // 🔹 Evaluate Answer
   const result = await evaluateAnswer({
     question: currentEntry.question,
@@ -245,6 +288,7 @@ async function submitAnswer(sessionId, answer) {
     });
 
     delete sessions[sessionId];
+    saveSessionsToDisk();
     console.log("🗑️ Session deleted:", sessionId);
 
     return {
@@ -320,6 +364,8 @@ async function submitAnswer(sessionId, answer) {
       answer: null,
     });
   }
+
+  saveSessionsToDisk();
 
   return {
     completed: false,
@@ -397,6 +443,7 @@ function abandonSession(sessionId, reason = "Student ended interview") {
   });
 
   removeActiveSession(sessionId);
+  saveSessionsToDisk();
 
   const questionsAnswered = session.history.filter(
     (h) => h.answer != null && h.answer !== ""

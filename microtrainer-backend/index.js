@@ -634,6 +634,11 @@ app.post("/interview/answer", async (req, res) => {
 
   } catch (error) {
     console.error("SESSION ERROR:", error.message);
+    if (error.message === "Invalid session ID") {
+      return res.status(404).json({
+        error: "Interview session expired. Please start a new interview.",
+      });
+    }
     res.status(500).json({ error: "Session failed" });
   }
 });
