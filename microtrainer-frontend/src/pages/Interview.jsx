@@ -315,6 +315,7 @@ const Interview = () => {
         {
           type: "ai",
           content: response.data.question,
+          isQuestion: true,
           timestamp: new Date(),
         },
       ]);
@@ -442,6 +443,7 @@ const Interview = () => {
         aiMessages.push({
           type: "ai",
           content: response.data.nextQuestion,
+          isQuestion: true,
           timestamp: new Date(),
         });
       }
@@ -768,8 +770,8 @@ IMPORTANT:
       </header>
 
       {/* Chat scrolls; input stays visible (flex footer — min-h-0 lets flex-1 shrink inside viewport) */}
-      <main className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4 overscroll-contain">
-        <div className="max-w-3xl mx-auto space-y-6 pb-2">
+      <main className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 pt-4 pb-10 overscroll-contain">
+        <div className="max-w-3xl mx-auto space-y-6 pb-4">
           
           <AnimatePresence>
             {chatHistory.map((message, index) => (
@@ -792,15 +794,16 @@ IMPORTANT:
             </motion.div>
           )}
 
+          <div className="h-4 sm:h-6" aria-hidden="true" />
           <div ref={chatEndRef} />
         </div>
       </main>
 
       {/* Composer pinned to bottom of interview panel (not below viewport) */}
-      <div className="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] px-4 sm:px-6 py-3">
+      <div className="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] px-4 sm:px-6 pt-5 pb-4">
         <div className="max-w-3xl mx-auto">
           {session && !session.completed && (
-            <div className="flex items-center justify-between gap-3 mb-2">
+            <div className="flex items-center justify-between gap-3 mb-3">
               <p className="text-xs text-gray-500 dark:text-gray-400">
                 Need to leave? End the interview — progress is saved to your history.
               </p>
@@ -917,12 +920,13 @@ const ChatMessage = ({ message }) => {
   const isFeedback = message.isFeedback;
   const isFinalFeedback = message.isFinalFeedback;
   const isClarification = message.isClarification;
+  const isQuestion = message.isQuestion;
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`flex gap-4 ${isUser ? "justify-end" : "justify-start"}`}
+      className={`flex gap-4 ${isUser ? "justify-end" : "justify-start"} ${isQuestion ? "mb-2" : ""}`}
     >
       {!isUser && (
         <div className="w-8 h-8 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 flex items-center justify-center flex-shrink-0">

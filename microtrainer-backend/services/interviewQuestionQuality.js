@@ -50,6 +50,16 @@ function normalizeQuestion(q) {
     .trim();
 }
 
+function questionDedupKey(q) {
+  return normalizeQuestion(q).toLowerCase();
+}
+
+function isQuestionExcluded(question, excludeQuestions = []) {
+  const key = questionDedupKey(question);
+  if (!key) return true;
+  return excludeQuestions.some((prev) => questionDedupKey(prev) === key);
+}
+
 function isBroadTopic(concept) {
   return BROAD_TECH_NAMES.has(normalizeQuestion(concept).toLowerCase());
 }
@@ -126,10 +136,10 @@ function curatedGetterForSubject(subject) {
   return null;
 }
 
-function getCuratedFallback(subject, difficulty = "medium") {
+function getCuratedFallback(subject, difficulty = "medium", options = {}) {
   const getter = curatedGetterForSubject(subject);
   if (getter) {
-    return pickCuratedQuestion(getter, subject, difficulty);
+    return pickCuratedQuestion(getter, subject, difficulty, options);
   }
 
   const templates = {
@@ -137,19 +147,43 @@ function getCuratedFallback(subject, difficulty = "medium") {
     medium: `Walk through a ${subject} bug you fixed — root cause and fix?`,
     hard: `What ${subject} trade-off would you make when scaling to production?`,
   };
-  return templates[difficulty] || templates.medium;
+  for (const tier of [difficulty, "medium", "easy", "hard"]) {
+    const template = templates[tier];
+    if (template && !isQuestionExcluded(template, options.excludeQuestions || [])) {
+      return template;
+    }
+  }
+  return templates.medium;
 }
 
-function pickCuratedQuestion(getter, subject, difficulty, maxTries = 12) {
-  const seen = new Set();
-  for (let i = 0; i < maxTries; i++) {
-    const raw = getter(difficulty);
-    if (!raw || seen.has(raw)) continue;
-    seen.add(raw);
-    if (isInterviewQualityQuestion(raw, subject)) {
+function pickCuratedQuestion(getter, subject, difficulty, options = {}) {
+  const { excludeQuestions = [], maxTries = 24 } = options;
+  const difficulties = [difficulty, "easy", "medium", "hard"].filter(
+    (d, i, arr) => arr.indexOf(d) === i
+  );
+  const tried = new Set();
+
+  for (const diff of difficulties) {
+    for (let i = 0; i < maxTries; i += 1) {
+      const raw = getter(diff);
+      if (!raw) continue;
+      const key = questionDedupKey(raw);
+      if (tried.has(key) || isQuestionExcluded(raw, excludeQuestions)) continue;
+      tried.add(key);
+      if (isInterviewQualityQuestion(raw, subject)) {
+        return normalizeQuestion(raw);
+      }
+    }
+  }
+
+  for (const diff of difficulties) {
+    for (let i = 0; i < maxTries; i += 1) {
+      const raw = getter(diff);
+      if (!raw || isQuestionExcluded(raw, excludeQuestions)) continue;
       return normalizeQuestion(raw);
     }
   }
+
   return normalizeQuestion(getter(difficulty));
 }
 
@@ -161,9 +195,9 @@ function ensureInterviewQuestion(question, subject, difficulty) {
   return getCuratedFallback(subject, difficulty);
 }
 
-function pickBankQuestion(getQuestionFn, subject, difficulty) {
+function pickBankQuestion(getQuestionFn, subject, difficulty, options = {}) {
   const getter = curatedGetterForSubject(subject) || getQuestionFn;
-  return pickCuratedQuestion(getter, subject, difficulty);
+  return pickCuratedQuestion(getter, subject, difficulty, options);
 }
 
 module.exports = {
@@ -177,4 +211,6 @@ module.exports = {
   pickCuratedQuestion,
   pickExpressQuestion: getRandomExpressQuestion,
   normalizeQuestion,
+  questionDedupKey,
+  isQuestionExcluded,
 };

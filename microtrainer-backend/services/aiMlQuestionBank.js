@@ -57,6 +57,13 @@ function matchesRoleSubject(subject) {
  * @param {number} [opts.sectionId] - 1-13
  * @param {string} [opts.topic] - substring match on topic
  */
+function normalizeQuestionText(q) {
+  return String(q || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
 function getRandomAiMlQuestion(difficulty = "medium", opts = {}) {
   const bank = loadBank();
   let pool = bank.questions;
@@ -72,19 +79,25 @@ function getRandomAiMlQuestion(difficulty = "medium", opts = {}) {
     pool = pool.filter((q) => q.topic.toLowerCase().includes(t));
   }
 
-  const tierPool = pool.filter((q) => q.difficulty === difficulty);
-  const fallback =
-    tierPool.length > 0
-      ? tierPool
-      : pool.filter((q) => q.difficulty === difficulty);
-  const finalPool =
-    fallback.length > 0
-      ? fallback
-      : pool.length > 0
-        ? pool
-        : bank.questions;
+  const exclude = new Set(
+    (opts.excludeQuestions || []).map((q) => normalizeQuestionText(q))
+  );
 
-  const pick = finalPool[Math.floor(Math.random() * finalPool.length)];
+  const difficulties = [difficulty, "easy", "medium", "hard"].filter(
+    (d, i, arr) => arr.indexOf(d) === i
+  );
+
+  for (const diff of difficulties) {
+    const tierPool = pool.filter((q) => q.difficulty === diff);
+    const candidates = tierPool.filter(
+      (q) => !exclude.has(normalizeQuestionText(q.text))
+    );
+    if (candidates.length > 0) {
+      return candidates[Math.floor(Math.random() * candidates.length)].text;
+    }
+  }
+
+  const pick = pool[Math.floor(Math.random() * pool.length)];
   return pick.text;
 }
 

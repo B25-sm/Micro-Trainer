@@ -4,6 +4,7 @@ const {
 } = require("./interviewClarificationService");
 const { evaluateAnswer } = require("./interviewService");
 const { generateQuestion } = require("./questionService");
+const { isQuestionExcluded } = require("./interviewQuestionQuality");
 const { generateCoachReport } = require("./coachService"); // ✅ NEW
 const { generateFollowUp } = require("./adaptiveFollowupService"); // 🔥 ADAPTIVE
 const { syncInterviewToCentral } = require("./centralPlatformSync"); // 🔄 SYNC
@@ -299,6 +300,26 @@ async function submitAnswer(sessionId, answer) {
     difficulty: nextDifficulty,
     answer: null
   });
+
+  const asked = session.history.map((h) => h.question).filter(Boolean);
+  const dupIdx = session.history.length - 1;
+  if (isQuestionExcluded(nextQuestionText, asked.slice(0, dupIdx))) {
+    console.warn("Duplicate interview question detected — regenerating");
+    session.history.pop();
+    const regen = await generateQuestion({
+      subject: session.subject,
+      history: session.history,
+      studentId: session.studentId,
+    });
+    const u = unpackQuestion(regen);
+    nextQuestionText = u.text;
+    nextDifficulty = u.difficulty;
+    session.history.push({
+      question: nextQuestionText,
+      difficulty: nextDifficulty,
+      answer: null,
+    });
+  }
 
   return {
     completed: false,

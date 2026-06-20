@@ -31,7 +31,16 @@ const {
   pickCuratedQuestion,
   normalizeQuestion,
   isAbsurdQuestion,
+  isQuestionExcluded,
 } = require("./interviewQuestionQuality");
+
+function getAskedQuestions(history = []) {
+  return history.map((h) => h.question).filter(Boolean);
+}
+
+function pickOptions(history) {
+  return { excludeQuestions: getAskedQuestions(history) };
+}
 
 function getAdaptiveDifficulty(history = []) {
   if (history.length === 0) return "easy";
@@ -67,7 +76,8 @@ function questionPack(questionText, difficulty, subject = "") {
   };
 }
 
-function pickMernQuestion(difficulty) {
+function pickMernQuestion(difficulty, history = []) {
+  const opts = pickOptions(history);
   const techs = [
     { getter: getRandomMongoQuestion, subject: "MongoDB" },
     { getter: getRandomExpressQuestion, subject: "Express" },
@@ -76,7 +86,7 @@ function pickMernQuestion(difficulty) {
   ];
   const pick = techs[Math.floor(Math.random() * techs.length)];
   return questionPack(
-    pickCuratedQuestion(pick.getter, pick.subject, difficulty),
+    pickCuratedQuestion(pick.getter, pick.subject, difficulty, opts),
     difficulty,
     pick.subject
   );
@@ -88,9 +98,10 @@ async function generateQuestion({ subject, history = [], studentId }) {
     const subjectLower = subject.toLowerCase();
     const isFullStack =
       subjectLower.includes("full stack") || subjectLower.includes("fullstack");
+    const opts = pickOptions(history);
 
     if (subjectLower.includes("mern")) {
-      return pickMernQuestion(difficulty);
+      return pickMernQuestion(difficulty, history);
     }
 
     if (subjectLower.includes("java") && isFullStack) {
@@ -100,7 +111,7 @@ async function generateQuestion({ subject, history = [], studentId }) {
       ];
       const pick = stack[Math.floor(Math.random() * stack.length)];
       return questionPack(
-        pickCuratedQuestion(pick.getter, pick.subject, difficulty),
+        pickCuratedQuestion(pick.getter, pick.subject, difficulty, opts),
         difficulty,
         pick.subject
       );
@@ -122,7 +133,10 @@ async function generateQuestion({ subject, history = [], studentId }) {
       else if (difficulty === "hard") tier = Math.random() < 0.45 ? 3 : 2;
       else tier = Math.random() < 0.65 ? 1 : 2;
 
-      const raw = getRandomAiMlQuestion(difficulty, { tier });
+      const raw = getRandomAiMlQuestion(difficulty, {
+        tier,
+        excludeQuestions: opts.excludeQuestions,
+      });
       return questionPack(raw, difficulty, originalSubject);
     }
 
@@ -133,7 +147,7 @@ async function generateQuestion({ subject, history = [], studentId }) {
       ];
       const pick = stack[Math.floor(Math.random() * stack.length)];
       return questionPack(
-        pickCuratedQuestion(pick.getter, pick.subject, difficulty),
+        pickCuratedQuestion(pick.getter, pick.subject, difficulty, opts),
         difficulty,
         pick.subject
       );
@@ -153,7 +167,7 @@ async function generateQuestion({ subject, history = [], studentId }) {
     for (const route of curatedRoutes) {
       if (route.match(subjectLower)) {
         return questionPack(
-          pickCuratedQuestion(route.getter, route.label, difficulty),
+          pickCuratedQuestion(route.getter, route.label, difficulty, opts),
           difficulty,
           route.label
         );
@@ -161,7 +175,7 @@ async function generateQuestion({ subject, history = [], studentId }) {
     }
 
     const memory = await getStudentMemory(studentId);
-    const previousQuestions = history.map((h) => h.question).filter(Boolean).slice(-10);
+    const previousQuestions = opts.excludeQuestions;
 
     const prompt = `
 Subject: ${subject}
@@ -172,44 +186,55 @@ Previous: ${previousQuestions.map((q) => "- " + q).join("\n") || "None"}
 
 Generate ONE specific technical interview question with a clear task.
 
+NEVER repeat or closely paraphrase any question listed under Previous.
 NEVER: "What is [technology]?", "Show code for [framework]", vague prompts.
 MUST: concrete skill, answerable in 2–5 minutes (verbal explanation or sketch — not a full IDE session), real interview tone.
 
 Return ONLY the question (one line, max 22 words).
 `;
 
-    const response = await axios.post(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
-        model: "llama-3.1-8b-instant",
-        messages: [
-          { role: "system", content: `${BASE_PERSONA}\n\n${INTERVIEW_PERSONA}` },
-          { role: "user", content: prompt },
-        ],
-        temperature: 0.4,
-        max_tokens: 80,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-          "Content-Type": "application/json",
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      const response = await axios.post(
+        "https://api.groq.com/openai/v1/chat/completions",
+        {
+          model: "llama-3.1-8b-instant",
+          messages: [
+            { role: "system", content: `${BASE_PERSONA}\n\n${INTERVIEW_PERSONA}` },
+            { role: "user", content: prompt },
+          ],
+          temperature: 0.45 + attempt * 0.08,
+          max_tokens: 80,
         },
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const question = cleanQuestion(response?.data?.choices?.[0]?.message?.content);
+
+      if (!question || !isInterviewQualityQuestion(question, subject)) {
+        break;
       }
+      if (!isQuestionExcluded(question, previousQuestions)) {
+        return questionPack(question, difficulty, subject);
+      }
+    }
+
+    return questionPack(
+      getCuratedFallback(subject, difficulty, opts),
+      difficulty,
+      subject
     );
-
-    let question = cleanQuestion(response?.data?.choices?.[0]?.message?.content);
-
-    if (!question || !isInterviewQualityQuestion(question, subject)) {
-      return questionPack(getCuratedFallback(subject, difficulty), difficulty, subject);
-    }
-    if (previousQuestions.includes(question)) {
-      return questionPack(getCuratedFallback(subject, difficulty), difficulty, subject);
-    }
-
-    return questionPack(question, difficulty, subject);
   } catch (error) {
     console.error("Question Generation Error:", error.message);
-    return questionPack(getCuratedFallback(subject, "easy"), "easy", subject);
+    return questionPack(
+      getCuratedFallback(subject, "easy", pickOptions(history)),
+      "easy",
+      subject
+    );
   }
 }
 
