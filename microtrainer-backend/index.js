@@ -1760,7 +1760,7 @@ const { getSchedule: getStoredSchedule } = require("./services/personalScheduleS
 const {
   getScenarios,
   reviewCommunication,
-  getStudentHistory,
+  getStudentHistory: getCommunicationReviewHistory,
 } = require("./services/communicationReviewService");
 
 app.get("/api/communication-review/scenarios", (req, res) => {
@@ -1789,7 +1789,7 @@ app.post("/api/communication-review/review", async (req, res) => {
 
 app.get("/api/communication-review/history/:studentId", studentSelfOrTrainer, (req, res) => {
   try {
-    const history = getStudentHistory(req.params.studentId);
+    const history = getCommunicationReviewHistory(req.params.studentId);
     res.json({ history });
   } catch (error) {
     res.status(500).json({ error: error.message });
