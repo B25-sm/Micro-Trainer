@@ -173,7 +173,7 @@ Previous: ${previousQuestions.map((q) => "- " + q).join("\n") || "None"}
 Generate ONE specific technical interview question with a clear task.
 
 NEVER: "What is [technology]?", "Show code for [framework]", vague prompts.
-MUST: concrete skill, answerable in 1–5 minutes, real interview tone.
+MUST: concrete skill, answerable in 2–5 minutes (verbal explanation or sketch — not a full IDE session), real interview tone.
 
 Return ONLY the question (one line, max 22 words).
 `;

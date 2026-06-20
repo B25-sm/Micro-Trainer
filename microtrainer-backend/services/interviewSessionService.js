@@ -15,8 +15,25 @@ const antiCheatService = require("./antiCheatService");
 function secondsForDifficulty(difficulty) {
   const d = String(difficulty || "easy").toLowerCase();
   if (d === "hard") return 300;
-  if (d === "medium") return 120;
-  return 60;
+  if (d === "medium") return 150;
+  return 90;
+}
+
+/** Coding / implement prompts need more time than pure conceptual Q&A */
+function isCodingTaskQuestion(text) {
+  return /\b(write|implement|code|function|algorithm|program|debug|fix this|snippet|pseudo[\s-]?code)\b/i.test(
+    text || ""
+  );
+}
+
+function secondsForQuestion(questionText, difficulty) {
+  const base = secondsForDifficulty(difficulty);
+  if (!isCodingTaskQuestion(questionText)) return base;
+
+  const d = String(difficulty || "easy").toLowerCase();
+  if (d === "hard") return 420;
+  if (d === "medium") return 300;
+  return 240;
 }
 
 /** generateQuestion returns { question, difficulty } */
@@ -66,7 +83,7 @@ async function createSession(subject, totalQuestions = 20, studentId) {
     sessionId,
     question: qText,
     difficulty,
-    questionTimeSeconds: secondsForDifficulty(difficulty),
+    questionTimeSeconds: secondsForQuestion(qText, difficulty),
     currentQuestion: 1,
     totalQuestions
   };
@@ -118,7 +135,7 @@ async function submitAnswer(sessionId, answer) {
       interviewerMessage: clarification.message,
       nextQuestion: currentEntry.question,
       difficulty: currentEntry.difficulty,
-      questionTimeSeconds: secondsForDifficulty(currentEntry.difficulty),
+      questionTimeSeconds: secondsForQuestion(currentEntry.question, currentEntry.difficulty),
       bonusSeconds: 45,
       currentQuestion: session.currentQuestion + 1,
       totalQuestions: session.totalQuestions,
@@ -289,7 +306,7 @@ async function submitAnswer(sessionId, answer) {
     score: result.score,
     nextQuestion: nextQuestionText,
     difficulty: nextDifficulty,
-    questionTimeSeconds: secondsForDifficulty(nextDifficulty),
+    questionTimeSeconds: secondsForQuestion(nextQuestionText, nextDifficulty),
     currentQuestion: session.currentQuestion + 1,
     totalQuestions: session.totalQuestions
   };

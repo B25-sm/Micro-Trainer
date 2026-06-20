@@ -29,6 +29,123 @@ function estimateVideoLuminance(video) {
 
 const LOW_LIGHT_LUMA = 58;
 
+/** Merge overlapping boxes — tiny-face often double-counts one person */
+function boxIoU(a, b) {
+  const x1 = Math.max(a.x, b.x);
+  const y1 = Math.max(a.y, b.y);
+  const x2 = Math.min(a.x + a.width, b.x + b.width);
+  const y2 = Math.min(a.y + a.height, b.y + b.height);
+  const inter = Math.max(0, x2 - x1) * Math.max(0, y2 - y1);
+  const union = a.width * a.height + b.width * b.height - inter;
+  return union > 0 ? inter / union : 0;
+}
+
+function boxCenter(box) {
+  return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+}
+
+function centerInsideBox(center, box, paddingRatio = 0.15) {
+  const padX = box.width * paddingRatio;
+  const padY = box.height * paddingRatio;
+  return (
+    center.x >= box.x - padX &&
+    center.x <= box.x + box.width + padX &&
+    center.y >= box.y - padY &&
+    center.y <= box.y + box.height + padY
+  );
+}
+
+function dedupeFaceDetections(detections, iouThreshold = 0.5) {
+  if (!detections?.length) return [];
+  const sorted = [...detections].sort(
+    (a, b) => (b.detection?.score ?? 0) - (a.detection?.score ?? 0)
+  );
+  const kept = [];
+  for (const det of sorted) {
+    const box = det.detection?.box;
+    if (!box) continue;
+    const overlaps = kept.some(
+      (k) => boxIoU(box, k.detection.box) >= iouThreshold
+    );
+    if (!overlaps) kept.push(det);
+  }
+  return kept;
+}
+
+/** Drop phantom boxes whose center sits inside a larger face box */
+function mergeContainedDetections(detections) {
+  if (detections.length <= 1) return detections;
+  const sorted = [...detections].sort(
+    (a, b) =>
+      b.detection.box.width * b.detection.box.height -
+      a.detection.box.width * a.detection.box.height
+  );
+  const kept = [];
+  for (const det of sorted) {
+    const center = boxCenter(det.detection.box);
+    const nested = kept.some((k) =>
+      centerInsideBox(center, k.detection.box, 0.2)
+    );
+    if (!nested) kept.push(det);
+  }
+  return kept;
+}
+
+/** Count distinct faces — ignore tiny phantom boxes beside the main face */
+function countDistinctFaces(detections, frameW, frameH) {
+  let deduped = dedupeFaceDetections(detections);
+  deduped = mergeContainedDetections(deduped);
+  if (deduped.length === 0) return 0;
+  if (deduped.length === 1) return 1;
+
+  const frameArea = Math.max(frameW * frameH, 1);
+  const minArea = frameArea * 0.01;
+
+  const valid = deduped.filter((d) => {
+    const box = d.detection?.box;
+    const score = d.detection?.score ?? 0;
+    if (!box) return false;
+    return box.width * box.height >= minArea && score >= 0.24;
+  });
+
+  if (valid.length <= 1) return valid.length;
+
+  const bySize = [...valid].sort(
+    (a, b) =>
+      b.detection.box.width * b.detection.box.height -
+      a.detection.box.width * a.detection.box.height
+  );
+  const primary = bySize[0];
+  const pBox = primary.detection.box;
+  const pArea = pBox.width * pBox.height;
+  const pCenter = boxCenter(pBox);
+  const pDiag = Math.hypot(pBox.width, pBox.height);
+
+  let extra = 0;
+  for (let i = 1; i < bySize.length; i += 1) {
+    const d = bySize[i];
+    const box = d.detection.box;
+    const score = d.detection.score ?? 0;
+    const area = box.width * box.height;
+    const center = boxCenter(box);
+    const dist = Math.hypot(center.x - pCenter.x, center.y - pCenter.y);
+    const hSep = Math.abs(center.x - pCenter.x);
+    const minSeparation = Math.max(pDiag * 0.28, Math.min(frameW, frameH) * 0.06);
+    const clearlyTwoPeople =
+      hSep >= frameW * 0.24 && score >= 0.22 && area >= minArea;
+    const separateAndSized =
+      dist >= minSeparation &&
+      score >= 0.28 &&
+      area >= Math.max(minArea, pArea * 0.1);
+
+    if (clearlyTwoPeople || separateAndSized) {
+      extra += 1;
+    }
+  }
+
+  return 1 + extra;
+}
+
 /**
  * Normal vs dim room.
  * Pose checks only flag a clear side turn — looking at the screen or keyboard is expected.
@@ -46,6 +163,7 @@ function getProctorRules(lowLight, typing) {
         profileAspectMax: 0.62,
         profileEyeRatioMax: 0.36,
         multipleFacesConfirmSecs: 5,
+        multipleFacesConfirmTicks: 10,
         noFaceMessage:
           "Face left the frame — stay visible (dim lighting — add front light if needed)",
       }
@@ -59,6 +177,7 @@ function getProctorRules(lowLight, typing) {
         profileAspectMax: 0.64,
         profileEyeRatioMax: 0.38,
         multipleFacesConfirmSecs: 3,
+        multipleFacesConfirmTicks: 4,
         noFaceMessage: "Face left the frame — stay visible while answering",
       };
 
@@ -265,21 +384,25 @@ const WebcamProctor = ({ onViolation, isActive, relaxForTyping = false }) => {
           .detectAllFaces(v, detectorOpts)
           .withFaceLandmarks();
 
+        const frameW = v.videoWidth;
+        const frameH = v.videoHeight;
+        let distinctFaces = dedupeFaceDetections(detections);
+        distinctFaces = mergeContainedDetections(distinctFaces);
+        const faceCount = countDistinctFaces(detections, frameW, frameH);
+
         if (canvasRef.current) {
           const displaySize = {
-            width: videoRef.current.videoWidth,
-            height: videoRef.current.videoHeight,
+            width: frameW,
+            height: frameH,
           };
           faceapi.matchDimensions(canvasRef.current, displaySize);
-          const resizedDetections = faceapi.resizeResults(detections, displaySize);
+          const resizedDetections = faceapi.resizeResults(distinctFaces, displaySize);
 
           const ctx = canvasRef.current.getContext("2d");
           ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
           faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
           faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
         }
-
-        const faceCount = detections.length;
 
         if (faceCount === 0 || faceCount > 1) {
           if (lookingAwayTimerRef.current) {
@@ -316,33 +439,38 @@ const WebcamProctor = ({ onViolation, isActive, relaxForTyping = false }) => {
         }
 
         if (faceCount > 1) {
-          if (lowLight) {
-            consecutiveMultipleFacesRef.current += 1;
-            if (
-              consecutiveMultipleFacesRef.current >= rules.multipleFacesConfirmSecs
-            ) {
-              reportViolation(
-                "multiple_faces",
-                35,
-                "Multiple faces visible for several seconds (dim-light rule)"
-              );
-              consecutiveMultipleFacesRef.current = 0;
-            }
-          } else {
+          consecutiveMultipleFacesRef.current += 1;
+          const needTicks = rules.multipleFacesConfirmTicks ?? 4;
+          if (
+            consecutiveMultipleFacesRef.current >= 2 &&
+            consecutiveMultipleFacesRef.current < needTicks
+          ) {
+            setLiveAlert("Multiple faces detected — verifying…");
+          }
+          if (consecutiveMultipleFacesRef.current >= needTicks) {
+            reportViolation(
+              "multiple_faces",
+              lowLight ? 35 : 40,
+              lowLight
+                ? "Multiple faces visible for several seconds (dim-light rule)"
+                : "Multiple faces detected — only you should be on camera"
+            );
             consecutiveMultipleFacesRef.current = 0;
-            reportViolation("multiple_faces", 40, "Multiple faces detected");
           }
         } else {
           consecutiveMultipleFacesRef.current = 0;
+          setLiveAlert((prev) =>
+            prev === "Multiple faces detected — verifying…" ? null : prev
+          );
         }
 
         if (faceCount === 1 && !rules.skipPoseChecks) {
-          const landmarks = detections[0].landmarks;
+          const landmarks = distinctFaces[0].landmarks;
           const nose = landmarks.getNose();
           const leftEye = landmarks.getLeftEye();
           const rightEye = landmarks.getRightEye();
 
-          const faceBox = detections[0].detection.box;
+          const faceBox = distinctFaces[0].detection.box;
           const faceWidth = Math.max(faceBox.width, 1);
           const faceHeight = Math.max(faceBox.height, 1);
           const eyeDistance = Math.abs(leftEye[0].x - rightEye[3].x);

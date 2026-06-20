@@ -25,8 +25,8 @@ const Interview = () => {
   const [loading, setLoading] = useState(false);
   const [subject, setSubject] = useState("MERN Stack");
   const [chatHistory, setChatHistory] = useState([]);
-  const [questionSecondsTotal, setQuestionSecondsTotal] = useState(60);
-  const [questionSecondsLeft, setQuestionSecondsLeft] = useState(60);
+  const [questionSecondsTotal, setQuestionSecondsTotal] = useState(90);
+  const [questionSecondsLeft, setQuestionSecondsLeft] = useState(90);
   const [questionDifficulty, setQuestionDifficulty] = useState("easy");
   const chatEndRef = useRef(null);
   const inputRef = useRef(null); // For auto-focus
@@ -41,6 +41,11 @@ const Interview = () => {
   const [abandonSummary, setAbandonSummary] = useState(null);
   const [studentId] = useState(() => localStorage.getItem("studentId") || "");
   const isEndingRef = useRef(false);
+  const warningCountRef = useRef(0);
+
+  useEffect(() => {
+    warningCountRef.current = warningCount;
+  }, [warningCount]);
 
   const postAnticheat = async (fn, payload) => {
     const sid = session?.sessionId;
@@ -92,12 +97,13 @@ const Interview = () => {
       type === "no_face_detected";
 
     if (warnsOnUi) {
-      const bannerText = `${reason} (${warningCount + 1}/3)`;
-      setProctorBanner(bannerText);
-      window.setTimeout(() => {
-        setProctorBanner((prev) => (prev === bannerText ? null : prev));
-      }, 8000);
-      incrementWarning(reason);
+      incrementWarning(reason, (newCount) => {
+        const bannerText = `${reason} (${newCount}/3)`;
+        setProctorBanner(bannerText);
+        window.setTimeout(() => {
+          setProctorBanner((prev) => (prev === bannerText ? null : prev));
+        }, 8000);
+      });
     }
 
     logEvent("webcam_" + type, { reason, points });
@@ -134,8 +140,9 @@ const Interview = () => {
   };
 
   // 🔒 ANTI-CHEAT: Increment Warning
-  const incrementWarning = (reason) => {
-    const newCount = warningCount + 1;
+  const incrementWarning = (reason, onCounted) => {
+    const newCount = warningCountRef.current + 1;
+    warningCountRef.current = newCount;
     setWarningCount(newCount);
     logEvent("warning_issued", { warningCount: newCount, reason });
     postAnticheat(incrementAnticheatWarning, {
@@ -150,6 +157,8 @@ const Interview = () => {
     } else if (newCount >= 3) {
       dismissInterview(reason);
     }
+
+    onCounted?.(newCount);
   };
 
   const exitFullscreenSafe = async () => {
