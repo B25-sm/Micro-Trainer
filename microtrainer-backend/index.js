@@ -2619,6 +2619,73 @@ app.get("/api/export/download/:filename", trainerOnly, (req, res) => {
   }
 });
 
+// =======================================================
+// 🧠 LEARNER INTELLIGENCE (behavior tracking, profiles,
+//    recommendations, at-risk monitoring)
+// =======================================================
+
+// Phase 1 — record a lightweight behavior micro-signal from the frontend
+app.post("/api/behavior/track", (req, res) => {
+  try {
+    const { logBehaviorEvent } = require("./services/studentLearningLedgerService");
+    const { studentId, eventType, technology, topic, durationMs, metadata } =
+      req.body || {};
+    if (!studentId || !eventType) {
+      return res.status(400).json({ error: "studentId and eventType required" });
+    }
+    const record = logBehaviorEvent({
+      studentId,
+      eventType,
+      technology,
+      topic,
+      durationMs,
+      metadata,
+    });
+    if (!record) {
+      return res.status(400).json({ error: "Invalid or ignored event" });
+    }
+    res.json({ ok: true, id: record.id });
+  } catch (error) {
+    console.error("BEHAVIOR TRACK ERROR:", error.message);
+    res.status(500).json({ error: "Failed to record behavior" });
+  }
+});
+
+// Phase 2 — full learner profile (self or trainer)
+app.get("/student/:studentId/profile", studentSelfOrTrainer, (req, res) => {
+  try {
+    const { getLearnerProfile } = require("./services/learnerProfileService");
+    res.json(getLearnerProfile(req.params.studentId));
+  } catch (error) {
+    console.error("LEARNER PROFILE ERROR:", error.message);
+    res.status(500).json({ error: "Failed to build learner profile" });
+  }
+});
+
+// Phase 3 — personalized recommendations (self or trainer)
+app.get("/student/:studentId/recommendations", studentSelfOrTrainer, (req, res) => {
+  try {
+    const { getRecommendations } = require("./services/recommendationService");
+    res.json(getRecommendations(req.params.studentId));
+  } catch (error) {
+    console.error("RECOMMENDATIONS ERROR:", error.message);
+    res.status(500).json({ error: "Failed to build recommendations" });
+  }
+});
+
+// Phase 4 — trainer view of at-risk students
+app.get("/trainer/at-risk", trainerOnly, (req, res) => {
+  try {
+    const { getAtRiskStudents } = require("./services/atRiskMonitorService");
+    const threshold = parseInt(req.query.threshold, 10) || 50;
+    const students = getAtRiskStudents({ threshold });
+    res.json({ students, count: students.length });
+  } catch (error) {
+    console.error("AT-RISK ERROR:", error.message);
+    res.status(500).json({ error: "Failed to load at-risk students" });
+  }
+});
+
 // ===== ANALYTICS ENDPOINTS =====
 
 // Get student dashboard analytics
@@ -2745,6 +2812,15 @@ server.listen(PORT, async () => {
 
   // Initialize background jobs
   initializeCronJobs();
+
+  // Learner intelligence: register the (pluggable) recommendation scorer
+  try {
+    const { initPluggableScorer } = require("./services/featureStoreService");
+    initPluggableScorer();
+    console.log("🧠 Learner intelligence: recommendation scorer ready");
+  } catch (e) {
+    console.warn("Learner intelligence init skipped:", e.message);
+  }
   
   // Optional: Enable auto-export every 60 minutes
   // Uncomment the line below to enable automatic exports

@@ -134,6 +134,24 @@ function initializeCronJobs() {
     { timezone: "UTC" }
   );
 
+  // Learner intelligence: rebuild profiles, export ML features, scan at-risk
+  cron.schedule(
+    "30 0 * * *",
+    () => {
+      console.log("🧠 Rebuilding learner profiles & scanning at-risk...");
+      try {
+        const { runAtRiskScan } = require("./atRiskMonitorService");
+        const { exportFeatureMatrix } = require("./featureStoreService");
+        const result = runAtRiskScan({ broadcast: true });
+        exportFeatureMatrix();
+        console.log(`✅ Learner intelligence updated (${result.flagged} at-risk)`);
+      } catch (error) {
+        console.error("❌ Learner intelligence job failed:", error.message);
+      }
+    },
+    { timezone: "UTC" }
+  );
+
   console.log("✅ Cron jobs initialized:");
   console.log("   - Daily streak calculation (00:00 UTC)");
   console.log("   - Daily assessment generation (00:00 UTC)");
@@ -143,6 +161,7 @@ function initializeCronJobs() {
   console.log("   - Personal schedule reminders (08:00 UTC)");
   console.log("   - Weekly summary emails (Sunday 08:00 UTC)");
   console.log("   - Mock test reminders (Sunday 10:00 UTC)");
+  console.log("   - Learner profiles + at-risk scan (00:30 UTC)");
 }
 
 function checkAtRiskStudents() {

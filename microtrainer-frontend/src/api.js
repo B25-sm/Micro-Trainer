@@ -147,6 +147,31 @@ export const reportIssue = (data) =>
 
 
 // =======================================================
+// 🔹 LEARNER INTELLIGENCE (profiles, recommendations, behavior)
+// =======================================================
+
+// Personalized "what to do next" recommendations
+export const getRecommendations = (id) =>
+  API.get(`/student/${id}/recommendations`, {
+    headers: getStudentApiHeaders(id),
+  });
+
+// Full learner profile (weak topics, momentum, study pattern, churn risk)
+export const getLearnerProfile = (id) =>
+  API.get(`/student/${id}/profile`, { headers: getStudentApiHeaders(id) });
+
+// Trainer: at-risk students
+export const getAtRiskStudents = (threshold = 50) =>
+  API.get(`/trainer/at-risk?threshold=${threshold}`, {
+    headers: getTrainerApiHeaders(),
+  });
+
+// Fire-and-forget behavior micro-signal (never blocks the UI)
+export const trackBehavior = (data) =>
+  API.post("/api/behavior/track", data).catch(() => {});
+
+
+// =======================================================
 // 🔹 EXPORT DEFAULT
 // =======================================================
 

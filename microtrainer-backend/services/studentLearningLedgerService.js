@@ -115,11 +115,15 @@ function appendEvent(event) {
     return null;
   }
 
-  try {
-    const { scheduleReadinessSheetsSync } = require("./technologyReadinessSheetsService");
-    scheduleReadinessSheetsSync(record.studentId, record.technology);
-  } catch (syncErr) {
-    console.error("Readiness Sheets schedule error:", syncErr.message);
+  // Behavior micro-signals (topic opened, dwell, search, etc.) are high-frequency
+  // and carry no score — skip the Google Sheets readiness sync for them.
+  if (record.source !== "behavior") {
+    try {
+      const { scheduleReadinessSheetsSync } = require("./technologyReadinessSheetsService");
+      scheduleReadinessSheetsSync(record.studentId, record.technology);
+    } catch (syncErr) {
+      console.error("Readiness Sheets schedule error:", syncErr.message);
+    }
   }
 
   return record;
@@ -257,7 +261,62 @@ function logChatQuestion({ studentId, topic }) {
   });
 }
 
+// =======================================================
+// 📡 BEHAVIOR MICRO-SIGNALS (Phase 1 — pattern tracking)
+// Lightweight, first-party, no score. Used to build learner profiles.
+// =======================================================
+const BEHAVIOR_EVENT_TYPES = new Set([
+  "topic_opened",
+  "topic_abandoned",
+  "lesson_started",
+  "lesson_completed",
+  "content_dwell",
+  "search_query",
+  "recommendation_clicked",
+  "retry",
+  "page_view",
+  "resource_opened",
+]);
+
+/**
+ * Record a behavioral micro-signal (what the student does, not just outcomes).
+ * @param {object} opts
+ * @param {string} opts.studentId
+ * @param {string} opts.eventType - one of BEHAVIOR_EVENT_TYPES
+ * @param {string} [opts.technology]
+ * @param {string} [opts.topic]
+ * @param {number} [opts.durationMs] - dwell time for content_dwell
+ * @param {object} [opts.metadata]
+ */
+function logBehaviorEvent({
+  studentId,
+  eventType,
+  technology,
+  topic,
+  durationMs,
+  metadata = {},
+}) {
+  if (!studentId || studentId === "anonymous") return null;
+  const type = String(eventType || "").trim();
+  if (!BEHAVIOR_EVENT_TYPES.has(type)) return null;
+
+  return appendEvent({
+    studentId,
+    technology,
+    topic: topic || "",
+    activityType: type,
+    score: null,
+    source: "behavior",
+    metadata: {
+      ...metadata,
+      ...(durationMs != null ? { durationMs: Number(durationMs) } : {}),
+    },
+  });
+}
+
 module.exports = {
+  BEHAVIOR_EVENT_TYPES,
+  logBehaviorEvent,
   appendEvent,
   readAllEvents,
   getEventsForStudent,

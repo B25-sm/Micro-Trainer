@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import axios from "axios";
-import { askAI } from "../api";
+import { askAI, trackBehavior } from "../api";
 import { getStudentId } from "../utils/studentAuth";
 import { isTrainerSession } from "../utils/trainerAuth";
 import { createLessonMarkdownComponents } from "../utils/lessonMarkdown";
@@ -289,9 +289,30 @@ const Learn = () => {
     setSelectedConceptOrder(conceptOrder);
     setIsReviewMode(isReview);
     setCurrentView("teaching");
+
+    const sid = resolveLearnStudentId();
+    if (sid) {
+      trackBehavior({
+        studentId: sid,
+        eventType: isReview ? "topic_opened" : "lesson_started",
+        technology: selectedTechnology,
+        topic: String(conceptId),
+        metadata: { conceptOrder, isReview },
+      });
+    }
   };
 
   const handleConceptComplete = () => {
+    const sid = resolveLearnStudentId();
+    if (sid) {
+      trackBehavior({
+        studentId: sid,
+        eventType: "lesson_completed",
+        technology: selectedTechnology,
+        topic: String(selectedConceptOrder ?? ""),
+      });
+    }
+
     // Return to concept list to show updated progress
     setCurrentView("concept-list");
     setSelectedConceptOrder(null);

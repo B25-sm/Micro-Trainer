@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAnalytics, getMemory } from "../api";
+import { getAnalytics, getMemory, getRecommendations } from "../api";
 import { motion } from "framer-motion";
 import SyncRequiredBanner from "../components/SyncRequiredBanner";
 import InterviewHistoryPanel from "../components/InterviewHistoryPanel";
@@ -37,6 +37,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [analytics, setAnalytics] = useState(null);
   const [memory, setMemory] = useState(null);
+  const [recommendations, setRecommendations] = useState([]);
   const [status, setStatus] = useState("loading"); // loading | ready | error | trainer | no-profile
 
   useEffect(() => {
@@ -65,6 +66,11 @@ const Dashboard = () => {
       setAnalytics({ ...EMPTY_ANALYTICS, ...(aRes.data || {}) });
       setMemory({ ...EMPTY_MEMORY, ...(mRes.data || {}) });
       setStatus("ready");
+
+      // Recommendations are non-critical — never block the dashboard on them
+      getRecommendations(studentId)
+        .then((rRes) => setRecommendations(rRes.data?.recommendations || []))
+        .catch(() => setRecommendations([]));
     } catch (err) {
       console.error("Dashboard error:", err);
       setStatus("error");
@@ -183,6 +189,13 @@ const Dashboard = () => {
       <main className="flex-1 p-6">
         <div className="max-w-6xl mx-auto space-y-6">
           <SyncRequiredBanner studentId={studentId} />
+
+          {recommendations.length > 0 && (
+            <RecommendationsCard
+              items={recommendations}
+              onAct={(path) => navigate(path)}
+            />
+          )}
 
           {analytics.totalQuestions === 0 && (
             <div className="rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40 px-4 py-3 text-sm text-blue-800 dark:text-blue-200">
@@ -305,6 +318,43 @@ const StatCard = ({ title, value, color, badge }) => (
       {value ?? "—"}
     </h3>
   </motion.div>
+);
+
+const RecommendationsCard = ({ items = [], onAct }) => (
+  <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] p-6 shadow-sm">
+    <div className="flex items-center gap-2 mb-4">
+      <span className="text-lg">🎯</span>
+      <h2 className="text-lg font-medium text-gray-800 dark:text-gray-100">
+        Recommended for you
+      </h2>
+    </div>
+    <ul className="space-y-3">
+      {items.map((rec) => (
+        <li
+          key={rec.id}
+          className="flex items-start justify-between gap-4 rounded-xl border border-gray-100 dark:border-gray-700/60 p-4 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition"
+        >
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
+              {rec.title}
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              {rec.reason}
+            </p>
+          </div>
+          {rec.action?.path && (
+            <button
+              type="button"
+              onClick={() => onAct(rec.action.path)}
+              className="shrink-0 px-3 py-1.5 rounded-lg bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 text-xs font-medium hover:opacity-90 transition"
+            >
+              {rec.action.label || "Go"}
+            </button>
+          )}
+        </li>
+      ))}
+    </ul>
+  </div>
 );
 
 const ConceptCard = ({ title, items = [], type }) => {
