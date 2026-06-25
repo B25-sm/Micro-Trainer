@@ -6,6 +6,7 @@ import { Mic, Code2, BookOpen, BarChart3, ArrowUp, MessageSquareText } from "luc
 import { chatWithMicroTrainer } from "../api";
 import { pageShell, textMuted } from "../lib/ui";
 import { createLessonMarkdownComponents } from "../utils/lessonMarkdown";
+import ConceptCards, { parseConceptSections } from "../components/ConceptCards";
 import ChatHistorySidebar from "../components/ChatHistorySidebar";
 import { useChatHistoryPersistence } from "../hooks/useChatHistoryPersistence";
 import { filterStarterPrompts } from "../utils/chatHistoryStorage";
@@ -337,6 +338,34 @@ function WelcomeView({
 
 /* ================= ACTIVE CHAT ================= */
 
+function AssistantMessage({ content, highlighted }) {
+  const sections = useMemo(() => parseConceptSections(content), [content]);
+
+  if (sections) {
+    return (
+      <div
+        className={`w-full rounded-3xl transition-shadow ${
+          highlighted ? "ring-2 ring-blue-300 dark:ring-blue-600 ring-offset-4 dark:ring-offset-[#202124]" : ""
+        }`}
+      >
+        <ConceptCards sections={sections} />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={`max-w-[90%] px-4 py-4 rounded-2xl rounded-bl-md bg-gray-50 dark:bg-[#292a2d] border border-gray-200 dark:border-gray-700 transition-shadow ${
+        highlighted ? "ring-2 ring-blue-300 dark:ring-blue-600" : ""
+      }`}
+    >
+      <div className="prose prose-sm dark:prose-invert max-w-none text-gray-800 dark:text-gray-200">
+        <ReactMarkdown components={chatMdComponents}>{content}</ReactMarkdown>
+      </div>
+    </div>
+  );
+}
+
 function ActiveChatView({
   chatHistory,
   highlightedIndex,
@@ -412,19 +441,10 @@ function ActiveChatView({
                     <span>{message.content}</span>
                   </div>
                 ) : (
-                  <div
-                    className={`max-w-[90%] px-4 py-4 rounded-2xl rounded-bl-md bg-gray-50 dark:bg-[#292a2d] border border-gray-200 dark:border-gray-700 transition-shadow ${
-                      highlightedIndex === index
-                        ? "ring-2 ring-blue-300 dark:ring-blue-600"
-                        : ""
-                    }`}
-                  >
-                    <div className="prose prose-sm dark:prose-invert max-w-none text-gray-800 dark:text-gray-200">
-                      <ReactMarkdown components={chatMdComponents}>
-                        {message.content}
-                      </ReactMarkdown>
-                    </div>
-                  </div>
+                  <AssistantMessage
+                    content={message.content}
+                    highlighted={highlightedIndex === index}
+                  />
                 )}
               </motion.div>
             ))}
