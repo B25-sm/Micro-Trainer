@@ -28,6 +28,8 @@ function estimateVideoLuminance(video) {
 }
 
 const LOW_LIGHT_LUMA = 58;
+/** Near-black frames (lens covered / camera feeding black) sit far below even a dim room */
+const BLACK_FRAME_LUMA = 12;
 
 /** Merge overlapping boxes — tiny-face often double-counts one person */
 function boxIoU(a, b) {
@@ -217,9 +219,14 @@ const WebcamProctor = ({ onViolation, isActive, relaxForTyping = false }) => {
   /** When true, dim-room presets apply (still enforced — softer thresholds / longer waits) */
   const [lowLightActive, setLowLightActive] = useState(false);
   const [liveAlert, setLiveAlert] = useState(null);
+  /** True when the camera track has ended/muted or the feed is black (covered/off) */
+  const [cameraOff, setCameraOff] = useState(false);
   const lowLightPrevRef = useRef(false);
   const detectionIntervalRef = useRef(null);
   const noFaceTimerRef = useRef(null);
+  const cameraOffTimerRef = useRef(null);
+  /** Counts consecutive near-black frames before flagging a covered/off camera */
+  const consecutiveBlackRef = useRef(0);
   const lookingAwayTimerRef = useRef(null);
   const headTurnTimerRef = useRef(null);
   /** Only count "empty" frames after real misses — detector often flickers in low light */
@@ -236,6 +243,7 @@ const WebcamProctor = ({ onViolation, isActive, relaxForTyping = false }) => {
     looking_away: 15_000,
     multiple_faces: 8_000,
     no_face_detected: 15_000,
+    camera_off: 12_000,
   };
 
   const stopCamera = () => {
@@ -246,7 +254,20 @@ const WebcamProctor = ({ onViolation, isActive, relaxForTyping = false }) => {
     if (videoRef.current) {
       videoRef.current.srcObject = null;
     }
+    if (cameraOffTimerRef.current) {
+      clearTimeout(cameraOffTimerRef.current);
+      cameraOffTimerRef.current = null;
+    }
+    consecutiveBlackRef.current = 0;
     setCameraActive(false);
+    setCameraOff(false);
+  };
+
+  /** Camera stopped/covered/disabled — flag immediately and surface a sticky alert */
+  const flagCameraOff = (reason) => {
+    if (!isActiveRef.current) return;
+    setCameraOff(true);
+    reportViolation("camera_off", 40, reason);
   };
 
   const reportViolation = (type, points, reason) => {
@@ -332,13 +353,31 @@ const WebcamProctor = ({ onViolation, isActive, relaxForTyping = false }) => {
         }
 
         streamRef.current = stream;
+
+        // Detect the camera being switched off / disconnected mid-interview.
+        // Browsers fire "ended" (track stopped/unplugged) or "mute" (OS/privacy
+        // shutter, another app grabbed the device) on the video track.
+        stream.getVideoTracks().forEach((track) => {
+          track.addEventListener("ended", () => {
+            flagCameraOff("Camera turned off — turn it back on to continue the interview");
+          });
+          track.addEventListener("mute", () => {
+            flagCameraOff("Camera feed stopped — make sure your camera is on and not blocked");
+          });
+          track.addEventListener("unmute", () => {
+            setCameraOff(false);
+          });
+        });
+
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
           setCameraActive(true);
+          setCameraOff(false);
           console.log("✅ Webcam started");
         }
       } catch (error) {
         console.error("❌ Webcam access denied:", error);
+        setCameraOff(true);
         reportViolation("camera_denied", 50, "Camera access required for interview");
       }
     };
@@ -367,6 +406,27 @@ const WebcamProctor = ({ onViolation, isActive, relaxForTyping = false }) => {
         }
 
         const luma = estimateVideoLuminance(v);
+
+        // Near-black feed for a few seconds → lens covered or camera off (not just dim).
+        if (luma < BLACK_FRAME_LUMA) {
+          consecutiveBlackRef.current += 1;
+          if (consecutiveBlackRef.current >= 6 && !cameraOffTimerRef.current) {
+            cameraOffTimerRef.current = setTimeout(() => {
+              flagCameraOff(
+                "Camera appears off or covered — uncover it and stay visible"
+              );
+              cameraOffTimerRef.current = null;
+            }, 3000);
+          }
+          return; // black frame yields no usable detections — skip the rest
+        }
+        consecutiveBlackRef.current = 0;
+        if (cameraOffTimerRef.current) {
+          clearTimeout(cameraOffTimerRef.current);
+          cameraOffTimerRef.current = null;
+        }
+        if (cameraOff) setCameraOff(false);
+
         const lowLight = luma < LOW_LIGHT_LUMA;
         if (lowLight !== lowLightPrevRef.current) {
           lowLightPrevRef.current = lowLight;
@@ -568,6 +628,11 @@ const WebcamProctor = ({ onViolation, isActive, relaxForTyping = false }) => {
       if (headTurnTimerRef.current) {
         clearTimeout(headTurnTimerRef.current);
       }
+      if (cameraOffTimerRef.current) {
+        clearTimeout(cameraOffTimerRef.current);
+        cameraOffTimerRef.current = null;
+      }
+      consecutiveBlackRef.current = 0;
       consecutiveNoFaceRef.current = 0;
       consecutiveMultipleFacesRef.current = 0;
       consecutiveLookingAwayRef.current = 0;
@@ -583,9 +648,17 @@ const WebcamProctor = ({ onViolation, isActive, relaxForTyping = false }) => {
         <div className="bg-gray-800 px-3 py-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div
-              className={`w-2 h-2 rounded-full ${cameraActive ? "bg-red-500 animate-pulse" : "bg-gray-400"}`}
+              className={`w-2 h-2 rounded-full ${
+                cameraOff
+                  ? "bg-amber-400 animate-pulse"
+                  : cameraActive
+                    ? "bg-red-500 animate-pulse"
+                    : "bg-gray-400"
+              }`}
             ></div>
-            <span className="text-xs text-white font-medium">Proctoring Active</span>
+            <span className="text-xs text-white font-medium">
+              {cameraOff ? "Camera Off" : "Proctoring Active"}
+            </span>
           </div>
         </div>
 
@@ -617,7 +690,16 @@ const WebcamProctor = ({ onViolation, isActive, relaxForTyping = false }) => {
           </div>
         )}
 
-        {liveAlert && (
+        {cameraOff && (
+          <div className="px-3 py-2 bg-red-600 border-t border-red-700">
+            <p className="text-xs text-white font-semibold leading-snug">
+              Camera is off. Turn your camera back on to continue — this is being recorded as a
+              proctoring violation.
+            </p>
+          </div>
+        )}
+
+        {liveAlert && !cameraOff && (
           <div className="px-3 py-2 bg-red-600 border-t border-red-700">
             <p className="text-xs text-white font-medium leading-snug">{liveAlert}</p>
           </div>

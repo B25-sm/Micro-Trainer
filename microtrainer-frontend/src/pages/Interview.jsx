@@ -108,6 +108,7 @@ const Interview = () => {
     const warnsOnUi =
       type === "multiple_faces" ||
       type === "camera_denied" ||
+      type === "camera_off" ||
       type === "head_turned" ||
       type === "looking_away" ||
       type === "no_face_detected";
