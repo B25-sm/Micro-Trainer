@@ -24,18 +24,15 @@ import PersonalSchedule from "./pages/PersonalSchedule.jsx";
 import CommunicationReview from "./pages/CommunicationReview.jsx";
 import CompanyInterviews from "./pages/CompanyInterviews.jsx";
 import CompanyInterview from "./pages/CompanyInterview.jsx";
-import ExtensionPanel from "./pages/ExtensionPanel.jsx";
 
 // Protected Route Component
 import { TrainerOnly } from "./components/ProtectedRoute.jsx";
 import { RequireAuth } from "./components/RequireAuth.jsx";
 import ReportIssueButton from "./components/ReportIssueButton.jsx";
-import ExtensionAutoConnect from "./components/ExtensionAutoConnect.jsx";
 
 function App() {
   return (
     <BrowserRouter>
-      <ExtensionAutoConnect />
       <ReportIssueButton />
       <AnimatePresence mode="wait">
         <Routes>
@@ -48,16 +45,6 @@ function App() {
             element={
               <RequireAuth>
                 <CompleteProfile />
-              </RequireAuth>
-            }
-          />
-
-          {/* Compact extension side-panel experience */}
-          <Route
-            path="/extension"
-            element={
-              <RequireAuth>
-                <ExtensionPanel />
               </RequireAuth>
             }
           />
