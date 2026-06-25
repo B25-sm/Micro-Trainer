@@ -10,7 +10,9 @@ const {
   getRandomNodeQuestionCurated,
   getRandomJSQuestionCurated,
   getRandomJavaQuestionCurated,
+  getRandomJavaFrameworkQuestion,
   getRandomPythonQuestionCurated,
+  getRandomPythonFrameworkQuestion,
   getRandomSQLQuestionCurated,
 } = require("./curatedInterviewBanks");
 
@@ -107,6 +109,7 @@ async function generateQuestion({ subject, history = [], studentId }) {
     if (subjectLower.includes("java") && isFullStack) {
       const stack = [
         { getter: getRandomJavaQuestionCurated, subject: "Java" },
+        { getter: getRandomJavaFrameworkQuestion, subject: "Spring Boot" },
         { getter: getRandomReactQuestionCurated, subject: "React" },
       ];
       const pick = stack[Math.floor(Math.random() * stack.length)];
@@ -143,6 +146,7 @@ async function generateQuestion({ subject, history = [], studentId }) {
     if (subjectLower.includes("python") && isFullStack) {
       const stack = [
         { getter: getRandomPythonQuestionCurated, subject: "Python" },
+        { getter: getRandomPythonFrameworkQuestion, subject: "Django/Flask" },
         { getter: getRandomReactQuestionCurated, subject: "React" },
       ];
       const pick = stack[Math.floor(Math.random() * stack.length)];

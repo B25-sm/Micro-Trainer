@@ -125,63 +125,112 @@ const JAVASCRIPT_BANK = {
   ],
 };
 
+// Pure Java LANGUAGE bank — no Spring / JPA / Hibernate.
+// Those frameworks live in JAVA_FRAMEWORK_BANK and are only used for
+// full-stack/role interviews, never a plain "Java" interview.
 const JAVA_BANK = {
   easy: [
     "ArrayList vs LinkedList — when would you pick each?",
     "HashMap — how do hashCode and equals work together?",
     "String vs StringBuilder in a loop — performance issue?",
     "@Override — why mark methods overridden from Object?",
-    "try-with-resources — auto-close JDBC Connection example",
+    "try-with-resources — auto-close a resource example",
     "interface vs abstract class — one scenario for each",
     "final keyword — on variable, method, and class",
-    "Maven pom.xml — what is groupId and artifactId?",
+    "autoboxing — Integer vs int pitfalls in comparisons",
   ],
   medium: [
-    "@RestController GET /users — sketch the method signature",
-    "@Autowired constructor injection — why preferred over field?",
-    "JPA @OneToMany — parent Order, child OrderItem example",
+    "Generics — write a generic <T> max() using Comparable",
+    "equals() and hashCode() — the contract when overriding both",
+    "Comparable vs Comparator — sort employees by salary",
     "Stream filter + map — get active user emails",
-    "Optional.orElseThrow — avoid null from repository",
-    "Bean scope singleton vs prototype — real impact?",
+    "Optional.orElseThrow — avoid returning null from a method",
+    "Enum with fields and methods — model planets with mass",
     "Checked vs unchecked exception — when throw which?",
-    "Spring @Transactional — what rolls back by default?",
+    "Functional interface + lambda — implement Runnable concisely",
   ],
   hard: [
-    "N+1 query problem in JPA — detect and fix with fetch join",
-    "Design thread-safe cache with ConcurrentHashMap",
-    "Circuit breaker pattern for external REST client",
-    "JWT filter chain order in Spring Security",
-    "Migrate monolith module to separate service — first steps",
+    "Design a thread-safe cache with ConcurrentHashMap",
+    "synchronized vs ReentrantLock — when prefer the explicit lock?",
+    "volatile vs synchronized — visibility vs atomicity",
+    "CompletableFuture — chain two async calls and combine results",
+    "Custom checked exception — when and how to create one well",
   ],
 };
 
+// Java enterprise FRAMEWORKS — used only for full-stack and role interviews.
+const JAVA_FRAMEWORK_BANK = {
+  easy: [
+    "@RestController GET /users — sketch the method signature",
+    "@Autowired constructor injection — why preferred over field?",
+    "Maven pom.xml — what is groupId and artifactId?",
+    "@SpringBootApplication — what does it enable?",
+  ],
+  medium: [
+    "JPA @OneToMany — parent Order, child OrderItem example",
+    "Bean scope singleton vs prototype — real impact?",
+    "Spring @Transactional — what rolls back by default?",
+    "Spring profiles — dev vs prod configuration",
+  ],
+  hard: [
+    "N+1 query problem in JPA — detect and fix with fetch join",
+    "Circuit breaker pattern for external REST client",
+    "JWT filter chain order in Spring Security",
+  ],
+};
+
+// Pure Python LANGUAGE bank — no web frameworks or third-party libraries.
+// Frameworks (Django/Flask/pandas/etc.) live in PYTHON_FRAMEWORK_BANK and are
+// only used for full-stack/role interviews, never a plain "Python" interview.
 const PYTHON_BANK = {
   easy: [
     "List comprehension — filter even numbers from 1–10",
     "dict.get vs dict[key] — when avoid KeyError?",
-    "virtualenv — why isolate project dependencies?",
+    "*args vs **kwargs — pass flexible arguments to a function",
     "f-strings vs .format() — format a user greeting",
-    "with open() — read a file safely",
+    "with open() — read a file safely using a context manager",
     "def vs lambda — when is lambda too cramped?",
-    "pip install -r requirements.txt — what goes in the file?",
+    "enumerate() — loop over a list with its index",
     "if __name__ == '__main__' — why guard script entry?",
   ],
   medium: [
-    "Django Model — define User with email unique",
-    "Flask route @app.route('/hello') — return JSON",
+    "Generators — yield squares lazily instead of building a list",
+    "Mutable default argument — why is def f(x=[]) risky?",
     "List vs tuple — immutable config tuple example",
     "Decorators — write @timer that logs execution time",
-    "requests.get timeout — handle timeout exception",
-    "pandas read_csv — drop null rows in one line idea",
-    "pytest fixture — share DB connection across tests",
+    "Exception handling — try/except/else/finally with an example",
+    "Shallow vs deep copy — copy.copy vs copy.deepcopy on nested list",
+    "is vs == — identity vs equality with small ints and strings",
     "GIL — when does it matter for CPU-bound Python?",
   ],
   hard: [
-    "Asyncio gather vs wait — parallel HTTP calls pattern",
+    "Asyncio gather vs wait — run coroutines concurrently",
+    "Context manager — implement __enter__/__exit__ for a timer",
+    "Type hints — annotate a function and explain the benefit",
+    "Metaclasses — what problem do they solve? one real use case",
+    "__slots__ — how does it reduce memory for many instances?",
+  ],
+};
+
+// Python web/data FRAMEWORKS — used only for full-stack and role interviews.
+const PYTHON_FRAMEWORK_BANK = {
+  easy: [
+    "Flask route @app.route('/hello') — return JSON",
+    "Django Model — define User with email unique",
+    "requests.get timeout — handle the timeout exception",
+    "pip install -r requirements.txt — what goes in the file?",
+  ],
+  medium: [
+    "Django ORM — query active users with filter()",
+    "Flask blueprint — why split routes into modules?",
+    "pandas read_csv — drop null rows in one line idea",
+    "pytest fixture — share a DB connection across tests",
+  ],
+  hard: [
     "Django N+1 in templates — select_related fix",
-    "Type hints + mypy — catch bug before runtime",
-    "Design Celery task for email with retry backoff",
-    "Memory profile a pandas pipeline on large CSV",
+    "Design a Celery task for email with retry backoff",
+    "Flask app factory + SQLAlchemy session per request",
+    "Memory profile a pandas pipeline on a large CSV",
   ],
 };
 
@@ -238,6 +287,12 @@ function getRandomJavaQuestionCurated(difficulty) {
 function getRandomPythonQuestionCurated(difficulty) {
   return pickFromBank(PYTHON_BANK, difficulty);
 }
+function getRandomPythonFrameworkQuestion(difficulty) {
+  return pickFromBank(PYTHON_FRAMEWORK_BANK, difficulty);
+}
+function getRandomJavaFrameworkQuestion(difficulty) {
+  return pickFromBank(JAVA_FRAMEWORK_BANK, difficulty);
+}
 function getRandomSQLQuestionCurated(difficulty) {
   return pickFromBank(SQL_BANK, difficulty);
 }
@@ -254,7 +309,17 @@ function isOffTopicQuestion(question, subject) {
   const sqlTerms = /\b(select |join |group by|where |insert into)\b/;
   const mongoTerms = /\b(mongodb|mongoose|bson|aggregation pipeline)\b/;
 
+  // Frameworks/libraries that must NOT appear in a pure LANGUAGE interview.
+  // (GIL is a core language/runtime concept, so it is deliberately excluded here.)
+  const pythonFrameworkTerms = /\b(django|flask|fastapi|pandas|numpy|scipy|celery|sqlalchemy|pytest|requests\.)\b/;
+  const javaFrameworkTerms = /\b(spring|spring boot|hibernate|jpa|@autowired|@restcontroller|@transactional|bean scope|maven)\b/;
+
   if (!isFullStack) {
+    // A plain "Python" interview must stay on the language — no web/data frameworks.
+    if (s === "python" && pythonFrameworkTerms.test(q)) return true;
+    // A plain "Java" interview must stay on the language — no Spring/JPA/Hibernate.
+    if (s === "java" && javaFrameworkTerms.test(q)) return true;
+
     if (s.includes("python") && reactTerms.test(q) && !pythonTerms.test(q)) return true;
     if (s.includes("java") && !s.includes("stack") && reactTerms.test(q) && !javaTerms.test(q)) return true;
     if (s.includes("sql") && (reactTerms.test(q) || mongoTerms.test(q))) return true;
@@ -271,7 +336,9 @@ module.exports = {
   NODE_BANK,
   JAVASCRIPT_BANK,
   JAVA_BANK,
+  JAVA_FRAMEWORK_BANK,
   PYTHON_BANK,
+  PYTHON_FRAMEWORK_BANK,
   SQL_BANK,
   getRandomMongoQuestion,
   getRandomExpressQuestion,
@@ -279,7 +346,9 @@ module.exports = {
   getRandomNodeQuestionCurated,
   getRandomJSQuestionCurated,
   getRandomJavaQuestionCurated,
+  getRandomJavaFrameworkQuestion,
   getRandomPythonQuestionCurated,
+  getRandomPythonFrameworkQuestion,
   getRandomSQLQuestionCurated,
   isOffTopicQuestion,
 };
