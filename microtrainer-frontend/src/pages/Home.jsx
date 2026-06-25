@@ -185,7 +185,7 @@ const Home = () => {
 
   return (
     <div className={`flex flex-col flex-1 min-h-0 ${pageShell}`}>
-      <div className="flex flex-1 min-h-0 w-full max-w-2xl mx-auto relative">
+      <div className="flex flex-1 min-h-0 w-full max-w-7xl mx-auto relative">
         {hasSavedSessions && (
           <ChatHistorySidebar
             sessions={sessions}
@@ -354,7 +354,7 @@ function AssistantMessage({ content, highlighted }) {
 
   return (
     <div
-      className={`max-w-[90%] px-4 py-4 rounded-2xl rounded-bl-md bg-gray-50 dark:bg-[#292a2d] border border-gray-200 dark:border-gray-700 transition-shadow ${
+      className={`max-w-3xl px-4 py-4 rounded-2xl rounded-bl-md bg-gray-50 dark:bg-[#292a2d] border border-gray-200 dark:border-gray-700 transition-shadow ${
         highlighted ? "ring-2 ring-blue-300 dark:ring-blue-600" : ""
       }`}
     >
@@ -396,7 +396,7 @@ function ActiveChatView({
 
       {/* Messages */}
       <div className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-6">
-        <div className="max-w-3xl mx-auto space-y-5">
+        <div className="w-full mx-auto space-y-5">
           <AnimatePresence>
             {chatHistory.map((message, index) => (
               <motion.div
@@ -416,7 +416,7 @@ function ActiveChatView({
               >
                 {message.role === "user" ? (
                   <div
-                    className={`max-w-[85%] sm:max-w-[75%] px-4 py-3 rounded-2xl rounded-br-md bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 text-sm leading-relaxed transition-shadow ${
+                    className={`max-w-[85%] sm:max-w-xl px-4 py-3 rounded-2xl rounded-br-md bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 text-sm leading-relaxed transition-shadow ${
                       highlightedIndex === index
                         ? "ring-2 ring-blue-300 dark:ring-blue-600 ring-offset-2 dark:ring-offset-[#202124]"
                         : ""
@@ -425,7 +425,7 @@ function ActiveChatView({
                     {message.content}
                   </div>
                 ) : message.role === "error" ? (
-                  <div className="max-w-[90%] px-4 py-3 rounded-2xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 text-sm flex items-start gap-2">
+                  <div className="max-w-2xl px-4 py-3 rounded-2xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 text-sm flex items-start gap-2">
                     <svg
                       className="w-4 h-4 flex-shrink-0 mt-0.5"
                       fill="currentColor"

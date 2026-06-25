@@ -231,7 +231,7 @@ function TextCard({ icon: Icon, title, accent, body, delay }) {
   );
 }
 
-function CodeCard({ lang, code, note, delay }) {
+function CodeCard({ lang, code, note, delay, className = "" }) {
   const meta = LANG_LABEL[lang] || { label: lang ? lang.toUpperCase() : "Code", file: "snippet" };
   const lines = code.split("\n");
   const gutterWidth = String(lines.length).length;
@@ -241,7 +241,7 @@ function CodeCard({ lang, code, note, delay }) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay, ease: "easeOut" }}
-      className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-800 bg-[#0d1117] shadow-lg shadow-slate-900/20 ring-1 ring-black/5"
+      className={`flex flex-col overflow-hidden rounded-2xl border border-slate-800 bg-[#0d1117] shadow-lg shadow-slate-900/20 ring-1 ring-black/5 ${className}`}
     >
       {/* Editor title bar */}
       <div className="flex items-center gap-3 border-b border-slate-800 bg-[#161b22] px-4 py-2.5">
@@ -304,24 +304,28 @@ export default function ConceptCards({ sections }) {
   } = sections;
 
   return (
-    <div className="grid w-full gap-4 md:grid-cols-2">
-      <div className="flex flex-col gap-4">
-        <TextCard
-          icon={Lightbulb}
-          title={explanationTitle}
-          accent="blue"
-          body={explanationBody}
-          delay={0}
-        />
-        <TextCard
-          icon={Globe2}
-          title="Real-World Application"
-          accent="emerald"
-          body={realWorldBody}
-          delay={0.08}
-        />
-      </div>
-      <CodeCard lang={codeLang} code={codeRaw} note={codeNote} delay={0.16} />
+    <div className="grid w-full items-start gap-5 md:grid-cols-2 xl:grid-cols-3">
+      <TextCard
+        icon={Lightbulb}
+        title={explanationTitle}
+        accent="blue"
+        body={explanationBody}
+        delay={0}
+      />
+      <TextCard
+        icon={Globe2}
+        title="Real-World Application"
+        accent="emerald"
+        body={realWorldBody}
+        delay={0.08}
+      />
+      <CodeCard
+        lang={codeLang}
+        code={codeRaw}
+        note={codeNote}
+        delay={0.16}
+        className="md:col-span-2 xl:col-span-1"
+      />
     </div>
   );
 }

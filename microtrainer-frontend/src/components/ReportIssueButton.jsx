@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
-import { LifeBuoy, Send, ChevronUp, X, ImagePlus, ClipboardPaste } from "lucide-react";
+import { LifeBuoy, Send, X, ImagePlus, ClipboardPaste } from "lucide-react";
 import { reportIssue } from "../api";
 
 const MAX_SCREENSHOTS = 3;
@@ -291,36 +291,23 @@ export default function ReportIssueButton() {
         </div>
       )}
 
-      <div className="flex items-center gap-0 rounded-2xl border border-slate-200/90 dark:border-slate-700/90 bg-white dark:bg-slate-900 shadow-xl shadow-slate-900/8 dark:shadow-black/30 overflow-hidden">
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          disabled={isSending}
-          title="Open form to report a problem"
-          className="flex items-center gap-2.5 pl-4 pr-3 py-3 text-sm font-semibold text-slate-800 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-60 transition"
-        >
-          <span className="flex items-center justify-center w-8 h-8 rounded-xl bg-indigo-600 text-white shadow-sm">
-            <LifeBuoy className="w-4 h-4" strokeWidth={2.25} />
-          </span>
-          <span className="hidden sm:inline">
-            {isSending ? "Sending…" : "Something feels off?"}
-          </span>
-          <span className="sm:hidden">{isSending ? "…" : "Bug? Tell us"}</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          disabled={isSending}
-          title="Add details before sending"
-          className="flex items-center justify-center px-3 py-3 border-l border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
-          aria-expanded={open}
-          aria-label="Add details"
-        >
-          <ChevronUp
-            className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`}
-          />
-        </button>
-      </div>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        disabled={isSending}
+        title="Report a problem"
+        aria-label="Report a problem"
+        aria-expanded={open}
+        className="group flex h-12 w-12 items-center justify-center rounded-full bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-black/5 transition-all duration-200 hover:bg-indigo-700 hover:scale-105 active:scale-95 disabled:opacity-60"
+      >
+        {isSending ? (
+          <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+        ) : open ? (
+          <X className="h-5 w-5" strokeWidth={2.25} />
+        ) : (
+          <LifeBuoy className="h-5 w-5" strokeWidth={2.25} />
+        )}
+      </button>
     </div>
   );
 }
