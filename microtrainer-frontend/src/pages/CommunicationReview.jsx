@@ -7,8 +7,10 @@ import {
   History,
   RotateCcw,
 } from "lucide-react";
-import { communicationReviewAPI } from "../api/communicationReview";
-import { COMMUNICATION_REVIEW_SCENARIOS } from "../data/communicationReviewScenarios";
+import {
+  communicationReviewAPI,
+  COMMUNICATION_REVIEW_SCENARIOS,
+} from "../api/communicationReview";
 import { getStudentId } from "../utils/studentAuth";
 import {
   pageShell,
