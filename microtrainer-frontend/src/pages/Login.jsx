@@ -1,5 +1,5 @@
 /**
- * Sign-in: Google or GitHub only.
+ * Sign-in: Google only.
  * Students complete Name + Initial + Batch on the next screen.
  * Trainers are recognized by authorized email on the server.
  */
@@ -59,17 +59,13 @@ export default function Login() {
     }
   }
 
-  function handleGitHubLogin() {
-    window.location.href = `${API_BASE}/auth/github`;
-  }
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#202124] flex items-center justify-center px-4 py-8">
       <div className="max-w-md w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] shadow-sm p-8">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-medium text-gray-900 dark:text-gray-100 mb-2">MicroTrainer</h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm">
-            Sign in with Google or GitHub to continue
+            Sign in with Google to continue
           </p>
         </div>
 
@@ -97,15 +93,6 @@ export default function Login() {
               Add VITE_GOOGLE_CLIENT_ID to the frontend .env (see OAUTH_SETUP.md).
             </p>
           )}
-
-          <button
-            type="button"
-            onClick={handleGitHubLogin}
-            disabled={oauthLoading}
-            className="w-full flex items-center justify-center gap-2 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/40 transition disabled:opacity-50"
-          >
-            Continue with GitHub
-          </button>
         </div>
 
         <p className="mt-8 text-center text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
