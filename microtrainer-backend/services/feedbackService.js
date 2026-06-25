@@ -89,6 +89,102 @@ function escapeHtml(text) {
     .replace(/"/g, "&quot;");
 }
 
+function withTimeout(promise, ms, label = "operation") {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      setTimeout(
+        () => reject(new Error(`${label} timed out after ${ms}ms`)),
+        ms
+      );
+    }),
+  ]);
+}
+
+async function deliverFeedbackReport(record, savedScreenshots) {
+  let sheetsLogged = false;
+  try {
+    sheetsLogged = await withTimeout(
+      logFeedbackReport(record),
+      12_000,
+      "Google Sheets"
+    );
+  } catch (e) {
+    console.warn("⚠️  Feedback sheets delivery:", e.message);
+  }
+
+  const recipients = getBugReportRecipients();
+  let emailSent = false;
+
+  if (recipients.length > 0) {
+    const { reportId, timestamp, studentId, email, name, role } = record;
+    const subject = `[MicroTrainer] Issue — ${record.pagePath || "app"} (${studentId})`;
+    const inlineImages = savedScreenshots
+      .map((shot, index) => {
+        return `<p><strong>Screenshot ${index + 1}:</strong></p><img src="cid:screenshot${index}" alt="Screenshot ${index + 1}" style="max-width:100%;border:1px solid #e5e7eb;border-radius:8px;" />`;
+      })
+      .join("");
+
+    const html = `
+      <h2>Student issue report</h2>
+      <p><strong>Time:</strong> ${escapeHtml(timestamp)}</p>
+      <p><strong>Student:</strong> ${escapeHtml(name)} (${escapeHtml(studentId)})</p>
+      <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+      <p><strong>Role:</strong> ${escapeHtml(role)}</p>
+      <p><strong>Page:</strong> <a href="${escapeHtml(record.pageUrl)}">${escapeHtml(record.pagePath || record.pageUrl)}</a></p>
+      <p><strong>Screenshots:</strong> ${savedScreenshots.length}</p>
+      <hr/>
+      <p><strong>Message:</strong></p>
+      <pre style="white-space:pre-wrap;font-family:inherit;background:#f4f4f5;padding:12px;border-radius:8px;">${escapeHtml(record.message)}</pre>
+      ${inlineImages}
+      <p style="color:#666;font-size:12px;">User-Agent: ${escapeHtml(record.userAgent)}</p>
+    `;
+    const text = [
+      "Student issue report",
+      `Time: ${timestamp}`,
+      `Student: ${name} (${studentId})`,
+      `Email: ${email}`,
+      `Page: ${record.pageUrl || record.pagePath}`,
+      `Screenshots: ${savedScreenshots.length}`,
+      "",
+      record.message,
+      "",
+      `User-Agent: ${record.userAgent}`,
+    ].join("\n");
+
+    const attachments = savedScreenshots.map((shot, index) => {
+      const filePath = path.join(SCREENSHOTS_DIR, reportId, shot.filename);
+      return {
+        filename: shot.filename,
+        content: fs.readFileSync(filePath),
+        contentType: shot.mimeType,
+        cid: `screenshot${index}`,
+      };
+    });
+
+    try {
+      const results = await withTimeout(
+        Promise.all(
+          recipients.map((to) =>
+            sendEmail(to, subject, html, text, { attachments })
+          )
+        ),
+        20_000,
+        "Email delivery"
+      );
+      emailSent = results.some((r) => r.success === true);
+    } catch (e) {
+      console.warn("⚠️  Feedback email delivery:", e.message);
+    }
+  }
+
+  logReportBanner(record, {
+    emailSent,
+    recipients: getBugReportRecipients(),
+    sheetsLogged,
+  });
+}
+
 function logReportBanner(record, { emailSent, recipients, sheetsLogged }) {
   const shotCount = record.screenshotCount || 0;
   const lines = [
@@ -227,7 +323,6 @@ async function submitFeedbackReport({
   }
 
   const trimmedMessage = String(message || "").trim().slice(0, 2000);
-  const recipients = getBugReportRecipients();
   const timestamp = new Date().toISOString();
   const reportId = `rpt_${Date.now()}_${crypto.randomBytes(4).toString("hex")}`;
 
@@ -269,88 +364,18 @@ async function submitFeedbackReport({
   };
 
   const saved = appendLocalLog(record);
-  let sheetsLogged = false;
-  try {
-    await logFeedbackReport(record);
-    sheetsLogged = true;
-  } catch (_) {
-    sheetsLogged = false;
-  }
 
-  let emailSent = false;
-  if (recipients.length > 0) {
-    const subject = `[MicroTrainer] Issue — ${record.pagePath || "app"} (${studentId})`;
-    const inlineImages = savedScreenshots
-      .map((shot, index) => {
-        const filePath = path.join(SCREENSHOTS_DIR, reportId, shot.filename);
-        return `<p><strong>Screenshot ${index + 1}:</strong></p><img src="cid:screenshot${index}" alt="Screenshot ${index + 1}" style="max-width:100%;border:1px solid #e5e7eb;border-radius:8px;" />`;
-      })
-      .join("");
-
-    const html = `
-      <h2>Student issue report</h2>
-      <p><strong>Time:</strong> ${escapeHtml(timestamp)}</p>
-      <p><strong>Student:</strong> ${escapeHtml(name)} (${escapeHtml(studentId)})</p>
-      <p><strong>Email:</strong> ${escapeHtml(email)}</p>
-      <p><strong>Role:</strong> ${escapeHtml(role)}</p>
-      <p><strong>Page:</strong> <a href="${escapeHtml(record.pageUrl)}">${escapeHtml(record.pagePath || record.pageUrl)}</a></p>
-      <p><strong>Screenshots:</strong> ${savedScreenshots.length}</p>
-      <hr/>
-      <p><strong>Message:</strong></p>
-      <pre style="white-space:pre-wrap;font-family:inherit;background:#f4f4f5;padding:12px;border-radius:8px;">${escapeHtml(record.message)}</pre>
-      ${inlineImages}
-      <p style="color:#666;font-size:12px;">User-Agent: ${escapeHtml(record.userAgent)}</p>
-    `;
-    const text = [
-      "Student issue report",
-      `Time: ${timestamp}`,
-      `Student: ${name} (${studentId})`,
-      `Email: ${email}`,
-      `Page: ${record.pageUrl || record.pagePath}`,
-      `Screenshots: ${savedScreenshots.length}`,
-      "",
-      record.message,
-      "",
-      `User-Agent: ${record.userAgent}`,
-    ].join("\n");
-
-    const attachments = savedScreenshots.map((shot, index) => {
-      const filePath = path.join(SCREENSHOTS_DIR, reportId, shot.filename);
-      return {
-        filename: shot.filename,
-        content: fs.readFileSync(filePath),
-        contentType: shot.mimeType,
-        cid: `screenshot${index}`,
-      };
-    });
-
-    const results = await Promise.all(
-      recipients.map((to) =>
-        sendEmail(to, subject, html, text, { attachments })
-      )
-    );
-    emailSent = results.some((r) => r.success === true);
-  }
-
-  logReportBanner(record, { emailSent, recipients, sheetsLogged });
-
-  let userMessage = "Report sent. Thank you!";
-  if (!emailSent && recipients.length > 0) {
-    userMessage =
-      "Report saved. Email could not be sent — your trainer will see it in the server log and Google Sheet.";
-  } else if (!emailSent && recipients.length === 0) {
-    userMessage =
-      "Report saved on the server. Set BUG_REPORT_EMAIL or TRAINER_EMAILS in backend .env.";
-  } else if (emailSent) {
-    userMessage = "Report sent to your trainer. Thank you!";
-  }
+  // Respond quickly — email and Sheets can be slow on production (SMTP timeouts).
+  void deliverFeedbackReport(record, savedScreenshots).catch((err) => {
+    console.error("Background feedback delivery failed:", err.message);
+  });
 
   return {
     success: true,
-    emailSent,
-    sheetsLogged,
     saved,
-    message: userMessage,
+    message: saved
+      ? "Report sent. Thank you!"
+      : "Report received. Thank you!",
   };
 }
 

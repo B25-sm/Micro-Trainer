@@ -20,6 +20,16 @@ function studentSelfOrTrainer(req, res, next) {
     return res.status(400).json({ error: "studentId required" });
   }
 
+  const { getUserFromRequest } = require("../services/jwtAuthService");
+  const jwtUser = getUserFromRequest(req);
+
+  if (!jwtUser) {
+    return res.status(401).json({
+      error: "Authentication required",
+      hint: "Sign in again — your session may have expired",
+    });
+  }
+
   if (canAccessStudentData(req, studentId)) {
     return next();
   }

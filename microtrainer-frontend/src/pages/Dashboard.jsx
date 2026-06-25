@@ -7,6 +7,11 @@ import InterviewHistoryPanel from "../components/InterviewHistoryPanel";
 import { getStudentId } from "../utils/studentAuth";
 import { isTrainerSession } from "../utils/trainerAuth";
 import {
+  clearAuthSession,
+  getSessionStudentId,
+  isAuthError,
+} from "../utils/authSession";
+import {
   LineChart,
   Line,
   XAxis,
@@ -38,7 +43,7 @@ const Dashboard = () => {
   const [analytics, setAnalytics] = useState(null);
   const [memory, setMemory] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
-  const [status, setStatus] = useState("loading"); // loading | ready | error | trainer | no-profile
+  const [status, setStatus] = useState("loading"); // loading | ready | error | trainer | no-profile | auth-expired
 
   useEffect(() => {
     if (isTrainerSession()) {
@@ -46,7 +51,7 @@ const Dashboard = () => {
       return;
     }
 
-    const studentId = getStudentId();
+    const studentId = getSessionStudentId();
     if (!studentId) {
       setStatus("no-profile");
       return;
@@ -73,6 +78,10 @@ const Dashboard = () => {
         .catch(() => setRecommendations([]));
     } catch (err) {
       console.error("Dashboard error:", err);
+      if (isAuthError(err)) {
+        setStatus("auth-expired");
+        return;
+      }
       setStatus("error");
     }
   };
@@ -137,6 +146,29 @@ const Dashboard = () => {
           className="px-5 py-2.5 rounded-lg bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 text-sm font-medium hover:opacity-90 transition"
         >
           Complete profile
+        </button>
+      </div>
+    );
+  }
+
+  if (status === "auth-expired") {
+    return (
+      <div className="max-w-lg mx-auto py-16 px-4 text-center">
+        <h1 className="text-xl font-medium text-gray-900 dark:text-gray-100 mb-2">
+          Session expired
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400 text-sm mb-6">
+          Please sign in again to view your dashboard.
+        </p>
+        <button
+          type="button"
+          onClick={() => {
+            clearAuthSession();
+            navigate("/login", { replace: true });
+          }}
+          className="px-5 py-2.5 rounded-lg bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 text-sm font-medium hover:opacity-90 transition"
+        >
+          Sign in again
         </button>
       </div>
     );

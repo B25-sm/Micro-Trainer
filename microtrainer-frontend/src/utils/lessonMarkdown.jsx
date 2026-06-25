@@ -61,32 +61,89 @@ const CAST_LINE_CLASS =
 export function createLessonMarkdownComponents() {
   return {
     pre: ({ children }) => (
-      <div className="my-4">
-        <div className="text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400 mb-1.5 read-mode:text-[var(--read-text-muted)]">
-          Code snippet
+      <div className="my-5 overflow-hidden rounded-xl border border-gray-200/80 shadow-sm dark:border-slate-800 read-mode:border-[var(--read-border)]">
+        <div className="flex items-center gap-2 border-b border-gray-200/80 bg-gray-100 px-3.5 py-2 dark:border-slate-800 dark:bg-slate-900 read-mode:border-[var(--read-border)] read-mode:bg-[var(--read-surface)]">
+          <span className="flex gap-1.5">
+            <span className="h-2.5 w-2.5 rounded-full bg-red-400/80" />
+            <span className="h-2.5 w-2.5 rounded-full bg-amber-400/80" />
+            <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/80" />
+          </span>
+          <span className="ml-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-500 dark:text-slate-400 read-mode:text-[var(--read-text-muted)]">
+            Code snippet
+          </span>
         </div>
-        <pre className="bg-gray-800 text-gray-100 dark:bg-slate-950 dark:text-slate-100 p-3 rounded-lg text-xs font-mono overflow-x-auto m-0">
+        <pre className="m-0 overflow-x-auto bg-gray-900 p-4 text-[13px] leading-relaxed text-gray-100 dark:bg-slate-950 dark:text-slate-100">
           {children}
         </pre>
       </div>
     ),
-    code: ({ inline, className, children, ...props }) =>
-      inline ? (
+    code: ({ inline, className, children, ...props }) => {
+      // react-markdown v9+ no longer passes the `inline` prop, so detect it:
+      // block code is fenced (has a `language-` class) or spans multiple lines.
+      const text = markdownChildText(children);
+      const isBlock =
+        inline === false ||
+        /language-/.test(className || "") ||
+        text.includes("\n");
+
+      return isBlock ? (
         <code
-          className="bg-gray-200 px-1.5 py-0.5 rounded text-xs font-mono text-gray-900 dark:bg-zinc-800 dark:text-slate-200 read-mode:bg-[var(--read-surface)] read-mode:text-[var(--read-text)]"
+          className={`${className || ""} block whitespace-pre font-mono`}
           {...props}
         >
           {children}
         </code>
       ) : (
-        <code className={`${className || ""} block whitespace-pre`} {...props}>
+        <code
+          className="rounded-md border border-indigo-200/70 bg-indigo-50 px-1.5 py-0.5 font-mono text-[0.85em] font-medium text-indigo-700 before:content-none after:content-none dark:border-indigo-500/20 dark:bg-indigo-500/10 dark:text-indigo-300 read-mode:border-[var(--read-border)] read-mode:bg-[var(--read-surface)] read-mode:text-[var(--read-text)]"
+          {...props}
+        >
           {children}
         </code>
-      ),
+      );
+    },
+    h1: ({ children }) => (
+      <h1 className="mb-3 mt-6 text-xl font-bold tracking-tight text-gray-900 first:mt-0 dark:text-slate-100 read-mode:text-[var(--read-text-heading)]">
+        {children}
+      </h1>
+    ),
+    h2: ({ children }) => (
+      <h2 className="mb-2.5 mt-6 text-lg font-bold tracking-tight text-gray-900 first:mt-0 dark:text-slate-100 read-mode:text-[var(--read-text-heading)]">
+        {children}
+      </h2>
+    ),
+    h3: ({ children }) => (
+      <h3 className="mb-2 mt-5 text-base font-semibold text-gray-900 first:mt-0 dark:text-slate-100 read-mode:text-[var(--read-text-heading)]">
+        {children}
+      </h3>
+    ),
     p: ({ children }) => (
-      <p className="mb-3 last:mb-0 leading-relaxed text-[15px] text-gray-800 dark:text-slate-200 read-mode:text-[var(--read-text)]">
+      <p className="mb-4 text-[15px] leading-7 tracking-[0.003em] text-gray-700 last:mb-0 dark:text-slate-300 read-mode:text-[var(--read-text)]">
         {children}
       </p>
+    ),
+    em: ({ children }) => (
+      <em className="italic text-gray-700 dark:text-slate-300 read-mode:text-[var(--read-text)]">
+        {children}
+      </em>
+    ),
+    a: ({ children, href }) => (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="font-medium text-blue-600 underline decoration-blue-400/40 underline-offset-2 transition-colors hover:text-blue-700 hover:decoration-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+      >
+        {children}
+      </a>
+    ),
+    blockquote: ({ children }) => (
+      <blockquote className="my-4 rounded-r-lg border-l-4 border-blue-300 bg-blue-50/60 py-2 pl-4 pr-3 text-[15px] italic leading-7 text-gray-700 dark:border-blue-500/40 dark:bg-blue-500/5 dark:text-slate-300 read-mode:border-[var(--read-border)] read-mode:bg-[var(--read-callout-bg)] read-mode:text-[var(--read-text)]">
+        {children}
+      </blockquote>
+    ),
+    hr: () => (
+      <hr className="my-6 border-0 border-t border-gray-200 dark:border-slate-800 read-mode:border-[var(--read-border)]" />
     ),
     li: ({ children }) => {
       const text = markdownChildText(children);
@@ -94,23 +151,23 @@ export function createLessonMarkdownComponents() {
         /\*\*[^*]+\*\*\s*=\s*/.test(text) ||
         (/\s=\s/.test(text) && /\([^)]+\)/.test(text));
 
+      if (isCastMapping) {
+        return <li className={`${CAST_LINE_CLASS} list-none`}>{children}</li>;
+      }
+
       return (
-        <li
-          className={
-            isCastMapping
-              ? CAST_LINE_CLASS
-              : "mb-1.5 text-gray-800 dark:text-slate-200 leading-relaxed read-mode:text-[var(--read-text)]"
-          }
-        >
+        <li className="pl-1.5 text-[15px] leading-7 text-gray-700 dark:text-slate-300 read-mode:text-[var(--read-text)]">
           {children}
         </li>
       );
     },
     ul: ({ children }) => (
-      <ul className="mb-4 space-y-1 pl-1 list-none">{children}</ul>
+      <ul className="mb-4 space-y-1.5 pl-5 list-disc marker:text-blue-400 last:mb-0 dark:marker:text-blue-500 read-mode:marker:text-[var(--read-border)]">
+        {children}
+      </ul>
     ),
     ol: ({ children }) => (
-      <ol className="mb-4 space-y-1.5 pl-5 list-decimal text-gray-800 dark:text-slate-200 read-mode:text-[var(--read-text)]">
+      <ol className="mb-4 space-y-1.5 pl-5 list-decimal marker:font-semibold marker:text-blue-500 last:mb-0 dark:marker:text-blue-400 read-mode:marker:text-[var(--read-border)]">
         {children}
       </ol>
     ),

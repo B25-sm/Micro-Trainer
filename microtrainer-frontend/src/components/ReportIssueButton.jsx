@@ -138,9 +138,14 @@ export default function ReportIssueButton() {
       setToast(res.data?.message || "Report sent. Thank you!");
     } catch (err) {
       setStatus("err");
-      setToast(
-        err?.error || err?.message || "Could not send report. Try again."
-      );
+      const message =
+        err?.error ||
+        (err?.status === 408
+          ? "Request timed out — please try again."
+          : null) ||
+        err?.message ||
+        "Could not send report. Try again.";
+      setToast(message);
     } finally {
       setTimeout(() => setStatus("idle"), 1200);
     }

@@ -2,10 +2,10 @@
  * Headers so students can only access their own progress on the API.
  */
 
-import { getStudentApiHeaders } from "./authSession";
+import { getStudentApiHeaders, getSessionStudentId } from "./authSession";
 
 export function getStudentId() {
-  return localStorage.getItem("studentId") || "";
+  return getSessionStudentId();
 }
 
 export function getStudentHeaders(forStudentId) {

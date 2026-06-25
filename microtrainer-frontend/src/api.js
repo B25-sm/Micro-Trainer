@@ -28,12 +28,19 @@ API.interceptors.response.use(
     console.error("API ERROR:", error?.response || error.message);
 
     if (error.code === "ECONNABORTED") {
-      return Promise.reject({ error: "Request timed out — please try again." });
+      return Promise.reject({
+        error: "Request timed out — please try again.",
+        status: 408,
+      });
     }
 
-    return Promise.reject(
-      error?.response?.data || { error: "Something went wrong" }
-    );
+    const status = error?.response?.status;
+    const data = error?.response?.data || { error: "Something went wrong" };
+
+    return Promise.reject({
+      ...data,
+      status,
+    });
   }
 );
 
@@ -143,7 +150,10 @@ export const getTrends = () =>
 // =======================================================
 
 export const reportIssue = (data) =>
-  API.post("/api/feedback", data, { headers: getBearerHeaders() });
+  API.post("/api/feedback", data, {
+    headers: getBearerHeaders(),
+    timeout: 30000,
+  });
 
 
 // =======================================================

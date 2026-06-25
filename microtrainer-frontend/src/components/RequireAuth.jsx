@@ -5,12 +5,16 @@
  */
 
 import { Navigate } from 'react-router-dom';
-import { isOAuthLoggedIn, needsProfileCompletion } from '../utils/authSession';
+import { isOAuthLoggedIn, needsProfileCompletion, clearAuthSession } from '../utils/authSession';
 
 export function RequireAuth({ children }) {
   const isLoggedIn = isOAuthLoggedIn();
 
   if (!isLoggedIn) {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      clearAuthSession();
+    }
     return <Navigate to="/login" replace />;
   }
 
