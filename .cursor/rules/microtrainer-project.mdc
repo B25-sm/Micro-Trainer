@@ -1,0 +1,73 @@
+---
+description: MicroTrainer monorepo architecture, APIs, auth, and integration points for embedding into other projects
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# MicroTrainer — Cursor Project Context
+
+## What this repo is
+
+AI-powered technical learning platform: guided courses, mock interviews, code practice, engagement/streaks, trainer dashboard, notifications.
+
+**Monorepo layout:**
+- `microtrainer-backend/` — Express API (`index.js`), port 5000, JSON file storage in `data/`
+- `microtrainer-frontend/` — Vite + React 19 SPA (`App.jsx`), port 5173
+- `license-server/`, `microtrainer-platform/`, `microtrainer-extension/` — optional satellites
+
+**Full integration guide:** `docs/INTEGRATION_GUIDE.md`
+
+## Frontend ↔ Backend contract
+
+- API base: `VITE_API_URL` → `microtrainer-frontend/src/api.js` (`API_BASE`)
+- Auth: JWT in `localStorage.authToken`; headers via `src/utils/authSession.js`
+  - `Authorization: Bearer <token>`
+  - `x-student-id: <studentId>` for student-scoped routes
+- Roles: `student` | `trainer` (trainer = email in backend `TRAINER_EMAILS`)
+
+## Key entry files
+
+| File | Purpose |
+|------|---------|
+| `microtrainer-backend/index.js` | All HTTP routes, Socket.io, cron |
+| `microtrainer-backend/routes/authRoutes.js` | OAuth + JWT |
+| `microtrainer-frontend/src/App.jsx` | React routes |
+| `microtrainer-frontend/src/api.js` | Axios API client |
+| `microtrainer-backend/services/learningPathService.js` | Guided course sessions |
+| `microtrainer-backend/services/adaptiveTeachingService.js` | AI lesson generation (Groq) |
+| `microtrainer-backend/services/notificationOrchestratorService.js` | Push/email with prefs |
+
+## Data storage
+
+Primary: **JSON files** under `microtrainer-backend/data/` (progress, engagement, notifications, curriculums).
+Secondary: **Google Sheets** (`SHEET_ID` + `credentials.json`) for exports/analytics.
+AI: **Groq** (`GROQ_API_KEY`). Code run: browser Pyodide + optional **Piston** (`PISTON_URL`).
+
+## Embedding into another app
+
+1. Set host app's API URL to MicroTrainer backend (`VITE_API_URL`).
+2. Reuse or replicate OAuth + JWT flow from `authSession.js` and `authRoutes.js`.
+3. Import specific pages from `src/pages/` or call REST APIs directly.
+4. Match `FRONTEND_URL` on backend for OAuth redirects.
+5. Do not commit `.env`, `credentials.json`, or private keys.
+
+## Production env (names only)
+
+**Backend:** `GROQ_API_KEY`, `JWT_SECRET`, `FRONTEND_URL`, `SHEET_ID`, `TRAINER_EMAILS`, `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`, `SMTP_*`, OAuth IDs.
+
+**Frontend:** `VITE_API_URL`, `VITE_GOOGLE_CLIENT_ID`, `VITE_VAPID_PUBLIC_KEY` (must match backend public VAPID key).
+
+## When changing notifications
+
+- Preferences: `notificationPreferencesService.js`
+- Dispatch: `notificationOrchestratorService.js`
+- Cron: `cronJobs.js`
+- UI: `NotificationSettings.jsx`, `usePushNotifications.js`
+- Push requires VAPID on **both** Render backend and Vercel frontend.
+
+## When changing lessons
+
+- Prompts: `personaConfig.js`, `adaptiveTeachingService.js`
+- Quality gates: `lessonQualityService.js`
+- UI: `StoryLessonContent.jsx`, `Learn.jsx`
