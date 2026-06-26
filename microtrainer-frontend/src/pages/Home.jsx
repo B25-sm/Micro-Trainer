@@ -185,7 +185,7 @@ const Home = () => {
 
   return (
     <div className={`flex flex-col flex-1 min-h-0 ${pageShell}`}>
-      <div className="flex flex-1 min-h-0 w-full max-w-7xl mx-auto relative">
+      <div className="flex flex-1 min-h-0 w-full max-w-3xl mx-auto relative">
         {hasSavedSessions && (
           <ChatHistorySidebar
             sessions={sessions}
@@ -343,11 +343,11 @@ function AssistantMessage({ content, highlighted }) {
   if (sections) {
     return (
       <div
-        className={`w-full rounded-3xl transition-shadow ${
-          highlighted ? "ring-2 ring-blue-300 dark:ring-blue-600 ring-offset-4 dark:ring-offset-[#202124]" : ""
+        className={`w-full rounded-[2rem] transition-shadow ${
+          highlighted ? "shadow-[0_0_0_2px] shadow-blue-400/70 dark:shadow-blue-500/60" : ""
         }`}
       >
-        <ConceptCards sections={sections} />
+        <ConceptCards sections={sections} seed={content} />
       </div>
     );
   }
@@ -362,6 +362,54 @@ function AssistantMessage({ content, highlighted }) {
         <ReactMarkdown components={chatMdComponents}>{content}</ReactMarkdown>
       </div>
     </div>
+  );
+}
+
+function NewQuestionButton({ onConfirm }) {
+  const [armed, setArmed] = useState(false);
+
+  useEffect(() => {
+    if (!armed) return undefined;
+    const t = setTimeout(() => setArmed(false), 3500);
+    return () => clearTimeout(t);
+  }, [armed]);
+
+  if (armed) {
+    return (
+      <div className="inline-flex items-center gap-1.5 rounded-full border border-[#1a73e8]/40 dark:border-[#8ab4f8]/40 bg-blue-50 dark:bg-[#1a73e8]/15 px-2 py-1 text-xs">
+        <span className="px-1 text-gray-600 dark:text-gray-300">Start a new question?</span>
+        <button
+          type="button"
+          onClick={() => {
+            setArmed(false);
+            onConfirm();
+          }}
+          className="rounded-full bg-[#1a73e8] dark:bg-[#8ab4f8] px-2.5 py-1 font-medium text-white dark:text-gray-900 hover:opacity-90 transition"
+        >
+          Yes
+        </button>
+        <button
+          type="button"
+          onClick={() => setArmed(false)}
+          className="rounded-full px-2 py-1 font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition"
+        >
+          Cancel
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => setArmed(true)}
+      className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#2a2b2e] px-3.5 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 shadow-sm transition hover:border-[#1a73e8]/50 hover:text-[#1a73e8] dark:hover:border-[#8ab4f8]/50 dark:hover:text-[#8ab4f8]"
+    >
+      <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <path d="M10 4.5v11M4.5 10h11" />
+      </svg>
+      New question
+    </button>
   );
 }
 
@@ -380,23 +428,9 @@ function ActiveChatView({
 }) {
   return (
     <div className="flex-1 flex flex-col min-h-0">
-      {/* Top bar */}
-      <div className="flex-shrink-0 flex items-center justify-between px-4 sm:px-6 py-3 border-b border-gray-100 dark:border-gray-800">
-        <p className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate">
-          Practice chat
-        </p>
-        <button
-          type="button"
-          onClick={onNewChat}
-          className="text-xs font-medium px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
-        >
-          New question
-        </button>
-      </div>
-
       {/* Messages */}
       <div className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-6">
-        <div className="w-full mx-auto space-y-5">
+        <div className="w-full max-w-3xl mx-auto space-y-5">
           <AnimatePresence>
             {chatHistory.map((message, index) => (
               <motion.div
@@ -470,8 +504,11 @@ function ActiveChatView({
       </div>
 
       {/* Pinned input */}
-      <div className="flex-shrink-0 px-4 sm:px-6 py-4 border-t border-gray-100 dark:border-gray-800 bg-white/80 dark:bg-[#202124]/80 backdrop-blur-sm">
+      <div className="flex-shrink-0 px-4 sm:px-6 pb-4 pt-3 bg-white dark:bg-[#202124]">
         <div className="max-w-3xl mx-auto">
+          <div className="mb-2 flex justify-end">
+            <NewQuestionButton onConfirm={onNewChat} />
+          </div>
           <HomeChatInput
             question={question}
             setQuestion={setQuestion}
@@ -509,12 +546,12 @@ function HomeChatInput({
       className={`relative ${className} ${
         isLarge
           ? "rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#292a2d] shadow-lg shadow-gray-200/50 dark:shadow-none focus-within:border-[#1a73e8]/50 dark:focus-within:border-[#8ab4f8]/50 focus-within:ring-2 focus-within:ring-[#1a73e8]/10 dark:focus-within:ring-[#8ab4f8]/10 transition"
-          : "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] shadow-sm focus-within:border-gray-300 dark:focus-within:border-gray-600 transition"
+          : "rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#2a2b2e] shadow-sm focus-within:border-[#1a73e8]/60 dark:focus-within:border-[#8ab4f8]/60 focus-within:ring-2 focus-within:ring-[#1a73e8]/15 dark:focus-within:ring-[#8ab4f8]/15 transition"
       }`}
     >
       <div
         className={`flex items-end gap-2 ${
-          isLarge ? "px-4 py-3 sm:px-5 sm:py-4" : "px-3 py-2.5"
+          isLarge ? "px-4 py-3 sm:px-5 sm:py-4" : "px-4 py-3"
         }`}
       >
         <textarea
@@ -527,7 +564,7 @@ function HomeChatInput({
           maxLength={500}
           rows={isLarge ? 2 : 1}
           className={`flex-1 resize-none bg-transparent text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 disabled:opacity-50 border-0 outline-none focus:ring-0 ${
-            isLarge ? "text-base sm:text-lg leading-relaxed" : "text-sm py-1"
+            isLarge ? "text-base sm:text-lg leading-relaxed" : "text-[15px] py-1 leading-relaxed"
           }`}
           style={{
             boxShadow: "none",
@@ -538,7 +575,7 @@ function HomeChatInput({
           type="submit"
           disabled={!question.trim() || isLoading}
           className={`flex-shrink-0 flex items-center justify-center rounded-xl bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 hover:opacity-90 transition disabled:opacity-30 disabled:cursor-not-allowed ${
-            isLarge ? "h-10 w-10 sm:h-11 sm:w-11" : "h-8 w-8"
+            isLarge ? "h-10 w-10 sm:h-11 sm:w-11" : "h-9 w-9"
           }`}
           title="Send"
         >

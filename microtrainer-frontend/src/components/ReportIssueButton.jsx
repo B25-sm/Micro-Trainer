@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
-import { LifeBuoy, Send, X, ImagePlus, ClipboardPaste } from "lucide-react";
+import { Lightbulb, Send, X, ImagePlus, ClipboardPaste } from "lucide-react";
 import { reportIssue } from "../api";
 
 const MAX_SCREENSHOTS = 3;
@@ -295,18 +295,19 @@ export default function ReportIssueButton() {
         type="button"
         onClick={() => setOpen((v) => !v)}
         disabled={isSending}
-        title="Report a problem"
-        aria-label="Report a problem"
+        title="Suggest an improvement or report a problem"
+        aria-label="Suggest an improvement or report a problem"
         aria-expanded={open}
-        className="group flex h-12 w-12 items-center justify-center rounded-full bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-black/5 transition-all duration-200 hover:bg-indigo-700 hover:scale-105 active:scale-95 disabled:opacity-60"
+        className="group inline-flex items-center gap-2 rounded-full border border-slate-200/90 bg-white/90 px-3.5 py-2 text-xs font-medium text-slate-500 shadow-sm backdrop-blur-sm transition hover:border-slate-300 hover:text-slate-700 disabled:opacity-60 dark:border-slate-700/90 dark:bg-slate-800/80 dark:text-slate-400 dark:hover:border-slate-600 dark:hover:text-slate-200"
       >
         {isSending ? (
-          <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+          <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-slate-400/40 border-t-slate-500 dark:border-t-slate-300" />
         ) : open ? (
-          <X className="h-5 w-5" strokeWidth={2.25} />
+          <X className="h-3.5 w-3.5" strokeWidth={2.25} />
         ) : (
-          <LifeBuoy className="h-5 w-5" strokeWidth={2.25} />
+          <Lightbulb className="h-3.5 w-3.5" strokeWidth={2.25} />
         )}
+        <span>{open ? "Close" : "Feedback"}</span>
       </button>
     </div>
   );

@@ -275,7 +275,7 @@ export default function NotificationSettings() {
               <SettingSwitch
                 label="Enable browser notifications"
                 checked={isSubscribed}
-                disabled={pushLoading}
+                disabled={pushLoading || permission === "denied"}
                 onChange={handleBrowserNotificationToggle}
               />
             </SettingRow>
@@ -286,16 +286,31 @@ export default function NotificationSettings() {
               </p>
             )}
 
-            {pushError && (
-              <p className="mt-3 text-sm text-red-600 dark:text-red-400" role="alert">
-                {pushError}
-              </p>
-            )}
-
-            {permission === "denied" && !pushError && (
-              <p className="mt-3 text-sm text-red-600 dark:text-red-400">
-                Permission denied — enable notifications in your browser settings, then try again.
-              </p>
+            {permission === "denied" ? (
+              <div className="mt-3 rounded-lg border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 px-4 py-3">
+                <p className="text-sm font-medium text-amber-900 dark:text-amber-200">
+                  Notifications are blocked for this site
+                </p>
+                <p className="mt-1 text-sm text-amber-800 dark:text-amber-300">
+                  The toggle can&apos;t turn on until you allow notifications in
+                  your browser. This is a browser permission — it can&apos;t be
+                  changed from this page.
+                </p>
+                <ol className="mt-2 list-decimal space-y-0.5 pl-5 text-sm text-amber-800 dark:text-amber-300">
+                  <li>Click the lock / tune icon at the left of the address bar.</li>
+                  <li>
+                    Find <span className="font-medium">Notifications</span> and set
+                    it to <span className="font-medium">Allow</span>.
+                  </li>
+                  <li>Reload this page, then turn the toggle on.</li>
+                </ol>
+              </div>
+            ) : (
+              pushError && (
+                <p className="mt-3 text-sm text-red-600 dark:text-red-400" role="alert">
+                  {pushError}
+                </p>
+              )
             )}
 
             {isSubscribed && (

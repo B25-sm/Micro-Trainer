@@ -7,9 +7,10 @@
  * doesn't match, it returns null and the caller falls back to plain markdown.
  */
 
+import { useCallback, useEffect, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { motion } from "framer-motion";
-import { Lightbulb, Globe2 } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Lightbulb, Globe2, Code2, ChevronLeft, ChevronRight, Palette } from "lucide-react";
 import {
   createLessonMarkdownComponents,
   normalizeLessonMarkdown,
@@ -21,10 +22,22 @@ const textComponents = createLessonMarkdownComponents();
 /* Parsing                                                             */
 /* ------------------------------------------------------------------ */
 
+const FENCE_RE = /```([\w+#-]*)\s*\n?([\s\S]*?)```/;
+
 export function parseConceptSections(raw) {
   const text = String(raw || "").trim();
   if (!text) return null;
 
+  // The fenced code block is the anchor of a concept answer.
+  const fence = text.match(FENCE_RE);
+  if (!fence) return null;
+  const codeLang = (fence[1] || "").toLowerCase();
+  const codeRaw = fence[2].replace(/\s+$/, "");
+  if (!codeRaw) return null;
+  const fenceStart = fence.index;
+  const fenceEnd = fence.index + fence[0].length;
+
+  // Bold section headers, e.g. **Explanation**, **Real-World Application**.
   const headerRegex = /\*\*([^*\n]{2,60}?)\*\*/g;
   const headers = [];
   let match;
@@ -40,28 +53,42 @@ export function parseConceptSections(raw) {
   const rwIdx = headers.findIndex((h) =>
     /real[\s-]*world|real[\s-]*time|use\s*case/i.test(h.title)
   );
-  const codeIdx = headers.findIndex((h) =>
-    /code\s*example|code\s*snippet|^example$/i.test(h.title)
+  if (rwIdx < 1) return null;
+
+  // Optional "Code Example / Snippet" header — may sit before OR after the fence.
+  const codeIdx = headers.findIndex(
+    (h, i) =>
+      i > rwIdx && /code\s*example|code\s*snippet|^example$|^code$/i.test(h.title)
   );
-  if (rwIdx < 1 || codeIdx < 0 || codeIdx <= rwIdx) return null;
 
   const explHeader = headers[0];
   const explanationTitle = explHeader.title || "Explanation";
   const explanationBody = text.slice(explHeader.end, headers[rwIdx].start).trim();
-  const realWorldBody = text
-    .slice(headers[rwIdx].end, headers[codeIdx].start)
-    .trim();
-  const codeBlock = text.slice(headers[codeIdx].end).trim();
 
-  if (!explanationBody || !realWorldBody || !codeBlock) return null;
+  // Real-world prose runs until the code heading or the fence — whichever comes first.
+  let rwEnd = fenceStart;
+  if (codeIdx >= 0 && headers[codeIdx].start < rwEnd) {
+    rwEnd = headers[codeIdx].start;
+  }
+  const realWorldBody = text.slice(headers[rwIdx].end, rwEnd).trim();
 
-  const fence = codeBlock.match(/```([\w+#-]*)\s*\n?([\s\S]*?)```/);
-  if (!fence) return null;
+  // Note: prefer the "Code Example" heading's prose; otherwise text after the fence.
+  let codeNote = "";
+  if (codeIdx >= 0) {
+    const nextHeader = headers[codeIdx + 1];
+    const noteEnd = nextHeader ? nextHeader.start : text.length;
+    codeNote = text
+      .slice(headers[codeIdx].end, noteEnd)
+      .replace(FENCE_RE, "")
+      .trim();
+  } else {
+    codeNote = text.slice(fenceEnd).replace(FENCE_RE, "").trim();
+  }
 
-  const codeLang = (fence[1] || "").toLowerCase();
-  const codeRaw = fence[2].replace(/\s+$/, "");
-  const codeNote = codeBlock.slice(fence.index + fence[0].length).trim();
-  if (!codeRaw) return null;
+  // Drop notes that are whitespace/markdown-only so we never render an empty card.
+  if (!/[a-z0-9]/i.test(codeNote)) codeNote = "";
+
+  if (!explanationBody || !realWorldBody) return null;
 
   return {
     explanationTitle,
@@ -188,104 +215,183 @@ const LANG_LABEL = {
   css: { label: "CSS", file: "styles.css" },
 };
 
-function TextCard({ icon: Icon, title, accent, body, delay }) {
-  const accents = {
-    blue: {
-      bar: "from-blue-500 to-indigo-500",
-      chip: "bg-blue-500/10 text-blue-600 dark:text-blue-300",
-      ring: "group-hover:border-blue-300 dark:group-hover:border-blue-500/50",
-    },
-    emerald: {
-      bar: "from-emerald-500 to-teal-500",
-      chip: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-300",
-      ring: "group-hover:border-emerald-300 dark:group-hover:border-emerald-500/50",
-    },
-  }[accent];
+/**
+ * Per-question palettes. Each palette has THREE coordinated-but-distinct stages
+ * (for Explanation / Real-World / Code), so the three cards stay visually separable
+ * within an answer, while the whole palette rotates between questions to keep the
+ * experience fresh and beat visual habituation ("this looks like the last answer").
+ *
+ * NOTE: every class is a full literal string so Tailwind's JIT can see and generate it.
+ */
+const PALETTES = [
+  // Ocean
+  [
+    { stage: "from-sky-400 via-blue-500 to-indigo-600", glow: "shadow-blue-500/25", dot: "bg-blue-500" },
+    { stage: "from-emerald-400 via-teal-500 to-cyan-600", glow: "shadow-emerald-500/25", dot: "bg-emerald-500" },
+    { stage: "from-fuchsia-500 via-purple-500 to-indigo-600", glow: "shadow-purple-500/30", dot: "bg-purple-500" },
+  ],
+  // Sunset
+  [
+    { stage: "from-rose-400 via-pink-500 to-fuchsia-600", glow: "shadow-rose-500/25", dot: "bg-rose-500" },
+    { stage: "from-amber-400 via-orange-500 to-red-500", glow: "shadow-orange-500/25", dot: "bg-orange-500" },
+    { stage: "from-violet-500 via-purple-500 to-fuchsia-600", glow: "shadow-violet-500/30", dot: "bg-violet-500" },
+  ],
+  // Spring
+  [
+    { stage: "from-teal-400 via-cyan-500 to-sky-600", glow: "shadow-teal-500/25", dot: "bg-teal-500" },
+    { stage: "from-lime-400 via-green-500 to-emerald-600", glow: "shadow-green-500/25", dot: "bg-green-500" },
+    { stage: "from-indigo-500 via-blue-500 to-cyan-600", glow: "shadow-indigo-500/30", dot: "bg-indigo-500" },
+  ],
+  // Berry
+  [
+    { stage: "from-violet-400 via-purple-500 to-indigo-600", glow: "shadow-purple-500/25", dot: "bg-purple-500" },
+    { stage: "from-pink-400 via-rose-500 to-red-500", glow: "shadow-pink-500/25", dot: "bg-pink-500" },
+    { stage: "from-blue-500 via-indigo-500 to-violet-600", glow: "shadow-indigo-500/30", dot: "bg-indigo-500" },
+  ],
+  // Citrus
+  [
+    { stage: "from-amber-400 via-yellow-500 to-orange-500", glow: "shadow-amber-500/25", dot: "bg-amber-500" },
+    { stage: "from-emerald-400 via-green-500 to-teal-600", glow: "shadow-emerald-500/25", dot: "bg-emerald-500" },
+    { stage: "from-rose-500 via-pink-500 to-fuchsia-600", glow: "shadow-pink-500/30", dot: "bg-pink-500" },
+  ],
+  // Aurora
+  [
+    { stage: "from-indigo-400 via-violet-500 to-purple-600", glow: "shadow-violet-500/25", dot: "bg-violet-500" },
+    { stage: "from-cyan-400 via-sky-500 to-blue-600", glow: "shadow-sky-500/25", dot: "bg-sky-500" },
+    { stage: "from-fuchsia-500 via-pink-500 to-rose-600", glow: "shadow-fuchsia-500/30", dot: "bg-fuchsia-500" },
+  ],
+];
 
+/** Neutral palette — used when the student turns colored themes OFF. */
+const NEUTRAL_PALETTE = [
+  { stage: "from-slate-500 via-slate-600 to-slate-700", glow: "shadow-slate-900/20", dot: "bg-slate-400" },
+  { stage: "from-slate-500 via-slate-600 to-slate-700", glow: "shadow-slate-900/20", dot: "bg-slate-400" },
+  { stage: "from-slate-500 via-slate-600 to-slate-700", glow: "shadow-slate-900/20", dot: "bg-slate-400" },
+];
+
+/** Stable string hash (djb2) → used to pick a palette deterministically per question. */
+function hashString(str) {
+  let hash = 5381;
+  const s = String(str || "");
+  for (let i = 0; i < s.length; i++) {
+    hash = ((hash << 5) + hash + s.charCodeAt(i)) >>> 0;
+  }
+  return hash;
+}
+
+function pickPalette(seed) {
+  return PALETTES[hashString(seed) % PALETTES.length];
+}
+
+/* ---- Colored-theme preference (persisted, shared across all cards) ---- */
+const COLOR_PREF_KEY = "mt.conceptCardsColor";
+const COLOR_PREF_EVENT = "mt-concept-color-change";
+
+function getColorPref() {
+  if (typeof localStorage === "undefined") return true;
+  return localStorage.getItem(COLOR_PREF_KEY) !== "off";
+}
+
+function setColorPref(on) {
+  try {
+    localStorage.setItem(COLOR_PREF_KEY, on ? "on" : "off");
+    window.dispatchEvent(new Event(COLOR_PREF_EVENT));
+  } catch {
+    /* ignore storage errors */
+  }
+}
+
+const LANG_BADGE = {
+  js: "JS", javascript: "JS", jsx: "JSX", ts: "TS", tsx: "TSX",
+  py: "PY", python: "PY", java: "JV", sql: "SQL", json: "{}",
+  bash: "SH", sh: "SH", html: "<>", css: "CSS",
+};
+
+/** A vibrant gradient "stage" that frames its content, snappify-style. */
+function Stage({ theme, icon: Icon, title, children }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay, ease: "easeOut" }}
-      className={`group relative flex-1 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-md dark:border-gray-700/70 dark:bg-[#1e1f22] ${accents.ring} read-mode:border-[var(--read-border)] read-mode:bg-[var(--read-surface)]`}
+    <div
+      className={`flex flex-col overflow-hidden rounded-[2rem] bg-gradient-to-br ${theme.stage} p-4 ${theme.glow} sm:p-5`}
     >
-      <div className={`h-1 w-full bg-gradient-to-r ${accents.bar}`} />
-      <div className="p-4 sm:p-5">
-        <div className="mb-2.5 flex items-center gap-2.5">
-          <span
-            className={`flex h-8 w-8 items-center justify-center rounded-xl ${accents.chip}`}
-          >
-            <Icon className="h-4 w-4" strokeWidth={2.4} />
-          </span>
-          <h3 className="text-[15px] font-semibold tracking-tight text-gray-900 dark:text-slate-100 read-mode:text-[var(--read-text-heading)]">
-            {title}
-          </h3>
-        </div>
-        <div className="text-gray-700 dark:text-slate-300">
-          <ReactMarkdown components={textComponents}>
-            {normalizeLessonMarkdown(body)}
-          </ReactMarkdown>
-        </div>
+      <div className="mb-3 flex items-center gap-2.5 px-1 pt-0.5 text-white">
+        <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
+          <Icon className="h-4 w-4" strokeWidth={2.6} />
+        </span>
+        <h3 className="text-sm font-semibold tracking-wide drop-shadow-sm">
+          {title}
+        </h3>
       </div>
-    </motion.div>
+      {children}
+    </div>
   );
 }
 
-function CodeCard({ lang, code, note, delay, className = "" }) {
-  const meta = LANG_LABEL[lang] || { label: lang ? lang.toUpperCase() : "Code", file: "snippet" };
+function TextPanel({ body }) {
+  return (
+    <div className="flex-1 rounded-xl bg-white px-5 py-4 dark:bg-[#1a1b1e] sm:px-7 sm:py-6 read-mode:bg-[var(--read-surface)]">
+      <div className="text-[15px] leading-relaxed text-gray-700 dark:text-slate-300">
+        <ReactMarkdown components={textComponents}>
+          {normalizeLessonMarkdown(body)}
+        </ReactMarkdown>
+      </div>
+    </div>
+  );
+}
+
+function CodeWindow({ lang, code, note }) {
+  const meta =
+    LANG_LABEL[lang] || { label: lang ? lang.toUpperCase() : "Code", file: "snippet" };
+  const badge = LANG_BADGE[lang] || "</>";
   const lines = code.split("\n");
-  const gutterWidth = String(lines.length).length;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay, ease: "easeOut" }}
-      className={`flex flex-col overflow-hidden rounded-2xl border border-slate-800 bg-[#0d1117] shadow-lg shadow-slate-900/20 ring-1 ring-black/5 ${className}`}
-    >
-      {/* Editor title bar */}
-      <div className="flex items-center gap-3 border-b border-slate-800 bg-[#161b22] px-4 py-2.5">
-        <span className="flex gap-1.5">
-          <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
-          <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
-          <span className="h-3 w-3 rounded-full bg-[#28c840]" />
-        </span>
-        <span className="flex items-center gap-2 rounded-md bg-slate-800/60 px-2.5 py-1 text-[12px] font-medium text-slate-300">
-          <span className="h-2 w-2 rounded-sm bg-sky-400" />
-          {meta.file}
-        </span>
-        <span className="ml-auto text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">
-          {meta.label}
-        </span>
-      </div>
+    <>
+      <div className="overflow-hidden rounded-xl bg-[#0d1117] ring-1 ring-white/10">
+        {/* Window chrome */}
+        <div className="flex items-center gap-3 bg-[#161b22] px-4 py-2.5">
+          <span className="flex gap-1.5">
+            <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
+            <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
+            <span className="h-3 w-3 rounded-full bg-[#28c840]" />
+          </span>
+          <span className="flex items-center gap-1.5 rounded-md bg-white/5 px-2.5 py-1 text-[12px] font-medium text-slate-300">
+            <span className="rounded bg-amber-400/90 px-1 text-[9px] font-bold leading-tight text-slate-900">
+              {badge}
+            </span>
+            {meta.file}
+          </span>
+          <span className="ml-auto text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+            {meta.label}
+          </span>
+        </div>
 
-      {/* Code body */}
-      <div className="flex-1 overflow-x-auto bg-[#0d1117] p-4">
-        <pre className="m-0 text-[12.5px] leading-[1.7] font-mono">
-          <code className="block">
-            {lines.map((line, idx) => (
-              <div key={idx} className="grid grid-cols-[auto_1fr] gap-4">
-                <span
-                  className="select-none text-right text-slate-600"
-                  style={{ width: `${gutterWidth}ch` }}
-                >
-                  {idx + 1}
-                </span>
-                <span className="whitespace-pre text-slate-100">
+        {/* Code body — clean, no gutter (snappify style) */}
+        <div className="overflow-x-auto px-4 py-4 sm:px-5">
+          <pre className="m-0 font-mono text-[12.5px] leading-[1.75]">
+            <code className="block">
+              {lines.map((line, idx) => (
+                <div key={idx} className="whitespace-pre text-slate-100">
                   {line.length ? highlightLine(line, idx) : "\u00A0"}
-                </span>
-              </div>
-            ))}
-          </code>
-        </pre>
+                </div>
+              ))}
+            </code>
+          </pre>
+        </div>
       </div>
 
       {note && (
-        <div className="border-t border-slate-800 bg-[#11161d] px-4 py-2.5 text-[12.5px] leading-relaxed text-slate-400">
-          <ReactMarkdown components={textComponents}>{note}</ReactMarkdown>
+        <div className="mt-3 rounded-xl bg-white px-5 py-4 dark:bg-[#1a1b1e] read-mode:bg-[var(--read-surface)]">
+          <p className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-purple-600 dark:text-purple-300">
+            Note
+          </p>
+          <div className="text-[15px] leading-relaxed text-gray-700 dark:text-slate-300">
+            <ReactMarkdown components={textComponents}>
+              {normalizeLessonMarkdown(note)}
+            </ReactMarkdown>
+          </div>
         </div>
       )}
-    </motion.div>
+    </>
   );
 }
 
@@ -293,7 +399,13 @@ function CodeCard({ lang, code, note, delay, className = "" }) {
 /* Layout                                                              */
 /* ------------------------------------------------------------------ */
 
-export default function ConceptCards({ sections }) {
+const slideVariants = {
+  enter: (dir) => ({ x: dir > 0 ? 48 : -48, opacity: 0 }),
+  center: { x: 0, opacity: 1 },
+  exit: (dir) => ({ x: dir > 0 ? -48 : 48, opacity: 0 }),
+};
+
+export default function ConceptCards({ sections, seed }) {
   const {
     explanationTitle,
     explanationBody,
@@ -303,29 +415,178 @@ export default function ConceptCards({ sections }) {
     codeNote,
   } = sections;
 
+  // Colored themes can be toggled off by the student (persisted across sessions).
+  const [colorOn, setColorOn] = useState(getColorPref);
+  useEffect(() => {
+    const sync = () => setColorOn(getColorPref());
+    window.addEventListener(COLOR_PREF_EVENT, sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener(COLOR_PREF_EVENT, sync);
+      window.removeEventListener("storage", sync);
+    };
+  }, []);
+
+  // Pick a palette deterministically from the question so each answer feels fresh,
+  // but the SAME question always keeps its own consistent colors.
+  const palette = useMemo(
+    () =>
+      colorOn ? pickPalette(seed || explanationTitle || explanationBody) : NEUTRAL_PALETTE,
+    [colorOn, seed, explanationTitle, explanationBody]
+  );
+
+  const slides = [
+    {
+      theme: palette[0],
+      icon: Lightbulb,
+      title: explanationTitle,
+      content: <TextPanel body={explanationBody} />,
+    },
+    {
+      theme: palette[1],
+      icon: Globe2,
+      title: "Real-World Application",
+      content: <TextPanel body={realWorldBody} />,
+    },
+    {
+      theme: palette[2],
+      icon: Code2,
+      title: "Code Example",
+      content: <CodeWindow lang={codeLang} code={codeRaw} note={codeNote} />,
+    },
+  ];
+
+  const total = slides.length;
+  const [[index, dir], setSlide] = useState([0, 0]);
+
+  const goTo = useCallback(
+    (target) => {
+      setSlide(([cur]) => {
+        const clamped = Math.max(0, Math.min(total - 1, target));
+        return [clamped, clamped >= cur ? 1 : -1];
+      });
+    },
+    [total]
+  );
+
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === "ArrowRight") goTo(index + 1);
+      else if (e.key === "ArrowLeft") goTo(index - 1);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [index, goTo]);
+
+  const active = slides[index];
+  const atStart = index === 0;
+  const atEnd = index === total - 1;
+
   return (
-    <div className="grid w-full items-start gap-5 md:grid-cols-2 xl:grid-cols-3">
-      <TextCard
-        icon={Lightbulb}
-        title={explanationTitle}
-        accent="blue"
-        body={explanationBody}
-        delay={0}
-      />
-      <TextCard
-        icon={Globe2}
-        title="Real-World Application"
-        accent="emerald"
-        body={realWorldBody}
-        delay={0.08}
-      />
-      <CodeCard
-        lang={codeLang}
-        code={codeRaw}
-        note={codeNote}
-        delay={0.16}
-        className="md:col-span-2 xl:col-span-1"
-      />
+    <div className="w-full max-w-3xl">
+      {/* Step tabs */}
+      <div className="mb-3 flex items-center gap-2">
+        <div className="flex min-w-0 flex-1 items-center gap-2 overflow-x-auto">
+          {slides.map((s, i) => {
+            const isActive = i === index;
+            const Icon = s.icon;
+            return (
+              <button
+                key={s.title}
+                type="button"
+                onClick={() => goTo(i)}
+                className={`group flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
+                  isActive
+                    ? "bg-gray-900 text-white shadow-sm dark:bg-white dark:text-gray-900"
+                    : "bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-[#2a2b2e] dark:text-gray-400 dark:hover:bg-[#34353a]"
+                }`}
+              >
+                <Icon className="h-3.5 w-3.5" strokeWidth={2.4} />
+                <span className="hidden sm:inline">{s.title}</span>
+                <span className="sm:hidden">{i + 1}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setColorPref(!colorOn)}
+          title={colorOn ? "Turn off colored themes" : "Turn on colored themes"}
+          aria-label={colorOn ? "Turn off colored themes" : "Turn on colored themes"}
+          aria-pressed={colorOn}
+          className={`flex shrink-0 items-center justify-center rounded-full p-1.5 transition-colors ${
+            colorOn
+              ? "text-[#1a73e8] hover:bg-blue-50 dark:text-[#8ab4f8] dark:hover:bg-[#2a2b2e]"
+              : "text-gray-400 hover:bg-gray-100 dark:text-gray-500 dark:hover:bg-[#2a2b2e]"
+          }`}
+        >
+          <Palette className="h-4 w-4" strokeWidth={2.2} />
+        </button>
+      </div>
+
+      {/* Slide */}
+      <div className="relative overflow-hidden">
+        <AnimatePresence mode="wait" custom={dir} initial={false}>
+          <motion.div
+            key={index}
+            custom={dir}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.26, ease: "easeOut" }}
+          >
+            <Stage theme={active.theme} icon={active.icon} title={active.title}>
+              {active.content}
+            </Stage>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Controls */}
+      <div className="mt-4 flex items-center justify-between">
+        <button
+          type="button"
+          onClick={() => goTo(index - 1)}
+          disabled={atStart}
+          className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-0 dark:text-gray-300 dark:hover:bg-[#2a2b2e]"
+        >
+          <ChevronLeft className="h-4 w-4" />
+          Back
+        </button>
+
+        <div className="flex items-center gap-2">
+          {slides.map((s, i) => (
+            <button
+              key={s.title}
+              type="button"
+              onClick={() => goTo(i)}
+              aria-label={`Go to ${s.title}`}
+              className={`h-2 rounded-full transition-all ${
+                i === index
+                  ? `w-6 ${s.theme.dot}`
+                  : "w-2 bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500"
+              }`}
+            />
+          ))}
+        </div>
+
+        {atEnd ? (
+          <span className="inline-flex items-center px-3.5 py-2 text-sm font-medium text-gray-400 dark:text-gray-500">
+            Done
+          </span>
+        ) : (
+          <button
+            type="button"
+            onClick={() => goTo(index + 1)}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-[#1a73e8] px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#1765cc] dark:bg-[#8ab4f8] dark:text-gray-900 dark:hover:bg-[#a5c6fa]"
+          >
+            Next
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        )}
+      </div>
     </div>
   );
 }
