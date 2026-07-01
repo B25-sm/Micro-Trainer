@@ -59,12 +59,12 @@
   --text-h: #f9fafb;
   --text-secondary: #cbd5e1;
   
-  /* Background Colors */
-  --bg: #202124;
-  --bg-secondary: #292a2d;
-  --bg-elevated: #292a2d;
-  --border: #3c4043;
-  --code-bg: #292a2d;
+  /* Background Colors — deep, neutral "studio" dark (was pale Material grey) */
+  --bg: #131314;
+  --bg-secondary: #1a1a1c;
+  --bg-elevated: #1e1e20;
+  --border: #2c2c2f;
+  --code-bg: #1a1a1c;
 
   /* Accent Colors */
   --accent: #8ab4f8;
@@ -90,6 +90,30 @@
   --shadow-lg:
     0 2px 6px 2px rgba(0, 0, 0, 0.15),
     0 8px 24px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* =========================
+   REFINED DARK PALETTE REMAP
+   Most screens hardcode the old Material hex as Tailwind arbitrary values
+   (e.g. dark:bg-[#202124]). Remap those literals + heavy grey borders to the
+   deeper, neutral palette above so the whole app gets the classier look
+   without touching ~35 component files. (read-mode overrides win via higher
+   specificity, so this leaves reading mode untouched.) */
+.dark [class*="dark:bg-\[#202124\]"],
+.dark [class*="dark:bg-\[#1f2023\]"] {
+  background-color: var(--bg) !important;
+}
+
+.dark [class*="dark:bg-\[#292a2d\]"],
+.dark [class*="dark:bg-\[#2a2b2e\]"] {
+  background-color: var(--bg-elevated) !important;
+}
+
+/* Soften the visible grey separators that make the UI look "cheap". */
+.dark [class*="dark:border-gray-600"],
+.dark [class*="dark:border-gray-700"],
+.dark [class*="dark:border-gray-800"] {
+  border-color: var(--border) !important;
 }
 
 /* Dark contrast safety net for legacy light-mode utility classes.
@@ -531,8 +555,8 @@ select optgroup,
 .dark select,
 .dark .app-select {
   color: #e8eaed !important;
-  background-color: #292a2d !important;
-  border-color: #3c4043 !important;
+  background-color: #1e1e20 !important;
+  border-color: #2c2c2f !important;
   color-scheme: dark;
 }
 
@@ -540,7 +564,7 @@ select optgroup,
 .dark select optgroup,
 .dark .app-select option,
 .dark .app-select optgroup {
-  background-color: #292a2d !important;
+  background-color: #1e1e20 !important;
   color: #e8eaed !important;
 }
 
@@ -605,7 +629,7 @@ textarea:focus {
 }
 
 .dark .glass-effect {
-  background: rgba(32, 33, 36, 0.8);
+  background: rgba(19, 19, 20, 0.8);
 }
 
 /* =========================

@@ -3,6 +3,8 @@ import {
   getTrainerApiHeaders,
   getStudentApiHeaders,
   getBearerHeaders,
+  getAuthToken,
+  getSessionStudentId,
 } from "./utils/authSession";
 
 // =======================================================
@@ -21,6 +23,22 @@ const API = axios.create({
 // =======================================================
 // 🔹 INTERCEPTORS (OPTIONAL BUT PRO LEVEL)
 // =======================================================
+
+// Attach the signed-in identity to EVERY request so the backend can enforce
+// "only signed-in students" and attribute all activity. Never clobbers a
+// header a caller set explicitly (e.g. trainer viewing a specific student).
+API.interceptors.request.use((config) => {
+  config.headers = config.headers || {};
+  const token = getAuthToken();
+  if (token && !config.headers.Authorization) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  const studentId = getSessionStudentId();
+  if (studentId && !config.headers["x-student-id"]) {
+    config.headers["x-student-id"] = studentId;
+  }
+  return config;
+});
 
 API.interceptors.response.use(
   (response) => response,
@@ -73,6 +91,10 @@ export const askAI = (data) =>
 export const chatWithMicroTrainer = (data) =>
   API.post("/chat/ask", data, { timeout: 60000 });
 
+// Optional post-learning quick check (mode: "generate" | "grade")
+export const chatQuickCheck = (data) =>
+  API.post("/chat/quick-check", data, { timeout: 30000 });
+
 
 // =======================================================
 // 🔹 STUDENT ANALYTICS
@@ -104,6 +126,9 @@ export const getCertificateEligibility = (id) =>
   API.get(`/api/certificate/eligibility/${id}`, {
     headers: getStudentApiHeaders(id),
   });
+
+export const getReadiness = (id) =>
+  API.get(`/student/${id}/readiness`, { headers: getStudentApiHeaders(id) });
 
 
 // =======================================================

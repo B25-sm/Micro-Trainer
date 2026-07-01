@@ -1,17 +1,20 @@
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect, useMemo } from "react";
-import ReactMarkdown from "react-markdown";
 import { Mic, Code2, BookOpen, BarChart3, ArrowUp, MessageSquareText } from "lucide-react";
 import { chatWithMicroTrainer } from "../api";
 import { pageShell, textMuted } from "../lib/ui";
-import { createLessonMarkdownComponents } from "../utils/lessonMarkdown";
 import ConceptCards, { parseConceptSections } from "../components/ConceptCards";
+import ConceptMarkdownAnswer from "../components/ConceptMarkdownAnswer";
 import ChatHistorySidebar from "../components/ChatHistorySidebar";
 import { useChatHistoryPersistence } from "../hooks/useChatHistoryPersistence";
 import { filterStarterPrompts } from "../utils/chatHistoryStorage";
+import { getStudentId } from "../utils/studentAuth";
+import { getAuthUser } from "../utils/authSession";
+import { getCareerTrack } from "../utils/careerTracks";
+import QuickCheckCard from "../components/QuickCheckCard";
+import TopNudgeBanner from "../components/TopNudgeBanner";
 
-const chatMdComponents = createLessonMarkdownComponents();
 const HOME_CHAT_STORAGE = "microtrainer-chat-history-home";
 
 const STARTER_PROMPT_POOL = [
@@ -26,6 +29,41 @@ const STARTER_PROMPT_POOL = [
   "What is the difference between SQL and NoSQL?",
   "How do I approach a binary search problem?",
 ];
+
+// Starter prompts tailored to the student's role (falls back to the pool above).
+const TRACK_STARTER_PROMPTS = {
+  fullstack: STARTER_PROMPT_POOL,
+  data_science: [
+    "Explain the bias-variance tradeoff with an example",
+    "How does cross-validation prevent overfitting?",
+    "When would you use a random forest vs logistic regression?",
+    "Explain p-values and hypothesis testing simply",
+    "How do you handle missing data in a dataset?",
+    "What is feature engineering? Give practical examples",
+    "Walk me through a pandas groupby aggregation",
+    "Explain precision, recall, and F1 score",
+  ],
+  data_analyst: [
+    "How do SQL window functions work? Show an example",
+    "Explain a good dashboard design for KPIs",
+    "How do you design an A/B test correctly?",
+    "Write a SQL query with a JOIN and GROUP BY",
+    "How do you tell a story with data to executives?",
+    "Explain the difference between mean, median, and mode",
+    "How do pivot tables help in analysis?",
+    "What metrics would you track for a product launch?",
+  ],
+  ai_ml: [
+    "Explain how transformers and attention work",
+    "Walk me through a RAG pipeline end to end",
+    "What are embeddings and how are they used?",
+    "How does fine-tuning differ from prompting?",
+    "Explain gradient descent in simple terms",
+    "What is MLOps and why does it matter?",
+    "How do you evaluate an LLM's output quality?",
+    "Explain vector databases and similarity search",
+  ],
+};
 
 const QUICK_ACTIONS = [
   { label: "Mock interview", path: "/interview", icon: Mic },
@@ -42,6 +80,7 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState(null);
   const [highlightedIndex, setHighlightedIndex] = useState(null);
+  const [lastConcept, setLastConcept] = useState(null);
   const chatEndRef = useRef(null);
   const messageRefs = useRef({});
   const inputRef = useRef(null);
@@ -59,9 +98,14 @@ const Home = () => {
   const hasSavedSessions = sessions.length > 0;
   const [historyOpen, setHistoryOpen] = useState(false);
 
+  const promptPool = useMemo(() => {
+    const track = getCareerTrack(getAuthUser());
+    return TRACK_STARTER_PROMPTS[track] || STARTER_PROMPT_POOL;
+  }, []);
+
   const starterPrompts = useMemo(
-    () => filterStarterPrompts(STARTER_PROMPT_POOL, sessions, 6),
-    [sessions]
+    () => filterStarterPrompts(promptPool, sessions, 6),
+    [sessions, promptPool]
   );
 
   useEffect(() => {
@@ -103,6 +147,7 @@ const Home = () => {
       const response = await chatWithMicroTrainer({
         question: userQuestion,
         sessionId: sessionId,
+        studentId: getStudentId(),
       });
 
       if (response.data.sessionId && !sessionId) {
@@ -117,6 +162,11 @@ const Home = () => {
           timestamp: response.data.timestamp,
         },
       ]);
+
+      // Offer an optional quick check for concept-like questions (skip greetings).
+      if (userQuestion.length >= 10 && !/^(hi|hey|hello|thanks|thank you)\b/i.test(userQuestion)) {
+        setLastConcept(userQuestion);
+      }
     } catch (err) {
       console.error("Chat error:", err);
       const errorMessage =
@@ -216,6 +266,7 @@ const Home = () => {
               onSubmit={handleSubmit}
               onKeyDown={handleKeyDown}
               onNewChat={startNewChat}
+              lastConcept={lastConcept}
             />
           ) : (
             <WelcomeView
@@ -259,6 +310,10 @@ function WelcomeView({
         transition={{ duration: 0.4 }}
         className="w-full max-w-2xl flex flex-col items-center"
       >
+        <div className="w-full mb-6">
+          <TopNudgeBanner />
+        </div>
+
         {/* Brand mark */}
         <div className="mb-6 flex flex-col items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-[#202124] text-sm font-bold shadow-sm">
@@ -343,7 +398,7 @@ function AssistantMessage({ content, highlighted }) {
   if (sections) {
     return (
       <div
-        className={`w-full rounded-[2rem] transition-shadow ${
+        className={`w-full max-w-3xl transition-shadow ${
           highlighted ? "shadow-[0_0_0_2px] shadow-blue-400/70 dark:shadow-blue-500/60" : ""
         }`}
       >
@@ -353,15 +408,7 @@ function AssistantMessage({ content, highlighted }) {
   }
 
   return (
-    <div
-      className={`max-w-3xl px-4 py-4 rounded-2xl rounded-bl-md bg-gray-50 dark:bg-[#292a2d] border border-gray-200 dark:border-gray-700 transition-shadow ${
-        highlighted ? "ring-2 ring-blue-300 dark:ring-blue-600" : ""
-      }`}
-    >
-      <div className="prose prose-sm dark:prose-invert max-w-none text-gray-800 dark:text-gray-200">
-        <ReactMarkdown components={chatMdComponents}>{content}</ReactMarkdown>
-      </div>
-    </div>
+    <ConceptMarkdownAnswer content={content} highlighted={highlighted} />
   );
 }
 
@@ -425,6 +472,7 @@ function ActiveChatView({
   onSubmit,
   onKeyDown,
   onNewChat,
+  lastConcept,
 }) {
   return (
     <div className="flex-1 flex flex-col min-h-0">
@@ -506,6 +554,11 @@ function ActiveChatView({
       {/* Pinned input */}
       <div className="flex-shrink-0 px-4 sm:px-6 pb-4 pt-3 bg-white dark:bg-[#202124]">
         <div className="max-w-3xl mx-auto">
+          {lastConcept && !isLoading && (
+            <div className="mb-3">
+              <QuickCheckCard key={lastConcept} topic={lastConcept} />
+            </div>
+          )}
           <div className="mb-2 flex justify-end">
             <NewQuestionButton onConfirm={onNewChat} />
           </div>

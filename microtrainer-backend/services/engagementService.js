@@ -253,6 +253,11 @@ function recordActivity(studentId, activityType, technology, conceptId, timeSpen
     todayActivity.averageScore = scores.reduce((a, b) => a + b, 0) / scores.length;
   }
   
+  // Persist today's activity BEFORE computing status — calculateStatus reads
+  // from disk, so saving first ensures the very first activity of the day is
+  // reflected immediately (otherwise it would lag one activity behind).
+  saveDailyActivities(dailyActivities);
+
   // Calculate new status
   const newStatus = calculateStatus(studentId);
   todayActivity.status = newStatus;

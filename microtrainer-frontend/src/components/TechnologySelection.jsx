@@ -4,6 +4,10 @@ import { learningPathAPI } from "../api/learningPath";
 import { getStudentId } from "../utils/studentAuth";
 import { isTrainerSession } from "../utils/trainerAuth";
 import { monogram } from "../lib/ui";
+import { getAuthUser } from "../utils/authSession";
+import { getTrack, getCareerTrack } from "../utils/careerTracks";
+
+const normTech = (v) => String(v || "").toLowerCase().replace(/[^a-z0-9]/g, "");
 
 function normalizeTechnologies(payload) {
   if (Array.isArray(payload)) return payload;
@@ -19,6 +23,16 @@ const TechnologySelection = ({ studentId: studentIdProp, onTechnologySelect }) =
   const [trainerPreview, setTrainerPreview] = useState(false);
 
   const resolvedStudentId = studentIdProp || getStudentId() || "";
+
+  const track = getTrack(getCareerTrack(getAuthUser()));
+  const coreTechIds = new Set((track?.coreTechnologies || []).map(normTech));
+
+  const orderedTechnologies = [...technologies].sort((a, b) => {
+    const aCore = coreTechIds.has(normTech(a.id)) || coreTechIds.has(normTech(a.name));
+    const bCore = coreTechIds.has(normTech(b.id)) || coreTechIds.has(normTech(b.name));
+    if (aCore === bCore) return 0;
+    return aCore ? -1 : 1;
+  });
 
   const fetchData = useCallback(async (isRetry = false) => {
     setIsLoading(true);
@@ -192,8 +206,10 @@ const TechnologySelection = ({ studentId: studentIdProp, onTechnologySelect }) =
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-        {technologies.map((tech) => {
+        {orderedTechnologies.map((tech) => {
           const progressInfo = getProgressInfo(tech.id, tech.totalConcepts);
+          const isCore =
+            coreTechIds.has(normTech(tech.id)) || coreTechIds.has(normTech(tech.name));
 
           return (
             <motion.div
@@ -207,13 +223,19 @@ const TechnologySelection = ({ studentId: studentIdProp, onTechnologySelect }) =
                     : "border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d]"
               }`}
             >
-              {progressInfo.status === "completed" && (
+              {progressInfo.status === "completed" ? (
                 <div className="absolute top-4 right-4">
                   <span className="inline-flex items-center px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs font-medium rounded-md border border-gray-200 dark:border-gray-600">
                     Completed
                   </span>
                 </div>
-              )}
+              ) : isCore ? (
+                <div className="absolute top-4 right-4">
+                  <span className="inline-flex items-center px-2 py-0.5 bg-[#e8f0fe] dark:bg-blue-950/50 text-[#1a73e8] dark:text-[#8ab4f8] text-xs font-medium rounded-md border border-blue-200 dark:border-blue-800">
+                    For your role
+                  </span>
+                </div>
+              ) : null}
 
               <div className="flex items-start gap-4 mb-4">
                 <span className={monogram}>{getTechnologyMonogram(tech.id)}</span>

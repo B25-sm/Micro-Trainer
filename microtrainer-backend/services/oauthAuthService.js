@@ -37,6 +37,18 @@ function resolveTrainerRole({ email }) {
 
 function buildAuthResponse(user, link) {
   const role = user.role;
+  const studentId = link?.studentId || user.studentId || null;
+
+  let careerTrack = null;
+  if (role === "student" && studentId) {
+    try {
+      const { getStudentProfile } = require("./studentProfileStore");
+      careerTrack = getStudentProfile(studentId)?.careerTrack || null;
+    } catch {
+      careerTrack = null;
+    }
+  }
+
   const token = signAuthToken({
     sub: user.oauthKey,
     email: user.email,
@@ -44,7 +56,8 @@ function buildAuthResponse(user, link) {
     picture: user.picture,
     provider: user.provider,
     role,
-    studentId: link?.studentId || user.studentId || null,
+    studentId,
+    careerTrack,
     profileComplete: role === "trainer" ? true : Boolean(link?.profileComplete),
   });
 
@@ -56,6 +69,7 @@ function buildAuthResponse(user, link) {
     picture: user.picture,
     provider: user.provider,
     studentId: link?.studentId || null,
+    careerTrack,
     profileComplete: role === "trainer" ? true : Boolean(link?.profileComplete),
     needsProfile: role === "student" && !link?.profileComplete,
   };

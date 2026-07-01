@@ -13,6 +13,7 @@ import MiniAssessmentCard from '../components/engagement/MiniAssessmentCard';
 import PerformanceAnalytics from '../components/engagement/PerformanceAnalytics';
 import BadgeDisplay from '../components/engagement/BadgeDisplay';
 import SyncRequiredBanner from '../components/SyncRequiredBanner';
+import TopNudgeBanner from '../components/TopNudgeBanner';
 import { getStudentHeaders, getStudentId } from '../utils/studentAuth';
 
 const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
@@ -184,6 +185,10 @@ export default function EngagementDashboard() {
         </div>
 
         <SyncRequiredBanner studentId={studentId} />
+
+        <div className="mb-4">
+          <TopNudgeBanner />
+        </div>
 
         <StatusBanner
           status={engagementData?.status || 'Inactive'}

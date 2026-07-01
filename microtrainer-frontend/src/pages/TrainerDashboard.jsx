@@ -13,6 +13,7 @@ import {
   Minus,
   X,
   BarChart3,
+  Activity,
 } from "lucide-react";
 import AppSelect from "../components/AppSelect";
 import FeedbackScreenshotThumb from "../components/FeedbackScreenshotThumb";
@@ -44,6 +45,38 @@ function TabButton({ active, onClick, icon: Icon, children }) {
   );
 }
 
+function relativeTime(iso) {
+  if (!iso) return "never";
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return "never";
+  const diffMs = Date.now() - then;
+  const mins = Math.floor(diffMs / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d ago`;
+}
+
+function statusStyle(status) {
+  switch (status) {
+    case "Excelling":
+      return "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300";
+    case "Active":
+      return "bg-green-100 text-green-700 dark:bg-green-950/50 dark:text-green-300";
+    case "At_Risk":
+      return "bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300";
+    default:
+      return "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400";
+  }
+}
+
+function isOnline(iso) {
+  if (!iso) return false;
+  return Date.now() - new Date(iso).getTime() < 5 * 60 * 1000;
+}
+
 const TrainerDashboard = () => {
   const navigate = useNavigate();
   const [students, setStudents] = useState([]);
@@ -62,6 +95,8 @@ const TrainerDashboard = () => {
   const [bugReports, setBugReports] = useState([]);
   const [readinessData, setReadinessData] = useState({ students: [], technologies: [] });
   const [readinessLoading, setReadinessLoading] = useState(true);
+  const [liveStudents, setLiveStudents] = useState([]);
+  const [liveMetrics, setLiveMetrics] = useState({ totalActiveToday: 0, averageEngagementScore: 0 });
 
   const availableSubjects = [
     "react",
@@ -80,6 +115,28 @@ const TrainerDashboard = () => {
     fetchBugReports();
     fetchTechnologyReadiness();
   }, [subject, selectedSubjects]);
+
+  // Live activity: poll every 20s so "who's active now" stays fresh.
+  useEffect(() => {
+    fetchLiveActivity();
+    const id = setInterval(fetchLiveActivity, 20000);
+    return () => clearInterval(id);
+  }, []);
+
+  const fetchLiveActivity = async () => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/api/analytics/admin/students?sortBy=last_activity&limit=100`,
+        { headers: getTrainerHeaders() }
+      );
+      setLiveStudents(res.data?.students || []);
+      setLiveMetrics(
+        res.data?.aggregateMetrics || { totalActiveToday: 0, averageEngagementScore: 0 }
+      );
+    } catch (err) {
+      console.error("Live activity error:", err);
+    }
+  };
 
   const fetchTechnologyReadiness = async () => {
     try {
@@ -396,6 +453,15 @@ const TrainerDashboard = () => {
           <div className="flex flex-wrap gap-2 items-center">
             <button
               type="button"
+              onClick={() => navigate("/admin/engagement")}
+              className={btnPrimary}
+            >
+              <Activity className="w-4 h-4" />
+              Live monitor
+            </button>
+
+            <button
+              type="button"
               onClick={handleSyncLearningProgress}
               disabled={syncingLearning || learningLoading}
               className={btnSecondary}
@@ -492,6 +558,107 @@ const TrainerDashboard = () => {
           </TabButton>
         </nav>
       </header>
+
+      {/* Live activity — who's online now, last active, streaks */}
+      <section className="mb-8 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1f2023] p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
+            </span>
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+              Live activity
+            </h2>
+            <span className="text-xs text-gray-400">updates every 20s</span>
+          </div>
+          <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+            <span>
+              <span className="font-semibold text-gray-900 dark:text-gray-100">
+                {liveStudents.filter((s) => isOnline(s.lastActivity)).length}
+              </span>{" "}
+              online now
+            </span>
+            <span>
+              <span className="font-semibold text-gray-900 dark:text-gray-100">
+                {liveMetrics.totalActiveToday}
+              </span>{" "}
+              active today
+            </span>
+            <span>
+              avg engagement{" "}
+              <span className="font-semibold text-gray-900 dark:text-gray-100">
+                {liveMetrics.averageEngagementScore}
+              </span>
+            </span>
+          </div>
+        </div>
+
+        {liveStudents.length === 0 ? (
+          <p className="text-sm text-gray-400 py-4 text-center">
+            No student activity recorded yet.
+          </p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs uppercase tracking-wide text-gray-400 border-b border-gray-100 dark:border-gray-800">
+                  <th className="py-2 pr-4 font-medium">Student</th>
+                  <th className="py-2 pr-4 font-medium">Status</th>
+                  <th className="py-2 pr-4 font-medium">Last active</th>
+                  <th className="py-2 pr-4 font-medium">Streak</th>
+                  <th className="py-2 pr-4 font-medium">Today</th>
+                  <th className="py-2 pr-4 font-medium">Focus</th>
+                </tr>
+              </thead>
+              <tbody>
+                {liveStudents.slice(0, 12).map((s) => (
+                  <tr
+                    key={s.studentId}
+                    onClick={() => navigate(`/trainer/student/${s.studentId}`)}
+                    className="border-b border-gray-50 dark:border-gray-800/60 hover:bg-gray-50 dark:hover:bg-gray-800/40 cursor-pointer"
+                  >
+                    <td className="py-2.5 pr-4 font-medium text-gray-900 dark:text-gray-100">
+                      <span className="inline-flex items-center gap-2">
+                        {isOnline(s.lastActivity) && (
+                          <span className="h-2 w-2 rounded-full bg-green-500" title="Online" />
+                        )}
+                        {s.studentId}
+                      </span>
+                    </td>
+                    <td className="py-2.5 pr-4">
+                      <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusStyle(s.status)}`}>
+                        {String(s.status || "Inactive").replace("_", " ")}
+                      </span>
+                    </td>
+                    <td className="py-2.5 pr-4 text-gray-500 dark:text-gray-400">
+                      {relativeTime(s.lastActivity)}
+                    </td>
+                    <td className="py-2.5 pr-4 text-gray-700 dark:text-gray-300">
+                      {s.currentStreak > 0 ? `🔥 ${s.currentStreak}` : "—"}
+                    </td>
+                    <td className="py-2.5 pr-4 text-gray-700 dark:text-gray-300">
+                      {s.todayActivities || 0}
+                    </td>
+                    <td className="py-2.5 pr-4 text-gray-500 dark:text-gray-400 capitalize">
+                      {s.activeTechnology || "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {liveStudents.length > 12 && (
+              <button
+                type="button"
+                onClick={() => navigate("/admin/engagement")}
+                className="mt-3 text-xs font-medium text-[#1a73e8] dark:text-[#8ab4f8] hover:underline"
+              >
+                View all {liveStudents.length} in Live monitor →
+              </button>
+            )}
+          </div>
+        )}
+      </section>
 
       {showMultiSelect && activeTab === "interviews" && (
         <motion.div

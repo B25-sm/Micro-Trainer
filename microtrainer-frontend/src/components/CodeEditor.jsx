@@ -12,6 +12,7 @@ import {
   supportsBrowserExecution,
 } from '../lib/browserCodeRunner.js';
 import { runCodeOnServer, submitProblemOnServer } from '../lib/serverCodeRunner.js';
+import { getSessionStudentId, getStudentApiHeaders } from '../utils/authSession';
 
 const PROBLEM_SOLVING_LANGUAGES = [
   { value: 'javascript', label: 'JavaScript' },
@@ -158,7 +159,7 @@ const CodeEditor = ({ problem, onSubmit, blockClipboard = true }) => {
     setOutput({ mode: 'submit', pending: true, passedTests: 0, totalTests: problem.testCases?.length || 0, results: [] });
 
     try {
-      const studentId = localStorage.getItem('studentId') || 'anonymous';
+      const studentId = getSessionStudentId() || 'anonymous';
 
       const result = supportsBrowserExecution(language)
         ? normalizeJudgeOutput(
@@ -199,7 +200,7 @@ const CodeEditor = ({ problem, onSubmit, blockClipboard = true }) => {
         try {
           await fetch(`${API_BASE}/problems/${problem.id}/browser-submit`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', ...getStudentApiHeaders() },
             body: JSON.stringify(payload),
           });
         } catch (recordError) {

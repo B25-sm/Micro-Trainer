@@ -79,12 +79,13 @@ router.post("/complete-profile", requireAuth, (req, res) => {
       return res.status(400).json({ error: "Trainers do not need a student profile" });
     }
 
-    const { name, initial, batch, studentId: bodyStudentId } = req.body || {};
-    const { buildDisplayName } = require("../services/studentProfileStore");
+    const { name, initial, batch, studentId: bodyStudentId, careerTrack } = req.body || {};
+    const { buildDisplayName, VALID_TRACKS } = require("../services/studentProfileStore");
 
     const ini = String(initial || "").trim();
     const bat = String(batch || "").trim();
     const fullName = String(name || user.name || "").trim();
+    const track = VALID_TRACKS.has(careerTrack) ? careerTrack : null;
 
     if (!fullName || !ini || !bat) {
       return res.status(400).json({
@@ -105,7 +106,17 @@ router.post("/complete-profile", requireAuth, (req, res) => {
       name: fullName,
       initial: ini,
       batch: bat,
+      careerTrack: track,
     });
+
+    // Pre-seed the personal-schedule track so /schedule skips the category step.
+    if (track) {
+      try {
+        require("../services/personalScheduleService").setCategory(studentId, track);
+      } catch (seedErr) {
+        console.warn("Personal schedule seed skipped:", seedErr.message);
+      }
+    }
 
     const [provider, providerUserId] = (user.sub || "").split(":");
     if (provider && providerUserId) {
@@ -120,6 +131,7 @@ router.post("/complete-profile", requireAuth, (req, res) => {
       provider: user.provider,
       role: "student",
       studentId,
+      careerTrack: track,
       profileComplete: true,
     });
 
@@ -127,6 +139,7 @@ router.post("/complete-profile", requireAuth, (req, res) => {
       token,
       role: "student",
       studentId,
+      careerTrack: track,
       displayName: buildDisplayName(fullName, ini, bat),
       profileComplete: true,
       needsProfile: false,

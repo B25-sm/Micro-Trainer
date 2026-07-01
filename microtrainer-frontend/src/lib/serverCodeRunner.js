@@ -1,4 +1,5 @@
 import { API_BASE } from '../api.js';
+import { getStudentApiHeaders } from '../utils/authSession';
 import { normalizeJudgeOutput } from './browserCodeRunner.js';
 
 function buildServerError(data, mode, language, fallbackMessage) {
@@ -45,7 +46,7 @@ export async function runCodeOnServer({
   try {
     const response = await fetch(`${API_BASE}/code/execute`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...getStudentApiHeaders() },
       body: JSON.stringify({
         language,
         code,
@@ -85,7 +86,7 @@ export async function submitProblemOnServer({
   try {
     const response = await fetch(`${API_BASE}/problems/${problemId}/submit`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...getStudentApiHeaders() },
       body: JSON.stringify({
         language,
         code,

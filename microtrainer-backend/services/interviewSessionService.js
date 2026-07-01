@@ -287,6 +287,19 @@ async function submitAnswer(sessionId, answer) {
       console.error("Background sync error:", err.message);
     });
 
+    // Adaptive loop: weak mock -> nudge a guided course; strong mock clears nudges.
+    try {
+      require("./learningRulesService")
+        .evaluate({
+          event: "interview_completed",
+          studentId: session.studentId,
+          record: { subject: session.subject, averageScore: parseFloat(final.averageScore) },
+        })
+        .catch((e) => console.error("Rules evaluate (interview) error:", e.message));
+    } catch (ruleErr) {
+      console.error("Rules hook error (interview):", ruleErr.message);
+    }
+
     delete sessions[sessionId];
     saveSessionsToDisk();
     console.log("🗑️ Session deleted:", sessionId);

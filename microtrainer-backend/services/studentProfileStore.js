@@ -52,16 +52,24 @@ function buildDisplayName(name, initial, batch) {
   return "";
 }
 
-function registerStudentProfile({ studentId, name, initial, batch }) {
+const VALID_TRACKS = new Set(["fullstack", "data_science", "data_analyst", "ai_ml"]);
+
+function registerStudentProfile({ studentId, name, initial, batch, careerTrack }) {
   if (!studentId || !name || !initial || !batch) {
     throw new Error("studentId, name, initial, and batch are required");
   }
+
+  const existing = profiles[studentId] || {};
+  const track = VALID_TRACKS.has(careerTrack)
+    ? careerTrack
+    : existing.careerTrack || null;
 
   profiles[studentId] = {
     studentId,
     name: String(name).trim(),
     initial: String(initial).trim(),
     batch: String(batch).trim(),
+    careerTrack: track,
     displayName: buildDisplayName(name, initial, batch),
     updatedAt: new Date().toISOString(),
   };
@@ -84,4 +92,5 @@ module.exports = {
   getAllStudentProfiles,
   normalizePart,
   buildDisplayName,
+  VALID_TRACKS,
 };

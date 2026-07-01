@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { buildStudentId, buildDisplayName } from "../utils/studentIdentity";
 import { getAuthToken, setAuthSession } from "../utils/authSession";
+import { CAREER_TRACKS } from "../utils/careerTracks";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
@@ -12,6 +13,7 @@ export default function CompleteProfile() {
   );
   const [initial, setInitial] = useState("");
   const [batch, setBatch] = useState("");
+  const [careerTrack, setCareerTrack] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -30,6 +32,12 @@ export default function CompleteProfile() {
       return;
     }
 
+    if (!careerTrack) {
+      setError("Please choose the role you're preparing for");
+      setLoading(false);
+      return;
+    }
+
     const studentId = buildStudentId(ini, bat);
     if (!studentId) {
       setError("Invalid Initial or Batch");
@@ -44,7 +52,7 @@ export default function CompleteProfile() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${getAuthToken()}`,
         },
-        body: JSON.stringify({ name, initial: ini, batch: bat, studentId }),
+        body: JSON.stringify({ name, initial: ini, batch: bat, studentId, careerTrack }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to save profile");
@@ -54,6 +62,7 @@ export default function CompleteProfile() {
       localStorage.setItem("studentBatch", bat);
       localStorage.setItem("userName", data.displayName || buildDisplayName(name, ini, bat));
       localStorage.setItem("studentId", data.studentId);
+      if (data.careerTrack) localStorage.setItem("careerTrack", data.careerTrack);
 
       setAuthSession({
         token: data.token,
@@ -119,6 +128,30 @@ export default function CompleteProfile() {
               required
               maxLength={40}
             />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              What role are you preparing for?
+            </label>
+            <select
+              value={careerTrack}
+              onChange={(e) => setCareerTrack(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#202124] text-gray-900 dark:text-gray-100"
+              required
+            >
+              <option value="" disabled>
+                Select your track…
+              </option>
+              {CAREER_TRACKS.map((t) => (
+                <option key={t.id} value={t.id} disabled={!t.available}>
+                  {t.label}
+                  {t.available ? "" : " — Coming soon"}
+                </option>
+              ))}
+            </select>
+            <p className="mt-1 text-xs text-gray-400">
+              We'll tailor your practice, interviews, and course to this role.
+            </p>
           </div>
 
           {error && (

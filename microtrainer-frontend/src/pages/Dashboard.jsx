@@ -361,30 +361,44 @@ const RecommendationsCard = ({ items = [], onAct }) => (
       </h2>
     </div>
     <ul className="space-y-3">
-      {items.map((rec) => (
-        <li
-          key={rec.id}
-          className="flex items-start justify-between gap-4 rounded-xl border border-gray-100 dark:border-gray-700/60 p-4 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition"
-        >
-          <div className="min-w-0">
-            <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
-              {rec.title}
-            </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              {rec.reason}
-            </p>
-          </div>
-          {rec.action?.path && (
-            <button
-              type="button"
-              onClick={() => onAct(rec.action.path)}
-              className="shrink-0 px-3 py-1.5 rounded-lg bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 text-xs font-medium hover:opacity-90 transition"
-            >
-              {rec.action.label || "Go"}
-            </button>
-          )}
-        </li>
-      ))}
+      {items.map((rec) => {
+        const isReadyMock = rec.type === "ready_for_mock";
+        const isCourse = rec.type === "course_after_mock_fail";
+        const highlighted = isReadyMock || isCourse;
+        const frame = isReadyMock
+          ? "border-blue-300 dark:border-blue-800 bg-[#e8f0fe]/70 dark:bg-blue-950/30"
+          : isCourse
+            ? "border-amber-300 dark:border-amber-800 bg-amber-50/80 dark:bg-amber-950/30"
+            : "border-gray-100 dark:border-gray-700/60 hover:bg-gray-50 dark:hover:bg-gray-700/30";
+        const btn = isCourse
+          ? "bg-amber-500 text-white hover:bg-amber-600"
+          : "bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 hover:opacity-90";
+        return (
+          <li
+            key={rec.id}
+            className={`flex items-start justify-between gap-4 rounded-xl border p-4 transition ${frame}`}
+          >
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                {highlighted && <span>{isReadyMock ? "🚀" : "📚"}</span>}
+                {rec.title}
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                {rec.reason}
+              </p>
+            </div>
+            {rec.action?.path && (
+              <button
+                type="button"
+                onClick={() => onAct(rec.action.path)}
+                className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium transition ${btn}`}
+              >
+                {rec.action.label || "Go"}
+              </button>
+            )}
+          </li>
+        );
+      })}
     </ul>
   </div>
 );

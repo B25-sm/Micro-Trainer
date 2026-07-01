@@ -155,12 +155,26 @@ function buildRecommendations(profile) {
 
 function getRecommendations(studentId) {
   const profile = getLearnerProfile(studentId);
+  let recommendations = buildRecommendations(profile);
+
+  // Merge adaptive-loop nudges (ready-for-mock, mock-failed-take-course).
+  try {
+    const active = require("./learningRulesService").getActiveNudges(studentId);
+    if (active.length) {
+      recommendations = [...active, ...recommendations]
+        .sort((a, b) => b.priority - a.priority)
+        .slice(0, 6);
+    }
+  } catch (err) {
+    console.error("Nudge merge error:", err.message);
+  }
+
   return {
     studentId,
     generatedAt: new Date().toISOString(),
     momentum: profile.momentum,
     churnRisk: profile.churnRisk,
-    recommendations: buildRecommendations(profile),
+    recommendations,
   };
 }
 

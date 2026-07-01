@@ -83,6 +83,7 @@ export function clearAuthSession() {
   localStorage.removeItem("authProvider");
   localStorage.removeItem("profileComplete");
   localStorage.removeItem("trainerKey");
+  localStorage.removeItem("careerTrack");
 }
 
 export function isOAuthLoggedIn() {

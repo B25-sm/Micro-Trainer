@@ -213,6 +213,7 @@ app.get('/health', (req, res) => {
 const {
   trainerOnly,
   studentSelfOrTrainer,
+  requireStudentIdentity,
 } = require("./middleware/accessControl");
 const {
   getStudentSyncStatus,
@@ -294,7 +295,7 @@ const {
 // Teaching sessions storage (in-memory for now)
 const teachingSessions = {};
 
-app.post("/ask", async (req, res) => {
+app.post("/ask", requireStudentIdentity, async (req, res) => {
   try {
     const { 
       question, 
@@ -417,7 +418,7 @@ app.post("/ask", async (req, res) => {
 // Chat sessions storage (in-memory)
 const chatSessions = {};
 
-app.post("/chat/ask", async (req, res) => {
+app.post("/chat/ask", requireStudentIdentity, async (req, res) => {
   try {
     const { question, sessionId, studentId } = req.body;
 
@@ -572,9 +573,111 @@ Don't:
 
 
 // =======================================================
+// 🔹 HOME QUICK CHECK — turn a searched concept into a scored signal
+// mode "generate": returns 1-2 short questions for the concept
+// mode "grade": scores the student's answers 0-100 and logs to the ledger
+// =======================================================
+app.post("/chat/quick-check", requireStudentIdentity, async (req, res) => {
+  try {
+    const { mode, topic, questions, answers, studentId } = req.body || {};
+    const concept = String(topic || "").trim();
+
+    if (!concept || concept.length > 300) {
+      return res.status(400).json({ error: "A valid topic is required" });
+    }
+
+    const groqCall = async (messages, maxTokens) => {
+      const response = await axios.post(
+        "https://api.groq.com/openai/v1/chat/completions",
+        {
+          model: "llama-3.1-8b-instant",
+          messages,
+          temperature: 0.3,
+          max_tokens: maxTokens,
+          response_format: { type: "json_object" },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          timeout: 20000,
+        }
+      );
+      const raw = response?.data?.choices?.[0]?.message?.content || "{}";
+      return JSON.parse(raw);
+    };
+
+    if (mode === "generate") {
+      const parsed = await groqCall(
+        [
+          {
+            role: "system",
+            content:
+              "You are a technical interviewer. Generate short recall questions to check if a student actually understands a concept they just read about. Respond ONLY as JSON: {\"questions\": [\"q1\", \"q2\"]}. Give exactly 2 concise, specific questions. No answers.",
+          },
+          { role: "user", content: `Concept: ${concept}` },
+        ],
+        300
+      );
+      const qs = Array.isArray(parsed.questions)
+        ? parsed.questions.filter((q) => typeof q === "string").slice(0, 2)
+        : [];
+      if (qs.length === 0) {
+        return res.status(502).json({ error: "Could not generate a quick check" });
+      }
+      return res.json({ topic: concept, questions: qs });
+    }
+
+    if (mode === "grade") {
+      if (!Array.isArray(questions) || !Array.isArray(answers) || answers.length === 0) {
+        return res.status(400).json({ error: "questions and answers are required" });
+      }
+
+      const qa = questions
+        .map((q, i) => `Q${i + 1}: ${q}\nStudent answer: ${answers[i] || "(no answer)"}`)
+        .join("\n\n");
+
+      const parsed = await groqCall(
+        [
+          {
+            role: "system",
+            content:
+              "You grade a student's short-answer responses about a concept. Score their overall understanding 0-100 based on correctness and completeness (not length). Respond ONLY as JSON: {\"score\": 0-100, \"feedback\": \"one short sentence\"}.",
+          },
+          { role: "user", content: `Concept: ${concept}\n\n${qa}` },
+        ],
+        250
+      );
+
+      let score = Number(parsed.score);
+      if (Number.isNaN(score)) score = 0;
+      score = Math.max(0, Math.min(100, Math.round(score)));
+      const feedback = String(parsed.feedback || "").slice(0, 300);
+
+      if (studentId && studentId !== "anonymous") {
+        try {
+          logAskQuickCheck({ studentId, topic: concept, score });
+        } catch (ledgerErr) {
+          console.error("Quick-check ledger error:", ledgerErr.message);
+        }
+      }
+
+      return res.json({ topic: concept, score, passed: score >= 60, feedback });
+    }
+
+    return res.status(400).json({ error: "mode must be 'generate' or 'grade'" });
+  } catch (error) {
+    console.error("QUICK CHECK ERROR:", error.message);
+    res.status(500).json({ error: "Quick check failed. Please try again." });
+  }
+});
+
+
+// =======================================================
 // 🔹 SINGLE INTERVIEW
 // =======================================================
-app.post("/interview", async (req, res) => {
+app.post("/interview", requireStudentIdentity, async (req, res) => {
   try {
     const { question, answer, subject, studentId } = req.body;
 
@@ -606,7 +709,7 @@ app.post("/interview", async (req, res) => {
 // =======================================================
 // 🔹 SESSION FLOW
 // =======================================================
-app.post("/interview/start", async (req, res) => {
+app.post("/interview/start", requireStudentIdentity, async (req, res) => {
   try {
     const { subject, studentId, totalQuestions } = req.body;
     const questionCount = Math.min(
@@ -628,7 +731,7 @@ app.post("/interview/start", async (req, res) => {
   }
 });
 
-app.post("/interview/answer", async (req, res) => {
+app.post("/interview/answer", requireStudentIdentity, async (req, res) => {
   try {
     const { sessionId, answer } = req.body;
 
@@ -653,7 +756,7 @@ app.post("/interview/answer", async (req, res) => {
   }
 });
 
-app.post("/interview/abandon", async (req, res) => {
+app.post("/interview/abandon", requireStudentIdentity, async (req, res) => {
   try {
     const { sessionId, reason } = req.body;
     if (!sessionId) {
@@ -882,6 +985,17 @@ app.get("/trainer/technology-readiness/:studentId", trainerOnly, async (req, res
   }
 });
 
+// Student-facing readiness (a student may see their own; trainers may see anyone)
+app.get("/student/:studentId/readiness", studentSelfOrTrainer, async (req, res) => {
+  try {
+    const detail = await buildStudentReadiness(req.params.studentId);
+    res.json(detail);
+  } catch (error) {
+    console.error("STUDENT READINESS ERROR:", error.message);
+    res.status(500).json({ error: "Failed to get readiness" });
+  }
+});
+
 const {
   syncAllReadinessToSheets,
   syncStudentReadinessToSheets,
@@ -1053,7 +1167,7 @@ app.get("/code/template/:language", async (req, res) => {
 // =======================================================
 
 // Execute code — mode "run" = single raw execution; mode "judge" = all testcases
-app.post("/code/execute", async (req, res) => {
+app.post("/code/execute", requireStudentIdentity, async (req, res) => {
   try {
     const { language, code, testCases, timeout, mode, input } = req.body;
 
@@ -1129,7 +1243,7 @@ app.post("/code/execute", async (req, res) => {
 });
 
 // Validate code without executing
-app.post("/code/validate", async (req, res) => {
+app.post("/code/validate", requireStudentIdentity, async (req, res) => {
   try {
     const { language, code } = req.body;
     
@@ -1149,7 +1263,7 @@ app.post("/code/validate", async (req, res) => {
 });
 
 // Submit solution for a problem (judge all testcases)
-app.post("/problems/:id/submit", async (req, res) => {
+app.post("/problems/:id/submit", requireStudentIdentity, async (req, res) => {
   try {
     const { language, code, studentId } = req.body;
     const problemId = req.params.id;
@@ -1235,7 +1349,7 @@ app.post("/problems/:id/submit", async (req, res) => {
 });
 
 // Record browser-graded JS/Python submissions without server-side execution.
-app.post("/problems/:id/browser-submit", async (req, res) => {
+app.post("/problems/:id/browser-submit", requireStudentIdentity, async (req, res) => {
   try {
     const problemId = req.params.id;
     const { language, studentId, result } = req.body || {};

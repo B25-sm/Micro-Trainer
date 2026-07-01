@@ -207,6 +207,9 @@ export default function CommunicationReview() {
                 strokeWidth={1.75}
               />
               <h1 className={headingPage}>Communication Review</h1>
+              <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-950/50 dark:text-amber-300">
+                Under progress
+              </span>
             </div>
             <p className={`${textMuted} max-w-xl`}>
               Practice how you say things — clarity, structure, and confidence — separate from

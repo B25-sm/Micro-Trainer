@@ -15,6 +15,8 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import CircularTimer from "../components/CircularTimer";
 import WebcamProctor from "../components/WebcamProctor";
+import { getSessionStudentId, getStudentApiHeaders, getAuthUser } from "../utils/authSession";
+import { getTrack, getCareerTrack } from "../utils/careerTracks";
 
 const Interview = () => {
   const navigate = useNavigate();
@@ -23,7 +25,9 @@ const Interview = () => {
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
-  const [subject, setSubject] = useState("MERN Stack");
+  const [subject, setSubject] = useState(
+    () => getTrack(getCareerTrack(getAuthUser()))?.interviewSubject || "MERN Stack"
+  );
   const [chatHistory, setChatHistory] = useState([]);
   const [questionSecondsTotal, setQuestionSecondsTotal] = useState(90);
   const [questionSecondsLeft, setQuestionSecondsLeft] = useState(90);
@@ -41,7 +45,7 @@ const Interview = () => {
   const [isDismissed, setIsDismissed] = useState(false);
   const [isAbandoned, setIsAbandoned] = useState(false);
   const [abandonSummary, setAbandonSummary] = useState(null);
-  const [studentId] = useState(() => localStorage.getItem("studentId") || "");
+  const [studentId] = useState(() => getSessionStudentId() || "");
   const isEndingRef = useRef(false);
   const warningCountRef = useRef(0);
 
@@ -505,8 +509,8 @@ IMPORTANT:
 
       const response = await fetch(`${API_BASE.replace(/\/$/, "")}/chat/ask`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: context }),
+        headers: { "Content-Type": "application/json", ...getStudentApiHeaders() },
+        body: JSON.stringify({ question: context, studentId }),
       });
 
       const chatData = await response.json();

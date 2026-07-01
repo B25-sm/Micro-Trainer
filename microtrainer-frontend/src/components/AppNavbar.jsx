@@ -31,7 +31,7 @@ const NAV_SECTIONS = [
     items: [
       { path: "/interview", label: "Interview", icon: Mic },
       { path: "/company-interviews", label: "Company Interviews", icon: Building2 },
-      { path: "/communication", label: "Communication", icon: MessageSquareText },
+      { path: "/communication", label: "Communication", icon: MessageSquareText, badge: "Under progress" },
       { path: "/problems", label: "Code Practice", icon: Code2 },
     ],
   },
@@ -131,16 +131,25 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
               <div className="mx-auto mb-2 h-px w-8 bg-gray-200 dark:bg-gray-700" aria-hidden />
             )}
             <ul className="space-y-0.5">
-              {section.items.map(({ path, label, icon: Icon }) => (
+              {section.items.map(({ path, label, icon: Icon, badge }) => (
                 <li key={path}>
                   <button
                     type="button"
                     onClick={() => go(path)}
                     className={navLinkClass(isActive(path), isCollapsed)}
-                    title={isCollapsed ? label : undefined}
+                    title={isCollapsed ? (badge ? `${label} — ${badge}` : label) : undefined}
                   >
                     <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={1.75} aria-hidden />
-                    {!isCollapsed && <span className="text-sm truncate">{label}</span>}
+                    {!isCollapsed && (
+                      <span className="flex min-w-0 flex-1 items-center justify-between gap-2 text-sm">
+                        <span className="truncate">{label}</span>
+                        {badge && (
+                          <span className="shrink-0 rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 dark:bg-amber-950/50 dark:text-amber-300">
+                            {badge}
+                          </span>
+                        )}
+                      </span>
+                    )}
                   </button>
                 </li>
               ))}

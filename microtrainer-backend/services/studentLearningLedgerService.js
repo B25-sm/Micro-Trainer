@@ -124,9 +124,84 @@ function appendEvent(event) {
     } catch (syncErr) {
       console.error("Readiness Sheets schedule error:", syncErr.message);
     }
+
+    // Feed real study actions into engagement (streaks / time-spent / status)
+    // and push live updates to the trainer dashboard. One chokepoint keeps every
+    // feature — chat, interview, coding, courses — tracked in realtime.
+    syncEngagement(record);
   }
 
   return record;
+}
+
+// Nominal time (seconds) credited per activity so "time spent today" accrues
+// even when a feature doesn't measure exact duration.
+const ACTIVITY_TIME_SECONDS = {
+  interview: 120,
+  coding_problem: 180,
+  guided_quiz: 90,
+  mini_assessment: 120,
+  ask_topic: 60,
+  ask_quick_check: 60,
+  chat_question: 45,
+};
+
+/**
+ * Mirror a ledger event into the engagement subsystem and broadcast it live.
+ * Best-effort: never let tracking break the primary action.
+ */
+function syncEngagement(record) {
+  try {
+    const engagement = require("./engagementService");
+    const timeSpent = ACTIVITY_TIME_SECONDS[record.activityType] ?? 60;
+
+    const result = engagement.recordActivity(
+      record.studentId,
+      record.activityType,
+      record.technology,
+      record.conceptId,
+      timeSpent,
+      record.score != null ? Number(record.score) : null
+    );
+
+    try {
+      const broadcaster = require("./eventBroadcaster");
+      broadcaster.broadcastActivityCompleted(record.studentId, {
+        activityType: record.activityType,
+        technology: record.technology,
+        topic: record.topic,
+        score: record.score,
+      });
+      if (result?.status) {
+        broadcaster.broadcastStatusUpdate(record.studentId, {
+          status: result.status,
+          todaySummary: result.todaySummary,
+        });
+      }
+      const streak = engagement.getStudentStreak(record.studentId);
+      broadcaster.broadcastStreakUpdate(record.studentId, {
+        currentStreak: streak.currentStreak,
+        longestStreak: streak.longestStreak,
+        streakAtRisk: streak.streakAtRisk,
+      });
+    } catch (broadcastErr) {
+      console.error("Engagement broadcast error:", broadcastErr.message);
+    }
+  } catch (engErr) {
+    console.error("Engagement sync error:", engErr.message);
+  }
+
+  // Adaptive loop: only scored activities can move readiness, so evaluate the
+  // "ready for a mock" rule after those. Fire-and-forget so it never blocks.
+  if (record.score != null) {
+    try {
+      require("./learningRulesService")
+        .evaluate({ event: "activity", studentId: record.studentId, technology: record.technology })
+        .catch((e) => console.error("Rules evaluate (activity) error:", e.message));
+    } catch (ruleErr) {
+      console.error("Rules hook error:", ruleErr.message);
+    }
+  }
 }
 
 function readAllEvents() {
