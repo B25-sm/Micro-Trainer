@@ -295,8 +295,8 @@ export default function ReportIssueButton() {
         type="button"
         onClick={() => setOpen((v) => !v)}
         disabled={isSending}
-        title="Suggest an improvement or report a problem"
-        aria-label="Suggest an improvement or report a problem"
+        title="Report a snag or suggest an improvement"
+        aria-label="Report a snag or suggest an improvement"
         aria-expanded={open}
         className="group inline-flex items-center gap-2 rounded-full border border-slate-200/90 bg-white/90 px-3.5 py-2 text-xs font-medium text-slate-500 shadow-sm backdrop-blur-sm transition hover:border-slate-300 hover:text-slate-700 disabled:opacity-60 dark:border-slate-700/90 dark:bg-slate-800/80 dark:text-slate-400 dark:hover:border-slate-600 dark:hover:text-slate-200"
       >
@@ -307,7 +307,7 @@ export default function ReportIssueButton() {
         ) : (
           <Lightbulb className="h-3.5 w-3.5" strokeWidth={2.25} />
         )}
-        <span>{open ? "Close" : "Feedback"}</span>
+        <span>{open ? "Close" : "snags"}</span>
       </button>
     </div>
   );

@@ -303,7 +303,7 @@ function WelcomeView({
   starterPrompts = [],
 }) {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-10 overflow-y-auto">
+    <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 pt-10 pb-28 overflow-y-auto">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -314,19 +314,13 @@ function WelcomeView({
           <TopNudgeBanner />
         </div>
 
-        {/* Brand mark */}
-        <div className="mb-6 flex flex-col items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-[#202124] text-sm font-bold shadow-sm">
-            MT
-          </div>
-          <div className="text-center">
-            <h1 className="text-2xl sm:text-3xl font-medium text-gray-900 dark:text-gray-100 tracking-tight">
-              What do you want to practice?
-            </h1>
-            <p className={`${textMuted} mt-2 max-w-md mx-auto`}>
-              Ask about any concept, interview topic, or coding problem — no menus required.
-            </p>
-          </div>
+        <div className="mb-8 text-center">
+          <h1 className="text-2xl sm:text-3xl font-medium text-gray-900 dark:text-gray-100 tracking-tight">
+            What do you want to practice?
+          </h1>
+          <p className={`${textMuted} mt-2 max-w-md mx-auto`}>
+            Ask about any concept, interview topic, or coding problem — no menus required.
+          </p>
         </div>
 
         {/* Primary input */}
@@ -363,8 +357,8 @@ function WelcomeView({
         </div>
 
         {/* Quick actions — secondary, not overwhelming */}
-        <div className="w-full mt-10 pt-6 border-t border-gray-100 dark:border-gray-800">
-          <p className="text-xs text-gray-400 dark:text-gray-500 text-center mb-3">
+        <div className="w-full mt-14 pt-8 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-xs text-gray-400 dark:text-gray-500 text-center mb-4">
             Or jump to a dedicated space
           </p>
           <div className="flex flex-wrap justify-center gap-2">
@@ -382,7 +376,7 @@ function WelcomeView({
           </div>
         </div>
 
-        <p className="text-[11px] text-gray-400 dark:text-gray-500 text-center mt-8">
+        <p className="text-[11px] text-gray-400 dark:text-gray-500 text-center mt-10">
           MicroTrainer adapts to your level. Answers may need a quick sanity check.
         </p>
       </motion.div>

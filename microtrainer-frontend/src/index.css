@@ -59,12 +59,12 @@
   --text-h: #f9fafb;
   --text-secondary: #cbd5e1;
   
-  /* Background Colors — classy blue-black (deep navy tint, premium feel) */
-  --bg: #0b0e14;
-  --bg-secondary: #11151d;
-  --bg-elevated: #161b28;
-  --border: #242b3b;
-  --code-bg: #11151d;
+  /* Background Colors — deep near-black with a subtle blue tint (premium feel) */
+  --bg: #05070b;
+  --bg-secondary: #0a0d14;
+  --bg-elevated: #0f131d;
+  --border: #1c2230;
+  --code-bg: #0a0d14;
 
   /* Accent Colors */
   --accent: #8ab4f8;
@@ -555,8 +555,8 @@ select optgroup,
 .dark select,
 .dark .app-select {
   color: #e8eaed !important;
-  background-color: #161b28 !important;
-  border-color: #242b3b !important;
+  background-color: #0f131d !important;
+  border-color: #1c2230 !important;
   color-scheme: dark;
 }
 
@@ -564,7 +564,7 @@ select optgroup,
 .dark select optgroup,
 .dark .app-select option,
 .dark .app-select optgroup {
-  background-color: #161b28 !important;
+  background-color: #0f131d !important;
   color: #e8eaed !important;
 }
 
@@ -629,7 +629,7 @@ textarea:focus {
 }
 
 .dark .glass-effect {
-  background: rgba(11, 14, 20, 0.8);
+  background: rgba(5, 7, 11, 0.8);
 }
 
 /* =========================
