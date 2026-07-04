@@ -303,11 +303,11 @@ function WelcomeView({
           <TopNudgeBanner />
         </div>
 
-        <div className="mb-7 text-center">
-          <h1 className="text-[28px] sm:text-[32px] font-semibold text-gray-900 dark:text-gray-100 tracking-tight">
+        <div className="w-full mb-7 text-center">
+          <h1 className="text-[28px] sm:text-[32px] font-semibold text-gray-900 dark:text-gray-100 tracking-tight break-words">
             What do you want to practice?
           </h1>
-          <p className={`${textMuted} mt-2 text-[15px]`}>
+          <p className={`${textMuted} mt-2 text-[15px] break-words`}>
             Ask about any concept, interview topic, or coding problem.
           </p>
         </div>
@@ -324,7 +324,7 @@ function WelcomeView({
           className="w-full"
         />
 
-        <p className="text-xs text-gray-400 dark:text-gray-500 text-center mt-3">
+        <p className="w-full text-xs text-gray-400 dark:text-gray-500 text-center mt-3 break-words">
           Answers are AI-generated — double-check anything important.
         </p>
 

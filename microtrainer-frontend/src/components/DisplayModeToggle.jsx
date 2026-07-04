@@ -66,16 +66,16 @@ function ThemeSegment({ darkMode, setDarkMode, iconOnly = false, compact = false
 
   return (
     <div
-      className={`relative inline-grid grid-cols-2 items-stretch rounded-full border bg-slate-100/95 dark:bg-[#303134] ${
+      className={`relative inline-grid grid-cols-2 items-stretch rounded-lg border bg-slate-100/80 dark:bg-white/[0.03] ${
         small
-          ? "border-slate-200/70 dark:border-slate-600/60 p-px"
-          : "border-slate-200/90 dark:border-slate-600/80 p-0.5 shadow-sm"
+          ? "border-slate-200/70 dark:border-slate-700/70 p-px"
+          : "border-slate-200/80 dark:border-slate-700/70 p-0.5"
       }`}
       role="group"
       aria-label="Theme"
     >
       <span
-        className={`pointer-events-none absolute rounded-full bg-white dark:bg-[#3c4043] shadow-md ring-1 ring-slate-200/80 dark:ring-slate-500/40 transition-[left] duration-200 ease-out ${
+        className={`pointer-events-none absolute rounded-md bg-white dark:bg-white/[0.08] shadow-sm ring-1 ring-slate-200/70 dark:ring-white/[0.06] transition-[left] duration-200 ease-out ${
           small ? "top-px bottom-px" : "top-0.5 bottom-0.5"
         }`}
         style={{
@@ -93,13 +93,13 @@ function ThemeSegment({ darkMode, setDarkMode, iconOnly = false, compact = false
       >
         <Sun
           className={`transition-all duration-200 ${
-            small ? "w-3.5 h-3.5" : "w-[17px] h-[17px]"
+            small ? "w-3.5 h-3.5" : "w-[15px] h-[15px]"
           } ${
             !darkMode
-              ? "text-amber-600 dark:text-amber-400 drop-shadow-[0_0_4px_rgba(217,119,6,0.35)]"
+              ? "text-blue-600 dark:text-blue-300 drop-shadow-[0_0_4px_rgba(37,99,235,0.35)]"
               : "text-slate-400 dark:text-slate-500"
           }`}
-          strokeWidth={small ? 1.5 : 1.75}
+          strokeWidth={1.5}
           aria-hidden
         />
       </ThemeOption>
@@ -112,13 +112,13 @@ function ThemeSegment({ darkMode, setDarkMode, iconOnly = false, compact = false
       >
         <Moon
           className={`transition-all duration-200 ${
-            small ? "w-3.5 h-3.5" : "w-[17px] h-[17px]"
+            small ? "w-3.5 h-3.5" : "w-[15px] h-[15px]"
           } ${
             darkMode
-              ? "text-indigo-600 dark:text-indigo-300 drop-shadow-[0_0_4px_rgba(99,102,241,0.4)]"
+              ? "text-blue-600 dark:text-blue-300 drop-shadow-[0_0_4px_rgba(37,99,235,0.35)]"
               : "text-slate-400 dark:text-slate-500"
           }`}
-          strokeWidth={small ? 1.5 : 1.75}
+          strokeWidth={1.5}
           aria-hidden
         />
       </ThemeOption>
@@ -140,7 +140,7 @@ function ThemeOption({ active, onClick, label, iconOnly, compact = false, childr
       aria-pressed={active}
       aria-label={label}
       title={label}
-      className={`relative z-[1] inline-flex w-full items-center justify-center rounded-full font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1a73e8] dark:focus-visible:ring-[#8ab4f8] focus-visible:ring-offset-1 dark:focus-visible:ring-offset-[#202124] ${
+      className={`relative z-[1] inline-flex w-full items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1a73e8] dark:focus-visible:ring-[#8ab4f8] focus-visible:ring-offset-1 dark:focus-visible:ring-offset-[#202124] ${
         small
           ? "h-6 px-2 gap-1"
           : iconOnly
@@ -172,19 +172,21 @@ function ReadModeButton({ readMode, toggleReadMode, iconOnly = false, compact = 
       title="Read mode — dim, low-glare colors"
       aria-label="Toggle read mode"
       aria-pressed={readMode}
-      className={`inline-flex items-center justify-center rounded-full border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1a73e8] dark:focus-visible:ring-[#8ab4f8] focus-visible:ring-offset-1 dark:focus-visible:ring-offset-[#202124] ${
+      className={`inline-flex items-center justify-center rounded-lg border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1a73e8] dark:focus-visible:ring-[#8ab4f8] focus-visible:ring-offset-1 dark:focus-visible:ring-offset-[#202124] ${
         small ? "h-6 w-6" : iconOnly ? "h-8 w-8" : "h-8 gap-1.5 px-3"
       } ${
         readMode
           ? small
-            ? "border-emerald-300/70 dark:border-emerald-600/50 bg-emerald-50/80 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300"
-            : "border-emerald-300/80 dark:border-emerald-600/60 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 shadow-sm"
+            ? "border-slate-200/70 dark:border-slate-700/70 bg-slate-100/80 dark:bg-white/[0.06] text-blue-600 dark:text-blue-300"
+            : "border-slate-200/80 dark:border-slate-700/70 bg-slate-100/80 dark:bg-white/[0.06] text-blue-600 dark:text-blue-300"
           : "border-transparent bg-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-100/90 dark:hover:bg-slate-700/50"
       }`}
     >
       <BookOpen
-        className={`transition-transform duration-200 ${small ? "w-3.5 h-3.5" : "w-4 h-4"}`}
-        strokeWidth={small ? 1.5 : 1.75}
+        className={`transition-transform duration-200 ${small ? "w-3.5 h-3.5" : "w-4 h-4"} ${
+          readMode ? "drop-shadow-[0_0_4px_rgba(37,99,235,0.35)]" : ""
+        }`}
+        strokeWidth={1.5}
         aria-hidden
       />
       {!iconOnly && (
