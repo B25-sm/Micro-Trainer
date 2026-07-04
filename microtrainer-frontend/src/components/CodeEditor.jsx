@@ -20,6 +20,36 @@ const PROBLEM_SOLVING_LANGUAGES = [
   { value: 'java', label: 'Java' },
 ];
 
+const codeStorageKey = (prob, lang) =>
+  `mt:code:${getSessionStudentId() || 'anon'}:${prob?.id || 'unknown'}:${lang}`;
+
+const readSavedCode = (prob, lang) => {
+  if (!prob?.id) return null;
+  try {
+    return localStorage.getItem(codeStorageKey(prob, lang));
+  } catch {
+    return null;
+  }
+};
+
+const writeSavedCode = (prob, lang, value) => {
+  if (!prob?.id) return;
+  try {
+    localStorage.setItem(codeStorageKey(prob, lang), value);
+  } catch {
+    // ignore storage errors (quota, privacy mode)
+  }
+};
+
+const clearSavedCode = (prob, lang) => {
+  if (!prob?.id) return;
+  try {
+    localStorage.removeItem(codeStorageKey(prob, lang));
+  } catch {
+    // ignore storage errors
+  }
+};
+
 const CodeEditor = ({ problem, onSubmit, blockClipboard = true }) => {
   const [code, setCode] = useState('');
   const [language, setLanguage] = useState('javascript');
@@ -29,34 +59,39 @@ const CodeEditor = ({ problem, onSubmit, blockClipboard = true }) => {
   const clipboardCleanupRef = useRef(null);
   const problemId = problem?.id;
 
-  const applyStarter = useCallback(
-    (lang = language, prob = problem) => {
-      setCode(getStarterCode(lang, prob));
+  const loadCode = useCallback(
+    async (lang, { skipCache = false } = {}) => {
+      if (!skipCache) {
+        const saved = readSavedCode(problem, lang);
+        if (saved != null) {
+          setCode(saved);
+          setOutput(null);
+          return;
+        }
+      }
+
+      const fallback = getStarterCode(lang, problem);
+      try {
+        const response = await fetch(
+          `${API_BASE}/code/template/${lang}?problemId=${encodeURIComponent(problemId || '')}`
+        );
+        const data = await response.json();
+        setCode(data.template || fallback);
+      } catch (error) {
+        console.error('Failed to load template, using local starter:', error);
+        setCode(fallback);
+      }
       setOutput(null);
     },
-    [language, problem]
+    [problem, problemId]
   );
-
-  const loadTemplate = useCallback(async () => {
-    const fallback = getStarterCode(language, problem);
-    try {
-      const response = await fetch(
-        `${API_BASE}/code/template/${language}?problemId=${encodeURIComponent(problemId || '')}`
-      );
-      const data = await response.json();
-      setCode(data.template || fallback);
-    } catch (error) {
-      console.error('Failed to load template, using local starter:', error);
-      setCode(fallback);
-    }
-    setOutput(null);
-  }, [language, problemId, problem]);
 
   useEffect(() => {
     if (problemId) {
-      loadTemplate();
+      loadCode(language);
     }
-  }, [problemId, loadTemplate]);
+    // Only reload when the problem changes; language switches are handled by handleLanguageChange.
+  }, [problemId]);
 
   useEffect(() => {
     if (!clipboardNotice) return;
@@ -86,7 +121,12 @@ const CodeEditor = ({ problem, onSubmit, blockClipboard = true }) => {
 
   const handleLanguageChange = (newLang) => {
     setLanguage(newLang);
-    applyStarter(newLang, problem);
+    loadCode(newLang);
+  };
+
+  const handleReset = () => {
+    clearSavedCode(problem, language);
+    loadCode(language, { skipCache: true });
   };
 
   const runCode = async () => {
@@ -248,7 +288,7 @@ const CodeEditor = ({ problem, onSubmit, blockClipboard = true }) => {
           </select>
           <button
             type="button"
-            onClick={loadTemplate}
+            onClick={handleReset}
             title="Reset to starter template"
             className="flex items-center gap-1 rounded-lg border border-gray-600 px-3 py-2 text-sm text-gray-300 hover:bg-gray-700"
           >
@@ -295,7 +335,11 @@ const CodeEditor = ({ problem, onSubmit, blockClipboard = true }) => {
             height="100%"
             language={language === 'java' ? 'java' : language}
             value={code}
-            onChange={(value) => setCode(value || '')}
+            onChange={(value) => {
+              const next = value || '';
+              setCode(next);
+              writeSavedCode(problem, language, next);
+            }}
             onMount={handleEditorMount}
             theme="vs-dark"
             options={{

@@ -170,7 +170,8 @@ const Home = () => {
     } catch (err) {
       console.error("Chat error:", err);
       const errorMessage =
-        err?.response?.data?.error ||
+        err?.error ||
+        err?.message ||
         "I can only help with technical concepts and interview preparation. Please ask me something technical — for example, React hooks, SQL joins, or how to prepare for a coding interview.";
 
       setChatHistory((prev) => [

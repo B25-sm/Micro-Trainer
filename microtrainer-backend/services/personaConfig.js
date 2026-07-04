@@ -81,6 +81,20 @@ CODE in **Code Example**: ONE fenced block (3-8 lines), correct syntax for the t
 `;
 
 /**
+ * Typo/shorthand tolerance — students type fast on phones. Without this, small
+ * fast models over-index on literal spelling and wrongly refuse valid technical
+ * questions (e.g. "wat is python", "diff btw let n var", "hw does react work").
+ */
+const INPUT_INTERPRETATION_RULES = `
+INTERPRETING STUDENT INPUT — students type fast and casually:
+- Silently correct obvious typos, missing punctuation, dropped letters, and chat shorthand before deciding what they mean. Never comment on the spelling/grammar itself — just answer the intended question.
+- Shorthand is common: "u"→you, "ur"→your, "y"→why, "hw"→how, "wat/wut"→what, "diff"/"b/w"→difference/between, "pls/plz"→please, "py"→Python, "js"→JavaScript, "db"→database, "oop"/"oops"→OOP.
+- Misspelled tech words are still that tech word: "pyhton/phyton"→Python, "javascrip(t)"→JavaScript, "reactjs/raect"→React, "mondodb"→MongoDB, "recurtion"→recursion, "algoritm"→algorithm, etc.
+- Fragment-y or ungrammatical questions ("python how it run", "react hooks work how") are still valid — answer the technical topic, don't ask them to rephrase.
+- Only fall back to asking for clarification if the message is truly ambiguous even after correcting for typos/shorthand (e.g. a single word with several unrelated technical meanings and no other context) — and even then, make your best guess first and offer the alternative rather than refusing outright.
+`;
+
+/**
  * Factual completeness — prevents incomplete lists (e.g. "only 3 SQL JOIN types").
  */
 const TECHNICAL_ACCURACY_RULES = `
@@ -531,6 +545,7 @@ module.exports = {
   CODE_SNIPPET_RULES_CHAT,
   CONCEPT_QA_RESPONSE_STRUCTURE,
   TECHNICAL_ACCURACY_RULES,
+  INPUT_INTERPRETATION_RULES,
   INTERVIEW_PERSONA,
   INTERVIEW_FORMAT,
   FINAL_EVALUATION_PERSONA,

@@ -20,6 +20,7 @@ export default function ScheduleDiagnostic({
   const [totalQ] = useState(QUESTIONS_PER_TECH);
   const [loading, setLoading] = useState(false);
   const [starting, setStarting] = useState(true);
+  const [interviewerNote, setInterviewerNote] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -30,6 +31,7 @@ export default function ScheduleDiagnostic({
       setQuestion("");
       setAnswer("");
       setCurrentQ(0);
+      setInterviewerNote("");
 
       try {
         const res = await startInterview({
@@ -75,6 +77,7 @@ export default function ScheduleDiagnostic({
         return;
       }
 
+      setInterviewerNote(res.data.isClarification ? res.data.interviewerMessage || "" : "");
       setQuestion(res.data.nextQuestion);
       setCurrentQ(res.data.currentQuestion || currentQ + 1);
     } catch (err) {
@@ -86,12 +89,14 @@ export default function ScheduleDiagnostic({
 
   const handleSkipTech = async () => {
     if (
+      loading ||
       !window.confirm(
         `Skip assessment for ${technology}? We'll assume you need more practice in this area.`
       )
     ) {
       return;
     }
+    setLoading(true);
     if (sessionId) {
       try {
         await abandonInterview({ sessionId });
@@ -99,12 +104,18 @@ export default function ScheduleDiagnostic({
         /* ignore */
       }
     }
-    await personalScheduleAPI.recordDiagnostic(studentId, {
-      technology,
-      averageScore: 3,
-      sessionId: sessionId || "skipped",
-    });
-    onComplete?.();
+    try {
+      await personalScheduleAPI.recordDiagnostic(studentId, {
+        technology,
+        averageScore: 3,
+        sessionId: sessionId || "skipped",
+      });
+      onComplete?.();
+    } catch (err) {
+      onError?.(err?.error || err?.message || "Could not skip skill check.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (starting) {
@@ -127,10 +138,21 @@ export default function ScheduleDiagnostic({
             {remaining > 1 ? ` · ${remaining - 1} more technology(ies) after this` : ""}
           </p>
         </div>
-        <button type="button" onClick={handleSkipTech} className={btnSecondary}>
-          Skip
+        <button
+          type="button"
+          onClick={handleSkipTech}
+          disabled={loading}
+          className={btnSecondary}
+        >
+          {loading ? "Skipping…" : "Skip"}
         </button>
       </div>
+
+      {interviewerNote && (
+        <div className="mb-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-900 dark:text-blue-200 text-sm whitespace-pre-line">
+          {interviewerNote}
+        </div>
+      )}
 
       <div className="mb-4 p-4 rounded-lg bg-gray-50 dark:bg-[#1e1f22] text-gray-800 dark:text-gray-200 text-sm">
         {question}

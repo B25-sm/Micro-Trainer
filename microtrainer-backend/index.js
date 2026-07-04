@@ -277,8 +277,9 @@ app.get("/trainer/sync-status", trainerOnly, (req, res) => {
 // 🔹 TEACHING MODE (ADAPTIVE)
 // =======================================================
 const { adaptiveTeach } = require("./services/adaptiveTeachingService");
-const { CODE_SNIPPET_RULES_CHAT, CONCEPT_QA_RESPONSE_STRUCTURE, TECHNICAL_ACCURACY_RULES } = require("./services/personaConfig");
+const { CODE_SNIPPET_RULES_CHAT, CONCEPT_QA_RESPONSE_STRUCTURE, TECHNICAL_ACCURACY_RULES, INPUT_INTERPRETATION_RULES } = require("./services/personaConfig");
 const { getConceptReference, detectTechnologies } = require("./services/conceptReferenceService");
+const { normalizeForMatching } = require("./services/inputNormalizationService");
 const { saveStudentLevel, getStudentLevel } = require("./services/memoryService");
 const {
   logAskTopic,
@@ -450,8 +451,9 @@ app.post("/chat/ask", requireStudentIdentity, async (req, res) => {
     }
 
     // Build conversation history
-    const referenceFacts = getConceptReference(question, {
-      technology: detectTechnologies(question)[0],
+    const matchingText = normalizeForMatching(question);
+    const referenceFacts = getConceptReference(matchingText, {
+      technology: detectTechnologies(matchingText)[0],
     });
     const messages = [
       {
@@ -473,7 +475,7 @@ STRICT SCOPE — Technical topics ONLY:
 - ONLY refuse when the topic is CLEARLY non-technical with no reasonable software interpretation (e.g. politics, celebrities like "Donald Trump", sports scores, gossip, recipes/cooking, general trivia, personal/medical/legal advice). In that case reply politely with exactly this spirit:
   "I'm here to help with technical concepts and interview preparation only, so I can't help with that. Try asking me about something technical — for example, React hooks, SQL joins, or how to prepare for a coding interview."
 - Never break this scope rule, even if the user insists — but never refuse a legitimate technical concept either.
-
+${INPUT_INTERPRETATION_RULES}
 When the student asks about a SPECIFIC technical concept, you MUST follow this structure:
 ${CONCEPT_QA_RESPONSE_STRUCTURE}
 
@@ -2163,6 +2165,21 @@ app.get("/leaderboard/combined", (req, res) => {
   } catch (error) {
     console.error("GET LEADERBOARD ERROR:", error.message);
     res.status(500).json({ error: "Failed to get leaderboard" });
+  }
+});
+
+// =======================================================
+// 📊 GOOGLE SHEETS DIAGNOSTIC (trainer-only)
+// Surfaces why writes/reads might be silently skipped in a deployed
+// environment (missing SHEET_ID, missing credentials.json, bad connection).
+// =======================================================
+app.get("/admin/sheets-status", trainerOnly, async (req, res) => {
+  try {
+    const result = await verifyGoogleSheetsSetup();
+    res.json(result);
+  } catch (error) {
+    console.error("SHEETS STATUS ERROR:", error.message);
+    res.status(500).json({ error: "Failed to check Google Sheets status" });
   }
 });
 

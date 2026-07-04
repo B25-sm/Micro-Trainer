@@ -27,19 +27,7 @@ function isClarificationRequest(text) {
   const t = String(text || "").trim();
   if (!t || t.length > 300) return false;
 
-  if (CLARIFICATION_PATTERNS.some((pattern) => pattern.test(t))) {
-    return true;
-  }
-
-  if (
-    t.length < 100 &&
-    t.includes("?") &&
-    /\b(question|mean|asking|repeat|clarify|understand|explain)\b/i.test(t)
-  ) {
-    return true;
-  }
-
-  return false;
+  return CLARIFICATION_PATTERNS.some((pattern) => pattern.test(t));
 }
 
 function fixAbsurdQuestion(question, subject = "MERN Stack") {
@@ -50,7 +38,7 @@ function fixAbsurdQuestion(question, subject = "MERN Stack") {
   return q;
 }
 
-function fallbackClarification(question, studentMessage) {
+function fallbackClarification(question, studentMessage, subject) {
   const fairQuestion = fixAbsurdQuestion(question, subject);
   const opener = /didn't|didnt|don't|dont|confused|understand/i.test(studentMessage)
     ? "No worries — happy to clarify."
@@ -71,7 +59,7 @@ async function generateClarification({
   const fairQuestion = fixAbsurdQuestion(question, subject);
 
   if (!process.env.GROQ_API_KEY) {
-    return fallbackClarification(question, studentMessage);
+    return fallbackClarification(question, studentMessage, subject);
   }
 
   try {
@@ -124,7 +112,7 @@ Clarification request #${clarificationCount} for this question`,
     const revisedQuestion = String(parsed.revisedQuestion || "").trim() || null;
 
     if (!message) {
-      return fallbackClarification(question, studentMessage);
+      return fallbackClarification(question, studentMessage, subject);
     }
 
     return {
@@ -133,7 +121,7 @@ Clarification request #${clarificationCount} for this question`,
     };
   } catch (err) {
     console.error("Clarification generation error:", err.message);
-    return fallbackClarification(question, studentMessage);
+    return fallbackClarification(question, studentMessage, subject);
   }
 }
 

@@ -18,6 +18,7 @@ const {
   ADAPTIVE_TEACHING_PERSONA,
   CONCEPT_QA_RESPONSE_STRUCTURE,
   TECHNICAL_ACCURACY_RULES,
+  INPUT_INTERPRETATION_RULES,
   CODE_SNIPPET_RULES_BEGINNER,
   CODE_SNIPPET_RULES_INTERMEDIATE,
   CODE_SNIPPET_RULES_ADVANCED,
@@ -29,6 +30,7 @@ const {
 } = require("./quizQuestionUtils");
 const { callGroq } = require("./groqClient");
 const { getConceptReference, detectTechnologies } = require("./conceptReferenceService");
+const { normalizeForMatching } = require("./inputNormalizationService");
 const {
   generateLessonDiagram,
   buildDiagramFallback,
@@ -38,6 +40,20 @@ const {
   validateLessonQuality,
   buildRepairPrompt,
 } = require("./lessonQualityService");
+
+// Common shorthand that small/fast LLMs misread literally (e.g. "oops" as the
+// interjection for a mistake) instead of as domain jargon.
+const CONCEPT_ABBREVIATIONS = [
+  { pattern: /\boops?\b/i, expansion: "OOP (Object-Oriented Programming)" },
+];
+
+function expandConceptAbbreviations(text) {
+  if (!text || typeof text !== "string") return text;
+  return CONCEPT_ABBREVIATIONS.reduce(
+    (result, { pattern, expansion }) => result.replace(pattern, expansion),
+    text
+  );
+}
 
 function buildCurriculumReferenceBlock(curriculumReference, lessonBrief) {
   const brief = lessonBrief ? String(lessonBrief).trim() : "";
@@ -315,7 +331,7 @@ const LEVEL_1_PERSONA = `
 ${BASE_PERSONA}
 
 ${ADAPTIVE_TEACHING_PERSONA}
-
+${INPUT_INTERPRETATION_RULES}
 You are teaching a COMPLETE BEGINNER who knows NOTHING about programming.
 
 TEACHING STYLE:
@@ -408,7 +424,8 @@ async function adaptiveTeach({
   conversationHistory = [],
   detectedLevel = null
 }) {
-  
+  concept = expandConceptAbbreviations(normalizeForMatching(concept));
+
   // STEP 1: First interaction — structured concept explanation + cross question
   if (!studentAnswer && !detectedLevel) {
     const analogy = getAnalogy(concept);
