@@ -115,7 +115,8 @@ const Interview = () => {
       type === "camera_off" ||
       type === "head_turned" ||
       type === "looking_away" ||
-      type === "no_face_detected";
+      type === "no_face_detected" ||
+      type === "identity_mismatch";
 
     if (warnsOnUi) {
       incrementWarning(reason, (newCount) => {

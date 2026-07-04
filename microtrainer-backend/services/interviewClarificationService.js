@@ -14,13 +14,17 @@ const CLARIFICATION_PATTERNS = [
   /\bsay (that|it) again\b/i,
   /\bconfused\b/i,
   /\belaborate\b/i,
-  /\bexplain the question\b/i,
+  /\bexplain\b.*\b(question|this|that|previous|again|same)\b/i,
+  /\b(repeat|rephrase|clarify)\b.*\bquestion\b/i,
+  /\b(previous|same|last)\s+question\b/i,
   /\bcan you explain\b/i,
   /\bi('m| am) (lost|confused)\b/i,
   /\bwhat (are|is) you asking\b/i,
   /\bwhat should i (write|answer|say|do)\b/i,
   /\bdid not understand\b/i,
   /\bunclear\b/i,
+  /\bdon'?t\s+(give|ask|move to|jump to)\s+(new|another|next)\s+question/i,
+  /\bno\s+new\s+questions?\b/i,
 ];
 
 function isClarificationRequest(text) {

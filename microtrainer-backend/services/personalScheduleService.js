@@ -219,6 +219,30 @@ function buildTaskList(schedule) {
     });
   }
 
+  // A student who already scores 8+ on every declared/syllabus technology would
+  // otherwise get zero tasks and generation would fail. Give them a light
+  // review + mock-interview plan instead of no plan at all.
+  if (tasks.length === 0) {
+    for (const item of syllabus) {
+      tasks.push({
+        id: `${item.technology}::${item.concept}::review`.replace(/\s+/g, "_").toLowerCase(),
+        technology: item.technology,
+        concept: `${item.concept} (quick review)`,
+        estimatedMinutes: 20,
+        type: "review",
+        diagnosticScore: schedule.diagnostics[item.technology]?.averageScore ?? 8,
+      });
+    }
+    tasks.push({
+      id: "mock_interview::final_prep",
+      technology: schedule.category,
+      concept: "Full mock interview + weak-spot drill",
+      estimatedMinutes: 60,
+      type: "mock",
+      diagnosticScore: null,
+    });
+  }
+
   return tasks;
 }
 
@@ -226,43 +250,43 @@ function distributeTasksAcrossDays(tasks, totalDays, hoursPerDay) {
   const minutesPerDay = hoursPerDay * 60;
   const days = [];
 
-  for (let d = 1; d <= totalDays; d++) {
-    days.push({
-      dayNumber: d,
+  function addDay() {
+    const day = {
+      dayNumber: days.length + 1,
       date: null,
       tasks: [],
       completed: false,
       completedTaskIds: [],
-    });
+    };
+    days.push(day);
+    return day;
   }
 
+  for (let d = 0; d < totalDays; d++) addDay();
+
+  // Linear bin-packing: every task lands on some day. If the pre-computed
+  // totalDays isn't enough capacity, extend the plan instead of dropping
+  // tasks (a plan that silently omits syllabus content isn't executable).
   let dayIndex = 0;
-  let dayUsedMinutes = 0;
-  let taskIdx = 0;
+  for (const task of tasks) {
+    let day = days[dayIndex] || addDay();
+    let used = day.tasks.reduce((sum, t) => sum + t.estimatedMinutes, 0);
 
-  while (taskIdx < tasks.length) {
-    const task = { ...tasks[taskIdx] };
-    const day = days[dayIndex];
-
-    if (dayUsedMinutes + task.estimatedMinutes > minutesPerDay && day.tasks.length > 0) {
-      dayIndex = (dayIndex + 1) % totalDays;
-      dayUsedMinutes = 0;
-      if (dayIndex === 0 && taskIdx > 0) {
-        // Still overflow — extend plan by adding minutes to last days
-        break;
-      }
-      continue;
+    while (day.tasks.length > 0 && used + task.estimatedMinutes > minutesPerDay) {
+      dayIndex++;
+      day = days[dayIndex] || addDay();
+      used = day.tasks.reduce((sum, t) => sum + t.estimatedMinutes, 0);
     }
 
-    day.tasks.push(task);
-    dayUsedMinutes += task.estimatedMinutes;
-    taskIdx++;
+    day.tasks.push({ ...task });
+    used += task.estimatedMinutes;
 
-    if (dayUsedMinutes >= minutesPerDay * 0.85) {
-      dayIndex = Math.min(dayIndex + 1, totalDays - 1);
-      dayUsedMinutes = 0;
+    if (used >= minutesPerDay * 0.85) {
+      dayIndex++;
     }
   }
+
+  while (days.length < MIN_PLAN_DAYS) addDay();
 
   // Assign calendar dates
   const start = new Date();
@@ -313,12 +337,13 @@ async function generatePlan(studentId) {
     throw new Error("Could not build a study plan. Try adding more skills or retaking diagnostics.");
   }
 
-  const { totalDays, totalMinutes, totalTasks } = calculateRecommendedDays(
+  const { totalDays: estimatedDays, totalMinutes, totalTasks } = calculateRecommendedDays(
     tasks,
     schedule.hoursPerDay
   );
 
-  const days = distributeTasksAcrossDays(tasks, totalDays, schedule.hoursPerDay);
+  const days = distributeTasksAcrossDays(tasks, estimatedDays, schedule.hoursPerDay);
+  const totalDays = days.length;
 
   const startDate = days[0]?.date;
   const endDate = days[days.length - 1]?.date;

@@ -31,6 +31,15 @@ const LOW_LIGHT_LUMA = 58;
 /** Near-black frames (lens covered / camera feeding black) sit far below even a dim room */
 const BLACK_FRAME_LUMA = 12;
 
+/** face-api euclidean distance between descriptors — below ~0.6 is the standard "same person"
+ *  cutoff; we use a slightly tighter value since a false "mismatch" just costs a re-check,
+ *  while a missed real swap defeats the whole point of proctoring. */
+const IDENTITY_DISTANCE_THRESHOLD = 0.55;
+/** Consecutive detection ticks (500ms each) a mismatch must persist before starting the hold timer */
+const IDENTITY_MISMATCH_STREAK_MIN = 4;
+/** Extra hold before actually flagging — avoids firing on a single bad-angle frame */
+const IDENTITY_MISMATCH_HOLD_MS = 4000;
+
 /** Merge overlapping boxes — tiny-face often double-counts one person */
 function boxIoU(a, b) {
   const x1 = Math.max(a.x, b.x);
@@ -236,6 +245,10 @@ const WebcamProctor = ({ onViolation, isActive, relaxForTyping = false }) => {
   /** Require sustained pose drift — single jittery frames should not start timers */
   const consecutiveLookingAwayRef = useRef(0);
   const consecutiveHeadTurnRef = useRef(0);
+  /** Baseline face descriptor captured once the first clean single-face frame arrives */
+  const referenceDescriptorRef = useRef(null);
+  const consecutiveIdentityMismatchRef = useRef(0);
+  const identityMismatchTimerRef = useRef(null);
   /** Avoid spamming parent (and duplicate warnings) when pose jitters */
   const violationCooldownRef = useRef({});
   const COOLDOWN_MS = {
@@ -244,6 +257,7 @@ const WebcamProctor = ({ onViolation, isActive, relaxForTyping = false }) => {
     multiple_faces: 8_000,
     no_face_detected: 15_000,
     camera_off: 12_000,
+    identity_mismatch: 15_000,
   };
 
   const stopCamera = () => {
@@ -258,7 +272,14 @@ const WebcamProctor = ({ onViolation, isActive, relaxForTyping = false }) => {
       clearTimeout(cameraOffTimerRef.current);
       cameraOffTimerRef.current = null;
     }
+    if (identityMismatchTimerRef.current) {
+      clearTimeout(identityMismatchTimerRef.current);
+      identityMismatchTimerRef.current = null;
+    }
     consecutiveBlackRef.current = 0;
+    consecutiveIdentityMismatchRef.current = 0;
+    /** Fresh baseline next time the camera starts — never compare across separate sessions */
+    referenceDescriptorRef.current = null;
     setCameraActive(false);
     setCameraOff(false);
   };
@@ -442,7 +463,8 @@ const WebcamProctor = ({ onViolation, isActive, relaxForTyping = false }) => {
 
         const detections = await faceapi
           .detectAllFaces(v, detectorOpts)
-          .withFaceLandmarks();
+          .withFaceLandmarks()
+          .withFaceDescriptors();
 
         const frameW = v.videoWidth;
         const frameH = v.videoHeight;
@@ -522,6 +544,49 @@ const WebcamProctor = ({ onViolation, isActive, relaxForTyping = false }) => {
           setLiveAlert((prev) =>
             prev === "Multiple faces detected — verifying…" ? null : prev
           );
+        }
+
+        // 🔒 IDENTITY CHECK — same face throughout, independent of typing/pose relaxation.
+        // Capture a baseline descriptor on the first clean single-face frame, then keep
+        // comparing every subsequent single-face frame against it.
+        if (faceCount === 1 && distinctFaces[0].descriptor) {
+          if (!referenceDescriptorRef.current) {
+            referenceDescriptorRef.current = distinctFaces[0].descriptor;
+          } else {
+            const distance = faceapi.euclideanDistance(
+              referenceDescriptorRef.current,
+              distinctFaces[0].descriptor
+            );
+
+            if (distance > IDENTITY_DISTANCE_THRESHOLD) {
+              consecutiveIdentityMismatchRef.current += 1;
+              if (
+                consecutiveIdentityMismatchRef.current >= IDENTITY_MISMATCH_STREAK_MIN &&
+                !identityMismatchTimerRef.current
+              ) {
+                identityMismatchTimerRef.current = setTimeout(() => {
+                  reportViolation(
+                    "identity_mismatch",
+                    45,
+                    "Face doesn't match the candidate who started this interview"
+                  );
+                  identityMismatchTimerRef.current = null;
+                }, IDENTITY_MISMATCH_HOLD_MS);
+              }
+            } else {
+              consecutiveIdentityMismatchRef.current = 0;
+              if (identityMismatchTimerRef.current) {
+                clearTimeout(identityMismatchTimerRef.current);
+                identityMismatchTimerRef.current = null;
+              }
+            }
+          }
+        } else {
+          consecutiveIdentityMismatchRef.current = 0;
+          if (identityMismatchTimerRef.current) {
+            clearTimeout(identityMismatchTimerRef.current);
+            identityMismatchTimerRef.current = null;
+          }
         }
 
         if (faceCount === 1 && !rules.skipPoseChecks) {
@@ -632,11 +697,16 @@ const WebcamProctor = ({ onViolation, isActive, relaxForTyping = false }) => {
         clearTimeout(cameraOffTimerRef.current);
         cameraOffTimerRef.current = null;
       }
+      if (identityMismatchTimerRef.current) {
+        clearTimeout(identityMismatchTimerRef.current);
+        identityMismatchTimerRef.current = null;
+      }
       consecutiveBlackRef.current = 0;
       consecutiveNoFaceRef.current = 0;
       consecutiveMultipleFacesRef.current = 0;
       consecutiveLookingAwayRef.current = 0;
       consecutiveHeadTurnRef.current = 0;
+      consecutiveIdentityMismatchRef.current = 0;
     };
   }, [cameraActive, modelsLoaded, isActive, relaxForTyping]);
 

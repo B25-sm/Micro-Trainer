@@ -117,6 +117,11 @@ export const getInterviewHistory = (studentId) =>
     headers: getStudentApiHeaders(studentId),
   });
 
+export const getCodePracticeHistory = (studentId) =>
+  API.get(`/problems/history/${studentId}`, {
+    headers: getStudentApiHeaders(studentId),
+  });
+
 export const getInterviewHistoryDetail = (studentId, sessionId) =>
   API.get(`/student/${studentId}/interviews/${sessionId}`, {
     headers: getStudentApiHeaders(studentId),

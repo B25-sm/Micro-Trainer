@@ -16,6 +16,7 @@ import {
   X,
   MessageSquareText,
   Building2,
+  Shuffle,
 } from "lucide-react";
 import DisplayModeToggle from "./DisplayModeToggle";
 import { clearAuthSession } from "../utils/authSession";
@@ -32,6 +33,7 @@ const NAV_SECTIONS = [
       { path: "/interview", label: "Interview", icon: Mic },
       { path: "/company-interviews", label: "Company Interviews", icon: Building2 },
       { path: "/communication", label: "Communication", icon: MessageSquareText, badge: "Under progress" },
+      { path: "/speaking-practice", label: "Speaking Practice", icon: Shuffle },
       { path: "/problems", label: "Code Practice", icon: Code2 },
     ],
   },
@@ -52,12 +54,20 @@ const NAV_SECTIONS = [
 ];
 
 function navLinkClass(active, collapsed) {
-  return `w-full flex items-center gap-3 rounded-lg transition-colors ${
-    collapsed ? "justify-center px-2 py-2.5" : "px-3 py-2"
+  return `group relative w-full flex items-center gap-3 rounded-xl transition-all duration-200 ${
+    collapsed ? "justify-center px-2 py-2.5" : "px-3 py-2.5"
   } ${
     active
-      ? "bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 font-medium"
-      : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700/50"
+      ? "bg-gradient-to-r from-blue-50 to-blue-50/0 dark:from-blue-500/15 dark:to-blue-500/0 text-blue-600 dark:text-blue-300 font-medium"
+      : "text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-white/[0.04]"
+  }`;
+}
+
+function navIconClass(active) {
+  return `h-[17px] w-[17px] shrink-0 transition-all duration-200 ${
+    active
+      ? "drop-shadow-[0_0_5px_rgba(37,99,235,0.4)] dark:drop-shadow-[0_0_5px_rgba(139,180,248,0.5)]"
+      : "group-hover:scale-[1.12]"
   }`;
 }
 
@@ -131,15 +141,23 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
               <div className="mx-auto mb-2 h-px w-8 bg-gray-200 dark:bg-gray-700" aria-hidden />
             )}
             <ul className="space-y-0.5">
-              {section.items.map(({ path, label, icon: Icon, badge }) => (
+              {section.items.map(({ path, label, icon: Icon, badge }) => {
+                const active = isActive(path);
+                return (
                 <li key={path}>
                   <button
                     type="button"
                     onClick={() => go(path)}
-                    className={navLinkClass(isActive(path), isCollapsed)}
+                    className={navLinkClass(active, isCollapsed)}
                     title={isCollapsed ? (badge ? `${label} — ${badge}` : label) : undefined}
                   >
-                    <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={1.75} aria-hidden />
+                    {active && (
+                      <span
+                        className="absolute left-0 top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full bg-blue-500 dark:bg-blue-400"
+                        aria-hidden
+                      />
+                    )}
+                    <Icon className={navIconClass(active)} strokeWidth={1.5} aria-hidden />
                     {!isCollapsed && (
                       <span className="flex min-w-0 flex-1 items-center justify-between gap-2 text-sm">
                         <span className="truncate">{label}</span>
@@ -152,7 +170,8 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
                     )}
                   </button>
                 </li>
-              ))}
+                );
+              })}
             </ul>
           </div>
         ))}
@@ -173,7 +192,13 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
               className={navLinkClass(isActive("/trainer"), isCollapsed)}
               title={isCollapsed ? "Trainer" : undefined}
             >
-              <GraduationCap className="h-[18px] w-[18px] shrink-0" strokeWidth={1.75} aria-hidden />
+              {isActive("/trainer") && (
+                <span
+                  className="absolute left-0 top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full bg-blue-500 dark:bg-blue-400"
+                  aria-hidden
+                />
+              )}
+              <GraduationCap className={navIconClass(isActive("/trainer"))} strokeWidth={1.5} aria-hidden />
               {!isCollapsed && <span className="text-sm truncate">Trainer</span>}
             </button>
           </div>
@@ -216,12 +241,16 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
           type="button"
           onClick={handleLogout}
           aria-label="Sign out of MicroTrainer"
-          className={`w-full inline-flex items-center rounded-lg text-sm font-normal text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-100/90 dark:hover:bg-white/[0.06] transition-colors ${
+          className={`group w-full inline-flex items-center rounded-lg text-sm font-normal text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-100/90 dark:hover:bg-white/[0.06] transition-colors ${
             isCollapsed ? "justify-center p-2" : "gap-2 px-3 py-2"
           }`}
           title={isCollapsed ? "Sign out" : undefined}
         >
-          <LogOut className="h-4 w-4 shrink-0 opacity-80" strokeWidth={1.75} aria-hidden />
+          <LogOut
+            className="h-[15px] w-[15px] shrink-0 opacity-80 transition-transform duration-200 group-hover:scale-[1.12]"
+            strokeWidth={1.5}
+            aria-hidden
+          />
           {!isCollapsed && <span>Sign out</span>}
         </button>
       </div>

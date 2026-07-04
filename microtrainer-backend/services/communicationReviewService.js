@@ -66,7 +66,100 @@ const SCENARIOS = [
     prompt: "What is your greatest weakness, and how are you working on it?",
     hint: "Real weakness + specific improvement — not a humble brag.",
   },
+  {
+    id: "random-hobby",
+    category: "Spontaneous",
+    prompt: "Talk about a hobby or interest you're passionate about.",
+    hint: "Lead with your main point. One example. Wrap up — don't trail off.",
+  },
+  {
+    id: "random-automate",
+    category: "Spontaneous",
+    prompt: "If you could automate one part of your daily routine, what would it be and why?",
+    hint: "Say the 'what' first, then the 'why' in one or two reasons.",
+  },
+  {
+    id: "random-teach",
+    category: "Spontaneous",
+    prompt: "If you had to teach a 10-minute class tomorrow, what topic would you pick and why?",
+    hint: "Pick one topic — don't hedge between options.",
+  },
+  {
+    id: "random-decision",
+    category: "Spontaneous",
+    prompt: "Describe a recent decision you made and how you approached it.",
+    hint: "State the decision first, then briefly how you got there.",
+  },
+  {
+    id: "random-skill",
+    category: "Spontaneous",
+    prompt: "What's a skill you wish schools taught but don't?",
+    hint: "Name the skill immediately, then justify it.",
+  },
+  {
+    id: "random-weekend",
+    category: "Spontaneous",
+    prompt: "Describe your ideal weekend, start to finish.",
+    hint: "Structure it in order — morning to night — not a list of unrelated things.",
+  },
 ];
+
+const ANSWER_FRAMEWORKS = {
+  Introduction: {
+    name: "Present → Past → Future",
+    steps: [
+      { key: "present", label: "Present", guidance: "Who you are right now — current role, year of study, or focus area." },
+      { key: "past", label: "Past", guidance: "Relevant background — what led you here (experience, projects, education)." },
+      { key: "future", label: "Future", guidance: "What you're looking for next and why this role/company fits." },
+    ],
+  },
+  Behavioral: {
+    name: "STAR",
+    steps: [
+      { key: "situation", label: "Situation", guidance: "Set the context — where and when this happened." },
+      { key: "task", label: "Task", guidance: "Your specific responsibility or goal in that situation." },
+      { key: "action", label: "Action", guidance: "What YOU did, step by step — not what the team did." },
+      { key: "result", label: "Result", guidance: "The outcome, ideally with a number or concrete detail, plus what you learned." },
+    ],
+  },
+  "Technical explanation": {
+    name: "Analogy → Explanation → Example",
+    steps: [
+      { key: "analogy", label: "Hook / Analogy", guidance: "Open with a simple analogy a non-expert would recognize." },
+      { key: "explanation", label: "Core explanation", guidance: "The actual mechanism, in plain language, no unexplained jargon." },
+      { key: "example", label: "Concrete example", guidance: "One real, specific example that makes it click." },
+    ],
+  },
+  Situational: {
+    name: "Clarify → Plan → Act → Communicate",
+    steps: [
+      { key: "clarify", label: "Clarify", guidance: "What you'd confirm or ask first before acting." },
+      { key: "plan", label: "Plan", guidance: "How you'd prioritize or break down the problem." },
+      { key: "act", label: "Act", guidance: "The concrete steps you'd actually take." },
+      { key: "communicate", label: "Communicate", guidance: "How and when you'd update others involved." },
+    ],
+  },
+  Custom: {
+    name: "Context → Core Point → Impact",
+    steps: [
+      { key: "context", label: "Context", guidance: "The one or two sentences of setup the listener needs." },
+      { key: "core", label: "Core point", guidance: "The main answer — say it directly, don't bury it." },
+      { key: "impact", label: "Impact / next step", guidance: "Why it matters or what happens next." },
+    ],
+  },
+  Spontaneous: {
+    name: "Open → Develop → Wrap-up",
+    steps: [
+      { key: "open", label: "Open", guidance: "State your main point or answer in the first sentence — don't warm up first." },
+      { key: "develop", label: "Develop", guidance: "Give one or two reasons or a short example that supports it." },
+      { key: "wrapup", label: "Wrap-up", guidance: "Close with a short concluding line instead of trailing off." },
+    ],
+  },
+};
+
+function getFramework(category) {
+  return ANSWER_FRAMEWORKS[category] || ANSWER_FRAMEWORKS.Custom;
+}
 
 function cleanJSON(raw) {
   if (!raw) return null;
@@ -101,6 +194,8 @@ async function reviewCommunication({
     throw new Error("Write at least a few sentences so we can review your communication");
   }
 
+  const framework = getFramework(scenario?.category || "Custom");
+
   const systemPrompt = `
 ${BASE_PERSONA}
 
@@ -110,6 +205,10 @@ Evaluate HOW the student communicates: clarity, structure, conciseness, confiden
 Do NOT penalize for minor technical inaccuracies unless they make the answer confusing.
 Do NOT reward length — rambling is a communication flaw.
 Short, clear, structured answers can score 9-10.
+
+You must also TEACH structure, not just correct wording. For every review, map the student's
+answer onto the "${framework.name}" framework, step by step, so they learn how to organize
+future answers the same way — do not just hand back a single rewritten sentence.
 
 Respond ONLY with valid JSON (no markdown).
 `;
@@ -125,6 +224,14 @@ ${response.trim()}
 
 Score each dimension 0-10 and give actionable feedback.
 
+The answer should follow this framework: "${framework.name}"
+Steps to map the student's answer onto:
+${framework.steps.map((s, i) => `${i + 1}. ${s.label} — ${s.guidance}`).join("\n")}
+
+For "structureBreakdown", go through EACH step above in order and report whether the student's
+answer covered it. If covered, quote or paraphrase what they said for that step. If missing, give
+a short concrete tip (1 sentence) for what they should add there next time.
+
 JSON schema:
 {
   "overallScore": 0-10,
@@ -139,6 +246,9 @@ JSON schema:
   "strengths": ["2-3 short bullets"],
   "improvements": ["2-3 specific, actionable tips"],
   "fillerWords": ["list detected fillers like um, like, basically — empty array if none"],
+  "structureBreakdown": [
+    { "step": "step label from the framework", "covered": true|false, "note": "what they said for this step, or a tip if missing" }
+  ],
   "rewrittenSample": "A tighter 45-75 second version they could say aloud — same facts, better delivery"
 }
 `;
@@ -157,7 +267,7 @@ JSON schema:
             { role: "user", content: userPrompt },
           ],
           temperature: 0.35,
-          max_tokens: 900,
+          max_tokens: 1100,
         },
         {
           headers: {
@@ -182,6 +292,24 @@ JSON schema:
         Math.min(10, Number(parsed.overallScore) || 0)
       );
 
+      const aiBreakdown = Array.isArray(parsed.structureBreakdown)
+        ? parsed.structureBreakdown
+        : [];
+
+      const structureBreakdown = framework.steps.map((s, i) => {
+        const match =
+          aiBreakdown.find(
+            (b) => String(b.step || "").toLowerCase().includes(s.label.toLowerCase())
+          ) || aiBreakdown[i];
+
+        return {
+          step: s.label,
+          guidance: s.guidance,
+          covered: Boolean(match?.covered),
+          note: match?.note ? String(match.note).trim() : null,
+        };
+      });
+
       const result = {
         scenarioId: scenario?.id || null,
         category: scenario?.category || "Custom",
@@ -194,6 +322,8 @@ JSON schema:
         strengths: Array.isArray(parsed.strengths) ? parsed.strengths : [],
         improvements: Array.isArray(parsed.improvements) ? parsed.improvements : [],
         fillerWords: Array.isArray(parsed.fillerWords) ? parsed.fillerWords : [],
+        structureFramework: framework.name,
+        structureBreakdown,
         rewrittenSample: parsed.rewrittenSample || "",
       };
 

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Code2, Lightbulb, Target, Trophy, ChevronRight } from 'lucide-react';
+import { Code2, Lightbulb, Target, Trophy, ChevronRight, History } from 'lucide-react';
 import CodeEditor from '../components/CodeEditor';
-import { API_BASE } from '../api.js';
+import { API_BASE, getCodePracticeHistory } from '../api.js';
+import { getStudentId } from '../utils/studentAuth';
 import { btnPrimary, btnSecondary, headingPage, textMuted, card } from '../lib/ui';
 
 const ProblemSolving = () => {
@@ -9,13 +10,36 @@ const ProblemSolving = () => {
   const [selectedProblem, setSelectedProblem] = useState(null);
   const [difficulty, setDifficulty] = useState('easy');
   const [showHints, setShowHints] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [attempts, setAttempts] = useState([]);
+  const [solvedProblemIds, setSolvedProblemIds] = useState(new Set());
+  const [solvedByDifficulty, setSolvedByDifficulty] = useState({ easy: 0, medium: 0, hard: 0 });
 
   useEffect(() => {
     fetchProblems();
     fetchStats();
   }, [difficulty]);
+
+  useEffect(() => {
+    fetchHistory();
+  }, []);
+
+  const fetchHistory = async () => {
+    const studentId = getStudentId();
+    if (!studentId) return;
+    try {
+      const response = await getCodePracticeHistory(studentId);
+      setAttempts(response.data.attempts || []);
+      setSolvedProblemIds(new Set(response.data.solvedProblemIds || []));
+      setSolvedByDifficulty(
+        response.data.solvedByDifficulty || { easy: 0, medium: 0, hard: 0 }
+      );
+    } catch (error) {
+      console.error('Failed to fetch code practice history:', error);
+    }
+  };
 
   const fetchProblems = async () => {
     try {
@@ -59,9 +83,9 @@ const ProblemSolving = () => {
     }
   };
 
-  const handleSubmit = (result) => {
-    console.log('Submission result:', result);
-    // You can add more logic here, like showing a success message
+  const handleSubmit = () => {
+    // Re-read the ledger — the submit request already persisted this attempt server-side.
+    fetchHistory();
   };
 
   return (
@@ -83,19 +107,21 @@ const ProblemSolving = () => {
               <div className={`${card} p-4`}>
                 <div className="flex gap-6 text-center">
                   <div>
-                    <div className="text-xl font-medium text-gray-900 dark:text-gray-100 tabular-nums">{stats.total}</div>
+                    <div className="text-xl font-medium text-gray-900 dark:text-gray-100 tabular-nums">
+                      {solvedByDifficulty.easy + solvedByDifficulty.medium + solvedByDifficulty.hard}/{stats.total}
+                    </div>
                     <div className="text-xs text-gray-500 dark:text-gray-400">Total</div>
                   </div>
                   <div>
-                    <div className="text-xl font-medium text-gray-700 dark:text-gray-300 tabular-nums">{stats.easy}</div>
+                    <div className="text-xl font-medium text-gray-700 dark:text-gray-300 tabular-nums">{solvedByDifficulty.easy}/{stats.easy}</div>
                     <div className="text-xs text-gray-500 dark:text-gray-400">Easy</div>
                   </div>
                   <div>
-                    <div className="text-xl font-medium text-gray-700 dark:text-gray-300 tabular-nums">{stats.medium}</div>
+                    <div className="text-xl font-medium text-gray-700 dark:text-gray-300 tabular-nums">{solvedByDifficulty.medium}/{stats.medium}</div>
                     <div className="text-xs text-gray-500 dark:text-gray-400">Medium</div>
                   </div>
                   <div>
-                    <div className="text-xl font-medium text-gray-700 dark:text-gray-300 tabular-nums">{stats.hard}</div>
+                    <div className="text-xl font-medium text-gray-700 dark:text-gray-300 tabular-nums">{solvedByDifficulty.hard}/{stats.hard}</div>
                     <div className="text-xs text-gray-500 dark:text-gray-400">Hard</div>
                   </div>
                 </div>
@@ -121,21 +147,75 @@ const ProblemSolving = () => {
 
             <button
               type="button"
+              onClick={() => setShowHistory((prev) => !prev)}
+              className={`ml-auto ${btnSecondary}`}
+            >
+              <History className="w-4 h-4" />
+              {showHistory ? 'Hide history' : 'History'}
+            </button>
+
+            <button
+              type="button"
               onClick={getRandomProblem}
-              className={`ml-auto ${btnPrimary}`}
+              className={btnPrimary}
             >
               <Trophy className="w-4 h-4" />
               Random challenge
             </button>
           </div>
+
+          {showHistory && (
+            <div className={`${card} mt-3 p-4`}>
+              <h3 className="text-gray-900 dark:text-gray-100 text-sm font-medium mb-3">
+                Recent attempts
+              </h3>
+              {attempts.length === 0 ? (
+                <p className={`${textMuted} text-sm`}>
+                  No attempts yet — submit a solution to start building your history.
+                </p>
+              ) : (
+                <div className="max-h-64 overflow-y-auto space-y-1.5">
+                  {attempts.map((attempt, index) => (
+                    <div
+                      key={`${attempt.problemId}-${attempt.timestamp}-${index}`}
+                      className="flex items-center justify-between gap-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#202124] px-3 py-2 text-sm"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span
+                          className={
+                            attempt.passed
+                              ? 'text-emerald-600 dark:text-emerald-400'
+                              : 'text-red-500 dark:text-red-400'
+                          }
+                        >
+                          {attempt.passed ? '✓' : '✗'}
+                        </span>
+                        <span className="text-gray-800 dark:text-gray-200 truncate">
+                          {attempt.title}
+                        </span>
+                        {attempt.difficulty && (
+                          <span className="shrink-0 text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                            {attempt.difficulty}
+                          </span>
+                        )}
+                      </div>
+                      <span className="shrink-0 text-xs text-gray-500 dark:text-gray-400">
+                        {new Date(attempt.timestamp).toLocaleString()}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Main Content */}
-        <div className="grid min-h-0 flex-1 grid-cols-12 gap-6" style={{ minHeight: 'calc(100vh - 220px)' }}>
+        <div className="grid grid-cols-12 gap-6 overflow-hidden" style={{ height: 'calc(100vh - 220px)' }}>
           {/* Problem List Sidebar */}
-          <div className="col-span-3">
-            <div className={`${card} p-4`}>
-              <h2 className="text-gray-900 dark:text-gray-100 text-sm font-medium mb-4 flex items-center gap-2">
+          <div className="col-span-3 flex min-h-0 flex-col">
+            <div className={`${card} flex min-h-0 flex-1 flex-col p-4`}>
+              <h2 className="text-gray-900 dark:text-gray-100 text-sm font-medium mb-4 flex items-center gap-2 shrink-0">
                 <Target className="w-5 h-5" />
                 Problems ({problems.length})
               </h2>
@@ -143,7 +223,7 @@ const ProblemSolving = () => {
               {loading ? (
                 <div className="text-gray-400 dark:text-gray-500 text-center py-8">Loading...</div>
               ) : (
-                <div className="space-y-2 max-h-[calc(100vh-300px)] overflow-y-auto">
+                <div className="space-y-2 min-h-0 flex-1 overflow-y-auto">
                   {problems.map((problem) => (
                     <button
                       key={problem.id}
@@ -154,7 +234,12 @@ const ProblemSolving = () => {
                           : 'bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/40 border-transparent'
                       }`}
                     >
-                      <div className="font-medium text-sm">{problem.title}</div>
+                      <div className="font-medium text-sm flex items-center gap-1.5">
+                        {solvedProblemIds.has(problem.id) && (
+                          <span className="text-emerald-600 dark:text-emerald-400" title="Solved">✓</span>
+                        )}
+                        {problem.title}
+                      </div>
                       <div className="text-xs opacity-75 mt-1">
                         {problem.id}
                       </div>
@@ -166,11 +251,11 @@ const ProblemSolving = () => {
           </div>
 
           {/* Problem Details & Editor */}
-          <div className="col-span-9 flex min-h-0 flex-col gap-4 overflow-hidden">
+          <div className="col-span-9 flex h-full min-h-0 flex-col gap-4 overflow-hidden">
             {selectedProblem ? (
               <>
                 {/* Problem Description */}
-                <div className={`max-h-[32vh] shrink-0 overflow-y-auto ${card} p-6`}>
+                <div className={`max-h-[300px] shrink-0 overflow-y-auto ${card} p-6`}>
                   <div className="flex items-start justify-between mb-4 gap-4">
                     <div>
                       <h2 className="text-xl font-medium text-gray-900 dark:text-gray-100 mb-2">
@@ -251,10 +336,7 @@ const ProblemSolving = () => {
                 </div>
 
                 {/* Code Editor */}
-                <div
-                  className="flex min-h-0 flex-1 flex-col"
-                  style={{ minHeight: '75vh', height: 'calc(100vh - 140px)' }}
-                >
+                <div className="flex min-h-0 flex-1 flex-col">
                   <CodeEditor
                     key={`${selectedProblem.id}-${selectedProblem.title}`}
                     problem={selectedProblem}

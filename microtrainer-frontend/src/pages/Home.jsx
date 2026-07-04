@@ -1,7 +1,6 @@
-import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect, useMemo } from "react";
-import { Mic, Code2, BookOpen, BarChart3, ArrowUp, MessageSquareText } from "lucide-react";
+import { ArrowUp } from "lucide-react";
 import { chatWithMicroTrainer } from "../api";
 import { pageShell, textMuted } from "../lib/ui";
 import ConceptCards, { parseConceptSections } from "../components/ConceptCards";
@@ -65,16 +64,7 @@ const TRACK_STARTER_PROMPTS = {
   ],
 };
 
-const QUICK_ACTIONS = [
-  { label: "Mock interview", path: "/interview", icon: Mic },
-  { label: "Communication", path: "/communication", icon: MessageSquareText },
-  { label: "Guided course", path: "/learn", icon: BookOpen },
-  { label: "Code practice", path: "/problems", icon: Code2 },
-  { label: "My progress", path: "/dashboard", icon: BarChart3 },
-];
-
 const Home = () => {
-  const navigate = useNavigate();
   const [question, setQuestion] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -104,7 +94,7 @@ const Home = () => {
   }, []);
 
   const starterPrompts = useMemo(
-    () => filterStarterPrompts(promptPool, sessions, 6),
+    () => filterStarterPrompts(promptPool, sessions, 4),
     [sessions, promptPool]
   );
 
@@ -278,7 +268,6 @@ const Home = () => {
               onSubmit={handleSubmit}
               onKeyDown={handleKeyDown}
               onStarterClick={(text) => handleSubmit(null, text)}
-              onNavigate={navigate}
               starterPrompts={starterPrompts}
             />
           )}
@@ -300,31 +289,29 @@ function WelcomeView({
   onSubmit,
   onKeyDown,
   onStarterClick,
-  onNavigate,
   starterPrompts = [],
 }) {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 pt-10 pb-28 overflow-y-auto">
+    <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-10 overflow-y-auto">
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
+        initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.35, ease: "easeOut" }}
         className="w-full max-w-2xl flex flex-col items-center"
       >
-        <div className="w-full mb-6">
+        <div className="w-full mb-7">
           <TopNudgeBanner />
         </div>
 
-        <div className="mb-8 text-center">
-          <h1 className="text-2xl sm:text-3xl font-medium text-gray-900 dark:text-gray-100 tracking-tight">
+        <div className="mb-7 text-center">
+          <h1 className="text-[28px] sm:text-[32px] font-semibold text-gray-900 dark:text-gray-100 tracking-tight">
             What do you want to practice?
           </h1>
-          <p className={`${textMuted} mt-2 max-w-md mx-auto`}>
-            Ask about any concept, interview topic, or coding problem — no menus required.
+          <p className={`${textMuted} mt-2 text-[15px]`}>
+            Ask about any concept, interview topic, or coding problem.
           </p>
         </div>
 
-        {/* Primary input */}
         <HomeChatInput
           question={question}
           setQuestion={setQuestion}
@@ -337,49 +324,25 @@ function WelcomeView({
           className="w-full"
         />
 
-        {/* Starter prompts */}
-        <div className="w-full mt-6">
-          <p className="text-xs font-medium text-gray-400 dark:text-gray-500 text-center mb-3 uppercase tracking-wide">
-            Try asking
-          </p>
-          <div className="flex flex-wrap justify-center gap-2">
+        <p className="text-xs text-gray-400 dark:text-gray-500 text-center mt-3">
+          MicroTrainer adapts to your level — answers may need a quick sanity check.
+        </p>
+
+        {starterPrompts.length > 0 && (
+          <div className="w-full mt-9 flex flex-wrap justify-center gap-2">
             {starterPrompts.map((prompt) => (
               <button
                 key={prompt}
                 type="button"
                 disabled={isLoading}
                 onClick={() => onStarterClick(prompt)}
-                className="text-left text-sm px-3.5 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#292a2d] text-gray-700 dark:text-gray-300 hover:border-[#1a73e8]/40 dark:hover:border-[#8ab4f8]/40 hover:bg-blue-50/50 dark:hover:bg-blue-950/20 transition disabled:opacity-50 max-w-full"
+                className="text-sm px-4 py-2 rounded-full border border-gray-200/80 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-white/[0.04] transition disabled:opacity-50 max-w-full truncate"
               >
                 {prompt}
               </button>
             ))}
           </div>
-        </div>
-
-        {/* Quick actions — secondary, not overwhelming */}
-        <div className="w-full mt-14 pt-8 border-t border-gray-100 dark:border-gray-800">
-          <p className="text-xs text-gray-400 dark:text-gray-500 text-center mb-4">
-            Or jump to a dedicated space
-          </p>
-          <div className="flex flex-wrap justify-center gap-2">
-            {QUICK_ACTIONS.map(({ label, path, icon: Icon }) => (
-              <button
-                key={path}
-                type="button"
-                onClick={() => onNavigate(path)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-[#1a73e8] dark:hover:text-[#8ab4f8] hover:bg-gray-50 dark:hover:bg-gray-800/60 transition"
-              >
-                <Icon className="h-3.5 w-3.5" strokeWidth={1.75} />
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <p className="text-[11px] text-gray-400 dark:text-gray-500 text-center mt-10">
-          MicroTrainer adapts to your level. Answers may need a quick sanity check.
-        </p>
+        )}
       </motion.div>
     </div>
   );
@@ -593,7 +556,7 @@ function HomeChatInput({
       onSubmit={onSubmit}
       className={`relative ${className} ${
         isLarge
-          ? "rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#292a2d] shadow-lg shadow-gray-200/50 dark:shadow-none focus-within:border-[#1a73e8]/50 dark:focus-within:border-[#8ab4f8]/50 focus-within:ring-2 focus-within:ring-[#1a73e8]/10 dark:focus-within:ring-[#8ab4f8]/10 transition"
+          ? "rounded-[26px] border border-gray-200/70 dark:border-gray-700 bg-white dark:bg-[#2a2b2e] shadow-[0_4px_24px_-6px_rgba(0,0,0,0.10)] dark:shadow-none focus-within:border-gray-300 dark:focus-within:border-gray-500 focus-within:shadow-[0_6px_28px_-6px_rgba(0,0,0,0.14)] transition-all"
           : "rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#2a2b2e] shadow-sm focus-within:border-[#1a73e8]/60 dark:focus-within:border-[#8ab4f8]/60 focus-within:ring-2 focus-within:ring-[#1a73e8]/15 dark:focus-within:ring-[#8ab4f8]/15 transition"
       }`}
     >

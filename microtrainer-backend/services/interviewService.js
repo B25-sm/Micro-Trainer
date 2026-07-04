@@ -43,6 +43,57 @@ function isBlankAnswer(answer) {
   return !answer || !String(answer).trim();
 }
 
+/** Meta/filler replies about the Q&A process itself, not the technical question —
+ *  a small fast model can be fooled into praising these as if they were real answers.
+ *  Matched with edit distance so typos ("anwer the question") are still caught. */
+const NON_ANSWER_PHRASES = [
+  "answer the question",
+  "answered the question",
+  "question answered",
+  "question is answered",
+  "question is successfully answered",
+  "100% qualified answer",
+  "qualified answer",
+  "correct answer",
+  "next question",
+  "done",
+  "ok",
+  "okay",
+  "sure",
+  "yes",
+  "no",
+];
+
+function levenshtein(a, b) {
+  if (!a.length) return b.length;
+  if (!b.length) return a.length;
+  const dp = Array.from({ length: a.length + 1 }, () => new Array(b.length + 1).fill(0));
+  for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+  for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      dp[i][j] =
+        a[i - 1] === b[j - 1]
+          ? dp[i - 1][j - 1]
+          : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+    }
+  }
+  return dp[a.length][b.length];
+}
+
+function isNonSubstantiveAnswer(answer) {
+  const a = String(answer || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[.!?]+$/, "");
+  if (!a) return false; // isBlankAnswer already handles empty
+  const wordCount = a.split(/\s+/).filter(Boolean).length;
+  if (wordCount > 6) return false;
+  return NON_ANSWER_PHRASES.some(
+    (phrase) => levenshtein(a, phrase) <= Math.max(1, Math.floor(phrase.length * 0.2))
+  );
+}
+
 /** Same policy as guided-course quiz: code expected only when the question asks for it */
 function questionRequiresCode(question) {
   const q = String(question || "").toLowerCase();
@@ -111,9 +162,19 @@ PENALIZE ONLY for:
 - Empty or non-answer
 - No code when the question explicitly required code/syntax
 
+GROUNDING — do not hallucinate:
+- Base "strengths"/"mistakes"/"improvement" ONLY on what the student's answer literally says. Never describe concepts, examples, or explanations the student did not actually write, even if they are the "expected" answer to the question.
+- A confident tone is not content. Filler like "answer the question", "question answered", "100% correct answer", "done", or a restatement of the question is a NON-ANSWER — score 0-1 and say plainly that no real answer was given. Do not invent technical substance to justify a higher score.
+
+Also rate two dimensions as exactly "Good", "Average", or "Poor" (these feed the student's progress dashboard):
+- "technical": correctness/depth of the technical content (should track the score — high score means Good, low score means Poor)
+- "communication": clarity and structure of the explanation, independent of whether the technical content was correct
+
 Respond ONLY in JSON format:
 {
   "score": 0-10,
+  "technical": "Good/Average/Poor",
+  "communication": "Good/Average/Poor",
   "strengths": "what they got right",
   "mistakes": "what they missed (if any)",
   "improvement": "one actionable tip"
@@ -172,15 +233,41 @@ Real interviews reward understanding, not essay length.
         parsed.score = 0;
       }
 
+      // Guard against the model omitting/mis-formatting these — they must be
+      // exactly "Good"/"Average"/"Poor" or the dashboard's progress aggregation
+      // silently treats them as 0 (this is what caused communication/technical
+      // progress to never move at all).
+      const RATING_VALUES = new Set(["Good", "Average", "Poor"]);
+      const ratingFromScore = (s) => (s >= 7 ? "Good" : s >= 4 ? "Average" : "Poor");
+      if (!RATING_VALUES.has(parsed.technical)) {
+        parsed.technical = ratingFromScore(Number(parsed.score) || 0);
+      }
+      if (!RATING_VALUES.has(parsed.communication)) {
+        parsed.communication = ratingFromScore(Number(parsed.score) || 0);
+      }
+
       // Empty answer only — do not penalize short correct answers
       if (isBlankAnswer(answer)) {
         parsed.score = 0;
+        parsed.technical = "Poor";
+        parsed.communication = "Poor";
         parsed.mistakes = "No answer provided";
+      } else if (isNonSubstantiveAnswer(answer)) {
+        // Deterministic override — the model can be fooled by confident-sounding
+        // filler ("100% qualified answer", "question answered") into inventing
+        // praise for technical content the student never actually wrote.
+        parsed.score = 0;
+        parsed.technical = "Poor";
+        parsed.communication = "Poor";
+        parsed.strengths = "";
+        parsed.mistakes = "This doesn't address the question — no technical content was given";
+        parsed.improvement = "Answer the actual question with a real explanation";
       } else if (
         questionRequiresCode(question) &&
         !answerIncludesCode(answer)
       ) {
         parsed.score = Math.min(Number(parsed.score) || 0, 5);
+        parsed.technical = ratingFromScore(parsed.score);
         parsed.mistakes =
           parsed.mistakes ||
           "Question asked for code or syntax; include a concrete example";

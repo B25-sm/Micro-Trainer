@@ -67,6 +67,42 @@ export const COMMUNICATION_REVIEW_SCENARIOS = [
     prompt: "What is your greatest weakness, and how are you working on it?",
     hint: "Real weakness + specific improvement — not a humble brag.",
   },
+  {
+    id: "random-hobby",
+    category: "Spontaneous",
+    prompt: "Talk about a hobby or interest you're passionate about.",
+    hint: "Lead with your main point. One example. Wrap up — don't trail off.",
+  },
+  {
+    id: "random-automate",
+    category: "Spontaneous",
+    prompt: "If you could automate one part of your daily routine, what would it be and why?",
+    hint: "Say the 'what' first, then the 'why' in one or two reasons.",
+  },
+  {
+    id: "random-teach",
+    category: "Spontaneous",
+    prompt: "If you had to teach a 10-minute class tomorrow, what topic would you pick and why?",
+    hint: "Pick one topic — don't hedge between options.",
+  },
+  {
+    id: "random-decision",
+    category: "Spontaneous",
+    prompt: "Describe a recent decision you made and how you approached it.",
+    hint: "State the decision first, then briefly how you got there.",
+  },
+  {
+    id: "random-skill",
+    category: "Spontaneous",
+    prompt: "What's a skill you wish schools taught but don't?",
+    hint: "Name the skill immediately, then justify it.",
+  },
+  {
+    id: "random-weekend",
+    category: "Spontaneous",
+    prompt: "Describe your ideal weekend, start to finish.",
+    hint: "Structure it in order — morning to night — not a list of unrelated things.",
+  },
 ];
 
 const client = axios.create({
@@ -84,6 +120,11 @@ export const communicationReviewAPI = {
 
   getHistory: (studentId) =>
     client.get(`/api/communication-review/history/${studentId}`, {
+      headers: getStudentApiHeaders(studentId),
+    }),
+
+  getStreak: (studentId) =>
+    client.get(`/api/communication-review/streak/${studentId}`, {
       headers: getStudentApiHeaders(studentId),
     }),
 };

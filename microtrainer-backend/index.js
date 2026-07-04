@@ -170,6 +170,7 @@ const {
 const {
   getRandomProblem,
   getProblemById,
+  getProblemDifficultyById,
   getProblemsByDifficulty,
   getAllProblems,
   getProblemStats
@@ -287,6 +288,7 @@ const {
   logChatQuestion,
   logCodingProblem,
   logMiniAssessment,
+  getEventsForStudent,
 } = require("./services/studentLearningLedgerService");
 const {
   buildStudentReadiness,
@@ -1144,6 +1146,52 @@ app.get("/problems/stats/all", async (req, res) => {
   }
 });
 
+// Past attempts + solved-by-difficulty counts for the Code Practice history/progress UI.
+// Every submit is already logged to the learning ledger — this just reads it back.
+app.get("/problems/history/:studentId", studentSelfOrTrainer, (req, res) => {
+  try {
+    const events = getEventsForStudent(req.params.studentId, { limit: 500 }).filter(
+      (e) => e.activityType === "coding_problem"
+    );
+
+    const attempts = events.slice(0, 50).map((e) => {
+      const problemId = e.metadata?.problemId || e.conceptId;
+      const problem = problemId ? getProblemById(problemId) : null;
+      return {
+        problemId,
+        title: problem?.title || problemId,
+        difficulty: problemId ? getProblemDifficultyById(problemId) : null,
+        language: e.metadata?.language || null,
+        score: e.score,
+        passed: e.passed,
+        timestamp: e.timestamp,
+      };
+    });
+
+    const solvedByDifficulty = { easy: 0, medium: 0, hard: 0 };
+    const solvedProblemIds = [...new Set(
+      events.filter((e) => e.passed).map((e) => e.metadata?.problemId || e.conceptId)
+    )].filter(Boolean);
+
+    for (const problemId of solvedProblemIds) {
+      const diff = getProblemDifficultyById(problemId);
+      if (diff && solvedByDifficulty[diff] != null) {
+        solvedByDifficulty[diff] += 1;
+      }
+    }
+
+    return res.json({
+      attempts,
+      solvedProblemIds,
+      solvedByDifficulty,
+      totalSolved: solvedProblemIds.length,
+    });
+  } catch (error) {
+    console.error("PROBLEM HISTORY ERROR:", error.message);
+    res.status(500).json({ error: "Failed to fetch problem history" });
+  }
+});
+
 // Get code template
 app.get("/code/template/:language", async (req, res) => {
   try {
@@ -1893,6 +1941,10 @@ const {
   reviewCommunication,
   getStudentHistory: getCommunicationReviewHistory,
 } = require("./services/communicationReviewService");
+const {
+  getStreak: getCommunicationStreak,
+  recordActivity: recordCommunicationActivity,
+} = require("./services/communicationStreakService");
 
 app.get("/api/communication-review/scenarios", (req, res) => {
   try {
@@ -1905,13 +1957,15 @@ app.get("/api/communication-review/scenarios", (req, res) => {
 app.post("/api/communication-review/review", async (req, res) => {
   try {
     const { studentId, scenarioId, customPrompt, response } = req.body;
+    const resolvedStudentId = studentId || "anonymous";
     const review = await reviewCommunication({
-      studentId: studentId || "anonymous",
+      studentId: resolvedStudentId,
       scenarioId,
       customPrompt,
       response,
     });
-    res.json({ review });
+    const streak = recordCommunicationActivity(resolvedStudentId);
+    res.json({ review, streak });
   } catch (error) {
     const status = error.message?.includes("required") ? 400 : 500;
     res.status(status).json({ error: error.message });
@@ -1922,6 +1976,15 @@ app.get("/api/communication-review/history/:studentId", studentSelfOrTrainer, (r
   try {
     const history = getCommunicationReviewHistory(req.params.studentId);
     res.json({ history });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/api/communication-review/streak/:studentId", studentSelfOrTrainer, (req, res) => {
+  try {
+    const streak = getCommunicationStreak(req.params.studentId);
+    res.json({ streak });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -2180,6 +2243,20 @@ app.get("/admin/sheets-status", trainerOnly, async (req, res) => {
   } catch (error) {
     console.error("SHEETS STATUS ERROR:", error.message);
     res.status(500).json({ error: "Failed to check Google Sheets status" });
+  }
+});
+
+// Confirms the "snags" feedback button's email delivery actually works in this
+// environment (SMTP creds valid + recipients configured), without sending mail.
+app.get("/admin/email-status", trainerOnly, async (req, res) => {
+  try {
+    const { verifySmtpConnection } = require("./services/emailService");
+    const { getBugReportRecipients } = require("./services/feedbackService");
+    const result = await verifySmtpConnection();
+    res.json({ ...result, recipients: getBugReportRecipients() });
+  } catch (error) {
+    console.error("EMAIL STATUS ERROR:", error.message);
+    res.status(500).json({ error: "Failed to check email status" });
   }
 });
 

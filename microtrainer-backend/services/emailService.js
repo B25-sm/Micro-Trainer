@@ -11,6 +11,35 @@ const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@microtrainer.com';
 const FROM_NAME = process.env.FROM_NAME || 'MicroTrainer';
 
 /**
+ * Verify SMTP connectivity/auth without sending an email — for the
+ * admin diagnostic endpoint (mirrors the Google Sheets status check).
+ */
+async function verifySmtpConnection() {
+  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    return { ready: false, reason: "missing_smtp_config" };
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT || 587),
+      secure: Number(process.env.SMTP_PORT || 587) === 465,
+      connectionTimeout: 10_000,
+      greetingTimeout: 10_000,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+
+    await transporter.verify();
+    return { ready: true, host: process.env.SMTP_HOST, from: FROM_EMAIL };
+  } catch (error) {
+    return { ready: false, reason: "connection_failed", error: error.message };
+  }
+}
+
+/**
  * Send email via SMTP
  */
 async function sendEmail(to, subject, htmlContent, textContent, options = {}) {
@@ -457,6 +486,7 @@ Start Fresh Today: ${process.env.FRONTEND_URL || 'http://localhost:5173'}/engage
 
 module.exports = {
   sendEmail,
+  verifySmtpConnection,
   sendDailyReminder,
   sendWeeklySummary,
   sendStreakCongratulations,

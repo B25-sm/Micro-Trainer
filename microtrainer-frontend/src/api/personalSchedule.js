@@ -3,19 +3,36 @@ import { getStudentApiHeaders, getTrainerApiHeaders } from "../utils/authSession
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
+function unwrapError(error) {
+  console.error("PERSONAL SCHEDULE API ERROR:", error?.response || error.message);
+
+  if (error.code === "ECONNABORTED") {
+    return { error: "Request timed out — please try again.", status: 408 };
+  }
+
+  const status = error?.response?.status;
+  const data = error?.response?.data || { error: "Something went wrong" };
+  return { ...data, status };
+}
+
 function client(studentId) {
-  return axios.create({
+  const instance = axios.create({
     baseURL: API_BASE,
     timeout: 60000,
-    headers: getStudentApiHeaders(studentId),
+    headers: studentId ? getStudentApiHeaders(studentId) : undefined,
   });
+  instance.interceptors.response.use(
+    (response) => response,
+    (error) => Promise.reject(unwrapError(error))
+  );
+  return instance;
 }
 
 export const personalScheduleAPI = {
-  getCategories: () => axios.get(`${API_BASE}/api/personal-schedule/categories`),
+  getCategories: () => client().get(`/api/personal-schedule/categories`),
 
   getTechOptions: (category) =>
-    axios.get(`${API_BASE}/api/personal-schedule/tech-options/${category}`),
+    client().get(`/api/personal-schedule/tech-options/${category}`),
 
   getSchedule: (studentId) =>
     client(studentId).get(`/api/personal-schedule/${studentId}`),
@@ -46,12 +63,12 @@ export const personalScheduleAPI = {
 
   /** Trainer view — same endpoints, trainer Bearer auth */
   getScheduleForTrainer: (studentId) =>
-    axios.get(`${API_BASE}/api/personal-schedule/${studentId}`, {
+    client().get(`/api/personal-schedule/${studentId}`, {
       headers: getTrainerApiHeaders(),
     }),
 
   getTodayForTrainer: (studentId) =>
-    axios.get(`${API_BASE}/api/personal-schedule/${studentId}/today`, {
+    client().get(`/api/personal-schedule/${studentId}/today`, {
       headers: getTrainerApiHeaders(),
     }),
 };

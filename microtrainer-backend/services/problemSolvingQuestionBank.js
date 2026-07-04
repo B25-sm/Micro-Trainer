@@ -234,6 +234,11 @@ const PROBLEM_SOLVING_BANK = {
             input: "hello",
             output: "olleh",
             explanation: "Reverse of hello is olleh"
+          },
+          {
+            input: "",
+            output: "",
+            explanation: "Reversing an empty string yields an empty string"
           }
         ],
         hints: ["Use built-in reverse", "Or iterate backwards"]
@@ -247,6 +252,11 @@ const PROBLEM_SOLVING_BANK = {
             input: "racecar",
             output: true,
             explanation: "racecar reads same forward and backward"
+          },
+          {
+            input: "hello",
+            output: false,
+            explanation: "hello reversed is olleh, not the same"
           }
         ],
         hints: ["Compare string with its reverse"]
@@ -260,6 +270,11 @@ const PROBLEM_SOLVING_BANK = {
             input: "hello world",
             output: 3,
             explanation: "Vowels are e, o, o"
+          },
+          {
+            input: "sky",
+            output: 0,
+            explanation: "No vowels (a, e, i, o, u) in 'sky'"
           }
         ],
         hints: ["Check each character", "Count if it's a vowel"]
@@ -273,6 +288,11 @@ const PROBLEM_SOLVING_BANK = {
             input: "hello world",
             output: "hll wrld",
             explanation: "After removing e, o, o"
+          },
+          {
+            input: "sky",
+            output: "sky",
+            explanation: "No vowels to remove"
           }
         ],
         hints: ["Filter out vowels", "Join remaining characters"]
@@ -286,6 +306,11 @@ const PROBLEM_SOLVING_BANK = {
             input: "hello world",
             output: "Hello World",
             explanation: "First letter of each word capitalized"
+          },
+          {
+            input: "javascript",
+            output: "Javascript",
+            explanation: "Single word, first letter capitalized"
           }
         ],
         hints: ["Split by space", "Capitalize first letter", "Join back"]
@@ -299,6 +324,11 @@ const PROBLEM_SOLVING_BANK = {
             input: "123",
             output: 123,
             explanation: "String 123 converted to number"
+          },
+          {
+            input: "-45",
+            output: -45,
+            explanation: "Negative sign is preserved in the conversion"
           }
         ],
         hints: ["Use unary plus operator", "Or multiply by 1"]
@@ -312,6 +342,11 @@ const PROBLEM_SOLVING_BANK = {
             input: "12345",
             output: true,
             explanation: "All characters are digits"
+          },
+          {
+            input: "12a45",
+            output: false,
+            explanation: "Contains a non-digit character 'a'"
           }
         ],
         hints: ["Use regex", "Or check each character"]
@@ -325,6 +360,11 @@ const PROBLEM_SOLVING_BANK = {
             input: ["hello world", "l"],
             output: 3,
             explanation: "Character 'l' appears 3 times"
+          },
+          {
+            input: ["hello world", "z"],
+            output: 0,
+            explanation: "Character 'z' does not appear"
           }
         ],
         hints: ["Loop through string", "Count matches"]
@@ -348,6 +388,11 @@ const PROBLEM_SOLVING_BANK = {
             input: [3, 1, 4, 1, 5, 9],
             output: 9,
             explanation: "9 is the largest number"
+          },
+          {
+            input: [-5, -2, -9, -1],
+            output: -1,
+            explanation: "-1 is the largest (least negative) value"
           }
         ],
         hints: ["Use Math.max", "Or iterate and track maximum"]
@@ -361,6 +406,11 @@ const PROBLEM_SOLVING_BANK = {
             input: [3, 1, 4, 1, 5, 9],
             output: 5,
             explanation: "Second largest after 9 is 5"
+          },
+          {
+            input: [10, 20, 30, 40],
+            output: 30,
+            explanation: "40 is largest, 30 is second largest"
           }
         ],
         hints: ["Sort array", "Or track first and second max"]
@@ -374,6 +424,11 @@ const PROBLEM_SOLVING_BANK = {
             input: [1, 2, 3, 4],
             output: 10,
             explanation: "1+2+3+4 = 10"
+          },
+          {
+            input: [],
+            output: 0,
+            explanation: "Sum of an empty array is 0"
           }
         ],
         hints: ["Use reduce", "Or loop and accumulate"]
@@ -387,6 +442,11 @@ const PROBLEM_SOLVING_BANK = {
             input: [1, 2, 2, 3, 4, 4, 5],
             output: [1, 2, 3, 4, 5],
             explanation: "Duplicates removed"
+          },
+          {
+            input: [1, 2, 3],
+            output: [1, 2, 3],
+            explanation: "No duplicates to remove"
           }
         ],
         hints: ["Use Set", "Or filter with indexOf"]
@@ -400,6 +460,11 @@ const PROBLEM_SOLVING_BANK = {
             input: [1, 2, 3, 4, 5],
             output: true,
             explanation: "Array is sorted"
+          },
+          {
+            input: [3, 1, 2],
+            output: false,
+            explanation: "3 > 1, not sorted ascending"
           }
         ],
         hints: ["Compare each element with next", "Return false if any is greater"]
@@ -413,6 +478,11 @@ const PROBLEM_SOLVING_BANK = {
             input: [1, 2, 3, 4, 5],
             output: [5, 4, 3, 2, 1],
             explanation: "Array reversed"
+          },
+          {
+            input: [7],
+            output: [7],
+            explanation: "A single-element array reversed is itself"
           }
         ],
         hints: ["Use reverse method", "Or swap elements"]
@@ -426,6 +496,11 @@ const PROBLEM_SOLVING_BANK = {
             input: [0, 1, false, 2, '', 3],
             output: [1, 2, 3],
             explanation: "Falsy values removed"
+          },
+          {
+            input: [1, 0, 2, 0, 3],
+            output: [1, 2, 3],
+            explanation: "0 values (falsy) removed, others kept"
           }
         ],
         hints: ["Use filter with Boolean", "Or check each value"]
@@ -439,6 +514,11 @@ const PROBLEM_SOLVING_BANK = {
             input: [1, 2, 2, 3, 4, 4, 5],
             output: [1, 3, 5],
             explanation: "Elements appearing once"
+          },
+          {
+            input: [1, 2, 3],
+            output: [1, 2, 3],
+            explanation: "All elements appear exactly once"
           }
         ],
         hints: ["Count frequency", "Filter elements with count 1"]
@@ -452,6 +532,11 @@ const PROBLEM_SOLVING_BANK = {
             input: [1, 2, 3, 4, 5],
             output: 6,
             explanation: "2+4 = 6"
+          },
+          {
+            input: [1, 3, 5],
+            output: 0,
+            explanation: "No even numbers present"
           }
         ],
         hints: ["Filter even numbers", "Sum them"]
@@ -475,6 +560,11 @@ const PROBLEM_SOLVING_BANK = {
             input: [["name", "Alice"], ["age", 25]],
             output: {name: "Alice", age: 25},
             explanation: "Array converted to object"
+          },
+          {
+            input: [],
+            output: {},
+            explanation: "Empty array converts to an empty object"
           }
         ],
         hints: ["Use Object.fromEntries", "Or loop and assign"]
@@ -488,6 +578,11 @@ const PROBLEM_SOLVING_BANK = {
             input: [{a: 1, b: 2}, {b: 3, c: 4}],
             output: {a: 1, b: 3, c: 4},
             explanation: "Objects merged, b overridden"
+          },
+          {
+            input: [{a: 1}, {b: 2}],
+            output: {a: 1, b: 2},
+            explanation: "No overlapping keys, both merged directly"
           }
         ],
         hints: ["Use spread operator", "Or Object.assign"]
@@ -501,6 +596,11 @@ const PROBLEM_SOLVING_BANK = {
             input: {a: 1, b: 2, c: 3},
             output: 3,
             explanation: "Object has 3 properties"
+          },
+          {
+            input: {},
+            output: 0,
+            explanation: "Empty object has 0 properties"
           }
         ],
         hints: ["Use Object.keys().length"]
@@ -514,6 +614,11 @@ const PROBLEM_SOLVING_BANK = {
             input: {a: 1, b: 2, c: 3},
             output: ["a", "b", "c"],
             explanation: "Keys extracted"
+          },
+          {
+            input: {},
+            output: [],
+            explanation: "No keys in an empty object"
           }
         ],
         hints: ["Use Object.keys()"]
@@ -527,6 +632,11 @@ const PROBLEM_SOLVING_BANK = {
             input: {a: 1, b: 2, c: 3},
             output: [1, 2, 3],
             explanation: "Values extracted"
+          },
+          {
+            input: {},
+            output: [],
+            explanation: "No values in an empty object"
           }
         ],
         hints: ["Use Object.values()"]
@@ -540,6 +650,11 @@ const PROBLEM_SOLVING_BANK = {
             input: {},
             output: true,
             explanation: "Object is empty"
+          },
+          {
+            input: {a: 1},
+            output: false,
+            explanation: "Object has a property, so it's not empty"
           }
         ],
         hints: ["Check Object.keys().length === 0"]
@@ -609,6 +724,11 @@ PROBLEM_SOLVING_BANK.mediumNumbersStrings = {
           input: [7, 4, 7, 23, 10],
           output: [4, 10],
           explanation: "4+1=5 (prime), 10+1=11 (prime)"
+        },
+        {
+          input: [8, 14, 20],
+          output: [],
+          explanation: "9, 15, and 21 are all non-prime, so none qualify"
         }
       ],
       hints: ["Add 1 to each number", "Check if result is prime"]
@@ -686,6 +806,11 @@ PROBLEM_SOLVING_BANK.mediumPatterns = {
           input: 4,
           output: "1\n1 2\n1 2 3\n1 2 3 4",
           explanation: "Each row has numbers from 1 to row number"
+        },
+        {
+          input: 2,
+          output: "1\n1 2",
+          explanation: "Two rows: row 1 has just '1', row 2 has '1 2'"
         }
       ],
       hints: ["Nested loops", "Inner loop from 1 to i"]
@@ -699,6 +824,11 @@ PROBLEM_SOLVING_BANK.mediumPatterns = {
           input: 4,
           output: "4 3 2 1\n4 3 2\n4 3\n4",
           explanation: "Each row starts from n and decreases"
+        },
+        {
+          input: 2,
+          output: "2 1\n2",
+          explanation: "Row 1 counts down from 2 to 1, row 2 is just '2'"
         }
       ],
       hints: ["Outer loop for rows", "Inner loop decrements"]
@@ -725,6 +855,11 @@ PROBLEM_SOLVING_BANK.mediumPatterns = {
           input: 3,
           output: "  1\n 2 2\n3 3 3",
           explanation: "Centered pyramid"
+        },
+        {
+          input: 2,
+          output: " 1\n2 2",
+          explanation: "Row 1 has 1 leading space, row 2 has none"
         }
       ],
       hints: ["Add spaces for centering", "Repeat number i times"]
@@ -738,6 +873,11 @@ PROBLEM_SOLVING_BANK.mediumPatterns = {
           input: 4,
           output: "1+\n12++\n123+++\n1234++++",
           explanation: "Numbers then plus signs"
+        },
+        {
+          input: 2,
+          output: "1+\n12++",
+          explanation: "Two rows: numbers 1 to i then i plus signs"
         }
       ],
       hints: ["Print numbers first", "Then print plus signs"]
@@ -751,6 +891,11 @@ PROBLEM_SOLVING_BANK.mediumPatterns = {
           input: 4,
           output: "+1\n++2\n+++3\n++++4",
           explanation: "Plus signs then number"
+        },
+        {
+          input: 2,
+          output: "+1\n++2",
+          explanation: "Row i has i plus signs then the number i"
         }
       ],
       hints: ["Print plus signs first", "Then print row number"]
@@ -764,6 +909,11 @@ PROBLEM_SOLVING_BANK.mediumPatterns = {
           input: 4,
           output: "+1\n++12\n+++123\n++++1234",
           explanation: "Plus signs then numbers 1 to i"
+        },
+        {
+          input: 2,
+          output: "+1\n++12",
+          explanation: "Row i has i plus signs then numbers 1 to i"
         }
       ],
       hints: ["Print i plus signs", "Then numbers 1 to i"]
@@ -777,6 +927,11 @@ PROBLEM_SOLVING_BANK.mediumPatterns = {
           input: 4,
           output: "A\nAB\nABC\nABCD",
           explanation: "Alphabets from A"
+        },
+        {
+          input: 3,
+          output: "A\nAB\nABC",
+          explanation: "Three rows of letters starting from A"
         }
       ],
       hints: ["Use ASCII codes", "Start from 65 (A)"]
@@ -790,6 +945,11 @@ PROBLEM_SOLVING_BANK.mediumPatterns = {
           input: 3,
           output: "A\nA B\nA B C",
           explanation: "Alphabets with spaces"
+        },
+        {
+          input: 2,
+          output: "A\nA B",
+          explanation: "Two rows of space-separated letters"
         }
       ],
       hints: ["Add space between letters"]
@@ -803,6 +963,11 @@ PROBLEM_SOLVING_BANK.mediumPatterns = {
           input: 4,
           output: "A1\nAB12\nABC123\nABCD1234",
           explanation: "Letters then numbers"
+        },
+        {
+          input: 2,
+          output: "A1\nAB12",
+          explanation: "Two rows: letters 1 to i then numbers 1 to i"
         }
       ],
       hints: ["Print letters first", "Then numbers"]
@@ -816,6 +981,11 @@ PROBLEM_SOLVING_BANK.mediumPatterns = {
           input: 4,
           output: "A\nab\nABC\nabcd",
           explanation: "Alternate case per row"
+        },
+        {
+          input: 3,
+          output: "A\nab\nABC",
+          explanation: "Odd rows uppercase, even rows lowercase"
         }
       ],
       hints: ["Check if row is odd/even", "Use appropriate case"]
@@ -839,6 +1009,11 @@ PROBLEM_SOLVING_BANK.mediumArrays = {
           input: [[1, 2, 3, 4, 5], 2],
           output: [4, 5, 1, 2, 3],
           explanation: "Rotated right by 2"
+        },
+        {
+          input: [[1, 2, 3], 0],
+          output: [1, 2, 3],
+          explanation: "Rotating by 0 leaves the array unchanged"
         }
       ],
       hints: ["Slice and concatenate", "Or reverse in parts"]
@@ -852,6 +1027,11 @@ PROBLEM_SOLVING_BANK.mediumArrays = {
           input: [[1, 2, 3], [2, 3, 4]],
           output: [2, 3],
           explanation: "Common elements"
+        },
+        {
+          input: [[1, 2], [3, 4]],
+          output: [],
+          explanation: "No common elements"
         }
       ],
       hints: ["Use filter and includes", "Or use Set"]
@@ -865,6 +1045,11 @@ PROBLEM_SOLVING_BANK.mediumArrays = {
           input: [1, 2, 4, 5],
           output: 3,
           explanation: "3 is missing"
+        },
+        {
+          input: [1, 2, 3, 5],
+          output: 4,
+          explanation: "4 is missing from the consecutive sequence"
         }
       ],
       hints: ["Calculate expected sum", "Subtract actual sum"]
@@ -878,6 +1063,11 @@ PROBLEM_SOLVING_BANK.mediumArrays = {
           input: [3, 5, -2, 8, 11],
           output: 88,
           explanation: "8 * 11 = 88"
+        },
+        {
+          input: [4, 4, 2],
+          output: 16,
+          explanation: "The two largest values, 4 and 4, multiply to 16"
         }
       ],
       hints: ["Sort array", "Multiply largest two"]
@@ -891,6 +1081,11 @@ PROBLEM_SOLVING_BANK.mediumArrays = {
           input: [0, 1, 0, 3, 12],
           output: [1, 3, 12, 0, 0],
           explanation: "Zeros moved to end"
+        },
+        {
+          input: [1, 2, 3],
+          output: [1, 2, 3],
+          explanation: "No zeros to move"
         }
       ],
       hints: ["Filter non-zeros", "Add zeros at end"]
@@ -917,6 +1112,11 @@ PROBLEM_SOLVING_BANK.mediumArrays = {
           input: [1, 3, 20, 4, 1, 0],
           output: 20,
           explanation: "20 is peak"
+        },
+        {
+          input: [5, 4, 3, 2, 1],
+          output: 5,
+          explanation: "5 has no left neighbor and is greater than the next element, so it's a peak"
         }
       ],
       hints: ["Compare with neighbors", "Check boundaries"]
@@ -930,6 +1130,11 @@ PROBLEM_SOLVING_BANK.mediumArrays = {
           input: [2, 1, 3, 5, 3, 2],
           output: 3,
           explanation: "3 appears first as duplicate"
+        },
+        {
+          input: [4, 4, 5, 6],
+          output: 4,
+          explanation: "4 repeats immediately, so it's the first duplicate found"
         }
       ],
       hints: ["Use Set to track seen", "Return when found"]
@@ -943,6 +1148,11 @@ PROBLEM_SOLVING_BANK.mediumArrays = {
           input: [1, [2, [3, [4]], 5]],
           output: [1, 2, 3, 4, 5],
           explanation: "All levels flattened"
+        },
+        {
+          input: [1, 2, 3],
+          output: [1, 2, 3],
+          explanation: "Already flat, no nested arrays to flatten"
         }
       ],
       hints: ["Use recursion", "Or flat() method"]
@@ -969,6 +1179,11 @@ PROBLEM_SOLVING_BANK.mediumArrays = {
           input: [10, 9, 2, 5, 3, 7, 101, 18],
           output: 4,
           explanation: "[2, 3, 7, 101] or [2, 5, 7, 18]"
+        },
+        {
+          input: [5, 4, 3, 2, 1],
+          output: 1,
+          explanation: "Strictly decreasing, so the longest increasing subsequence has length 1"
         }
       ],
       hints: ["Dynamic programming", "Track longest at each position"]
@@ -982,6 +1197,11 @@ PROBLEM_SOLVING_BANK.mediumArrays = {
           input: [3, 1, 2, 4, 7, 6, 5],
           output: [2, 4, 6, 3, 1, 7, 5],
           explanation: "Evens first, then odds"
+        },
+        {
+          input: [1, 3, 5],
+          output: [1, 3, 5],
+          explanation: "No even numbers, order unchanged"
         }
       ],
       hints: ["Filter evens and odds separately", "Concatenate"]
@@ -1005,6 +1225,11 @@ PROBLEM_SOLVING_BANK.mediumStrings = {
           input: "The quick brown fox jumps over the lazy dog",
           output: "jumps",
           explanation: "jumps is the longest word"
+        },
+        {
+          input: "I love programming",
+          output: "programming",
+          explanation: "programming is unambiguously the longest word"
         }
       ],
       hints: ["Split by space", "Find max length"]
@@ -1018,6 +1243,11 @@ PROBLEM_SOLVING_BANK.mediumStrings = {
           input: ["listen", "silent"],
           output: true,
           explanation: "Same letters, different order"
+        },
+        {
+          input: ["hello", "world"],
+          output: false,
+          explanation: "Different letters, not anagrams"
         }
       ],
       hints: ["Sort both strings", "Compare"]
@@ -1031,6 +1261,11 @@ PROBLEM_SOLVING_BANK.mediumStrings = {
           input: "swiss",
           output: "w",
           explanation: "w appears only once"
+        },
+        {
+          input: "aabbc",
+          output: "c",
+          explanation: "a and b repeat; c is the first character that doesn't repeat"
         }
       ],
       hints: ["Count frequency", "Find first with count 1"]
@@ -1044,6 +1279,11 @@ PROBLEM_SOLVING_BANK.mediumStrings = {
           input: "123.45",
           output: true,
           explanation: "Valid decimal number"
+        },
+        {
+          input: "12a.45",
+          output: false,
+          explanation: "Contains a non-numeric character 'a'"
         }
       ],
       hints: ["Use regex", "Or parseFloat and check"]
@@ -1057,6 +1297,11 @@ PROBLEM_SOLVING_BANK.mediumStrings = {
           input: ["abcde", "cdeab"],
           output: true,
           explanation: "cdeab is rotation of abcde"
+        },
+        {
+          input: ["abcde", "abced"],
+          output: false,
+          explanation: "abced is not a rotation of abcde"
         }
       ],
       hints: ["Concatenate first string with itself", "Check if second is substring"]
@@ -1070,6 +1315,11 @@ PROBLEM_SOLVING_BANK.mediumStrings = {
           input: "hello world",
           output: "world hello",
           explanation: "Words reversed"
+        },
+        {
+          input: "hello",
+          output: "hello",
+          explanation: "A single word is unchanged when word order is reversed"
         }
       ],
       hints: ["Split by space", "Reverse array", "Join"]
@@ -1083,6 +1333,11 @@ PROBLEM_SOLVING_BANK.mediumStrings = {
           input: "aabcccccaaa",
           output: "a2b1c5a3",
           explanation: "Character counts"
+        },
+        {
+          input: "abc",
+          output: "a1b1c1",
+          explanation: "Each character appears once"
         }
       ],
       hints: ["Track current character", "Count consecutive occurrences"]
@@ -1096,6 +1351,11 @@ PROBLEM_SOLVING_BANK.mediumStrings = {
           input: "abc",
           output: ["abc", "acb", "bac", "bca", "cab", "cba"],
           explanation: "All arrangements"
+        },
+        {
+          input: "ab",
+          output: ["ab", "ba"],
+          explanation: "Only two permutations of a 2-character string"
         }
       ],
       hints: ["Use recursion", "Swap characters"]
@@ -1109,6 +1369,11 @@ PROBLEM_SOLVING_BANK.mediumStrings = {
           input: "abcabcbb",
           output: 3,
           explanation: "abc is longest"
+        },
+        {
+          input: "abcdef",
+          output: 6,
+          explanation: "All characters are unique, so the whole string is the answer"
         }
       ],
       hints: ["Sliding window", "Track seen characters"]
@@ -1122,6 +1387,11 @@ PROBLEM_SOLVING_BANK.mediumStrings = {
           input: "MCMXCIV",
           output: 1994,
           explanation: "M=1000, CM=900, XC=90, IV=4"
+        },
+        {
+          input: "III",
+          output: 3,
+          explanation: "I+I+I = 3"
         }
       ],
       hints: ["Map Roman to values", "Handle subtraction cases"]
@@ -1135,6 +1405,11 @@ PROBLEM_SOLVING_BANK.mediumStrings = {
           input: "babad",
           output: "bab",
           explanation: "bab or aba are longest"
+        },
+        {
+          input: "cbbd",
+          output: "bb",
+          explanation: "bb is the unique longest palindromic substring"
         }
       ],
       hints: ["Expand around center", "Check all positions"]
@@ -1148,6 +1423,11 @@ PROBLEM_SOLVING_BANK.mediumStrings = {
           input: ["egg", "add"],
           output: true,
           explanation: "e->a, g->d mapping works"
+        },
+        {
+          input: ["foo", "bar"],
+          output: false,
+          explanation: "o would need to map to both a and r, which is inconsistent"
         }
       ],
       hints: ["Create character mapping", "Check consistency"]
@@ -1171,6 +1451,11 @@ PROBLEM_SOLVING_BANK.mediumObjects = {
           input: {a: 1, b: {c: 2}},
           output: {a: 1, b: {c: 2}},
           explanation: "Deep copy created"
+        },
+        {
+          input: {a: [1, 2, 3]},
+          output: {a: [1, 2, 3]},
+          explanation: "Deep clone preserves nested array values"
         }
       ],
       hints: ["Use JSON.parse(JSON.stringify())", "Or recursive copy"]
@@ -1184,6 +1469,11 @@ PROBLEM_SOLVING_BANK.mediumObjects = {
           input: [{a: 1, b: 2}, {a: 1, b: 2}],
           output: true,
           explanation: "Objects are equal"
+        },
+        {
+          input: [{a: 1, b: 2}, {a: 1, b: 3}],
+          output: false,
+          explanation: "b values differ (2 vs 3)"
         }
       ],
       hints: ["Compare keys and values recursively"]
@@ -1197,6 +1487,11 @@ PROBLEM_SOLVING_BANK.mediumObjects = {
           input: [{a: 1, b: 2}, {b: 3, c: 4}],
           output: ["b"],
           explanation: "b is common"
+        },
+        {
+          input: [{a: 1}, {b: 2}],
+          output: [],
+          explanation: "No shared keys between the two objects"
         }
       ],
       hints: ["Get keys from both", "Find intersection"]
@@ -1210,6 +1505,11 @@ PROBLEM_SOLVING_BANK.mediumObjects = {
           input: [[{a: 1}, {a: 2}, {a: 3}], "a"],
           output: 6,
           explanation: "1+2+3 = 6"
+        },
+        {
+          input: [[{a: 5}], "a"],
+          output: 5,
+          explanation: "Only one object, sum equals its value"
         }
       ],
       hints: ["Map to extract values", "Reduce to sum"]
@@ -1226,6 +1526,13 @@ PROBLEM_SOLVING_BANK.mediumObjects = {
             Bob: [{name: "Bob", age: 30}]
           },
           explanation: "Grouped by name"
+        },
+        {
+          input: [[{name: "Bob", age: 20}, {name: "Bob", age: 22}], "name"],
+          output: {
+            Bob: [{name: "Bob", age: 20}, {name: "Bob", age: 22}]
+          },
+          explanation: "Both objects share the same name, grouped together"
         }
       ],
       hints: ["Use reduce", "Create groups dynamically"]
@@ -1239,6 +1546,11 @@ PROBLEM_SOLVING_BANK.mediumObjects = {
           input: {name: "Alice", age: 25},
           output: "name=Alice&age=25",
           explanation: "Query string format"
+        },
+        {
+          input: {id: 1},
+          output: "id=1",
+          explanation: "Single property produces a single key=value pair"
         }
       ],
       hints: ["Map entries", "Join with &"]
@@ -1252,6 +1564,11 @@ PROBLEM_SOLVING_BANK.mediumObjects = {
           input: {a: {b: {c: 1}}},
           output: "a.b.c",
           explanation: "Deepest path"
+        },
+        {
+          input: {x: 1},
+          output: "x",
+          explanation: "Only one level deep, path is just the key itself"
         }
       ],
       hints: ["Recursively traverse", "Track depth"]
@@ -1265,6 +1582,11 @@ PROBLEM_SOLVING_BANK.mediumObjects = {
           input: {a: {b: {c: 1}}},
           output: {"a.b.c": 1},
           explanation: "Flattened with dot notation"
+        },
+        {
+          input: {a: 1, b: 2},
+          output: {a: 1, b: 2},
+          explanation: "Already flat, keys remain unchanged"
         }
       ],
       hints: ["Recursively build keys", "Join with dots"]
@@ -1281,6 +1603,13 @@ PROBLEM_SOLVING_BANK.mediumObjects = {
             2: {id: 2, name: "Bob"}
           },
           explanation: "Lookup by id"
+        },
+        {
+          input: [[{id: 5, name: "Eve"}], "id"],
+          output: {
+            5: {id: 5, name: "Eve"}
+          },
+          explanation: "Single item produces a single-entry lookup table"
         }
       ],
       hints: ["Reduce to object", "Use key as property"]
@@ -1304,6 +1633,11 @@ PROBLEM_SOLVING_BANK.mediumFundamentals = {
           input: [2, 3, "+"],
           output: 5,
           explanation: "2 + 3 = 5"
+        },
+        {
+          input: [10, 4, "-"],
+          output: 6,
+          explanation: "10 - 4 = 6"
         }
       ],
       hints: ["Use switch statement", "Handle all operators"]
@@ -1317,6 +1651,11 @@ PROBLEM_SOLVING_BANK.mediumFundamentals = {
           input: 15,
           output: "1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz",
           explanation: "FizzBuzz pattern"
+        },
+        {
+          input: 5,
+          output: "1 2 Fizz 4 Buzz",
+          explanation: "Fizz for multiples of 3, Buzz for multiples of 5"
         }
       ],
       hints: ["Check divisibility", "Handle both case first"]
@@ -1330,6 +1669,11 @@ PROBLEM_SOLVING_BANK.mediumFundamentals = {
           input: 5,
           output: [0, 1, 1, 2, 3],
           explanation: "First 5 Fibonacci numbers"
+        },
+        {
+          input: 1,
+          output: [0],
+          explanation: "The first Fibonacci number is 0"
         }
       ],
       hints: ["Start with 0, 1", "Each is sum of previous two"]
@@ -1343,6 +1687,11 @@ PROBLEM_SOLVING_BANK.mediumFundamentals = {
           input: 123,
           output: 6,
           explanation: "1+2+3 = 6"
+        },
+        {
+          input: 999,
+          output: 27,
+          explanation: "9+9+9 = 27"
         }
       ],
       hints: ["Convert to string", "Sum each digit"]
@@ -1356,6 +1705,11 @@ PROBLEM_SOLVING_BANK.mediumFundamentals = {
           input: [[1, 2, 3, 4, 5], 3],
           output: 2,
           explanation: "3 is at index 2"
+        },
+        {
+          input: [[1, 2, 3, 4, 5], 10],
+          output: -1,
+          explanation: "10 is not in the array, so binary search returns -1"
         }
       ],
       hints: ["Compare with middle", "Adjust search range"]
@@ -1369,6 +1723,11 @@ PROBLEM_SOLVING_BANK.mediumFundamentals = {
           input: 153,
           output: true,
           explanation: "1³ + 5³ + 3³ = 153"
+        },
+        {
+          input: 123,
+          output: false,
+          explanation: "1³+2³+3³ = 1+8+27 = 36, not equal to 123"
         }
       ],
       hints: ["Count digits", "Sum of powers equals number"]
@@ -1431,6 +1790,16 @@ function getProblemById(id) {
   return null;
 }
 
+/** Problems don't carry their own difficulty — it lives on the parent category. */
+function getProblemDifficultyById(id) {
+  for (const category of Object.values(PROBLEM_SOLVING_BANK)) {
+    if (category.problems?.some(p => p.id === id)) {
+      return category.difficulty || null;
+    }
+  }
+  return null;
+}
+
 function getProblemsByDifficulty(difficulty) {
   const problems = [];
   for (const category of Object.values(PROBLEM_SOLVING_BANK)) {
@@ -1480,6 +1849,7 @@ module.exports = {
   PROBLEM_SOLVING_BANK,
   getRandomProblem,
   getProblemById,
+  getProblemDifficultyById,
   getProblemsByDifficulty,
   getAllProblems,
   getProblemStats

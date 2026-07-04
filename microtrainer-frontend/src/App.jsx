@@ -22,6 +22,7 @@ import AdminEngagementDashboard from "./pages/AdminEngagementDashboard.jsx";
 import NotificationSettings from "./pages/NotificationSettings.jsx";
 import PersonalSchedule from "./pages/PersonalSchedule.jsx";
 import CommunicationReview from "./pages/CommunicationReview.jsx";
+import SpeakingPractice from "./pages/SpeakingPractice.jsx";
 import CompanyInterviews from "./pages/CompanyInterviews.jsx";
 import CompanyInterview from "./pages/CompanyInterview.jsx";
 
@@ -188,6 +189,18 @@ function App() {
               <RequireAuth>
                 <MainLayout>
                   <CommunicationReview />
+                </MainLayout>
+              </RequireAuth>
+            }
+          />
+
+          {/* Speaking Practice — random topic */}
+          <Route
+            path="/speaking-practice"
+            element={
+              <RequireAuth>
+                <MainLayout>
+                  <SpeakingPractice />
                 </MainLayout>
               </RequireAuth>
             }

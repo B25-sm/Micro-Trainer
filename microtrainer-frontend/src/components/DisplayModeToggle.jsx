@@ -92,14 +92,14 @@ function ThemeSegment({ darkMode, setDarkMode, iconOnly = false, compact = false
         compact={compact}
       >
         <Sun
-          className={`transition-colors ${
-            small ? "w-3.5 h-3.5" : "w-[18px] h-[18px]"
+          className={`transition-all duration-200 ${
+            small ? "w-3.5 h-3.5" : "w-[17px] h-[17px]"
           } ${
             !darkMode
-              ? "text-amber-600 dark:text-amber-400"
+              ? "text-amber-600 dark:text-amber-400 drop-shadow-[0_0_4px_rgba(217,119,6,0.35)]"
               : "text-slate-400 dark:text-slate-500"
           }`}
-          strokeWidth={small ? 1.75 : 2}
+          strokeWidth={small ? 1.5 : 1.75}
           aria-hidden
         />
       </ThemeOption>
@@ -111,14 +111,14 @@ function ThemeSegment({ darkMode, setDarkMode, iconOnly = false, compact = false
         compact={compact}
       >
         <Moon
-          className={`transition-colors ${
-            small ? "w-3.5 h-3.5" : "w-[18px] h-[18px]"
+          className={`transition-all duration-200 ${
+            small ? "w-3.5 h-3.5" : "w-[17px] h-[17px]"
           } ${
             darkMode
-              ? "text-indigo-600 dark:text-indigo-300"
+              ? "text-indigo-600 dark:text-indigo-300 drop-shadow-[0_0_4px_rgba(99,102,241,0.4)]"
               : "text-slate-400 dark:text-slate-500"
           }`}
-          strokeWidth={small ? 1.75 : 2}
+          strokeWidth={small ? 1.5 : 1.75}
           aria-hidden
         />
       </ThemeOption>
@@ -183,8 +183,8 @@ function ReadModeButton({ readMode, toggleReadMode, iconOnly = false, compact = 
       }`}
     >
       <BookOpen
-        className={small ? "w-3.5 h-3.5" : "w-[17px] h-[17px]"}
-        strokeWidth={small ? 1.75 : 2}
+        className={`transition-transform duration-200 ${small ? "w-3.5 h-3.5" : "w-4 h-4"}`}
+        strokeWidth={small ? 1.5 : 1.75}
         aria-hidden
       />
       {!iconOnly && (

@@ -411,7 +411,11 @@ export default function CompanyInterview() {
               disabled={loading}
               rows={4}
               placeholder="Answer as you would in the interview..."
-              className="w-full rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-[#202124] px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#1a73e8]/20 disabled:opacity-60"
+              className="w-full rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-[#202124] px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#1a73e8]/20 disabled:opacity-60 select-none"
+              style={{ userSelect: "none" }}
+              onCopy={(e) => e.preventDefault()}
+              onPaste={(e) => e.preventDefault()}
+              onCut={(e) => e.preventDefault()}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && (e.ctrlKey || e.metaKey) && !loading) {
                   e.preventDefault();
