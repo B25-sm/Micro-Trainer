@@ -325,7 +325,7 @@ function WelcomeView({
         />
 
         <p className="text-xs text-gray-400 dark:text-gray-500 text-center mt-3">
-          MicroTrainer adapts to your level — answers may need a quick sanity check.
+          Answers are AI-generated — double-check anything important.
         </p>
 
         {starterPrompts.length > 0 && (
