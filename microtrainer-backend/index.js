@@ -2175,8 +2175,18 @@ app.get("/leaderboard/combined", (req, res) => {
 // =======================================================
 app.get("/admin/sheets-status", trainerOnly, async (req, res) => {
   try {
+    const { resolveCredentialsPath, credentialsFileExists } = require("./services/googleSheetsAuth");
     const result = await verifyGoogleSheetsSetup();
-    res.json(result);
+    res.json({
+      ...result,
+      debug: {
+        credentialsPathChecked: resolveCredentialsPath(),
+        credentialsFileExists: credentialsFileExists(),
+        envVarSet: Boolean(process.env.GOOGLE_APPLICATION_CREDENTIALS || process.env.CREDENTIALS_PATH),
+        googleApplicationCredentialsEnv: process.env.GOOGLE_APPLICATION_CREDENTIALS || null,
+        credentialsPathEnv: process.env.CREDENTIALS_PATH || null,
+      },
+    });
   } catch (error) {
     console.error("SHEETS STATUS ERROR:", error.message);
     res.status(500).json({ error: "Failed to check Google Sheets status" });
