@@ -18,12 +18,14 @@ export function useSpeechToText({ getBaseText, onTranscript, disabled }) {
   const recognitionRef = useRef(null);
   const baseTextRef = useRef("");
   const originalTextRef = useRef("");
+  const interimTextRef = useRef("");
 
   const stopRecording = useCallback(() => {
     recognitionRef.current?.stop();
   }, []);
 
   const cancelRecording = useCallback(() => {
+    interimTextRef.current = "";
     recognitionRef.current?.abort();
     onTranscript(originalTextRef.current);
   }, [onTranscript]);
@@ -40,6 +42,7 @@ export function useSpeechToText({ getBaseText, onTranscript, disabled }) {
     const base = getBaseText ? getBaseText() : "";
     originalTextRef.current = base;
     baseTextRef.current = base.trim() ? base.trim() + " " : "";
+    interimTextRef.current = "";
 
     recognition.onresult = (event) => {
       let finalChunk = "";
@@ -56,6 +59,7 @@ export function useSpeechToText({ getBaseText, onTranscript, disabled }) {
         baseTextRef.current += finalChunk;
         onTranscript(baseTextRef.current.trim());
       }
+      interimTextRef.current = interim;
       setInterimText(interim);
     };
 
@@ -68,6 +72,14 @@ export function useSpeechToText({ getBaseText, onTranscript, disabled }) {
     };
 
     recognition.onend = () => {
+      // Some browsers do not promote the last interim result to "final" when
+      // stop() is called. Preserve exactly what the student could see.
+      if (interimTextRef.current.trim()) {
+        onTranscript(
+          `${baseTextRef.current}${interimTextRef.current}`.trim()
+        );
+      }
+      interimTextRef.current = "";
       setIsRecording(false);
       setInterimText("");
       recognitionRef.current = null;
@@ -77,6 +89,20 @@ export function useSpeechToText({ getBaseText, onTranscript, disabled }) {
     recognition.start();
     setIsRecording(true);
   }, [disabled, getBaseText, onTranscript]);
+
+  useEffect(() => {
+    if (!isRecording) return undefined;
+
+    const stopOnEnter = (event) => {
+      if (event.key !== "Enter" || event.shiftKey || event.isComposing) return;
+      event.preventDefault();
+      event.stopPropagation();
+      stopRecording();
+    };
+
+    window.addEventListener("keydown", stopOnEnter, true);
+    return () => window.removeEventListener("keydown", stopOnEnter, true);
+  }, [isRecording, stopRecording]);
 
   useEffect(() => {
     return () => {
