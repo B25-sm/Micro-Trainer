@@ -59,14 +59,15 @@
   --text-h: #f9fafb;
   --text-secondary: #cbd5e1;
   
-  /* Background Colors — near-black base, faint violet-lifted surfaces (premium) */
-  --bg: #060509;
-  --bg-secondary: #0a0812;
-  --bg-elevated: #0e0b18;
+  /* Background Colors — neutral near-black (ChatGPT-style), no color tint.
+     Main area is essentially black; surfaces step up in neutral grey. */
+  --bg: #0a0a0a;
+  --bg-secondary: #161616;
+  --bg-elevated: #1e1e1e;
   /* Alpha hairline, not a solid hex — reads as a soft seam (ChatGPT-style)
      instead of a hard line, while still separating surfaces structurally. */
   --border: rgba(255, 255, 255, 0.08);
-  --code-bg: #0a0812;
+  --code-bg: #161616;
 
   /* Accent Colors */
   --accent: #a78bfa;

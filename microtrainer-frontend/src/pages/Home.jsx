@@ -7,62 +7,11 @@ import ConceptCards, { parseConceptSections } from "../components/ConceptCards";
 import ConceptMarkdownAnswer from "../components/ConceptMarkdownAnswer";
 import ChatHistorySidebar from "../components/ChatHistorySidebar";
 import { useChatHistoryPersistence } from "../hooks/useChatHistoryPersistence";
-import { filterStarterPrompts } from "../utils/chatHistoryStorage";
 import { getStudentId } from "../utils/studentAuth";
-import { getAuthUser } from "../utils/authSession";
-import { getCareerTrack } from "../utils/careerTracks";
 import QuickCheckCard from "../components/QuickCheckCard";
 import TopNudgeBanner from "../components/TopNudgeBanner";
 
 const HOME_CHAT_STORAGE = "microtrainer-chat-history-home";
-
-const STARTER_PROMPT_POOL = [
-  "Explain React hooks with a real-world example",
-  "What MERN stack questions come up in interviews?",
-  "How do SQL JOINs work? Show me with a query",
-  "Walk me through solving a two-pointer problem",
-  "What's the difference between let, const, and var?",
-  "Help me prepare for a Java OOP interview",
-  "How does async/await work in JavaScript?",
-  "Explain REST APIs in simple terms",
-  "What is the difference between SQL and NoSQL?",
-  "How do I approach a binary search problem?",
-];
-
-// Starter prompts tailored to the student's role (falls back to the pool above).
-const TRACK_STARTER_PROMPTS = {
-  fullstack: STARTER_PROMPT_POOL,
-  data_science: [
-    "Explain the bias-variance tradeoff with an example",
-    "How does cross-validation prevent overfitting?",
-    "When would you use a random forest vs logistic regression?",
-    "Explain p-values and hypothesis testing simply",
-    "How do you handle missing data in a dataset?",
-    "What is feature engineering? Give practical examples",
-    "Walk me through a pandas groupby aggregation",
-    "Explain precision, recall, and F1 score",
-  ],
-  data_analyst: [
-    "How do SQL window functions work? Show an example",
-    "Explain a good dashboard design for KPIs",
-    "How do you design an A/B test correctly?",
-    "Write a SQL query with a JOIN and GROUP BY",
-    "How do you tell a story with data to executives?",
-    "Explain the difference between mean, median, and mode",
-    "How do pivot tables help in analysis?",
-    "What metrics would you track for a product launch?",
-  ],
-  ai_ml: [
-    "Explain how transformers and attention work",
-    "Walk me through a RAG pipeline end to end",
-    "What are embeddings and how are they used?",
-    "How does fine-tuning differ from prompting?",
-    "Explain gradient descent in simple terms",
-    "What is MLOps and why does it matter?",
-    "How do you evaluate an LLM's output quality?",
-    "Explain vector databases and similarity search",
-  ],
-};
 
 const Home = () => {
   const [question, setQuestion] = useState("");
@@ -87,16 +36,6 @@ const Home = () => {
   const isChatting = chatHistory.length > 0;
   const hasSavedSessions = sessions.length > 0;
   const [historyOpen, setHistoryOpen] = useState(false);
-
-  const promptPool = useMemo(() => {
-    const track = getCareerTrack(getAuthUser());
-    return TRACK_STARTER_PROMPTS[track] || STARTER_PROMPT_POOL;
-  }, []);
-
-  const starterPrompts = useMemo(
-    () => filterStarterPrompts(promptPool, sessions, 4),
-    [sessions, promptPool]
-  );
 
   useEffect(() => {
     if (chatHistory.length > 0) {
@@ -267,8 +206,6 @@ const Home = () => {
               inputRef={inputRef}
               onSubmit={handleSubmit}
               onKeyDown={handleKeyDown}
-              onStarterClick={(text) => handleSubmit(null, text)}
-              starterPrompts={starterPrompts}
             />
           )}
         </main>
@@ -288,8 +225,6 @@ function WelcomeView({
   inputRef,
   onSubmit,
   onKeyDown,
-  onStarterClick,
-  starterPrompts = [],
 }) {
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-10 overflow-y-auto">
@@ -327,22 +262,6 @@ function WelcomeView({
         <p className="w-full text-[11px] text-gray-400 dark:text-gray-500 text-center mt-2.5 break-words">
           Answers are AI-generated — double-check anything important.
         </p>
-
-        {starterPrompts.length > 0 && (
-          <div className="w-full mt-7 flex flex-wrap justify-center gap-1.5">
-            {starterPrompts.map((prompt) => (
-              <button
-                key={prompt}
-                type="button"
-                disabled={isLoading}
-                onClick={() => onStarterClick(prompt)}
-                className="text-[12.5px] px-3.5 py-[7px] rounded-full border border-black/[0.06] dark:border-white/[0.08] bg-black/[0.02] dark:bg-white/[0.04] text-gray-600 dark:text-gray-300 hover:border-violet-400/40 dark:hover:border-violet-400/30 hover:text-violet-700 dark:hover:text-violet-200 hover:bg-violet-500/[0.06] dark:hover:bg-violet-400/[0.08] transition-all disabled:opacity-50 max-w-full truncate"
-              >
-                {prompt}
-              </button>
-            ))}
-          </div>
-        )}
       </motion.div>
     </div>
   );
@@ -556,8 +475,8 @@ function HomeChatInput({
       onSubmit={onSubmit}
       className={`relative ${className} ${
         isLarge
-          ? "rounded-full border border-black/[0.07] dark:border-white/[0.09] bg-white/95 dark:bg-white/[0.045] backdrop-blur-xl shadow-[0_2px_16px_-6px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_20px_-4px_rgba(0,0,0,0.5)] focus-within:border-violet-400/40 dark:focus-within:border-violet-300/20 focus-within:shadow-[0_0_0_3px_rgba(124,58,237,0.07),0_4px_20px_-4px_rgba(124,58,237,0.16)] dark:focus-within:shadow-[0_0_0_3px_rgba(167,139,250,0.08),0_4px_22px_-4px_rgba(167,139,250,0.18)] transition-all duration-200"
-          : "rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#2a2b2e] shadow-sm focus-within:border-[#7c3aed]/60 dark:focus-within:border-[#a78bfa]/60 focus-within:ring-2 focus-within:ring-[#7c3aed]/15 dark:focus-within:ring-[#a78bfa]/15 transition"
+          ? "rounded-full border border-black/[0.08] dark:border-white/10 bg-white dark:bg-[#2f2f2f] shadow-sm dark:shadow-none focus-within:border-black/20 dark:focus-within:border-white/20 transition-colors duration-200"
+          : "rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#2f2f2f] shadow-sm dark:shadow-none focus-within:border-black/20 dark:focus-within:border-white/20 transition-colors"
       }`}
     >
       <div
@@ -585,7 +504,7 @@ function HomeChatInput({
         <button
           type="submit"
           disabled={!question.trim() || isLoading}
-          className={`flex-shrink-0 flex items-center justify-center rounded-full bg-gradient-to-b from-[#8b5cf6] to-[#7c3aed] dark:from-[#b7a3fb] dark:to-[#a78bfa] text-white dark:text-gray-900 shadow-[0_2px_8px_-2px_rgba(124,58,237,0.35)] dark:shadow-[0_2px_9px_-2px_rgba(167,139,250,0.28)] hover:opacity-90 transition disabled:opacity-30 disabled:shadow-none disabled:cursor-not-allowed ${
+          className={`flex-shrink-0 flex items-center justify-center rounded-full bg-black dark:bg-white text-white dark:text-black hover:opacity-90 transition disabled:opacity-30 disabled:cursor-not-allowed ${
             isLarge ? "h-9 w-9" : "h-9 w-9"
           }`}
           title="Send"

@@ -156,7 +156,7 @@ export default function ReportIssueButton() {
   return (
     <div
       ref={panelRef}
-      className="fixed z-[120] bottom-6 right-6 flex flex-col gap-3 items-end"
+      className="fixed z-[120] bottom-24 right-6 flex flex-col gap-3 items-end"
       style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
       aria-live="polite"
     >
