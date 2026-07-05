@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   deleteChatSession,
   getFirstUserQuestion,
@@ -8,11 +8,27 @@ import {
 
 /**
  * Persists chat threads to localStorage and exposes sidebar session list.
+ *
+ * `studentId` is folded into the storage key so history never leaks across
+ * accounts on a shared browser/device — without it, every student using the
+ * same machine would see (and could delete) each other's saved conversations.
  */
-export function useChatHistoryPersistence(storageKey) {
+export function useChatHistoryPersistence(baseStorageKey, studentId) {
+  const storageKey = useMemo(
+    () => `${baseStorageKey}:${studentId || "anon"}`,
+    [baseStorageKey, studentId]
+  );
   const [sessions, setSessions] = useState(() => loadChatSessions(storageKey));
   const [activeSessionId, setActiveSessionId] = useState(null);
   const activeSessionIdRef = useRef(null);
+
+  // Re-load (and stop showing another account's cached sessions) if the
+  // resolved student changes — e.g. login completing after initial mount.
+  useEffect(() => {
+    setSessions(loadChatSessions(storageKey));
+    setActiveSessionId(null);
+    activeSessionIdRef.current = null;
+  }, [storageKey]);
 
   useEffect(() => {
     activeSessionIdRef.current = activeSessionId;

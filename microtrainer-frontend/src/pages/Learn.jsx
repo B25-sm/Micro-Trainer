@@ -61,7 +61,7 @@ const Learn = () => {
     beginNewSession,
     selectSession,
     removeSession,
-  } = useChatHistoryPersistence(ASK_CHAT_STORAGE);
+  } = useChatHistoryPersistence(ASK_CHAT_STORAGE, studentId);
 
   const showHistoryDrawer =
     learningMode === "ask-anything" && sessions.length > 0;

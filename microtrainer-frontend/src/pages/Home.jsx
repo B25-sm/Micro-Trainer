@@ -82,7 +82,7 @@ const Home = () => {
     beginNewSession,
     selectSession,
     removeSession,
-  } = useChatHistoryPersistence(HOME_CHAT_STORAGE);
+  } = useChatHistoryPersistence(HOME_CHAT_STORAGE, getStudentId());
 
   const isChatting = chatHistory.length > 0;
   const hasSavedSessions = sessions.length > 0;
