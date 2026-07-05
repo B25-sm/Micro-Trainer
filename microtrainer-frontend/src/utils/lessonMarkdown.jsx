@@ -95,7 +95,7 @@ export function createLessonMarkdownComponents() {
         </code>
       ) : (
         <code
-          className="rounded-md border border-indigo-200/70 bg-indigo-50 px-1.5 py-0.5 font-mono text-[0.85em] font-medium text-indigo-700 before:content-none after:content-none dark:border-indigo-500/20 dark:bg-indigo-500/10 dark:text-indigo-300 read-mode:border-[var(--read-border)] read-mode:bg-[var(--read-surface)] read-mode:text-[var(--read-text)]"
+          className="rounded-md border border-gray-200 bg-gray-100 px-1.5 py-0.5 font-mono text-[0.85em] font-semibold text-gray-950 before:content-none after:content-none dark:border-white/10 dark:bg-white/[0.08] dark:text-gray-100 read-mode:border-[var(--read-border)] read-mode:bg-[var(--read-surface)] read-mode:text-[var(--read-text)]"
           {...props}
         >
           {children}
@@ -118,12 +118,12 @@ export function createLessonMarkdownComponents() {
       </h3>
     ),
     p: ({ children }) => (
-      <p className="mb-4 text-[15px] leading-7 tracking-[0.003em] text-gray-700 last:mb-0 dark:text-slate-300 read-mode:text-[var(--read-text)]">
+      <p className="mb-4 text-base leading-7 text-[#171717] last:mb-0 dark:text-[#ededed] read-mode:text-[var(--read-text)]">
         {children}
       </p>
     ),
     em: ({ children }) => (
-      <em className="italic text-gray-700 dark:text-slate-300 read-mode:text-[var(--read-text)]">
+      <em className="italic text-[#171717] dark:text-[#ededed] read-mode:text-[var(--read-text)]">
         {children}
       </em>
     ),
@@ -138,7 +138,7 @@ export function createLessonMarkdownComponents() {
       </a>
     ),
     blockquote: ({ children }) => (
-      <blockquote className="my-4 rounded-r-lg border-l-4 border-blue-300 bg-blue-50/60 py-2 pl-4 pr-3 text-[15px] italic leading-7 text-gray-700 dark:border-blue-500/40 dark:bg-blue-500/5 dark:text-slate-300 read-mode:border-[var(--read-border)] read-mode:bg-[var(--read-callout-bg)] read-mode:text-[var(--read-text)]">
+      <blockquote className="my-4 rounded-r-lg border-l-4 border-blue-500 bg-blue-50/60 py-2 pl-4 pr-3 text-base italic leading-7 text-[#171717] dark:border-blue-400/50 dark:bg-blue-500/5 dark:text-[#ededed] read-mode:border-[var(--read-border)] read-mode:bg-[var(--read-callout-bg)] read-mode:text-[var(--read-text)]">
         {children}
       </blockquote>
     ),
@@ -156,13 +156,13 @@ export function createLessonMarkdownComponents() {
       }
 
       return (
-        <li className="pl-1.5 text-[15px] leading-7 text-gray-700 dark:text-slate-300 read-mode:text-[var(--read-text)]">
+        <li className="pl-1.5 text-base leading-7 text-[#171717] dark:text-[#ededed] read-mode:text-[var(--read-text)]">
           {children}
         </li>
       );
     },
     ul: ({ children }) => (
-      <ul className="mb-4 space-y-1.5 pl-5 list-disc marker:text-blue-400 last:mb-0 dark:marker:text-blue-500 read-mode:marker:text-[var(--read-border)]">
+      <ul className="mb-4 space-y-1.5 pl-5 list-disc marker:text-blue-600 last:mb-0 dark:marker:text-blue-400 read-mode:marker:text-[var(--read-border)]">
         {children}
       </ul>
     ),

@@ -24,7 +24,7 @@ function ConceptAnswerFrame({ theme, children }) {
       className={`overflow-hidden rounded-[1.25rem] bg-gradient-to-br ${theme.stage} p-2 ${theme.glow}`}
     >
       <div className="rounded-xl bg-white px-4 py-3 dark:bg-[#1a1b1e] sm:px-5 sm:py-4 read-mode:bg-[var(--read-surface)]">
-        <div className="text-[15px] leading-relaxed text-gray-700 dark:text-slate-300">
+        <div className="learning-prose">
           {children}
         </div>
       </div>

@@ -329,7 +329,7 @@ function Stage({ theme, icon: Icon, title, children }) {
 function TextPanel({ body }) {
   return (
     <div className="flex-1 rounded-xl bg-white px-4 py-3 dark:bg-[#1a1b1e] sm:px-5 sm:py-4 read-mode:bg-[var(--read-surface)]">
-      <div className="text-[15px] leading-relaxed text-gray-700 dark:text-slate-300">
+      <div className="learning-prose">
         <ReactMarkdown components={textComponents}>
           {normalizeLessonMarkdown(body)}
         </ReactMarkdown>
@@ -384,7 +384,7 @@ function CodeWindow({ lang, code, note }) {
           <p className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-purple-600 dark:text-purple-300">
             Note
           </p>
-          <div className="text-[15px] leading-relaxed text-gray-700 dark:text-slate-300">
+          <div className="learning-prose">
             <ReactMarkdown components={textComponents}>
               {normalizeLessonMarkdown(note)}
             </ReactMarkdown>

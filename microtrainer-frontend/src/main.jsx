@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { GoogleOAuthProvider } from '@react-oauth/google'
+import '@fontsource-variable/inter'
 import './index.css'
 import App from './App.jsx'
 import { DisplayModeProvider } from './context/DisplayModeContext.jsx'
