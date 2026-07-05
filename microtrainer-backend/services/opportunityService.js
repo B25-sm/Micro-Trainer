@@ -26,18 +26,10 @@ const CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12h
 const MAX_RESULTS = 10;
 const cache = new Map(); // "tech::concept" -> { data, expiresAt }
 
-// Seniority we never surface to a learner.
-const SENIOR_EXCLUDE = [
-  "senior",
-  "sr",
-  "lead",
-  "principal",
-  "staff",
-  "architect",
-  "manager",
-  "head",
-  "director",
-];
+// Seniority we never surface to a learner. Word-boundary matched so short
+// tokens ("sr", "head") don't match inside unrelated words ("headless").
+const SENIOR_RE =
+  /\b(senior|sr|lead|principal|staff|architect|manager|head|director)\b/i;
 
 // ---------------------------------------------------------
 // Stack model — the heart of relevance. Resolves whatever a surface knows
@@ -45,48 +37,56 @@ const SENIOR_EXCLUDE = [
 // canonical stack with a GitHub language + India-oriented job keywords.
 // ---------------------------------------------------------
 
+// jobPhrase is the single exact phrase we send to Adzuna as `what_phrase`.
+// Tested against the live India feed — an exact role phrase + relevance sort
+// returns real, on-target roles; broad OR-queries return noise.
 const STACKS = {
   mern: {
     label: "MERN / Full-stack JS",
     githubLanguage: "javascript",
-    jobKeywords: ["mern stack developer", "full stack developer", "react node"],
+    jobPhrase: "full stack developer",
   },
   frontend: {
     label: "Frontend",
     githubLanguage: "javascript",
-    jobKeywords: ["frontend developer", "react developer", "ui developer"],
+    jobPhrase: "frontend developer",
   },
   node: {
     label: "Node / Backend JS",
     githubLanguage: "javascript",
-    jobKeywords: ["node js developer", "backend developer"],
+    jobPhrase: "node js developer",
   },
   pythonFullstack: {
     label: "Python full-stack",
     githubLanguage: "python",
-    jobKeywords: ["python full stack developer", "django developer"],
+    jobPhrase: "python developer",
   },
   django: {
     label: "Django / Python",
     githubLanguage: "python",
-    jobKeywords: ["django developer", "python developer"],
+    jobPhrase: "python developer",
   },
   python: {
     label: "Python",
     githubLanguage: "python",
-    jobKeywords: ["python developer"],
+    jobPhrase: "python developer",
   },
   java: {
     label: "Java",
     githubLanguage: "java",
-    jobKeywords: ["java developer", "spring boot developer"],
+    jobPhrase: "java developer",
   },
   sql: {
     label: "SQL / Data",
     githubLanguage: "sql",
-    jobKeywords: ["sql developer", "data analyst"],
+    jobPhrase: "sql developer",
   },
 };
+
+// A real dev role's title says so. Requiring one of these drops tangential
+// matches (professor / sales / operations) that slip past a loose phrase.
+const DEV_TITLE_RE =
+  /develop|engineer|programmer|software|full[\s-]?stack|front[\s-]?end|back[\s-]?end|react|python|java|node|sde/i;
 
 /**
  * Match free-form input to a canonical stack. Order matters — check the more
@@ -235,11 +235,13 @@ async function fetchAdzunaJobs(stack) {
         params: {
           app_id: process.env.ADZUNA_APP_ID,
           app_key: process.env.ADZUNA_APP_KEY,
-          what_or: stack.jobKeywords.join(" "),
-          what_exclude: SENIOR_EXCLUDE.join(" "),
+          // Exact role phrase + IT category + relevance sort is what actually
+          // returns on-target roles; date-sort or OR-queries return noise.
+          what_phrase: stack.jobPhrase,
+          category: "it-jobs",
+          sort_by: "relevance",
           max_days_old: 30,
-          sort_by: "date",
-          results_per_page: 6,
+          results_per_page: 10,
           "content-type": "application/json",
         },
         timeout: 6000,
@@ -248,13 +250,12 @@ async function fetchAdzunaJobs(stack) {
 
     const items = res.data?.results || [];
     return items
-      .filter(
-        (job) =>
-          // belt-and-suspenders: drop anything senior that slipped through
-          !SENIOR_EXCLUDE.some((w) =>
-            String(job.title || "").toLowerCase().includes(w)
-          )
-      )
+      .filter((job) => {
+        const title = String(job.title || "");
+        // Drop senior/lead roles, and anything whose title isn't a dev role.
+        if (SENIOR_RE.test(title)) return false;
+        return DEV_TITLE_RE.test(title);
+      })
       .slice(0, 5)
       .map((job) => ({
         type: /intern/i.test(job.title || "") ? "internship" : "job",
