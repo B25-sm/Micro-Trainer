@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
-import { Lightbulb, Send, X, ImagePlus, ClipboardPaste } from "lucide-react";
+import { Send, X, ImagePlus, ClipboardPaste } from "lucide-react";
 import { reportIssue } from "../api";
 
 const MAX_SCREENSHOTS = 3;
@@ -156,7 +156,7 @@ export default function ReportIssueButton() {
   return (
     <div
       ref={panelRef}
-      className="fixed z-[120] bottom-24 right-6 flex flex-col gap-3 items-end"
+      className="fixed z-[120] bottom-16 right-4 flex flex-col gap-3 items-end"
       style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
       aria-live="polite"
     >
@@ -298,14 +298,12 @@ export default function ReportIssueButton() {
         title="Report a snag or suggest an improvement"
         aria-label="Report a snag or suggest an improvement"
         aria-expanded={open}
-        className="group inline-flex items-center gap-2 rounded-full border border-slate-200/90 bg-white/90 px-3.5 py-2 text-xs font-medium text-slate-500 shadow-sm backdrop-blur-sm transition hover:border-slate-300 hover:text-slate-700 disabled:opacity-60 dark:border-slate-700/90 dark:bg-slate-800/80 dark:text-slate-400 dark:hover:border-slate-600 dark:hover:text-slate-200"
+        className="inline-flex items-center gap-1 px-1.5 py-1 text-[10px] font-medium text-slate-400 transition hover:text-slate-600 disabled:opacity-60 dark:text-slate-500 dark:hover:text-slate-300"
       >
         {isSending ? (
-          <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-slate-400/40 border-t-slate-500 dark:border-t-slate-300" />
-        ) : open ? (
-          <X className="h-3.5 w-3.5" strokeWidth={2.25} />
+          <span className="h-2.5 w-2.5 animate-spin rounded-full border-2 border-slate-400/40 border-t-slate-500 dark:border-t-slate-300" />
         ) : (
-          <Lightbulb className="h-3.5 w-3.5" strokeWidth={2.25} />
+          <span aria-hidden="true">{open ? "✕" : "🐞"}</span>
         )}
         <span>{open ? "Close" : "snags"}</span>
       </button>

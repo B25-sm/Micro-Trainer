@@ -66,7 +66,7 @@ export default function Composer({ onSend, onStop, isStreaming, showContinue, on
             onClick={handleSubmit}
             disabled={!value.trim()}
             title="Send"
-            className="flex-shrink-0 w-8 h-8 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center hover:opacity-90 transition disabled:opacity-30 disabled:cursor-not-allowed"
+            className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-b from-[#8b5cf6] to-[#7c3aed] dark:from-[#b7a3fb] dark:to-[#a78bfa] text-white dark:text-gray-900 shadow-[0_2px_8px_-2px_rgba(124,58,237,0.35)] dark:shadow-[0_2px_9px_-2px_rgba(167,139,250,0.28)] flex items-center justify-center hover:opacity-90 transition disabled:opacity-30 disabled:shadow-none disabled:cursor-not-allowed"
           >
             <ArrowUp className="w-4 h-4" />
           </button>

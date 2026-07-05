@@ -504,7 +504,7 @@ function HomeChatInput({
         <button
           type="submit"
           disabled={!question.trim() || isLoading}
-          className={`flex-shrink-0 flex items-center justify-center rounded-full bg-black dark:bg-white text-white dark:text-black hover:opacity-90 transition disabled:opacity-30 disabled:cursor-not-allowed ${
+          className={`flex-shrink-0 flex items-center justify-center rounded-full bg-gradient-to-b from-[#8b5cf6] to-[#7c3aed] dark:from-[#b7a3fb] dark:to-[#a78bfa] text-white dark:text-gray-900 shadow-[0_2px_8px_-2px_rgba(124,58,237,0.35)] dark:shadow-[0_2px_9px_-2px_rgba(167,139,250,0.28)] hover:opacity-90 transition disabled:opacity-30 disabled:shadow-none disabled:cursor-not-allowed ${
             isLarge ? "h-9 w-9" : "h-9 w-9"
           }`}
           title="Send"
