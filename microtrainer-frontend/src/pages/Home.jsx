@@ -16,6 +16,7 @@ import { useAttachments } from "../hooks/useAttachments";
 import AttachButton from "../components/attachments/AttachButton";
 import AttachmentChips from "../components/attachments/AttachmentChips";
 import { documentsToContextText } from "../utils/fileAttachments";
+import NeonLoader from "../components/NeonLoader";
 
 const HOME_CHAT_STORAGE = "microtrainer-chat-history-home";
 
@@ -441,10 +442,8 @@ function ActiveChatView({
               animate={{ opacity: 1 }}
               className="flex justify-start"
             >
-              <div className="flex items-center gap-1 px-1 py-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-gray-400 dark:bg-gray-500 animate-pulse [animation-delay:0ms]" />
-                <span className="w-1.5 h-1.5 rounded-full bg-gray-400 dark:bg-gray-500 animate-pulse [animation-delay:200ms]" />
-                <span className="w-1.5 h-1.5 rounded-full bg-gray-400 dark:bg-gray-500 animate-pulse [animation-delay:400ms]" />
+              <div className="px-1 py-2">
+                <NeonLoader />
               </div>
             </motion.div>
           )}
