@@ -1,55 +1,143 @@
 // =======================================================
 // 💼 OPPORTUNITY SERVICE
-// Maps a technology/concept the student is practicing to real, live
-// opportunities: GitHub good-first-issues, bounty-labeled issues, remote
-// jobs/internships, and hackathons — all normalized to one shape.
+// Maps what a student is practicing to real, live opportunities:
+//   • GitHub good-first-issues + bounties  → concept-relevant, self-evidently
+//     real (live GitHub links). Shown today, no key needed.
+//   • Jobs / internships (Adzuna)          → matched to the STACK the student
+//     is preparing (not a micro-concept), fresh, India-focused, senior roles
+//     excluded. Dormant until ADZUNA_APP_ID / ADZUNA_APP_KEY are set.
 //
-// Cached per-concept (not per-student) since opportunities barely change
-// and concepts are finite — this keeps upstream API usage tiny regardless
-// of how many students hit the endpoint.
+// Design principles learned the hard way:
+//   - Jobs map to STACK + LEVEL, never to a toy concept like "Sum of Digits".
+//   - Never show a senior/lead role to someone still learning.
+//   - Only credible sources. No scraping LinkedIn/Naukri/Indeed (no legal API);
+//     no low-signal remote-gig boards that surface cleaning-company "jobs".
+//   - No API can guarantee a listing is still open — we filter by freshness
+//     and use a reputable aggregator, and claim nothing more.
 //
-// Every source fetcher swallows its own errors and returns [] on failure,
-// so one dead/rate-limited feed never breaks the others or the chip.
+// Cached per-concept (not per-student): keeps upstream API usage tiny at scale.
+// Every fetcher swallows its own errors and returns [] so one dead feed never
+// breaks the others or the chip.
 // =======================================================
 
 const axios = require("axios");
 
 const CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12h
-const MAX_RESULTS = 12;
+const MAX_RESULTS = 10;
 const cache = new Map(); // "tech::concept" -> { data, expiresAt }
 
-// GitHub's "language:" search qualifier wants a language name, not a
-// framework name — map the technologies this app teaches onto it.
-const GITHUB_LANGUAGE_MAP = {
-  react: "javascript",
-  reactjs: "javascript",
-  javascript: "javascript",
-  node: "javascript",
-  nodejs: "javascript",
-  typescript: "typescript",
-  python: "python",
-  django: "python",
-  java: "java",
-  spring: "java",
-  springboot: "java",
-  sql: "sql",
+// Seniority we never surface to a learner.
+const SENIOR_EXCLUDE = [
+  "senior",
+  "sr",
+  "lead",
+  "principal",
+  "staff",
+  "architect",
+  "manager",
+  "head",
+  "director",
+];
+
+// ---------------------------------------------------------
+// Stack model — the heart of relevance. Resolves whatever a surface knows
+// (a technology name, an interview subject, a role, or free text) into a
+// canonical stack with a GitHub language + India-oriented job keywords.
+// ---------------------------------------------------------
+
+const STACKS = {
+  mern: {
+    label: "MERN / Full-stack JS",
+    githubLanguage: "javascript",
+    jobKeywords: ["mern stack developer", "full stack developer", "react node"],
+  },
+  frontend: {
+    label: "Frontend",
+    githubLanguage: "javascript",
+    jobKeywords: ["frontend developer", "react developer", "ui developer"],
+  },
+  node: {
+    label: "Node / Backend JS",
+    githubLanguage: "javascript",
+    jobKeywords: ["node js developer", "backend developer"],
+  },
+  pythonFullstack: {
+    label: "Python full-stack",
+    githubLanguage: "python",
+    jobKeywords: ["python full stack developer", "django developer"],
+  },
+  django: {
+    label: "Django / Python",
+    githubLanguage: "python",
+    jobKeywords: ["django developer", "python developer"],
+  },
+  python: {
+    label: "Python",
+    githubLanguage: "python",
+    jobKeywords: ["python developer"],
+  },
+  java: {
+    label: "Java",
+    githubLanguage: "java",
+    jobKeywords: ["java developer", "spring boot developer"],
+  },
+  sql: {
+    label: "SQL / Data",
+    githubLanguage: "sql",
+    jobKeywords: ["sql developer", "data analyst"],
+  },
 };
 
-function cacheKey(tech, concept) {
-  return `${String(tech || "").toLowerCase()}::${String(concept || "").toLowerCase()}`;
+/**
+ * Match free-form input to a canonical stack. Order matters — check the more
+ * specific/compound stacks before the generic ones, and guard "java" against
+ * matching inside "javascript".
+ */
+function resolveStack(tech, concept) {
+  const text = `${tech || ""} ${concept || ""}`.toLowerCase();
+  const has = (...terms) => terms.some((t) => text.includes(t));
+
+  if (has("mern")) return STACKS.mern;
+  if (has("python") && has("full")) return STACKS.pythonFullstack;
+  if (has("django")) return STACKS.django;
+  if (has("python")) return STACKS.python;
+  if (has("spring")) return STACKS.java;
+  // "javascript"/"react"/"html"/"css"/"node" all imply the JS family
+  if (has("node", "express")) return STACKS.node;
+  if (has("react", "frontend", "front end", "html", "css", "javascript", "js", "vue", "angular"))
+    return STACKS.frontend;
+  if (has("java")) return STACKS.java; // after javascript is handled above
+  if (has("sql", "database", "mysql", "postgres")) return STACKS.sql;
+  return null; // no confident stack → skip jobs rather than guess
 }
+
+// ---------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------
 
 function extractReward(text) {
   const match = String(text || "").match(/\$\s?[\d,]+(\.\d+)?/);
   return match ? match[0].replace(/\s+/, "") : null;
 }
 
-function stripHtml(text) {
-  return String(text || "").replace(/<[^>]*>/g, "").trim();
+function daysAgo(iso) {
+  if (!iso) return null;
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return null;
+  return Math.max(0, Math.round((Date.now() - then) / (24 * 60 * 60 * 1000)));
+}
+
+function formatInrSalary(min) {
+  if (!min || min < 100000) return null; // ignore missing / implausibly small
+  return `₹${Math.round(min / 100000)}L+`;
+}
+
+function cacheKey(tech, concept) {
+  return `${String(tech || "").toLowerCase()}::${String(concept || "").toLowerCase()}`;
 }
 
 // ---------------------------------------------------------
-// GitHub — good-first-issues (real OSS tickets solvable today)
+// GitHub — good-first-issues + bounties (concept-relevant, real links)
 // ---------------------------------------------------------
 
 function githubHeaders() {
@@ -60,13 +148,9 @@ function githubHeaders() {
   return headers;
 }
 
-function buildGithubTechTerms(tech, concept) {
-  const language = GITHUB_LANGUAGE_MAP[String(tech || "").toLowerCase().trim()];
+function githubTechTerms(stack, tech, concept) {
   const parts = [];
-  // language: qualifier substitutes for the tech term when we can map one;
-  // otherwise keep the raw tech as a search term so it isn't dropped
-  // whenever a concept is also present.
-  if (language) parts.push(`language:${language}`);
+  if (stack) parts.push(`language:${stack.githubLanguage}`);
   else if (tech) parts.push(String(tech));
   if (concept) parts.push(String(concept));
   return parts;
@@ -81,15 +165,14 @@ async function searchGithubIssues(query) {
   return res.data.items || [];
 }
 
-async function fetchGithubIssues(tech, concept) {
+async function fetchGithubIssues(stack, tech, concept) {
   try {
     const query = [
       'label:"good first issue"',
       "state:open",
       "type:issue",
-      ...buildGithubTechTerms(tech, concept),
+      ...githubTechTerms(stack, tech, concept),
     ].join(" ");
-
     const items = await searchGithubIssues(query);
     return items.map((issue) => ({
       type: "issue",
@@ -97,6 +180,7 @@ async function fetchGithubIssues(tech, concept) {
       org: (issue.repository_url || "").split("/").slice(-2).join("/"),
       url: issue.html_url,
       reward: null,
+      postedDaysAgo: daysAgo(issue.created_at),
       tags: [tech].filter(Boolean),
       source: "github",
     }));
@@ -106,21 +190,14 @@ async function fetchGithubIssues(tech, concept) {
   }
 }
 
-// ---------------------------------------------------------
-// Bounties — proxy via GitHub issues labeled/tagged as paid bounties
-// (Algora, IssueHunt, Boost.small, etc. all sync bounty issues to GitHub
-// with a "bounty" label and a $ amount in the title).
-// ---------------------------------------------------------
-
-async function fetchBounties(tech, concept) {
+async function fetchBounties(stack, tech, concept) {
   try {
     const query = [
       "label:bounty",
       "state:open",
       "type:issue",
-      ...buildGithubTechTerms(tech, concept),
+      ...githubTechTerms(stack, tech, concept),
     ].join(" ");
-
     const items = await searchGithubIssues(query);
     return items.map((issue) => ({
       type: "bounty",
@@ -128,6 +205,7 @@ async function fetchBounties(tech, concept) {
       org: (issue.repository_url || "").split("/").slice(-2).join("/"),
       url: issue.html_url,
       reward: extractReward(issue.title),
+      postedDaysAgo: daysAgo(issue.created_at),
       tags: [tech].filter(Boolean),
       source: "github-bounty",
     }));
@@ -138,97 +216,64 @@ async function fetchBounties(tech, concept) {
 }
 
 // ---------------------------------------------------------
-// Jobs & internships — free public job boards
+// Adzuna — real, fresh jobs matched to the stack. Dormant until keys are set.
+// India by default; senior roles excluded; freshness-filtered.
 // ---------------------------------------------------------
 
-async function fetchRemoteOkJobs(tech) {
-  try {
-    const tag = String(tech || "").toLowerCase().trim().replace(/\s+/g, "-");
-    if (!tag) return [];
-
-    const res = await axios.get("https://remoteok.com/api", {
-      params: { tags: tag },
-      headers: { "User-Agent": "Mozilla/5.0 (MicroTrainer opportunity feed)" },
-      timeout: 6000,
-    });
-
-    const items = Array.isArray(res.data) ? res.data.slice(1) : []; // first item is a legal notice
-    // Postings tagged with 20-30 generic tags to reach every search are spam-y
-    // and rarely relevant to the specific tech — keep only tightly-tagged ones.
-    const relevant = items.filter((job) => (job.tags || []).length <= 10);
-    return relevant.slice(0, 5).map((job) => ({
-      type: /intern/i.test(job.position || "") ? "internship" : "job",
-      title: job.position,
-      org: job.company,
-      url: job.url,
-      reward: job.salary_min ? `$${Math.round(job.salary_min / 1000)}k+` : null,
-      tags: job.tags || [],
-      source: "remoteok",
-    }));
-  } catch (err) {
-    console.error("Opportunity fetch (remoteok) error:", err.message);
-    return [];
-  }
+function adzunaConfigured() {
+  return Boolean(process.env.ADZUNA_APP_ID && process.env.ADZUNA_APP_KEY);
 }
 
-async function fetchArbeitnowJobs(tech, concept) {
+async function fetchAdzunaJobs(stack) {
+  if (!stack || !adzunaConfigured()) return []; // no key → jobs stay dark
+
+  const country = (process.env.ADZUNA_COUNTRY || "in").toLowerCase();
   try {
-    const search = [tech, concept].filter(Boolean).join(" ");
     const res = await axios.get(
-      "https://www.arbeitnow.com/api/job-board-api",
-      { params: { search }, timeout: 6000 }
+      `https://api.adzuna.com/v1/api/jobs/${country}/search/1`,
+      {
+        params: {
+          app_id: process.env.ADZUNA_APP_ID,
+          app_key: process.env.ADZUNA_APP_KEY,
+          what_or: stack.jobKeywords.join(" "),
+          what_exclude: SENIOR_EXCLUDE.join(" "),
+          max_days_old: 30,
+          sort_by: "date",
+          results_per_page: 6,
+          "content-type": "application/json",
+        },
+        timeout: 6000,
+      }
     );
 
-    const items = res.data?.data || [];
-    return items.slice(0, 5).map((job) => ({
-      type: (job.job_types || []).some((t) => /intern/i.test(t))
-        ? "internship"
-        : "job",
-      title: job.title,
-      org: job.company_name,
-      url: job.url,
-      reward: null,
-      tags: job.tags || [],
-      source: "arbeitnow",
-    }));
+    const items = res.data?.results || [];
+    return items
+      .filter(
+        (job) =>
+          // belt-and-suspenders: drop anything senior that slipped through
+          !SENIOR_EXCLUDE.some((w) =>
+            String(job.title || "").toLowerCase().includes(w)
+          )
+      )
+      .slice(0, 5)
+      .map((job) => ({
+        type: /intern/i.test(job.title || "") ? "internship" : "job",
+        title: job.title,
+        org: job.company?.display_name || "Company",
+        url: job.redirect_url,
+        reward: formatInrSalary(job.salary_min),
+        postedDaysAgo: daysAgo(job.created),
+        tags: [job.category?.label].filter(Boolean),
+        source: "adzuna",
+      }));
   } catch (err) {
-    console.error("Opportunity fetch (arbeitnow) error:", err.message);
+    console.error("Opportunity fetch (adzuna) error:", err.message);
     return [];
   }
 }
 
 // ---------------------------------------------------------
-// Hackathons — best-effort; unofficial endpoint, degrades to [] silently
-// ---------------------------------------------------------
-
-async function fetchHackathons(tech) {
-  try {
-    const res = await axios.get("https://devpost.com/api/hackathons", {
-      params: { search: tech, status: "open" },
-      timeout: 6000,
-    });
-
-    const items = res.data?.hackathons || [];
-    return items.slice(0, 3).map((h) => ({
-      type: "hackathon",
-      title: stripHtml(h.title),
-      org: "Devpost",
-      url: h.url,
-      reward:
-        h.prize_amount && !/^\$?\s?0+(\.0+)?$/.test(stripHtml(h.prize_amount))
-          ? stripHtml(h.prize_amount)
-          : null,
-      tags: (h.themes || []).map((t) => t.name).filter(Boolean),
-      source: "devpost",
-    }));
-  } catch (err) {
-    console.error("Opportunity fetch (hackathons) error:", err.message);
-    return [];
-  }
-}
-
-// ---------------------------------------------------------
-// Merge — round-robin across sources so a cap never crowds out variety
+// Merge — round-robin so a cap never crowds out variety
 // ---------------------------------------------------------
 
 function interleave(lists, limit) {
@@ -254,22 +299,20 @@ async function getOpportunities(tech, concept) {
     return cached.data;
   }
 
-  const [issues, bounties, remoteOkJobs, arbeitnowJobs, hackathons] =
-    await Promise.all([
-      fetchGithubIssues(tech, concept),
-      fetchBounties(tech, concept),
-      fetchRemoteOkJobs(tech),
-      fetchArbeitnowJobs(tech, concept),
-      fetchHackathons(tech),
-    ]);
+  const stack = resolveStack(tech, concept);
 
-  const data = interleave(
-    [bounties, [...remoteOkJobs, ...arbeitnowJobs], issues, hackathons],
-    MAX_RESULTS
-  );
+  const [issues, bounties, jobs] = await Promise.all([
+    fetchGithubIssues(stack, tech, concept),
+    fetchBounties(stack, tech, concept),
+    fetchAdzunaJobs(stack),
+  ]);
+
+  // Jobs first (highest motivation when they're real + stack-matched), then
+  // bounties, then good-first-issues.
+  const data = interleave([jobs, bounties, issues], MAX_RESULTS);
 
   cache.set(key, { data, expiresAt: Date.now() + CACHE_TTL_MS });
   return data;
 }
 
-module.exports = { getOpportunities };
+module.exports = { getOpportunities, resolveStack };

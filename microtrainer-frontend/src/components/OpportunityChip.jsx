@@ -10,6 +10,14 @@ const TYPE_LABEL = {
   hackathon: "hackathon",
 };
 
+function formatAge(days) {
+  if (days <= 0) return "today";
+  if (days === 1) return "1d ago";
+  if (days < 7) return `${days}d ago`;
+  if (days < 30) return `${Math.round(days / 7)}w ago`;
+  return `${Math.round(days / 30)}mo ago`;
+}
+
 /**
  * Ambient, collapsed one-line chip: "💼 3 live openings for useEffect".
  * Renders nothing until real opportunities are found, so it never adds
@@ -76,6 +84,9 @@ const OpportunityChip = ({ tech, concept }) => {
                   {op.org}
                   {op.reward ? ` · ${op.reward}` : ""} ·{" "}
                   {TYPE_LABEL[op.type] || op.type}
+                  {typeof op.postedDaysAgo === "number"
+                    ? ` · ${formatAge(op.postedDaysAgo)}`
+                    : ""}
                 </div>
               </a>
             ))}
