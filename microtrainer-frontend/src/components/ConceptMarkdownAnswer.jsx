@@ -21,9 +21,9 @@ const conceptMdComponents = createConceptChatMarkdownComponents();
 function ConceptAnswerFrame({ theme, children }) {
   return (
     <div
-      className={`overflow-hidden rounded-[1.25rem] bg-gradient-to-br ${theme.stage} p-2 ${theme.glow}`}
+      className={`concept-answer-frame overflow-hidden rounded-[1.25rem] bg-gradient-to-br ${theme.stage} p-2 ${theme.glow}`}
     >
-      <div className="rounded-xl bg-white px-4 py-3 dark:bg-[#1a1b1e] sm:px-5 sm:py-4 read-mode:bg-[var(--read-surface)]">
+      <div className="concept-text-panel rounded-xl bg-white px-4 py-3 dark:bg-[#1a1b1e] sm:px-5 sm:py-4 read-mode:bg-[var(--read-surface)]">
         <div className="learning-prose">
           {children}
         </div>
@@ -63,14 +63,14 @@ export default function ConceptMarkdownAnswer({ content, highlighted }) {
           : ""
       }`}
     >
-      <div className="mb-3 flex justify-end">
+      <div className="concept-color-row mb-3 flex justify-end">
         <button
           type="button"
           onClick={() => setColorPref(!colorOn)}
           title={colorOn ? "Turn off colored themes" : "Turn on colored themes"}
           aria-label={colorOn ? "Turn off colored themes" : "Turn on colored themes"}
           aria-pressed={colorOn}
-          className={`flex items-center justify-center rounded-full p-1.5 transition-colors ${
+          className={`concept-color-toggle flex items-center justify-center rounded-full p-1.5 transition-colors ${
             colorOn
               ? "text-[#7c3aed] hover:bg-blue-50 dark:text-[#a78bfa] dark:hover:bg-[#2a2b2e]"
               : "text-gray-400 hover:bg-gray-100 dark:text-gray-500 dark:hover:bg-[#2a2b2e]"

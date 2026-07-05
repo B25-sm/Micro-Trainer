@@ -408,7 +408,48 @@ body {
 }
 
 .dark .learning-prose {
-  color: #ededed;
+  color: #f4f4f4;
+}
+
+/* Dark-mode answers use one calm reading plane. Decorative palettes remain
+   available in light mode, but never compete with long-form text at night. */
+.dark .concept-stage,
+.dark .concept-answer-frame {
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.dark .concept-stage-heading {
+  margin-bottom: 0.75rem;
+  padding: 0;
+  color: #f4f4f4;
+}
+
+.dark .concept-stage-heading h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  text-shadow: none;
+}
+
+.dark .concept-stage-icon {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.dark .concept-text-panel {
+  background: transparent !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
+.dark .concept-color-toggle {
+  display: none;
+}
+
+.dark .concept-color-row {
+  display: none;
 }
 
 /* =========================

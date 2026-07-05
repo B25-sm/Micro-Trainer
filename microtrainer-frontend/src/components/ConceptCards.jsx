@@ -311,10 +311,10 @@ const LANG_BADGE = {
 function Stage({ theme, icon: Icon, title, children }) {
   return (
     <div
-      className={`flex flex-col overflow-hidden rounded-[1.25rem] bg-gradient-to-br ${theme.stage} p-2 ${theme.glow}`}
+      className={`concept-stage flex flex-col overflow-hidden rounded-[1.25rem] bg-gradient-to-br ${theme.stage} p-2 ${theme.glow}`}
     >
-      <div className="mb-1 flex items-center gap-2 px-1.5 py-1 text-white">
-        <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-white/20 backdrop-blur-sm">
+      <div className="concept-stage-heading mb-1 flex items-center gap-2 px-1.5 py-1 text-white">
+        <span className="concept-stage-icon flex h-6 w-6 items-center justify-center rounded-lg bg-white/20 backdrop-blur-sm">
           <Icon className="h-3.5 w-3.5" strokeWidth={2.6} />
         </span>
         <h3 className="text-sm font-semibold tracking-wide drop-shadow-sm">
@@ -328,7 +328,7 @@ function Stage({ theme, icon: Icon, title, children }) {
 
 function TextPanel({ body }) {
   return (
-    <div className="flex-1 rounded-xl bg-white px-4 py-3 dark:bg-[#1a1b1e] sm:px-5 sm:py-4 read-mode:bg-[var(--read-surface)]">
+    <div className="concept-text-panel flex-1 rounded-xl bg-white px-4 py-3 dark:bg-[#1a1b1e] sm:px-5 sm:py-4 read-mode:bg-[var(--read-surface)]">
       <div className="learning-prose">
         <ReactMarkdown components={textComponents}>
           {normalizeLessonMarkdown(body)}
@@ -515,7 +515,7 @@ export default function ConceptCards({ sections, seed }) {
           title={colorOn ? "Turn off colored themes" : "Turn on colored themes"}
           aria-label={colorOn ? "Turn off colored themes" : "Turn on colored themes"}
           aria-pressed={colorOn}
-          className={`flex shrink-0 items-center justify-center rounded-full p-1.5 transition-colors ${
+          className={`concept-color-toggle flex shrink-0 items-center justify-center rounded-full p-1.5 transition-colors ${
             colorOn
               ? "text-[#7c3aed] hover:bg-blue-50 dark:text-[#a78bfa] dark:hover:bg-[#2a2b2e]"
               : "text-gray-400 hover:bg-gray-100 dark:text-gray-500 dark:hover:bg-[#2a2b2e]"
