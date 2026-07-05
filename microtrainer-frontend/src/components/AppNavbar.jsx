@@ -19,6 +19,7 @@ import {
   Shuffle,
   Sparkles,
   Bot,
+  UserRound,
 } from "lucide-react";
 import DisplayModeToggle from "./DisplayModeToggle";
 import { clearAuthSession } from "../utils/authSession";
@@ -232,11 +233,11 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
         {isCollapsed ? (
           <div className="flex flex-col items-center gap-1.5">
             <span
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-violet-500 text-[11px] font-semibold text-white shadow-sm"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-black/[0.035] text-gray-500 ring-1 ring-inset ring-black/[0.07] dark:bg-white/[0.055] dark:text-gray-400 dark:ring-white/[0.08]"
               title={userName || "Guest"}
               aria-hidden
             >
-              {(userName || "G").charAt(0).toUpperCase()}
+              <UserRound className="h-4 w-4" strokeWidth={1.8} />
             </span>
             <button
               type="button"
@@ -254,10 +255,10 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
             title={userName || "Guest"}
           >
             <span
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-violet-500 text-[11px] font-semibold text-white shadow-sm"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-black/[0.035] text-gray-500 ring-1 ring-inset ring-black/[0.07] dark:bg-white/[0.055] dark:text-gray-400 dark:ring-white/[0.08]"
               aria-hidden
             >
-              {(userName || "G").charAt(0).toUpperCase()}
+              <UserRound className="h-4 w-4" strokeWidth={1.8} />
             </span>
             <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-gray-700 dark:text-gray-200 read-mode:text-[var(--read-text)]">
               {userName || "Guest"}
