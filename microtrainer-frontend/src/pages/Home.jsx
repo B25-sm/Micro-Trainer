@@ -325,7 +325,7 @@ function NewQuestionButton({ onConfirm }) {
 
   if (armed) {
     return (
-      <div className="inline-flex items-center gap-1.5 rounded-full border border-[#7c3aed]/40 dark:border-[#a78bfa]/40 bg-blue-50 dark:bg-[#7c3aed]/15 px-2 py-1 text-xs">
+      <div className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.06] px-2 py-1 text-xs">
         <span className="px-1 text-gray-600 dark:text-gray-300">Start a new question?</span>
         <button
           type="button"
@@ -333,7 +333,7 @@ function NewQuestionButton({ onConfirm }) {
             setArmed(false);
             onConfirm();
           }}
-          className="rounded-full bg-[#7c3aed] dark:bg-[#a78bfa] px-2.5 py-1 font-medium text-white dark:text-gray-900 hover:opacity-90 transition"
+          className="rounded-full bg-gray-950 dark:bg-[#ececec] px-2.5 py-1 font-medium text-white dark:text-gray-950 hover:opacity-85 transition"
         >
           Yes
         </button>
@@ -352,7 +352,7 @@ function NewQuestionButton({ onConfirm }) {
     <button
       type="button"
       onClick={() => setArmed(true)}
-      className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#2a2b2e] px-3.5 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 shadow-sm transition hover:border-[#7c3aed]/50 hover:text-[#7c3aed] dark:hover:border-[#a78bfa]/50 dark:hover:text-[#a78bfa]"
+      className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 dark:border-white/10 bg-white dark:bg-transparent px-3.5 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 transition hover:bg-gray-100 dark:hover:bg-white/[0.06]"
     >
       <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
         <path d="M10 4.5v11M4.5 10h11" />
@@ -401,7 +401,7 @@ function ActiveChatView({
               >
                 {message.role === "user" ? (
                   <div
-                    className={`max-w-[85%] sm:max-w-xl px-4 py-3 rounded-2xl rounded-br-md bg-[#7c3aed] dark:bg-[#a78bfa] text-white dark:text-gray-900 text-sm leading-relaxed transition-shadow ${
+                    className={`max-w-[85%] sm:max-w-xl px-4 py-3 rounded-2xl bg-gray-200 dark:bg-[#2f2f2f] text-gray-950 dark:text-[#ececec] text-sm leading-relaxed transition-shadow ${
                       highlightedIndex === index
                         ? "ring-2 ring-blue-300 dark:ring-blue-600 ring-offset-2 dark:ring-offset-[#202124]"
                         : ""
@@ -440,7 +440,7 @@ function ActiveChatView({
               animate={{ opacity: 1 }}
               className="flex justify-start"
             >
-              <div className="px-4 py-3 rounded-2xl bg-gray-50 dark:bg-[#292a2d] border border-gray-200 dark:border-gray-700">
+              <div className="px-4 py-3 rounded-2xl bg-gray-100 dark:bg-[#212121] border border-black/[0.06] dark:border-white/[0.07]">
                 <div className="flex gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500 animate-bounce [animation-delay:0ms]" />
                   <span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500 animate-bounce [animation-delay:150ms]" />
@@ -455,7 +455,7 @@ function ActiveChatView({
       </div>
 
       {/* Pinned input */}
-      <div className="flex-shrink-0 px-4 sm:px-6 pb-4 pt-3 bg-white dark:bg-[#202124]">
+      <div className="flex-shrink-0 px-4 sm:px-6 pb-4 pt-3 bg-transparent">
         <div className="max-w-3xl mx-auto">
           {lastConcept && !isLoading && (
             <div className="mb-3">

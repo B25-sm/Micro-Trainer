@@ -13,7 +13,7 @@ export default function DisplayModeToggle({ variant = "panel" }) {
   if (variant === "icon") {
     return (
       <div
-        className="flex flex-col items-center gap-0.5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-black/[0.02] dark:bg-white/[0.04] p-1 read-mode:bg-[var(--read-surface-elevated)] read-mode:border-[var(--read-border)]"
+        className="flex flex-col items-center gap-1"
         role="group"
         aria-label="Display settings"
       >
@@ -28,7 +28,6 @@ export default function DisplayModeToggle({ variant = "panel" }) {
             <Sun className="h-[15px] w-[15px] text-blue-600 drop-shadow-[0_0_4px_rgba(37,99,235,0.3)]" strokeWidth={1.75} aria-hidden />
           )}
         </DockIconButton>
-        <span className="h-px w-4 bg-black/[0.07] dark:bg-white/[0.08]" aria-hidden />
         <DockIconButton active={readMode} onClick={toggleReadMode} label="Toggle read mode">
           <BookOpen
             className={`h-[15px] w-[15px] transition-colors ${
@@ -105,8 +104,8 @@ function DockIconButton({ active, onClick, label, children }) {
       aria-label={label}
       className={`flex h-7 w-7 items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 ${
         active
-          ? "bg-white dark:bg-white/10 shadow-sm"
-          : "hover:bg-white/70 dark:hover:bg-white/[0.06]"
+          ? "bg-black/[0.06] dark:bg-white/10"
+          : "hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
       }`}
     >
       {children}

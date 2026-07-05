@@ -89,7 +89,7 @@ export default function MessageBubble({ message, isLastAssistant, onEdit, onRege
         <div
           className={
             isUser
-              ? "inline-block rounded-2xl bg-[#7c3aed] dark:bg-[#2a4a7f] text-white px-4 py-2.5 text-sm"
+              ? "inline-block rounded-2xl bg-gray-200 dark:bg-[#2f2f2f] text-gray-950 dark:text-[#ececec] px-4 py-2.5 text-sm"
               : "text-gray-900 dark:text-gray-100"
           }
         >

@@ -70,10 +70,10 @@
   --code-bg: #161616;
 
   /* Accent Colors */
-  --accent: #a78bfa;
-  --accent-hover: #c4b5fd;
-  --accent-bg: rgba(167, 139, 250, 0.15);
-  --accent-border: rgba(167, 139, 250, 0.3);
+  --accent: #ececec;
+  --accent-hover: #ffffff;
+  --accent-bg: rgba(255, 255, 255, 0.08);
+  --accent-border: rgba(255, 255, 255, 0.14);
   
   /* Status Colors */
   --success: #81c995;
@@ -109,7 +109,23 @@
 
 .dark [class*="dark:bg-\[#292a2d\]"],
 .dark [class*="dark:bg-\[#2a2b2e\]"] {
-  background-color: var(--bg-elevated) !important;
+  background-color: #171717 !important;
+}
+
+/* Neutral dark controls across legacy screens. Semantic status colours stay
+   intact, but decorative violet surfaces no longer dominate the interface. */
+.dark [class*="dark:bg-\[#a78bfa\]"] {
+  background-color: #ececec !important;
+  color: #111111 !important;
+  box-shadow: none !important;
+}
+
+.dark [class*="dark:text-\[#a78bfa\]"] {
+  color: #d4d4d4 !important;
+}
+
+.dark [class*="dark:border-\[#a78bfa\]"] {
+  border-color: rgba(255, 255, 255, 0.22) !important;
 }
 
 /* Soften the visible grey separators that make the UI look "cheap". */
@@ -493,6 +509,14 @@ pre code {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #bdc1c6;
+}
+
+.app-sidebar-nav {
+  scrollbar-width: none;
+}
+
+.app-sidebar-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .dark ::-webkit-scrollbar-thumb {

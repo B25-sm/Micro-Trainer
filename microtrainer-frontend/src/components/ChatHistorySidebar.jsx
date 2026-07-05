@@ -57,7 +57,7 @@ export default function ChatHistorySidebar({
             onNewChat?.();
             close();
           }}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#7c3aed] px-3 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#6d28d9] dark:bg-[#a78bfa] dark:text-gray-950 dark:hover:bg-[#b7a3fb]"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gray-950 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800 dark:bg-[#ececec] dark:text-gray-950 dark:hover:bg-white"
         >
           <Plus className="h-4 w-4" strokeWidth={2.4} />
           New question
@@ -84,7 +84,7 @@ export default function ChatHistorySidebar({
                   key={session.id}
                   className={`group overflow-hidden rounded-xl transition-colors ${
                     isActive
-                      ? "bg-violet-50 ring-1 ring-violet-200 dark:bg-[#2f2940] dark:ring-violet-400/25"
+                      ? "bg-gray-100 ring-1 ring-black/[0.06] dark:bg-white/[0.08] dark:ring-white/10"
                       : "hover:bg-gray-100/80 dark:hover:bg-white/[0.06]"
                   }`}
                 >

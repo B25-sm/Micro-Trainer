@@ -125,8 +125,8 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
           className="flex items-center gap-2.5 min-w-0"
           title="MicroTrainer home"
         >
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-950 text-white dark:bg-white dark:text-black">
-            <Sparkles className="h-4 w-4" strokeWidth={1.8} aria-hidden />
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center text-gray-900 dark:text-white">
+            <Sparkles className="h-[18px] w-[18px]" strokeWidth={1.7} aria-hidden />
           </span>
           {!isCollapsed && (
             <span className="truncate text-[15px] font-semibold tracking-tight text-gray-900 dark:text-gray-100 read-mode:text-[var(--read-text-heading)]">
@@ -135,16 +135,13 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
           )}
         </button>
       </div>
-      <nav className="flex-1 overflow-y-auto px-2.5 py-2 space-y-4" aria-label="Main">
+      <nav className="app-sidebar-nav flex-1 overflow-y-auto px-2.5 py-2 space-y-4" aria-label="Main">
         {NAV_SECTIONS.map((section, idx) => (
           <div key={section.label || `section-${idx}`}>
             {section.label && !isCollapsed && (
               <p className="px-2.5 mb-1.5 text-[9.5px] font-semibold uppercase tracking-[0.16em] text-gray-400/80 dark:text-gray-500/80">
                 {section.label}
               </p>
-            )}
-            {section.label && isCollapsed && (
-              <div className="mx-auto mb-2 h-px w-6 bg-black/[0.08] dark:bg-white/10" aria-hidden />
             )}
             <ul className="space-y-0.5">
               {section.items.map(({ path, label, icon: Icon, badge }) => {
@@ -182,9 +179,6 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
               <p className="px-2.5 mb-1.5 text-[9.5px] font-semibold uppercase tracking-[0.16em] text-gray-400/80 dark:text-gray-500/80">
                 Staff
               </p>
-            )}
-            {isCollapsed && (
-              <div className="mx-auto mb-2 h-px w-6 bg-black/[0.08] dark:bg-white/10" aria-hidden />
             )}
             <button
               type="button"
@@ -290,7 +284,7 @@ export default function AppNavbar({ showLevelBadge = false, currentLevel = null 
         >
           <Menu className="h-5 w-5" strokeWidth={1.75} />
         </button>
-        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[7px] bg-gradient-to-br from-blue-500 to-violet-500 text-white">
+        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-gray-950 text-white dark:bg-white dark:text-black">
           <Sparkles className="h-3 w-3" strokeWidth={2} aria-hidden />
         </span>
         <span className="text-[15px] font-semibold text-gray-800 dark:text-gray-100">MicroTrainer</span>

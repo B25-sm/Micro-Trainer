@@ -59,7 +59,7 @@ export default function Composer({ onSend, onStop, isStreaming, showContinue, on
         {error && (
           <p className="text-xs text-red-500 px-1 pb-1.5">{error}</p>
         )}
-        <div className="rounded-3xl border border-black/[0.08] dark:border-white/10 bg-white dark:bg-[#2f2f2f] px-2 py-2 shadow-sm dark:shadow-none focus-within:border-black/20 dark:focus-within:border-white/20 transition-colors duration-200">
+        <div className="rounded-3xl border border-black/[0.08] dark:border-transparent bg-white dark:bg-[#242424] px-2 py-2 shadow-sm dark:shadow-none focus-within:border-black/20 dark:focus-within:border-white/10 transition-colors duration-200">
           {attachments.length > 0 && (
             <div className="pt-1">
               <AttachmentChips attachments={attachments} onRemove={removeAttachment} />
@@ -97,7 +97,7 @@ export default function Composer({ onSend, onStop, isStreaming, showContinue, on
                 onClick={handleSubmit}
                 disabled={!canSend}
                 title="Send"
-                className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-b from-[#8b5cf6] to-[#7c3aed] dark:from-[#b7a3fb] dark:to-[#a78bfa] text-white dark:text-gray-900 shadow-[0_2px_8px_-2px_rgba(124,58,237,0.35)] dark:shadow-[0_2px_9px_-2px_rgba(167,139,250,0.28)] flex items-center justify-center hover:opacity-90 transition disabled:opacity-30 disabled:shadow-none disabled:cursor-not-allowed"
+                className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-950 dark:bg-[#ececec] text-white dark:text-gray-950 flex items-center justify-center hover:opacity-85 transition disabled:opacity-25 disabled:cursor-not-allowed"
               >
                 <ArrowUp className="w-4 h-4" />
               </button>
