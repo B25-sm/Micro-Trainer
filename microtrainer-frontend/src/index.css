@@ -61,9 +61,9 @@
   
   /* Background Colors — neutral near-black (ChatGPT-style), no color tint.
      Main area is essentially black; surfaces step up in neutral grey. */
-  --bg: #09070d;
-  --bg-secondary: #100c17;
-  --bg-elevated: #18131f;
+  --bg: #0a0a0a;
+  --bg-secondary: #161616;
+  --bg-elevated: #1e1e1e;
   /* Alpha hairline, not a solid hex — reads as a soft seam (ChatGPT-style)
      instead of a hard line, while still separating surfaces structurally. */
   --border: rgba(255, 255, 255, 0.08);
@@ -148,7 +148,7 @@
    near-black instead of allowing the legacy bg-white safety remap above to
    lift it back to charcoal. */
 .dark .app-canvas {
-  background-color: #09070d !important;
+  background-color: #050505 !important;
 }
 
 .dark :where(.border-gray-100, .border-gray-200, .border-slate-100, .border-slate-200) {
