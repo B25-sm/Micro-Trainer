@@ -17,9 +17,13 @@ export const MAX_TEXT_CHARS = 16000;
 const IMAGE_MIMES = ["image/png", "image/jpeg", "image/jpg"];
 
 // accept-strings for the hidden <input type="file">
-export const ACCEPT_DOCUMENTS = ".pdf,.docx,.txt,.md,.markdown,text/plain,text/markdown,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+export const ACCEPT_DOCUMENTS = ".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+export const ACCEPT_NOTES = ".txt,.md,.markdown,text/plain,text/markdown";
+export const ACCEPT_CODE = ".js,.jsx,.ts,.tsx,.py,.java,.c,.h,.cpp,.cc,.cxx,.hpp,.cs,.go,.rs,.php,.rb,.swift,.kt,.kts,.sql,.html,.htm,.css,.scss,.sass,.less,.json,.xml,.yaml,.yml,.sh,.bash,.ps1,.vue,.svelte";
 export const ACCEPT_IMAGES = "image/png,image/jpeg";
-export const ACCEPT_DOCUMENTS_AND_IMAGES = `${ACCEPT_DOCUMENTS},${ACCEPT_IMAGES}`;
+export const ACCEPT_DOCUMENTS_AND_IMAGES = `${ACCEPT_DOCUMENTS},${ACCEPT_NOTES},${ACCEPT_CODE},${ACCEPT_IMAGES}`;
+
+const TEXT_FILE_PATTERN = /\.(txt|md|markdown|js|jsx|ts|tsx|py|java|c|h|cpp|cc|cxx|hpp|cs|go|rs|php|rb|swift|kt|kts|sql|html?|css|scss|sass|less|json|xml|ya?ml|sh|bash|ps1|vue|svelte)$/i;
 
 function genId() {
   return crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
@@ -38,6 +42,12 @@ function isDocx(file) {
     file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
     /\.docx$/i.test(file.name)
   );
+}
+
+function isReadableText(file) {
+  return file.type.startsWith("text/") ||
+    ["application/json", "application/xml"].includes(file.type) ||
+    TEXT_FILE_PATTERN.test(file.name);
 }
 
 function readTextFile(file) {
@@ -95,8 +105,10 @@ export async function readAttachment(file) {
     raw = await extractPdfText(file);
   } else if (isDocx(file)) {
     raw = await extractDocxText(file);
-  } else {
+  } else if (isReadableText(file)) {
     raw = await readTextFile(file);
+  } else {
+    throw new Error(`${file.name} is not a supported document, note, or code file.`);
   }
 
   let text = (raw || "").trim();

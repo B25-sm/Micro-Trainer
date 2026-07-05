@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { FileText, Image as ImageIcon, Plus } from "lucide-react";
+import { FileCode2, FileText, Image as ImageIcon, NotebookText, Plus } from "lucide-react";
 import {
+  ACCEPT_CODE,
   ACCEPT_DOCUMENTS,
   ACCEPT_IMAGES,
+  ACCEPT_NOTES,
   MAX_ATTACHMENTS,
   readAttachment,
 } from "../../utils/fileAttachments";
@@ -24,6 +26,8 @@ export default function AttachButton({ allowImages = false, count = 0, onAdd, on
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
   const docInputRef = useRef(null);
+  const codeInputRef = useRef(null);
+  const notesInputRef = useRef(null);
   const imageInputRef = useRef(null);
 
   useEffect(() => {
@@ -72,6 +76,28 @@ export default function AttachButton({ allowImages = false, count = 0, onAdd, on
           e.target.value = "";
         }}
       />
+      <input
+        ref={codeInputRef}
+        type="file"
+        accept={ACCEPT_CODE}
+        multiple
+        className="hidden"
+        onChange={(e) => {
+          handleFiles(e.target.files);
+          e.target.value = "";
+        }}
+      />
+      <input
+        ref={notesInputRef}
+        type="file"
+        accept={ACCEPT_NOTES}
+        multiple
+        className="hidden"
+        onChange={(e) => {
+          handleFiles(e.target.files);
+          e.target.value = "";
+        }}
+      />
       {allowImages && (
         <input
           ref={imageInputRef}
@@ -102,7 +128,7 @@ export default function AttachButton({ allowImages = false, count = 0, onAdd, on
       {open && (
         <div
           role="menu"
-          className="absolute bottom-full left-0 mb-2 w-52 rounded-xl border border-black/[0.08] dark:border-white/10 bg-white dark:bg-[#2f2f2f] shadow-lg py-1.5 z-10"
+          className="absolute bottom-full left-0 mb-2 w-60 rounded-xl border border-black/[0.08] dark:border-white/10 bg-white dark:bg-[#2f2f2f] shadow-lg py-1.5 z-10"
         >
           <button
             type="button"
@@ -114,7 +140,31 @@ export default function AttachButton({ allowImages = false, count = 0, onAdd, on
             className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors"
           >
             <FileText className="h-4 w-4 text-gray-400" />
-            Upload a document
+            Add PDF or Word document
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              codeInputRef.current?.click();
+              setOpen(false);
+            }}
+            className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors"
+          >
+            <FileCode2 className="h-4 w-4 text-gray-400" />
+            Add code files
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              notesInputRef.current?.click();
+              setOpen(false);
+            }}
+            className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors"
+          >
+            <NotebookText className="h-4 w-4 text-gray-400" />
+            Add text or Markdown notes
           </button>
           {allowImages && (
             <button
@@ -127,7 +177,7 @@ export default function AttachButton({ allowImages = false, count = 0, onAdd, on
               className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors"
             >
               <ImageIcon className="h-4 w-4 text-gray-400" />
-              Upload a photo
+              Add a photo
             </button>
           )}
         </div>
