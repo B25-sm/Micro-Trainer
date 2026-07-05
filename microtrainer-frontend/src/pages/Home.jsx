@@ -15,7 +15,7 @@ import { useSpeechToText } from "../hooks/useSpeechToText";
 import { useAttachments } from "../hooks/useAttachments";
 import AttachButton from "../components/attachments/AttachButton";
 import AttachmentChips from "../components/attachments/AttachmentChips";
-import { ACCEPT_DOCUMENTS, documentsToContextText } from "../utils/fileAttachments";
+import { documentsToContextText } from "../utils/fileAttachments";
 
 const HOME_CHAT_STORAGE = "microtrainer-chat-history-home";
 
@@ -534,7 +534,6 @@ function HomeChatInput({
       >
         {!speech.isRecording && (
           <AttachButton
-            accept={ACCEPT_DOCUMENTS}
             count={attach?.attachments?.length || 0}
             onAdd={attach?.addAttachments}
             onError={attach?.setError}

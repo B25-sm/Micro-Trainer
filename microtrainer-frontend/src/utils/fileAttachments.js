@@ -18,7 +18,8 @@ const IMAGE_MIMES = ["image/png", "image/jpeg", "image/jpg"];
 
 // accept-strings for the hidden <input type="file">
 export const ACCEPT_DOCUMENTS = ".pdf,.docx,.txt,.md,.markdown,text/plain,text/markdown,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-export const ACCEPT_DOCUMENTS_AND_IMAGES = `${ACCEPT_DOCUMENTS},image/png,image/jpeg`;
+export const ACCEPT_IMAGES = "image/png,image/jpeg";
+export const ACCEPT_DOCUMENTS_AND_IMAGES = `${ACCEPT_DOCUMENTS},${ACCEPT_IMAGES}`;
 
 function genId() {
   return crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;

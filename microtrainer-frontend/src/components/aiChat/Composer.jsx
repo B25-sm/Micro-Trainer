@@ -3,7 +3,6 @@ import { ArrowUp, Square } from "lucide-react";
 import AttachButton from "../attachments/AttachButton";
 import AttachmentChips from "../attachments/AttachmentChips";
 import { useAttachments } from "../../hooks/useAttachments";
-import { ACCEPT_DOCUMENTS_AND_IMAGES } from "../../utils/fileAttachments";
 
 const MAX_HEIGHT_PX = 200;
 
@@ -68,7 +67,7 @@ export default function Composer({ onSend, onStop, isStreaming, showContinue, on
           )}
           <div className="flex items-end gap-1.5">
             <AttachButton
-              accept={ACCEPT_DOCUMENTS_AND_IMAGES}
+              allowImages
               count={attachments.length}
               onAdd={addAttachments}
               onError={setError}
