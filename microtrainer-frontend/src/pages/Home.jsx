@@ -304,7 +304,7 @@ function WelcomeView({
         </div>
 
         <div className="w-full mb-6 text-center">
-          <h1 className="text-[26px] sm:text-[30px] font-semibold tracking-tight break-words bg-gradient-to-b from-gray-900 to-gray-600 dark:from-white dark:to-violet-200/80 bg-clip-text text-transparent">
+          <h1 className="text-[26px] sm:text-[30px] font-semibold tracking-tight break-words text-gray-900 dark:text-gray-100">
             What do you want to practice?
           </h1>
           <p className={`${textMuted} mt-1.5 text-[14px] break-words`}>
@@ -556,7 +556,7 @@ function HomeChatInput({
       onSubmit={onSubmit}
       className={`relative ${className} ${
         isLarge
-          ? "rounded-full border border-black/[0.07] dark:border-white/[0.09] bg-white/95 dark:bg-white/[0.045] backdrop-blur-xl shadow-[0_2px_16px_-6px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_20px_-4px_rgba(0,0,0,0.5)] focus-within:border-violet-400/50 dark:focus-within:border-violet-300/30 focus-within:shadow-[0_0_0_3px_rgba(124,58,237,0.12),0_4px_20px_-4px_rgba(124,58,237,0.25)] dark:focus-within:shadow-[0_0_0_3px_rgba(167,139,250,0.14),0_4px_22px_-4px_rgba(167,139,250,0.3)] transition-all duration-200"
+          ? "rounded-full border border-black/[0.07] dark:border-white/[0.09] bg-white/95 dark:bg-white/[0.045] backdrop-blur-xl shadow-[0_2px_16px_-6px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_20px_-4px_rgba(0,0,0,0.5)] focus-within:border-violet-400/40 dark:focus-within:border-violet-300/20 focus-within:shadow-[0_0_0_3px_rgba(124,58,237,0.07),0_4px_20px_-4px_rgba(124,58,237,0.16)] dark:focus-within:shadow-[0_0_0_3px_rgba(167,139,250,0.08),0_4px_22px_-4px_rgba(167,139,250,0.18)] transition-all duration-200"
           : "rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#2a2b2e] shadow-sm focus-within:border-[#7c3aed]/60 dark:focus-within:border-[#a78bfa]/60 focus-within:ring-2 focus-within:ring-[#7c3aed]/15 dark:focus-within:ring-[#a78bfa]/15 transition"
       }`}
     >
@@ -585,7 +585,7 @@ function HomeChatInput({
         <button
           type="submit"
           disabled={!question.trim() || isLoading}
-          className={`flex-shrink-0 flex items-center justify-center rounded-full bg-gradient-to-b from-[#8b5cf6] to-[#7c3aed] dark:from-[#b7a3fb] dark:to-[#a78bfa] text-white dark:text-gray-900 shadow-[0_2px_10px_-2px_rgba(124,58,237,0.55)] dark:shadow-[0_2px_12px_-2px_rgba(167,139,250,0.45)] hover:opacity-90 transition disabled:opacity-30 disabled:shadow-none disabled:cursor-not-allowed ${
+          className={`flex-shrink-0 flex items-center justify-center rounded-full bg-gradient-to-b from-[#8b5cf6] to-[#7c3aed] dark:from-[#b7a3fb] dark:to-[#a78bfa] text-white dark:text-gray-900 shadow-[0_2px_8px_-2px_rgba(124,58,237,0.35)] dark:shadow-[0_2px_9px_-2px_rgba(167,139,250,0.28)] hover:opacity-90 transition disabled:opacity-30 disabled:shadow-none disabled:cursor-not-allowed ${
             isLarge ? "h-9 w-9" : "h-9 w-9"
           }`}
           title="Send"

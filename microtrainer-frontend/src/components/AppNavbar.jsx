@@ -71,7 +71,7 @@ function navLinkClass(active, collapsed) {
 function navIconClass(active) {
   return `h-4 w-4 shrink-0 transition-all duration-200 ${
     active
-      ? "drop-shadow-[0_0_5px_rgba(37,99,235,0.4)] dark:drop-shadow-[0_0_5px_rgba(139,180,248,0.5)]"
+      ? "drop-shadow-[0_0_3px_rgba(37,99,235,0.25)] dark:drop-shadow-[0_0_3px_rgba(139,180,248,0.3)]"
       : "group-hover:scale-[1.1]"
   }`;
 }
@@ -128,11 +128,11 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
           className="flex items-center gap-2.5 min-w-0"
           title="MicroTrainer home"
         >
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[9px] bg-gradient-to-br from-blue-500 to-violet-500 text-white shadow-[0_2px_10px_rgba(99,102,241,0.4)]">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[9px] bg-gradient-to-br from-blue-500 to-violet-500 text-white shadow-[0_2px_8px_rgba(99,102,241,0.25)]">
             <Sparkles className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
           </span>
           {!isCollapsed && (
-            <span className="truncate text-[15px] font-semibold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent read-mode:from-[var(--read-text-heading)] read-mode:to-[var(--read-text-heading)]">
+            <span className="truncate text-[15px] font-semibold tracking-tight text-gray-900 dark:text-gray-100 read-mode:text-[var(--read-text-heading)]">
               MicroTrainer
             </span>
           )}

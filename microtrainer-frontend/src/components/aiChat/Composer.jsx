@@ -41,7 +41,7 @@ export default function Composer({ onSend, onStop, isStreaming, showContinue, on
           </button>
         </div>
       )}
-      <div className="max-w-3xl mx-auto flex items-end gap-2 rounded-2xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#2a2b2e] px-3 py-2 shadow-sm focus-within:border-[#7c3aed] dark:focus-within:border-[#a78bfa] transition-colors">
+      <div className="max-w-3xl mx-auto flex items-end gap-2 rounded-full border border-black/[0.07] dark:border-white/[0.09] bg-white/95 dark:bg-white/[0.045] backdrop-blur-xl px-4 py-2 shadow-[0_2px_16px_-6px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_20px_-4px_rgba(0,0,0,0.5)] focus-within:border-violet-400/40 dark:focus-within:border-violet-300/20 focus-within:shadow-[0_0_0_3px_rgba(124,58,237,0.07),0_4px_20px_-4px_rgba(124,58,237,0.16)] dark:focus-within:shadow-[0_0_0_3px_rgba(167,139,250,0.08),0_4px_22px_-4px_rgba(167,139,250,0.18)] transition-all duration-200">
         <textarea
           ref={textareaRef}
           value={value}
@@ -66,7 +66,7 @@ export default function Composer({ onSend, onStop, isStreaming, showContinue, on
             onClick={handleSubmit}
             disabled={!value.trim()}
             title="Send"
-            className="flex-shrink-0 w-8 h-8 rounded-full bg-[#7c3aed] dark:bg-[#a78bfa] text-white dark:text-gray-900 flex items-center justify-center hover:opacity-90 disabled:opacity-30 disabled:cursor-not-allowed"
+            className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-b from-[#8b5cf6] to-[#7c3aed] dark:from-[#b7a3fb] dark:to-[#a78bfa] text-white dark:text-gray-900 shadow-[0_2px_8px_-2px_rgba(124,58,237,0.35)] dark:shadow-[0_2px_9px_-2px_rgba(167,139,250,0.28)] flex items-center justify-center hover:opacity-90 transition disabled:opacity-30 disabled:shadow-none disabled:cursor-not-allowed"
           >
             <ArrowUp className="w-4 h-4" />
           </button>

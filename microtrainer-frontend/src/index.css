@@ -63,7 +63,9 @@
   --bg: #060509;
   --bg-secondary: #0a0812;
   --bg-elevated: #0e0b18;
-  --border: #1c1626;
+  /* Alpha hairline, not a solid hex — reads as a soft seam (ChatGPT-style)
+     instead of a hard line, while still separating surfaces structurally. */
+  --border: rgba(255, 255, 255, 0.08);
   --code-bg: #0a0812;
 
   /* Accent Colors */
