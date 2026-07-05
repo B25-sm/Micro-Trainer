@@ -442,6 +442,42 @@ body {
   color: #171717 !important;
 }
 
+.concept-metallic-silver.concept-style-plain {
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.concept-style-plain .concept-stage-heading {
+  margin-bottom: 0.75rem;
+  padding: 0;
+  color: #171717;
+}
+
+.dark .concept-style-plain .concept-stage-heading {
+  color: #f4f4f4;
+}
+
+.concept-style-plain .concept-stage-icon {
+  background: rgba(17, 17, 17, 0.07);
+}
+
+.dark .concept-style-plain .concept-stage-icon {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.concept-style-plain .concept-text-panel {
+  background: transparent !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
+.dark .concept-style-plain .learning-prose,
+.dark .concept-style-plain .learning-prose :where(p, li, em, strong, h1, h2, h3, a) {
+  color: #f4f4f4 !important;
+}
+
 /* =========================
    ROOT CONTAINER
 ========================= */
@@ -896,6 +932,10 @@ textarea:focus {
 .read-mode .concept-metallic-silver .learning-prose,
 .read-mode .concept-metallic-silver .learning-prose :where(p, li, em, strong, h1, h2, h3, a) {
   color: var(--read-text) !important;
+}
+
+.read-mode .concept-metallic-silver.concept-style-plain {
+  background: transparent !important;
 }
 
 .read-mode .app-sidebar-nav button {

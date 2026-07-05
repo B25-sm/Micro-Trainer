@@ -5,12 +5,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { Palette } from "lucide-react";
 import {
-  getColorPref,
-  setColorPref,
-  COLOR_PREF_EVENT,
-  pickPalette,
+  AnswerStyleToggle,
+  CARD_STYLE_EVENT,
+  getCardStyle,
   NEUTRAL_PALETTE,
 } from "./ConceptCards";
 import { normalizeLessonMarkdown } from "../utils/lessonMarkdown";
@@ -18,10 +16,10 @@ import { createConceptChatMarkdownComponents } from "../utils/conceptChatMarkdow
 
 const conceptMdComponents = createConceptChatMarkdownComponents();
 
-function ConceptAnswerFrame({ theme, children }) {
+function ConceptAnswerFrame({ theme, cardStyle, children }) {
   return (
     <div
-      className={`concept-answer-frame overflow-hidden rounded-[1.25rem] bg-gradient-to-br ${theme.stage} p-2 ${theme.glow}`}
+      className={`concept-answer-frame concept-style-${cardStyle} overflow-hidden rounded-[1.25rem] bg-gradient-to-br ${theme.stage} p-2 ${theme.glow}`}
     >
       <div className="concept-text-panel rounded-xl bg-white px-4 py-3 dark:bg-[#1a1b1e] sm:px-5 sm:py-4 read-mode:bg-[var(--read-surface)]">
         <div className="learning-prose">
@@ -38,22 +36,18 @@ export default function ConceptMarkdownAnswer({ content, highlighted }) {
     [content]
   );
 
-  const [colorOn, setColorOn] = useState(getColorPref);
+  const [cardStyle, setCardStyleState] = useState(getCardStyle);
   useEffect(() => {
-    const sync = () => setColorOn(getColorPref());
-    window.addEventListener(COLOR_PREF_EVENT, sync);
+    const sync = () => setCardStyleState(getCardStyle());
+    window.addEventListener(CARD_STYLE_EVENT, sync);
     window.addEventListener("storage", sync);
     return () => {
-      window.removeEventListener(COLOR_PREF_EVENT, sync);
+      window.removeEventListener(CARD_STYLE_EVENT, sync);
       window.removeEventListener("storage", sync);
     };
   }, []);
 
-  const theme = useMemo(
-    () =>
-      colorOn ? pickPalette(content)[0] : NEUTRAL_PALETTE[0],
-    [colorOn, content]
-  );
+  const theme = NEUTRAL_PALETTE[0];
 
   return (
     <div
@@ -63,24 +57,11 @@ export default function ConceptMarkdownAnswer({ content, highlighted }) {
           : ""
       }`}
     >
-      <div className="concept-color-row mb-3 flex justify-end">
-        <button
-          type="button"
-          onClick={() => setColorPref(!colorOn)}
-          title={colorOn ? "Turn off colored themes" : "Turn on colored themes"}
-          aria-label={colorOn ? "Turn off colored themes" : "Turn on colored themes"}
-          aria-pressed={colorOn}
-          className={`concept-color-toggle flex items-center justify-center rounded-full p-1.5 transition-colors ${
-            colorOn
-              ? "text-[#7c3aed] hover:bg-blue-50 dark:text-[#a78bfa] dark:hover:bg-[#2a2b2e]"
-              : "text-gray-400 hover:bg-gray-100 dark:text-gray-500 dark:hover:bg-[#2a2b2e]"
-          }`}
-        >
-          <Palette className="h-4 w-4" strokeWidth={2.2} />
-        </button>
+      <div className="mb-3 flex justify-end">
+        <AnswerStyleToggle style={cardStyle} />
       </div>
 
-      <ConceptAnswerFrame theme={theme}>
+      <ConceptAnswerFrame theme={theme} cardStyle={cardStyle}>
         <ReactMarkdown components={conceptMdComponents}>
           {normalized}
         </ReactMarkdown>

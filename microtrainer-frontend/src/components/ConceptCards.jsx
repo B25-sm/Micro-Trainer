@@ -7,10 +7,10 @@
  * doesn't match, it returns null and the caller falls back to plain markdown.
  */
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { AnimatePresence, motion } from "framer-motion";
-import { Lightbulb, Globe2, Code2, ChevronLeft, ChevronRight, Palette } from "lucide-react";
+import { AlignLeft, Lightbulb, Globe2, Code2, ChevronLeft, ChevronRight, Square } from "lucide-react";
 import {
   createLessonMarkdownComponents,
   normalizeLessonMarkdown,
@@ -304,6 +304,58 @@ export function setColorPref(on) {
   }
 }
 
+export const CARD_STYLE_KEY = "mt.conceptAnswerStyle";
+export const CARD_STYLE_EVENT = "mt-concept-answer-style-change";
+
+export function getCardStyle() {
+  if (typeof localStorage === "undefined") return "card";
+  return localStorage.getItem(CARD_STYLE_KEY) === "plain" ? "plain" : "card";
+}
+
+export function setCardStyle(style) {
+  try {
+    localStorage.setItem(CARD_STYLE_KEY, style);
+    window.dispatchEvent(new Event(CARD_STYLE_EVENT));
+  } catch {
+    /* ignore storage errors */
+  }
+}
+
+export function AnswerStyleToggle({ style }) {
+  return (
+    <div
+      className="inline-flex shrink-0 items-center rounded-full border border-black/[0.07] bg-black/[0.035] p-0.5 dark:border-white/10 dark:bg-white/[0.06]"
+      role="group"
+      aria-label="Answer appearance"
+    >
+      {[
+        { id: "plain", label: "Plain", Icon: AlignLeft },
+        { id: "card", label: "Card", Icon: Square },
+      ].map(({ id, label, Icon }) => {
+        const active = style === id;
+        return (
+          <button
+            key={id}
+            type="button"
+            onClick={() => setCardStyle(id)}
+            title={`${label} answer view`}
+            aria-label={`${label} answer view`}
+            aria-pressed={active}
+            className={`inline-flex h-7 items-center gap-1.5 rounded-full px-2.5 text-[11px] font-medium transition-all ${
+              active
+                ? "bg-white text-gray-950 shadow-sm ring-1 ring-black/[0.05] dark:bg-[#ededed] dark:text-black dark:ring-white/10"
+                : "text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-100"
+            }`}
+          >
+            <Icon className="h-3.5 w-3.5" strokeWidth={1.9} />
+            <span className="hidden sm:inline">{label}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 const LANG_BADGE = {
   js: "JS", javascript: "JS", jsx: "JSX", ts: "TS", tsx: "TSX",
   py: "PY", python: "PY", java: "JV", sql: "SQL", json: "{}",
@@ -311,10 +363,10 @@ const LANG_BADGE = {
 };
 
 /** A slim gradient stage that frames the content without overpowering it. */
-function Stage({ theme, icon: Icon, title, children }) {
+function Stage({ theme, icon: Icon, title, cardStyle, children }) {
   return (
     <div
-      className={`concept-stage flex flex-col overflow-hidden rounded-[1.25rem] bg-gradient-to-br ${theme.stage} p-2 ${theme.glow}`}
+      className={`concept-stage concept-style-${cardStyle} flex flex-col overflow-hidden rounded-[1.25rem] bg-gradient-to-br ${theme.stage} p-2 ${theme.glow}`}
     >
       <div className="concept-stage-heading mb-1 flex items-center gap-2 px-1.5 py-1 text-white">
         <span className="concept-stage-icon flex h-6 w-6 items-center justify-center rounded-lg bg-white/20 backdrop-blur-sm">
@@ -419,24 +471,20 @@ export default function ConceptCards({ sections, seed }) {
   } = sections;
 
   // Colored themes can be toggled off by the student (persisted across sessions).
-  const [colorOn, setColorOn] = useState(getColorPref);
+  const [cardStyle, setCardStyleState] = useState(getCardStyle);
   useEffect(() => {
-    const sync = () => setColorOn(getColorPref());
-    window.addEventListener(COLOR_PREF_EVENT, sync);
+    const sync = () => setCardStyleState(getCardStyle());
+    window.addEventListener(CARD_STYLE_EVENT, sync);
     window.addEventListener("storage", sync);
     return () => {
-      window.removeEventListener(COLOR_PREF_EVENT, sync);
+      window.removeEventListener(CARD_STYLE_EVENT, sync);
       window.removeEventListener("storage", sync);
     };
   }, []);
 
   // Pick a palette deterministically from the question so each answer feels fresh,
   // but the SAME question always keeps its own consistent colors.
-  const palette = useMemo(
-    () =>
-      colorOn ? pickPalette(seed || explanationTitle || explanationBody) : NEUTRAL_PALETTE,
-    [colorOn, seed, explanationTitle, explanationBody]
-  );
+  const palette = NEUTRAL_PALETTE;
 
   const slides = [
     {
@@ -512,20 +560,7 @@ export default function ConceptCards({ sections, seed }) {
           })}
         </div>
 
-        <button
-          type="button"
-          onClick={() => setColorPref(!colorOn)}
-          title={colorOn ? "Turn off colored themes" : "Turn on colored themes"}
-          aria-label={colorOn ? "Turn off colored themes" : "Turn on colored themes"}
-          aria-pressed={colorOn}
-          className={`concept-color-toggle flex shrink-0 items-center justify-center rounded-full p-1.5 transition-colors ${
-            colorOn
-              ? "text-[#7c3aed] hover:bg-blue-50 dark:text-[#a78bfa] dark:hover:bg-[#2a2b2e]"
-              : "text-gray-400 hover:bg-gray-100 dark:text-gray-500 dark:hover:bg-[#2a2b2e]"
-          }`}
-        >
-          <Palette className="h-4 w-4" strokeWidth={2.2} />
-        </button>
+        <AnswerStyleToggle style={cardStyle} />
       </div>
 
       {/* Slide */}
@@ -540,7 +575,7 @@ export default function ConceptCards({ sections, seed }) {
             exit="exit"
             transition={{ duration: 0.26, ease: "easeOut" }}
           >
-            <Stage theme={active.theme} icon={active.icon} title={active.title}>
+            <Stage theme={active.theme} icon={active.icon} title={active.title} cardStyle={cardStyle}>
               {active.content}
             </Stage>
           </motion.div>
