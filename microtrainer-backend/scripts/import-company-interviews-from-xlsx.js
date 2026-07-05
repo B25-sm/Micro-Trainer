@@ -12,6 +12,40 @@ const XLSX = require("xlsx");
 const DEFAULT_XLSX = path.join(__dirname, "../../interview_questions.xlsx");
 const CSV_FILE = path.join(__dirname, "../data/company-interviews/company-questions.csv");
 
+// Labels found in the source workbook that identify candidates, interview rounds,
+// roles, or locations rather than companies. Keep them out of the app if an old
+// copy of the workbook is imported again.
+const NON_COMPANY_LABELS = new Set(
+  [
+    "Arun kumar",
+    "Bala Manoj Gupta",
+    "Civic center",
+    "D1R ROHIT",
+    "D1R SANDHYA",
+    "D3R SWATHI",
+    "Fatima Firdouse -outi",
+    "Final round",
+    "G. praveen",
+    "HARSHAVARDHAN",
+    "Jayakrishna",
+    "Kapa Revanth Kumar Reddy-out",
+    "Mahesh",
+    "Manish-blr",
+    "NAGA SAI KIRAN",
+    "Python Data Analyst",
+    "Rahul",
+    "Ranjith",
+    "Renan",
+    "Sai Shruthi Haridasu",
+    "Shiva",
+    "Srija Gunda-outi",
+  ].map((label) => label.toLowerCase())
+);
+
+function isCompanyLabel(label) {
+  return !NON_COMPANY_LABELS.has(String(label || "").trim().toLowerCase());
+}
+
 function csvEscape(val) {
   const s = String(val ?? "");
   if (/[",\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
@@ -130,7 +164,7 @@ function importFromXlsx(xlsxPath) {
       row["Questions Asked"] || row.question || row.pattern || ""
     ).trim();
 
-    if (!companyName || !pattern) continue;
+    if (!companyName || !pattern || !isCompanyLabel(companyName)) continue;
 
     if (!companyMeta.has(companyName)) {
       let baseId = slugify(companyName);
@@ -174,7 +208,7 @@ function importFromXlsx(xlsxPath) {
   const countByCompany = new Map();
   for (const row of rows) {
     const name = String(row["Company Name"] || "").trim();
-    if (!name) continue;
+    if (!name || !isCompanyLabel(name)) continue;
     countByCompany.set(name, (countByCompany.get(name) || 0) + 1);
   }
 
