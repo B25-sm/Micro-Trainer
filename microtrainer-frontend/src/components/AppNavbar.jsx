@@ -314,7 +314,7 @@ export default function AppNavbar({ showLevelBadge = false, currentLevel = null 
       >
         <div className="relative h-full">
           <div
-            className="relative flex h-full flex-col overflow-hidden border-r border-black/[0.06] dark:border-white/[0.06] bg-[#f2f2f2] dark:bg-[#171717] read-mode:bg-[var(--read-surface-elevated)] read-mode:border-[var(--read-border)]"
+            className="relative flex h-full flex-col overflow-hidden border-r border-black/[0.055] dark:border-white/[0.06] bg-[#fcfcfc] dark:bg-[#171717] read-mode:bg-[var(--read-surface-elevated)] read-mode:border-[var(--read-border)]"
           >
             <button
               type="button"

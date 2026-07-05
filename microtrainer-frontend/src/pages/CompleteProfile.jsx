@@ -82,7 +82,7 @@ export default function CompleteProfile() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#202124] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-white dark:bg-[#202124] flex items-center justify-center px-4">
       <div className="max-w-md w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] shadow-sm p-8">
         <h1 className="text-2xl font-medium text-gray-900 dark:text-gray-100 mb-2">Complete your profile</h1>
         <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
