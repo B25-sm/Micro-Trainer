@@ -9,6 +9,7 @@ import ChatHistorySidebar from "../components/ChatHistorySidebar";
 import { useChatHistoryPersistence } from "../hooks/useChatHistoryPersistence";
 import { getStudentId } from "../utils/studentAuth";
 import QuickCheckCard from "../components/QuickCheckCard";
+import OpportunityChip from "../components/OpportunityChip";
 import TopNudgeBanner from "../components/TopNudgeBanner";
 import { useSpeechToText } from "../hooks/useSpeechToText";
 
@@ -437,6 +438,7 @@ function ActiveChatView({
               <QuickCheckCard key={lastConcept} topic={lastConcept} />
             </div>
           )}
+          {lastConcept && !isLoading && <OpportunityChip tech={lastConcept} />}
           <div className="mb-2 flex justify-end">
             <NewQuestionButton onConfirm={onNewChat} />
           </div>
