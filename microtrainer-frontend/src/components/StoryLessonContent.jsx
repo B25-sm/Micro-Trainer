@@ -14,7 +14,7 @@ export default function StoryLessonContent({
   isTerse = false,
   level,
   badge,
-  cardTheme = "white",
+  cardTheme = "silver",
 }) {
   const normalized = useMemo(
     () => normalizeLessonMarkdown(content),
