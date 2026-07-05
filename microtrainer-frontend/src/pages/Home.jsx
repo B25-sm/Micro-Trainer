@@ -498,15 +498,28 @@ function HomeChatInput({
       >
         {speech.isRecording ? (
           <div className="flex min-w-0 flex-1 items-center gap-3 px-1" role="status">
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-200">Listening</span>
-            <div className="flex h-7 flex-1 items-center gap-[3px] overflow-hidden" aria-hidden="true">
-              {[10, 18, 13, 24, 16, 21, 11, 19, 14, 23, 12, 17, 9, 15].map((height, index) => (
+            <div className="flex h-7 shrink-0 items-center gap-[2px]" aria-hidden="true">
+              {[9, 17, 12, 22, 14, 19, 10].map((height, index) => (
                 <span
                   key={index}
-                  className="w-[3px] shrink-0 animate-pulse rounded-full bg-gray-800 dark:bg-gray-100"
+                  className="w-[2px] shrink-0 animate-pulse rounded-full bg-gray-700 dark:bg-gray-200"
                   style={{ height, animationDelay: `${index * 70}ms`, animationDuration: "700ms" }}
                 />
               ))}
+            </div>
+            <div
+              className="max-h-20 min-w-0 flex-1 overflow-y-auto whitespace-pre-wrap py-1 text-[15px] leading-relaxed text-gray-800 dark:text-gray-100"
+              aria-live="polite"
+            >
+              {question || speech.interimText ? (
+                <>
+                  {question}
+                  {question && speech.interimText ? " " : ""}
+                  <span className="text-gray-500 dark:text-gray-400">{speech.interimText}</span>
+                </>
+              ) : (
+                <span className="text-gray-400 dark:text-gray-500">Start speaking...</span>
+              )}
             </div>
           </div>
         ) : (
