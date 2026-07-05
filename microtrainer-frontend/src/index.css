@@ -144,6 +144,13 @@
   background-color: var(--bg-elevated) !important;
 }
 
+/* The application canvas is structural, not an elevated white card. Keep it
+   near-black instead of allowing the legacy bg-white safety remap above to
+   lift it back to charcoal. */
+.dark .app-canvas {
+  background-color: #050505 !important;
+}
+
 .dark :where(.border-gray-100, .border-gray-200, .border-slate-100, .border-slate-200) {
   border-color: var(--border) !important;
 }
