@@ -3,7 +3,7 @@
  */
 
 export const pageShell =
-  "min-h-screen bg-white dark:bg-[#202124] read-mode:bg-[var(--read-surface)] text-gray-800 dark:text-gray-200 transition-colors duration-300";
+  "min-h-screen bg-[#f7f7f7] dark:bg-[#0d0d0d] read-mode:bg-[var(--read-surface)] text-gray-800 dark:text-gray-200 transition-colors duration-300";
 
 export const card =
   "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] shadow-sm";

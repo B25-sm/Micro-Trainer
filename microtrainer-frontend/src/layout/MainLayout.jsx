@@ -19,7 +19,7 @@ function MainLayoutInner({ children }) {
   const contentPad = isFullWidth ? "w-full" : "max-w-6xl mx-auto w-full px-4 py-4";
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#202124] text-gray-800 dark:text-gray-200 read-mode:bg-[var(--read-surface)] read-mode:text-[var(--read-text)] transition-colors duration-300">
+    <div className="min-h-screen bg-[#f7f7f7] dark:bg-[#0d0d0d] text-gray-800 dark:text-gray-200 read-mode:bg-[var(--read-surface)] read-mode:text-[var(--read-text)] transition-colors duration-300">
       <Navbar />
 
       <div

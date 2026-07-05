@@ -60,21 +60,17 @@ const NAV_SECTIONS = [
 ];
 
 function navLinkClass(active, collapsed) {
-  return `group relative w-full flex items-center gap-2.5 rounded-xl transition-all duration-200 ${
-    collapsed ? "justify-center px-0 py-2.5" : "px-2.5 py-[9px]"
+  return `group relative w-full flex items-center gap-3 rounded-lg transition-colors duration-150 ${
+    collapsed ? "justify-center px-0 py-2.5" : "px-3 py-2.5"
   } ${
     active
-      ? "bg-gradient-to-r from-blue-500/10 via-blue-500/[0.04] to-transparent dark:from-blue-400/[0.16] dark:via-blue-400/[0.05] dark:to-transparent text-blue-700 dark:text-blue-300 font-medium"
-      : "text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-black/[0.03] dark:hover:bg-white/[0.045]"
+      ? "bg-black/[0.055] dark:bg-white/[0.09] text-gray-950 dark:text-white font-medium"
+      : "text-gray-500 dark:text-[#b4b4b4] hover:text-gray-900 dark:hover:text-white hover:bg-black/[0.035] dark:hover:bg-white/[0.06]"
   }`;
 }
 
 function navIconClass(active) {
-  return `h-4 w-4 shrink-0 transition-all duration-200 ${
-    active
-      ? "drop-shadow-[0_0_3px_rgba(37,99,235,0.25)] dark:drop-shadow-[0_0_3px_rgba(139,180,248,0.3)]"
-      : "group-hover:scale-[1.1]"
-  }`;
+  return `h-[18px] w-[18px] shrink-0 transition-colors duration-150 ${active ? "" : ""}`;
 }
 
 function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
@@ -129,8 +125,8 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
           className="flex items-center gap-2.5 min-w-0"
           title="MicroTrainer home"
         >
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[9px] bg-gradient-to-br from-blue-500 to-violet-500 text-white shadow-[0_2px_8px_rgba(99,102,241,0.25)]">
-            <Sparkles className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-950 text-white dark:bg-white dark:text-black">
+            <Sparkles className="h-4 w-4" strokeWidth={1.8} aria-hidden />
           </span>
           {!isCollapsed && (
             <span className="truncate text-[15px] font-semibold tracking-tight text-gray-900 dark:text-gray-100 read-mode:text-[var(--read-text-heading)]">
@@ -139,9 +135,7 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
           )}
         </button>
       </div>
-      <div className="mx-3.5 h-px bg-gradient-to-r from-transparent via-black/[0.08] dark:via-white/[0.08] to-transparent read-mode:via-[var(--read-border)]" aria-hidden />
-
-      <nav className="flex-1 overflow-y-auto px-2.5 py-3.5 space-y-5" aria-label="Main">
+      <nav className="flex-1 overflow-y-auto px-2.5 py-2 space-y-4" aria-label="Main">
         {NAV_SECTIONS.map((section, idx) => (
           <div key={section.label || `section-${idx}`}>
             {section.label && !isCollapsed && (
@@ -163,12 +157,6 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
                     className={navLinkClass(active, isCollapsed)}
                     title={isCollapsed ? (badge ? `${label} — ${badge}` : label) : undefined}
                   >
-                    {active && (
-                      <span
-                        className="absolute left-0 top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full bg-blue-500 dark:bg-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.65)]"
-                        aria-hidden
-                      />
-                    )}
                     <Icon className={navIconClass(active)} strokeWidth={1.75} aria-hidden />
                     {!isCollapsed && (
                       <span className="flex min-w-0 flex-1 items-center justify-between gap-2 text-[13px]">
@@ -204,20 +192,12 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
               className={navLinkClass(isActive("/trainer"), isCollapsed)}
               title={isCollapsed ? "Trainer" : undefined}
             >
-              {isActive("/trainer") && (
-                <span
-                  className="absolute left-0 top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full bg-blue-500 dark:bg-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.65)]"
-                  aria-hidden
-                />
-              )}
               <GraduationCap className={navIconClass(isActive("/trainer"))} strokeWidth={1.75} aria-hidden />
               {!isCollapsed && <span className="text-[13px] truncate">Trainer</span>}
             </button>
           </div>
         )}
       </nav>
-
-      <div className="mx-3.5 h-px bg-gradient-to-r from-transparent via-black/[0.08] dark:via-white/[0.08] to-transparent read-mode:via-[var(--read-border)]" aria-hidden />
 
       <div className={`px-2.5 py-3 space-y-2.5 ${isCollapsed ? "flex flex-col items-center" : ""}`}>
         <div className={isCollapsed ? "flex justify-center" : ""}>
@@ -338,9 +318,9 @@ export default function AppNavbar({ showLevelBadge = false, currentLevel = null 
           lg:translate-x-0
         `}
       >
-        <div className="relative h-full lg:p-3">
+        <div className="relative h-full">
           <div
-            className="relative flex h-full flex-col overflow-hidden lg:rounded-[20px] border border-black/[0.06] dark:border-white/[0.07] bg-white/90 dark:bg-[#18191c]/90 backdrop-blur-2xl lg:shadow-[0_8px_30px_-6px_rgba(15,23,42,0.14)] dark:lg:shadow-[0_8px_36px_-6px_rgba(0,0,0,0.55)] read-mode:bg-[var(--read-surface-elevated)] read-mode:border-[var(--read-border)]"
+            className="relative flex h-full flex-col overflow-hidden border-r border-black/[0.06] dark:border-white/[0.06] bg-[#f2f2f2] dark:bg-[#171717] read-mode:bg-[var(--read-surface-elevated)] read-mode:border-[var(--read-border)]"
           >
             <button
               type="button"
@@ -361,7 +341,7 @@ export default function AppNavbar({ showLevelBadge = false, currentLevel = null 
           <button
             type="button"
             onClick={toggleCollapsed}
-            className="hidden lg:flex absolute -right-3 top-9 z-10 h-6 w-6 items-center justify-center rounded-full border border-black/[0.07] dark:border-white/[0.1] bg-white/95 dark:bg-[#1c1d21]/95 backdrop-blur text-gray-500 dark:text-gray-400 shadow-[0_2px_8px_rgba(0,0,0,0.1)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.45)] hover:text-blue-600 dark:hover:text-blue-300 hover:border-blue-500/30 transition-colors"
+            className="hidden lg:flex absolute right-3 top-5 z-10 h-8 w-8 items-center justify-center rounded-lg text-gray-500 dark:text-[#b4b4b4] hover:text-gray-900 dark:hover:text-white hover:bg-black/[0.05] dark:hover:bg-white/[0.07] transition-colors"
             aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {isCollapsed ? (

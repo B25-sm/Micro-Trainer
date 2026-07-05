@@ -251,7 +251,7 @@ function WelcomeView({
   attach,
 }) {
   return (
-    <div className="flex-1 flex flex-col items-center px-4 sm:px-6 pt-[18vh] pb-10 overflow-y-auto">
+    <div className="flex-1 flex flex-col items-center px-4 sm:px-6 pt-[23vh] pb-10 overflow-y-auto">
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -262,11 +262,11 @@ function WelcomeView({
           <TopNudgeBanner />
         </div>
 
-        <div className="w-full mb-6 text-center">
-          <h1 className="text-[26px] sm:text-[30px] font-semibold tracking-tight break-words text-gray-900 dark:text-gray-100">
+        <div className="w-full mb-8 text-center">
+          <h1 className="text-[27px] sm:text-[32px] font-medium tracking-[-0.025em] break-words text-gray-950 dark:text-[#f4f4f4]">
             What do you want to practice?
           </h1>
-          <p className={`${textMuted} mt-1.5 text-[14px] break-words`}>
+          <p className={`${textMuted} mt-2 text-[14px] break-words dark:text-[#9b9b9b]`}>
             Ask about any concept, interview topic, or coding problem.
           </p>
         </div>
@@ -523,8 +523,8 @@ function HomeChatInput({
         onSubmit={onSubmit}
         className={`relative ${
           isLarge || hasAttachments
-            ? "rounded-3xl border border-black/[0.08] dark:border-white/10 bg-white dark:bg-[#2f2f2f] shadow-sm dark:shadow-none focus-within:border-black/20 dark:focus-within:border-white/20 transition-colors duration-200"
-            : "rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#2f2f2f] shadow-sm dark:shadow-none focus-within:border-black/20 dark:focus-within:border-white/20 transition-colors"
+            ? "rounded-[26px] border border-black/[0.08] dark:border-transparent bg-white dark:bg-[#242424] shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_30px_rgba(0,0,0,0.05)] dark:shadow-none focus-within:border-black/15 dark:focus-within:border-white/10 transition-colors duration-200"
+            : "rounded-[22px] border border-gray-200 dark:border-transparent bg-white dark:bg-[#242424] shadow-sm dark:shadow-none focus-within:border-black/15 dark:focus-within:border-white/10 transition-colors"
         }`}
       >
       <div
@@ -618,7 +618,7 @@ function HomeChatInput({
         {!speech.isRecording && <button
           type="submit"
           disabled={(!question.trim() && !hasAttachments) || isLoading}
-          className={`flex-shrink-0 flex items-center justify-center rounded-full bg-gradient-to-b from-[#8b5cf6] to-[#7c3aed] dark:from-[#b7a3fb] dark:to-[#a78bfa] text-white dark:text-gray-900 shadow-[0_2px_8px_-2px_rgba(124,58,237,0.35)] dark:shadow-[0_2px_9px_-2px_rgba(167,139,250,0.28)] hover:opacity-90 transition disabled:opacity-30 disabled:shadow-none disabled:cursor-not-allowed ${
+          className={`flex-shrink-0 flex items-center justify-center rounded-full bg-gray-950 dark:bg-[#f4f4f4] text-white dark:text-black hover:opacity-85 transition disabled:opacity-25 disabled:cursor-not-allowed ${
             isLarge ? "h-9 w-9" : "h-9 w-9"
           }`}
           title="Send"
