@@ -264,9 +264,9 @@ const PALETTES = [
 
 /** Neutral palette — used when the student turns colored themes OFF. */
 export const NEUTRAL_PALETTE = [
-  { stage: "from-slate-500 via-slate-600 to-slate-700", glow: "shadow-slate-900/20", dot: "bg-slate-400" },
-  { stage: "from-slate-500 via-slate-600 to-slate-700", glow: "shadow-slate-900/20", dot: "bg-slate-400" },
-  { stage: "from-slate-500 via-slate-600 to-slate-700", glow: "shadow-slate-900/20", dot: "bg-slate-400" },
+  { stage: "concept-metallic-silver", glow: "shadow-slate-900/20", dot: "bg-slate-400" },
+  { stage: "concept-metallic-silver", glow: "shadow-slate-900/20", dot: "bg-slate-400" },
+  { stage: "concept-metallic-silver", glow: "shadow-slate-900/20", dot: "bg-slate-400" },
 ];
 
 /** Stable string hash (djb2) → used to pick a palette deterministically per question. */
@@ -286,15 +286,18 @@ export function pickPalette(seed) {
 /* ---- Colored-theme preference (persisted, shared across all cards) ---- */
 export const COLOR_PREF_KEY = "mt.conceptCardsColor";
 export const COLOR_PREF_EVENT = "mt-concept-color-change";
+const COLOR_PREF_VERSION_KEY = "mt.conceptCardsColorVersion";
 
 export function getColorPref() {
-  if (typeof localStorage === "undefined") return true;
+  if (typeof localStorage === "undefined") return false;
+  if (localStorage.getItem(COLOR_PREF_VERSION_KEY) !== "2") return false;
   return localStorage.getItem(COLOR_PREF_KEY) !== "off";
 }
 
 export function setColorPref(on) {
   try {
     localStorage.setItem(COLOR_PREF_KEY, on ? "on" : "off");
+    localStorage.setItem(COLOR_PREF_VERSION_KEY, "2");
     window.dispatchEvent(new Event(COLOR_PREF_EVENT));
   } catch {
     /* ignore storage errors */
