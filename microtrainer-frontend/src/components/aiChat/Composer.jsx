@@ -59,7 +59,7 @@ export default function Composer({ onSend, onStop, isStreaming, showContinue, on
         {error && (
           <p className="text-xs text-red-500 px-1 pb-1.5">{error}</p>
         )}
-        <div className="rounded-3xl border border-black/[0.08] dark:border-transparent bg-white dark:bg-[#242424] px-2 py-2 shadow-sm dark:shadow-none focus-within:border-black/20 dark:focus-within:border-white/10 transition-colors duration-200">
+        <div className="rounded-full border border-black/[0.08] dark:border-transparent bg-white dark:bg-[#242424] px-2 py-1.5 shadow-sm dark:shadow-none focus-within:border-black/20 dark:focus-within:border-white/10 transition-colors duration-200">
           {attachments.length > 0 && (
             <div className="pt-1">
               <AttachmentChips attachments={attachments} onRemove={removeAttachment} />
@@ -80,7 +80,7 @@ export default function Composer({ onSend, onStop, isStreaming, showContinue, on
               onKeyDown={handleKeyDown}
               rows={1}
               placeholder="Message AI Chat… (Shift+Enter for a new line)"
-              className="flex-1 resize-none bg-transparent text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none py-1.5 max-h-[200px]"
+              className="flex-1 resize-none bg-transparent text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none py-1 max-h-[200px]"
             />
             {isStreaming ? (
               <button

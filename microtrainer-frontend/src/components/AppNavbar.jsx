@@ -126,7 +126,7 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
           title="MicroTrainer home"
         >
           <span className="flex h-8 w-8 shrink-0 items-center justify-center text-gray-900 dark:text-white">
-            <Sparkles className="h-[18px] w-[18px]" strokeWidth={1.7} aria-hidden />
+            <Sparkles className="h-[17px] w-[17px]" strokeWidth={1.5} aria-hidden />
           </span>
           {!isCollapsed && (
             <span className="truncate text-[15px] font-semibold tracking-tight text-gray-900 dark:text-gray-100 read-mode:text-[var(--read-text-heading)]">
@@ -154,7 +154,7 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
                     className={navLinkClass(active, isCollapsed)}
                     title={isCollapsed ? (badge ? `${label} — ${badge}` : label) : undefined}
                   >
-                    <Icon className={navIconClass(active)} strokeWidth={1.75} aria-hidden />
+                    <Icon className={navIconClass(active)} strokeWidth={1.5} aria-hidden />
                     {!isCollapsed && (
                       <span className="flex min-w-0 flex-1 items-center justify-between gap-2 text-[13px]">
                         <span className="truncate">{label}</span>
@@ -186,7 +186,7 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
               className={navLinkClass(isActive("/trainer"), isCollapsed)}
               title={isCollapsed ? "Trainer" : undefined}
             >
-              <GraduationCap className={navIconClass(isActive("/trainer"))} strokeWidth={1.75} aria-hidden />
+              <GraduationCap className={navIconClass(isActive("/trainer"))} strokeWidth={1.5} aria-hidden />
               {!isCollapsed && <span className="text-[13px] truncate">Trainer</span>}
             </button>
           </div>
@@ -211,7 +211,7 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
               title={userName || "Guest"}
               aria-hidden
             >
-              <UserRound className="h-4 w-4" strokeWidth={1.8} />
+              <UserRound className="h-4 w-4" strokeWidth={1.5} />
             </span>
             <button
               type="button"
@@ -220,7 +220,7 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
               title="Sign out"
               className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-500/10 transition-colors"
             >
-              <LogOut className="h-[15px] w-[15px]" strokeWidth={1.75} aria-hidden />
+              <LogOut className="h-[15px] w-[15px]" strokeWidth={1.5} aria-hidden />
             </button>
           </div>
         ) : (
@@ -232,7 +232,7 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
               className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-black/[0.035] text-gray-500 ring-1 ring-inset ring-black/[0.07] dark:bg-white/[0.055] dark:text-gray-400 dark:ring-white/[0.08]"
               aria-hidden
             >
-              <UserRound className="h-4 w-4" strokeWidth={1.8} />
+              <UserRound className="h-4 w-4" strokeWidth={1.5} />
             </span>
             <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-gray-700 dark:text-gray-200 read-mode:text-[var(--read-text)]">
               {userName || "Guest"}
@@ -244,7 +244,7 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
               title="Sign out"
               className="shrink-0 flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 dark:text-gray-500 opacity-70 group-hover/user:opacity-100 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-500/10 transition-colors"
             >
-              <LogOut className="h-[15px] w-[15px]" strokeWidth={1.75} aria-hidden />
+              <LogOut className="h-[15px] w-[15px]" strokeWidth={1.5} aria-hidden />
             </button>
           </div>
         )}
@@ -314,7 +314,7 @@ export default function AppNavbar({ showLevelBadge = false, currentLevel = null 
       >
         <div className="relative h-full">
           <div
-            className="relative flex h-full flex-col overflow-hidden border-r border-black/[0.055] dark:border-white/[0.055] bg-[#fcfcfc] dark:bg-[#101010] read-mode:bg-[var(--read-surface-elevated)] read-mode:border-[var(--read-border)]"
+            className="relative flex h-full flex-col overflow-hidden border-r border-black/[0.055] dark:border-white/[0.07] bg-[#fcfcfc] dark:bg-black read-mode:bg-[var(--read-surface-elevated)] read-mode:border-[var(--read-border)]"
           >
             <button
               type="button"

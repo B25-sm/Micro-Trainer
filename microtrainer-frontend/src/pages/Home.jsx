@@ -187,7 +187,7 @@ const Home = () => {
 
   return (
     <div className={`flex flex-col flex-1 min-h-0 ${pageShell}`}>
-      <div className="flex flex-1 min-h-0 w-full max-w-3xl mx-auto relative">
+      <div className="flex flex-1 min-h-0 w-full max-w-[52rem] mx-auto relative">
         {hasSavedSessions && (
           <ChatHistorySidebar
             sessions={sessions}
@@ -257,7 +257,7 @@ function WelcomeView({
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: "easeOut" }}
-        className="w-full max-w-3xl flex flex-col items-center"
+        className="w-full max-w-[52rem] flex flex-col items-center"
       >
         <div className="w-full mb-5">
           <TopNudgeBanner />
@@ -524,13 +524,13 @@ function HomeChatInput({
         onSubmit={onSubmit}
         className={`relative ${
           isLarge || hasAttachments
-            ? "rounded-[26px] border border-black/[0.08] dark:border-transparent bg-white dark:bg-[#242424] shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_30px_rgba(0,0,0,0.05)] dark:shadow-none focus-within:border-black/15 dark:focus-within:border-white/10 transition-colors duration-200"
-            : "rounded-[22px] border border-gray-200 dark:border-transparent bg-white dark:bg-[#242424] shadow-sm dark:shadow-none focus-within:border-black/15 dark:focus-within:border-white/10 transition-colors"
+            ? "rounded-full border border-black/[0.08] dark:border-transparent bg-white dark:bg-[#242424] shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_30px_rgba(0,0,0,0.05)] dark:shadow-none focus-within:border-black/15 dark:focus-within:border-white/10 transition-colors duration-200"
+            : "rounded-full border border-gray-200 dark:border-transparent bg-white dark:bg-[#242424] shadow-sm dark:shadow-none focus-within:border-black/15 dark:focus-within:border-white/10 transition-colors"
         }`}
       >
       <div
         className={`flex items-center gap-1.5 ${
-          isLarge ? "pl-2 pr-2 py-2" : "px-2 py-2 items-end"
+          isLarge ? "pl-2.5 pr-1.5 py-1.5" : "px-2 py-1.5 items-end"
         }`}
       >
         {!speech.isRecording && (
@@ -578,7 +578,7 @@ function HomeChatInput({
             maxLength={500}
             rows={1}
             className={`flex-1 resize-none bg-transparent text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 disabled:opacity-50 border-0 outline-none focus:ring-0 ${
-              isLarge ? "text-[15px] py-1.5 leading-relaxed" : "text-[15px] py-1 leading-relaxed"
+              isLarge ? "text-[15px] py-1 leading-relaxed" : "text-[15px] py-1 leading-relaxed"
             }`}
             style={{ boxShadow: "none", WebkitAppearance: "none" }}
           />
@@ -588,7 +588,7 @@ function HomeChatInput({
             <button
               type="button"
               onClick={speech.cancelRecording}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-900 transition hover:bg-gray-200 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-900 transition hover:bg-gray-200 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
               title="Cancel dictation"
               aria-label="Cancel dictation"
             >
@@ -597,7 +597,7 @@ function HomeChatInput({
             <button
               type="button"
               onClick={speech.stopRecording}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black text-white transition hover:bg-black/80 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-black text-white transition hover:bg-black/80 dark:bg-white dark:text-black dark:hover:bg-gray-200"
               title="Finish dictation"
               aria-label="Finish dictation"
             >
@@ -609,7 +609,7 @@ function HomeChatInput({
             type="button"
             onClick={speech.startRecording}
             disabled={isLoading || !speech.supported}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-600 transition hover:bg-gray-100 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-30 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-gray-600 transition hover:bg-gray-100 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-30 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white"
             title={speech.supported ? "Dictate" : "Voice input is not supported in this browser"}
             aria-label="Dictate"
           >
@@ -620,7 +620,7 @@ function HomeChatInput({
           type="submit"
           disabled={(!question.trim() && !hasAttachments) || isLoading}
           className={`flex-shrink-0 flex items-center justify-center rounded-full bg-gray-950 dark:bg-[#f4f4f4] text-white dark:text-black hover:opacity-85 transition disabled:opacity-25 disabled:cursor-not-allowed ${
-            isLarge ? "h-9 w-9" : "h-9 w-9"
+            isLarge ? "h-8 w-8" : "h-8 w-8"
           }`}
           title="Send"
         >
