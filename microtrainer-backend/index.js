@@ -287,6 +287,11 @@ const {
   isScopeRefusal,
 } = require("./services/chatTechnicalIntentService");
 const { callGroq } = require("./services/groqClient");
+const { QUALITY_MODEL, FAST_MODEL } = require("./services/aiModelConfig");
+const {
+  buildAnswerPlan,
+  assessAnswer,
+} = require("./services/chatAnswerQualityService");
 const { saveStudentLevel, getStudentLevel } = require("./services/memoryService");
 const {
   logAskTopic,
@@ -466,6 +471,9 @@ app.post("/chat/ask", requireStudentIdentity, async (req, res) => {
     // Build conversation history
     const matchingText = normalizeForMatching(question);
     const technicalIntent = getTechnicalIntent(matchingText);
+    const answerPlan = buildAnswerPlan(matchingText, {
+      technical: technicalIntent.recognized,
+    });
     const referenceFacts = getConceptReference(matchingText, {
       technology: technicalIntent.technologies[0],
     });
@@ -539,6 +547,7 @@ Don't:
           technicalIntentHint,
           attachmentHint,
           referenceFacts,
+          answerPlan.instruction,
           cleanAttachmentText ? `Attached document(s):\n${cleanAttachmentText}` : "",
           `Student question:\n${question}`,
         ]
@@ -548,12 +557,13 @@ Don't:
     ];
 
     // Call GROQ API
+    const chatModel = QUALITY_MODEL;
     const response = await callGroq(
       {
-        model: "llama-3.1-8b-instant",
+        model: chatModel,
         messages: messages,
-        temperature: referenceFacts ? 0.35 : 0.5,
-        max_tokens: 950
+        temperature: referenceFacts ? 0.2 : 0.3,
+        max_tokens: answerPlan.isBroad ? 3000 : 2200
       },
       1
     );
@@ -575,16 +585,46 @@ Don't:
       try {
         const retryResponse = await callGroq(
           {
-            model: "llama-3.1-8b-instant",
+            model: chatModel,
             messages: retryMessages,
             temperature: 0.25,
-            max_tokens: 950,
+            max_tokens: answerPlan.isBroad ? 3000 : 2200,
           },
           1
         );
         answer = retryResponse?.data?.choices?.[0]?.message?.content || answer;
       } catch (retryError) {
         console.error("CHAT technical-intent retry error:", retryError.message);
+      }
+    }
+
+    // Do not ship a fluent but incomplete lesson. Broad topics have an explicit
+    // coverage contract; one focused repair pass fills omissions or removes
+    // retrieved-context pollution before the student sees the answer.
+    const quality = assessAnswer(answer, answerPlan);
+    if (!quality.passed) {
+      const repairMessages = [
+        ...messages,
+        { role: "assistant", content: answer },
+        {
+          role: "system",
+          content: `QUALITY REVIEW FAILED. Rewrite the answer completely; do not merely append a correction. Fix every issue below while preserving correct material:\n- ${quality.issues.join("\n- ")}\nReturn only the improved final answer.`,
+        },
+      ];
+      try {
+        const repairedResponse = await callGroq(
+          {
+            model: chatModel,
+            messages: repairMessages,
+            temperature: 0.15,
+            max_tokens: answerPlan.isBroad ? 3200 : 2400,
+          },
+          1
+        );
+        const repaired = repairedResponse?.data?.choices?.[0]?.message?.content?.trim();
+        if (repaired) answer = repaired;
+      } catch (repairError) {
+        console.error("CHAT quality repair error:", repairError.message);
       }
     }
 
@@ -643,7 +683,7 @@ app.post("/chat/quick-check", requireStudentIdentity, async (req, res) => {
       const response = await axios.post(
         "https://api.groq.com/openai/v1/chat/completions",
         {
-          model: "llama-3.1-8b-instant",
+          model: FAST_MODEL,
           messages,
           temperature: 0.3,
           max_tokens: maxTokens,

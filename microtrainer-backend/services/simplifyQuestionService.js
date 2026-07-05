@@ -3,6 +3,7 @@
  */
 
 const { callGroq } = require("./groqClient");
+const { FAST_MODEL } = require("./aiModelConfig");
 const { normalizeQuizQuestion } = require("./quizQuestionUtils");
 
 function parseJsonFromGroq(raw) {
@@ -58,7 +59,7 @@ async function simplifyQuizQuestion({ technology, conceptTitle, lessonSnippet, q
   }
 
   const response = await callGroq({
-    model: "llama-3.1-8b-instant",
+    model: FAST_MODEL,
     messages: [
       {
         role: "system",

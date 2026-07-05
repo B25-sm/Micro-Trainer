@@ -4,6 +4,7 @@
 
 const axios = require("axios");
 const path = require("path");
+const { FAST_MODEL } = require("./aiModelConfig");
 
 let groqQueue = Promise.resolve();
 
@@ -115,14 +116,14 @@ function sleep(ms) {
 
 async function testGroqConnection() {
   const response = await callGroq({
-    model: "llama-3.1-8b-instant",
+    model: FAST_MODEL,
     messages: [{ role: "user", content: "Reply with exactly: ok" }],
     max_tokens: 5,
     temperature: 0,
   });
   return {
     ok: true,
-    model: "llama-3.1-8b-instant",
+    model: FAST_MODEL,
     reply: response?.data?.choices?.[0]?.message?.content?.trim() || "",
   };
 }

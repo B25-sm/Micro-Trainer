@@ -1,4 +1,5 @@
 const axios = require("axios");
+const { QUALITY_MODEL } = require("./aiModelConfig");
 const { BASE_PERSONA } = require("./personaConfig");
 const { addReview, getHistory } = require("./communicationReviewStore");
 
@@ -261,7 +262,7 @@ JSON schema:
       const aiRes = await axios.post(
         "https://api.groq.com/openai/v1/chat/completions",
         {
-          model: "llama-3.1-8b-instant",
+          model: QUALITY_MODEL,
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: userPrompt },

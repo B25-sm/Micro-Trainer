@@ -4,6 +4,7 @@
 // =======================================================
 
 const { callGroq } = require("./groqClient");
+const { QUALITY_MODEL } = require("./aiModelConfig");
 const {
   alignMcqCorrectIndexWithLesson,
   gradeMcqAnswers,
@@ -246,7 +247,7 @@ Return ONLY JSON: {"fair":true|false,"correctedScore":0-10,"reason":"one sentenc
 
   try {
     const response = await callGroq({
-      model: "llama-3.1-8b-instant",
+      model: QUALITY_MODEL,
       messages: [
         {
           role: "system",

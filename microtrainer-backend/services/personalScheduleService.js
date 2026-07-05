@@ -3,6 +3,7 @@
  */
 
 const { callGroq } = require("./groqClient");
+const { QUALITY_MODEL } = require("./aiModelConfig");
 const {
   getCategoryList,
   getTechOptionsForCategory,
@@ -367,7 +368,7 @@ Write 3 short motivational sentences (plain text, no markdown headers):
 Keep under 120 words total.`;
 
     const groqRes = await callGroq({
-      model: "llama-3.1-8b-instant",
+      model: QUALITY_MODEL,
       messages: [{ role: "user", content: prompt }],
       max_tokens: 200,
       temperature: 0.5,

@@ -1,4 +1,5 @@
 const axios = require("axios");
+const { QUALITY_MODEL } = require("./aiModelConfig");
 
 // 🔹 Persona
 const {
@@ -80,7 +81,7 @@ Base everything on actual performance data.
     const response = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
       {
-        model: "llama-3.1-8b-instant",
+        model: QUALITY_MODEL,
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: prompt }

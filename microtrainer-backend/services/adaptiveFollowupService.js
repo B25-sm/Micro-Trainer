@@ -310,7 +310,8 @@ async function generateFollowUp(previousQuestion, answer, subject) {
 // =======================================================
 async function generateAIFollowUp(previousQuestion, answer, subject) {
   try {
-    const axios = require("axios");
+const axios = require("axios");
+const { QUALITY_MODEL } = require("./aiModelConfig");
     
     const prompt = `You are Sai Mahendra conducting a technical interview.
 
@@ -329,7 +330,7 @@ Return ONLY the question, nothing else.`;
     const response = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
       {
-        model: "llama-3.1-8b-instant",
+        model: QUALITY_MODEL,
         messages: [
           {
             role: "system",

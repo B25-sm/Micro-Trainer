@@ -4,6 +4,7 @@
  */
 
 const { callGroq } = require("./groqClient");
+const { QUALITY_MODEL } = require("./aiModelConfig");
 
 const DIAGRAM_SCHEMA = `{
   "title": "short diagram title",
@@ -150,7 +151,7 @@ ${DIAGRAM_SCHEMA}`;
 
   try {
     const response = await callGroq({
-      model: "llama-3.1-8b-instant",
+      model: QUALITY_MODEL,
       messages: [
         {
           role: "system",

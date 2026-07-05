@@ -14,6 +14,21 @@ const {
 /** Hard overrides where AI commonly gives incomplete/wrong lists */
 const AUTHORITATIVE_OVERRIDES = [
   {
+    id: "react-hooks-overview",
+    match: (text) => /^(?:what (?:is|are)\s+)?(?:react\s+)?hooks?\??$/i.test(text.trim()),
+    reference: `React Hooks overview — this is an umbrella topic, not a synonym for useState:
+- State: useState, useReducer
+- Context: useContext
+- Refs: useRef, useImperativeHandle
+- Effects: useEffect; specialized timing variants useLayoutEffect and useInsertionEffect
+- Performance/responsiveness: useMemo, useCallback, useTransition, useDeferredValue
+- External stores and identity: useSyncExternalStore, useId
+- Actions/forms: useActionState; React DOM provides useFormStatus
+- Reuse: custom Hooks combine Hooks into reusable stateful logic
+- Rules: call Hooks at the top level, and only from React function components or custom Hooks
+Important: useEffect synchronizes with external systems; it is not the default tool for derived values or event handling.`,
+  },
+  {
     id: "sql-joins",
     match: (text) =>
       /\b(sql\s+)?joins?\b/i.test(text) ||

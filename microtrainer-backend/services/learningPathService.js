@@ -13,6 +13,7 @@ const {
 const { generateGuidedCourseLesson } = require('./adaptiveTeachingService');
 const { simplifyQuizQuestion } = require('./simplifyQuestionService');
 const { callGroq } = require('./groqClient');
+const { QUALITY_MODEL } = require('./aiModelConfig');
 const {
   normalizeQuizQuestions,
   sanitizeQuestionsForClient,
@@ -270,7 +271,7 @@ Return ONLY a JSON object: {"questions": ["Question 1?", "Question 2?"]}`;
     const response = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
       {
-        model: "llama-3.1-8b-instant",
+        model: QUALITY_MODEL,
         messages: [
           {
             role: "system",
@@ -562,7 +563,7 @@ For feedback, explain what was correct or incorrect about each answer.`;
     console.log(`🔑 Using API key: ${process.env.GROQ_API_KEY ? 'Present (length: ' + process.env.GROQ_API_KEY.length + ')' : 'MISSING!'}`);
     
     const response = await callGroq({
-      model: "llama-3.1-8b-instant",
+      model: QUALITY_MODEL,
       messages: [
         {
           role: "system",

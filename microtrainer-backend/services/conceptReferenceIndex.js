@@ -288,7 +288,10 @@ function detectTechnologies(text) {
 function scoreEntry(queryNorm, entry, hintedTechs = []) {
   let score = 0;
 
-  if (hintedTechs.includes(entry.technology)) score += 40;
+  // A technology hint narrows relevant matches; it must not make every entry
+  // in that curriculum a match by itself ("hooks" previously retrieved the
+  // first React module/useState and polluted the answer with unrelated facts).
+  if (hintedTechs.includes(entry.technology)) score += 8;
 
   const titleNorm = normalizeText(entry.title);
   if (titleNorm.length >= 8 && queryNorm.includes(titleNorm.slice(0, Math.min(24, titleNorm.length)))) {
@@ -324,7 +327,7 @@ function findMatchingEntries(text, options = {}) {
       entry,
       score: scoreEntry(queryNorm, entry, hintedTechs),
     }))
-    .filter((row) => row.score >= 18)
+    .filter((row) => row.score >= 14)
     .sort((a, b) => b.score - a.score);
 
   return scored.slice(0, options.limit || 3).map((row) => row.entry);

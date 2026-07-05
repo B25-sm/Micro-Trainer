@@ -8,6 +8,7 @@
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
+const { QUALITY_MODEL } = require('./aiModelConfig');
 
 // Import question banks
 const { getQuestions: getJavaScriptQuestions } = require('./javascriptQuestionBank');
@@ -277,7 +278,7 @@ Respond in JSON format:
     const response = await axios.post(
       'https://api.groq.com/openai/v1/chat/completions',
       {
-        model: 'llama-3.1-8b-instant',
+        model: QUALITY_MODEL,
         messages: [
           {
             role: 'system',

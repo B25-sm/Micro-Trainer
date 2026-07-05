@@ -1,4 +1,5 @@
 const axios = require("axios");
+const { QUALITY_MODEL } = require("./aiModelConfig");
 
 const { BASE_PERSONA, INTERVIEW_PERSONA } = require("./personaConfig");
 const { getStudentMemory } = require("./memoryService");
@@ -201,7 +202,7 @@ Return ONLY the question (one line, max 22 words).
       const response = await axios.post(
         "https://api.groq.com/openai/v1/chat/completions",
         {
-          model: "llama-3.1-8b-instant",
+          model: QUALITY_MODEL,
           messages: [
             { role: "system", content: `${BASE_PERSONA}\n\n${INTERVIEW_PERSONA}` },
             { role: "user", content: prompt },

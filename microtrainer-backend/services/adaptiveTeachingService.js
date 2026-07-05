@@ -4,6 +4,7 @@
 // =======================================================
 
 const axios = require("axios");
+const { QUALITY_MODEL } = require("./aiModelConfig");
 const { getAnalogy, detectLevel } = require("./analogyDatabase");
 const {
   BASE_PERSONA,
@@ -164,7 +165,7 @@ Return ONLY the formatted lesson markdown.`;
 
   async function requestLesson(userPrompt, temp = 0.75) {
     const response = await callGroq({
-      model: "llama-3.1-8b-instant",
+      model: QUALITY_MODEL,
       messages: [
         { role: "system", content: persona },
         { role: "user", content: userPrompt },
@@ -289,7 +290,7 @@ Return ONLY 4 lines of plain text (see TERSE format — line 3 must be the flow 
 
   try {
     const response = await callGroq({
-      model: "llama-3.1-8b-instant",
+      model: QUALITY_MODEL,
       messages: [
         {
           role: "system",
@@ -520,7 +521,7 @@ CROSS_QUESTION:
     const response = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
       {
-        model: "llama-3.1-8b-instant",
+        model: QUALITY_MODEL,
         messages: [
           { role: "system", content: LEVEL_1_PERSONA },
           { role: "user", content: prompt }
@@ -606,7 +607,7 @@ ${snippetRules}`;
     const response = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
       {
-        model: "llama-3.1-8b-instant",
+        model: QUALITY_MODEL,
         messages: [
           { role: "system", content: persona },
           ...contextMessages,
@@ -750,7 +751,7 @@ async function generateLessonQuestions(
   const { openCount, mcqCount } = getQuestionMixCounts(count);
   try {
     const response = await callGroq({
-      model: "llama-3.1-8b-instant",
+      model: QUALITY_MODEL,
       messages: [
         {
           role: "system",
