@@ -12,7 +12,7 @@ const DIMENSION_ORDER = [
 
 function scoreColor(score) {
   if (score >= 8) return "bg-emerald-500";
-  if (score >= 6) return "bg-[#1a73e8] dark:bg-[#8ab4f8]";
+  if (score >= 6) return "bg-[#7c3aed] dark:bg-[#a78bfa]";
   return "bg-amber-500";
 }
 

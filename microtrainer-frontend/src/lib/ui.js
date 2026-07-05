@@ -12,7 +12,7 @@ export const cardInset =
   "rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#202124]/50";
 
 export const btnPrimary =
-  "inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed";
+  "inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg bg-gradient-to-b from-[#8b5cf6] to-[#7c3aed] dark:from-[#b7a3fb] dark:to-[#a78bfa] text-white dark:text-gray-900 shadow-[0_1px_0_0_rgba(255,255,255,0.16)_inset,0_4px_14px_-4px_rgba(124,58,237,0.5)] dark:shadow-[0_1px_0_0_rgba(255,255,255,0.25)_inset,0_4px_18px_-4px_rgba(167,139,250,0.4)] hover:opacity-95 transition disabled:opacity-50 disabled:cursor-not-allowed";
 
 export const btnSecondary =
   "inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#292a2d] text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/40 transition disabled:opacity-50 disabled:cursor-not-allowed";

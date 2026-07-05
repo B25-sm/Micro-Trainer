@@ -178,7 +178,7 @@ const TechnologySelection = ({ studentId: studentIdProp, onTechnologySelect }) =
         <button
           type="button"
           onClick={fetchData}
-          className="px-4 py-2 bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 rounded-lg hover:opacity-90 transition text-sm font-medium"
+          className="px-4 py-2 bg-[#7c3aed] dark:bg-[#a78bfa] text-white dark:text-gray-900 rounded-lg hover:opacity-90 transition text-sm font-medium"
         >
           Try Again
         </button>
@@ -231,7 +231,7 @@ const TechnologySelection = ({ studentId: studentIdProp, onTechnologySelect }) =
                 </div>
               ) : isCore ? (
                 <div className="absolute top-4 right-4">
-                  <span className="inline-flex items-center px-2 py-0.5 bg-[#e8f0fe] dark:bg-blue-950/50 text-[#1a73e8] dark:text-[#8ab4f8] text-xs font-medium rounded-md border border-blue-200 dark:border-blue-800">
+                  <span className="inline-flex items-center px-2 py-0.5 bg-[#e8f0fe] dark:bg-blue-950/50 text-[#7c3aed] dark:text-[#a78bfa] text-xs font-medium rounded-md border border-blue-200 dark:border-blue-800">
                     For your role
                   </span>
                 </div>
@@ -285,7 +285,7 @@ const TechnologySelection = ({ studentId: studentIdProp, onTechnologySelect }) =
                 <button
                   type="button"
                   onClick={() => onTechnologySelect(tech.id, "guided")}
-                  className="flex-1 px-4 py-2.5 rounded-lg text-sm font-medium bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 hover:opacity-90 transition"
+                  className="flex-1 px-4 py-2.5 rounded-lg text-sm font-medium bg-[#7c3aed] dark:bg-[#a78bfa] text-white dark:text-gray-900 hover:opacity-90 transition"
                 >
                   {progressInfo.status === "not-started"
                     ? "Start guided course"

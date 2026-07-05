@@ -37,10 +37,10 @@ export default function TopNudgeBanner() {
   const isMock = nudge.type === "ready_for_mock";
   const Icon = isMock ? Rocket : BookOpen;
   const frame = isMock
-    ? "border-blue-300 dark:border-blue-800 bg-[#e8f0fe] dark:bg-blue-950/40"
+    ? "border-violet-300/60 dark:border-violet-400/20 bg-violet-50 dark:bg-violet-400/[0.07]"
     : "border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40";
   const btn = isMock
-    ? "bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900"
+    ? "bg-[#7c3aed] dark:bg-[#a78bfa] text-white dark:text-gray-900"
     : "bg-amber-500 text-white";
 
   return (

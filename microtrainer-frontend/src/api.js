@@ -97,6 +97,27 @@ export const chatQuickCheck = (data) =>
 
 
 // =======================================================
+// 🔹 AI CHAT (Grok-powered ChatGPT-style assistant)
+// =======================================================
+
+export const getAiChatStatus = () => API.get("/ai-chat/status");
+
+export const listAiChats = (query = "") =>
+  API.get("/ai-chat/conversations", { params: query ? { q: query } : {} });
+
+export const createAiChat = (data = {}) =>
+  API.post("/ai-chat/conversations", data);
+
+export const getAiChat = (id) =>
+  API.get(`/ai-chat/conversations/${id}`);
+
+export const renameAiChat = (id, title) =>
+  API.patch(`/ai-chat/conversations/${id}`, { title });
+
+export const deleteAiChat = (id) =>
+  API.delete(`/ai-chat/conversations/${id}`);
+
+// =======================================================
 // 🔹 STUDENT ANALYTICS
 // =======================================================
 

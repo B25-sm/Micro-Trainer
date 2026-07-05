@@ -26,7 +26,7 @@ const btnSecondary =
   "inline-flex items-center gap-2 px-3.5 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#292a2d] text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/40 transition disabled:opacity-50 disabled:cursor-not-allowed";
 
 const btnPrimary =
-  "inline-flex items-center gap-2 px-3.5 py-2 text-sm font-medium rounded-lg bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed";
+  "inline-flex items-center gap-2 px-3.5 py-2 text-sm font-medium rounded-lg bg-[#7c3aed] dark:bg-[#a78bfa] text-white dark:text-gray-900 hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed";
 
 function TabButton({ active, onClick, icon: Icon, children }) {
   return (
@@ -35,7 +35,7 @@ function TabButton({ active, onClick, icon: Icon, children }) {
       onClick={onClick}
       className={`inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition -mb-px ${
         active
-          ? "border-[#1a73e8] dark:border-[#8ab4f8] text-gray-900 dark:text-gray-100"
+          ? "border-[#7c3aed] dark:border-[#a78bfa] text-gray-900 dark:text-gray-100"
           : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
       }`}
     >
@@ -504,7 +504,7 @@ const TrainerDashboard = () => {
                   }}
                   className={`${btnSecondary} ${
                     showMultiSelect
-                      ? "border-[#1a73e8] dark:border-[#8ab4f8] text-[#1a73e8] dark:text-[#8ab4f8]"
+                      ? "border-[#7c3aed] dark:border-[#a78bfa] text-[#7c3aed] dark:text-[#a78bfa]"
                       : ""
                   }`}
                 >
@@ -651,7 +651,7 @@ const TrainerDashboard = () => {
               <button
                 type="button"
                 onClick={() => navigate("/admin/engagement")}
-                className="mt-3 text-xs font-medium text-[#1a73e8] dark:text-[#8ab4f8] hover:underline"
+                className="mt-3 text-xs font-medium text-[#7c3aed] dark:text-[#a78bfa] hover:underline"
               >
                 View all {liveStudents.length} in Live monitor →
               </button>
@@ -699,7 +699,7 @@ const TrainerDashboard = () => {
                   onClick={() => toggleSubjectSelection(subj)}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition ${
                     selected
-                      ? "border-[#1a73e8] dark:border-[#8ab4f8] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                      ? "border-[#7c3aed] dark:border-[#a78bfa] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                       : "border-gray-200 dark:border-gray-600 bg-white dark:bg-[#202124] text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-500"
                   }`}
                 >

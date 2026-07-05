@@ -787,6 +787,9 @@ app.post("/interview/abandon", requireStudentIdentity, async (req, res) => {
 const authRoutes = require("./routes/authRoutes");
 app.use("/auth", authRoutes);
 
+const aiChatRoutes = require("./routes/aiChatRoutes");
+app.use("/ai-chat", aiChatRoutes);
+
 const { registerStudentProfile } = require("./services/studentProfileStore");
 
 app.post("/auth/student-register", (req, res) => {

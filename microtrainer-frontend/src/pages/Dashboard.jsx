@@ -123,7 +123,7 @@ const Dashboard = () => {
         <button
           type="button"
           onClick={() => navigate("/trainer")}
-          className="px-5 py-2.5 rounded-lg bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 text-sm font-medium hover:opacity-90 transition"
+          className="px-5 py-2.5 rounded-lg bg-[#7c3aed] dark:bg-[#a78bfa] text-white dark:text-gray-900 text-sm font-medium hover:opacity-90 transition"
         >
           Open Trainer panel
         </button>
@@ -143,7 +143,7 @@ const Dashboard = () => {
         <button
           type="button"
           onClick={() => navigate("/complete-profile")}
-          className="px-5 py-2.5 rounded-lg bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 text-sm font-medium hover:opacity-90 transition"
+          className="px-5 py-2.5 rounded-lg bg-[#7c3aed] dark:bg-[#a78bfa] text-white dark:text-gray-900 text-sm font-medium hover:opacity-90 transition"
         >
           Complete profile
         </button>
@@ -166,7 +166,7 @@ const Dashboard = () => {
             clearAuthSession();
             navigate("/login", { replace: true });
           }}
-          className="px-5 py-2.5 rounded-lg bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 text-sm font-medium hover:opacity-90 transition"
+          className="px-5 py-2.5 rounded-lg bg-[#7c3aed] dark:bg-[#a78bfa] text-white dark:text-gray-900 text-sm font-medium hover:opacity-90 transition"
         >
           Sign in again
         </button>
@@ -247,7 +247,7 @@ const Dashboard = () => {
             <StatCard
               title="Questions Answered"
               value={analytics.totalQuestions}
-              color="text-[#1a73e8] dark:text-[#8ab4f8]"
+              color="text-[#7c3aed] dark:text-[#a78bfa]"
             />
             <StatCard
               title="Average Score"
@@ -372,7 +372,7 @@ const RecommendationsCard = ({ items = [], onAct }) => (
             : "border-gray-100 dark:border-gray-700/60 hover:bg-gray-50 dark:hover:bg-gray-700/30";
         const btn = isCourse
           ? "bg-amber-500 text-white hover:bg-amber-600"
-          : "bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 hover:opacity-90";
+          : "bg-[#7c3aed] dark:bg-[#a78bfa] text-white dark:text-gray-900 hover:opacity-90";
         return (
           <li
             key={rec.id}

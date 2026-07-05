@@ -610,7 +610,7 @@ IMPORTANT:
               <button
                 onClick={handleStart}
                 disabled={loading}
-                className="w-full py-3.5 bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 rounded-xl font-medium hover:opacity-90 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3.5 bg-[#7c3aed] dark:bg-[#a78bfa] text-white dark:text-gray-900 rounded-xl font-medium hover:opacity-90 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "Starting..." : "Begin Interview"}
               </button>
@@ -657,7 +657,7 @@ IMPORTANT:
             <button
               type="button"
               onClick={() => navigate("/dashboard")}
-              className="px-5 py-2.5 rounded-lg bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 text-sm font-medium hover:opacity-90"
+              className="px-5 py-2.5 rounded-lg bg-[#7c3aed] dark:bg-[#a78bfa] text-white dark:text-gray-900 text-sm font-medium hover:opacity-90"
             >
               View history
             </button>
@@ -882,7 +882,7 @@ IMPORTANT:
               <button
                 onClick={handleSubmit}
                 disabled={loading || !answer.trim()}
-                className="p-2.5 bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 rounded-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                className="p-2.5 bg-[#7c3aed] dark:bg-[#a78bfa] text-white dark:text-gray-900 rounded-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
               >
                 {loading ? (
                   <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">

@@ -312,7 +312,7 @@ const CodeEditor = ({ problem, onSubmit, blockClipboard = true }) => {
               type="button"
               onClick={submitSolution}
               disabled={isRunning}
-              className="flex items-center gap-2 rounded-lg bg-[#8ab4f8] px-4 py-2 text-sm font-medium text-gray-900 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex items-center gap-2 rounded-lg bg-[#a78bfa] px-4 py-2 text-sm font-medium text-gray-900 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isRunning ? <Loader className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
               Submit

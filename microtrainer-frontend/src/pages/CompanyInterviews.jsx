@@ -83,7 +83,7 @@ export default function CompanyInterviews() {
       <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 py-6">
         <header className="mb-8">
           <div className="flex items-center gap-2 mb-1">
-            <Building2 className="h-6 w-6 text-[#1a73e8] dark:text-[#8ab4f8]" strokeWidth={1.75} />
+            <Building2 className="h-6 w-6 text-[#7c3aed] dark:text-[#a78bfa]" strokeWidth={1.75} />
             <h1 className={headingPage}>Company Interviews</h1>
           </div>
           <p className={`${textMuted} max-w-2xl`}>
@@ -102,7 +102,7 @@ export default function CompanyInterviews() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search company name..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#292a2d] text-sm focus:outline-none focus:ring-2 focus:ring-[#1a73e8]/20"
+            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#292a2d] text-sm focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/20"
           />
         </div>
 
@@ -167,7 +167,7 @@ export default function CompanyInterviews() {
                   <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-blue-500" />
                 </div>
               </div>
-              <p className="text-xs font-medium text-[#1a73e8] dark:text-[#8ab4f8] mb-1">{c.role}</p>
+              <p className="text-xs font-medium text-[#7c3aed] dark:text-[#a78bfa] mb-1">{c.role}</p>
               <p className={`${textMuted} text-sm mb-3 line-clamp-2`}>{c.tagline}</p>
               <div className="flex flex-wrap gap-1.5">
                 {(c.topics || []).slice(0, 4).map((t) => (

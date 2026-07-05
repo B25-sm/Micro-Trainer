@@ -157,7 +157,7 @@ export function createConceptChatMarkdownComponents() {
       const label = String(children).trim();
       if (isConceptSectionLabel(label)) {
         return (
-          <strong className="mb-2 mt-6 block text-[11px] font-bold uppercase tracking-[0.14em] text-[#1a73e8] first:mt-0 dark:text-[#8ab4f8]">
+          <strong className="mb-2 mt-6 block text-[11px] font-bold uppercase tracking-[0.14em] text-[#7c3aed] first:mt-0 dark:text-[#a78bfa]">
             {children}
           </strong>
         );

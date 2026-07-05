@@ -72,7 +72,7 @@ export default function ConceptMarkdownAnswer({ content, highlighted }) {
           aria-pressed={colorOn}
           className={`flex items-center justify-center rounded-full p-1.5 transition-colors ${
             colorOn
-              ? "text-[#1a73e8] hover:bg-blue-50 dark:text-[#8ab4f8] dark:hover:bg-[#2a2b2e]"
+              ? "text-[#7c3aed] hover:bg-blue-50 dark:text-[#a78bfa] dark:hover:bg-[#2a2b2e]"
               : "text-gray-400 hover:bg-gray-100 dark:text-gray-500 dark:hover:bg-[#2a2b2e]"
           }`}
         >

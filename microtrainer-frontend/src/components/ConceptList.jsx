@@ -259,7 +259,7 @@ const ConceptList = ({
             <button
               type="button"
               onClick={() => onStudyModeChange(freeStudy ? "guided" : "browse")}
-              className="text-sm font-medium text-[#1a73e8] dark:text-[#8ab4f8] hover:underline shrink-0"
+              className="text-sm font-medium text-[#7c3aed] dark:text-[#a78bfa] hover:underline shrink-0"
             >
               {freeStudy ? "Switch to guided path" : "Browse all topics"}
             </button>

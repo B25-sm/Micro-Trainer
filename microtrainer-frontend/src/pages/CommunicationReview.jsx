@@ -191,7 +191,7 @@ export default function CommunicationReview() {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <MessageSquareText
-                className="h-6 w-6 text-[#1a73e8] dark:text-[#8ab4f8]"
+                className="h-6 w-6 text-[#7c3aed] dark:text-[#a78bfa]"
                 strokeWidth={1.75}
               />
               <h1 className={headingPage}>Communication Review</h1>
@@ -283,7 +283,7 @@ export default function CommunicationReview() {
                 }}
                 rows={3}
                 placeholder="e.g. Explain a gap in your resume..."
-                className="w-full text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#202124] px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-[#1a73e8]/20 dark:focus:ring-[#8ab4f8]/20"
+                className="w-full text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#202124] px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/20 dark:focus:ring-[#a78bfa]/20"
               />
             </div>
           </aside>
@@ -306,7 +306,7 @@ export default function CommunicationReview() {
                         <span className="truncate text-gray-700 dark:text-gray-300">
                           {h.prompt}
                         </span>
-                        <span className="shrink-0 text-xs font-medium text-[#1a73e8] dark:text-[#8ab4f8]">
+                        <span className="shrink-0 text-xs font-medium text-[#7c3aed] dark:text-[#a78bfa]">
                           {h.overallScore}/10
                         </span>
                       </button>

@@ -57,7 +57,7 @@ export default function QuickCheckCard({ topic }) {
       >
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-2 min-w-0">
-            <GraduationCap className="h-5 w-5 shrink-0 text-[#1a73e8] dark:text-[#8ab4f8] mt-0.5" strokeWidth={1.75} />
+            <GraduationCap className="h-5 w-5 shrink-0 text-[#7c3aed] dark:text-[#a78bfa] mt-0.5" strokeWidth={1.75} />
             <div className="min-w-0">
               {phase === "offer" && (
                 <>
@@ -98,7 +98,7 @@ export default function QuickCheckCard({ topic }) {
               <button
                 type="button"
                 onClick={start}
-                className="rounded-lg bg-[#1a73e8] dark:bg-[#8ab4f8] px-3 py-1.5 text-xs font-medium text-white dark:text-gray-900 hover:opacity-90"
+                className="rounded-lg bg-[#7c3aed] dark:bg-[#a78bfa] px-3 py-1.5 text-xs font-medium text-white dark:text-gray-900 hover:opacity-90"
               >
                 Test me
               </button>
@@ -138,7 +138,7 @@ export default function QuickCheckCard({ topic }) {
               type="button"
               onClick={submit}
               disabled={answers.every((a) => !a.trim())}
-              className="rounded-lg bg-[#1a73e8] dark:bg-[#8ab4f8] px-3 py-1.5 text-xs font-medium text-white dark:text-gray-900 hover:opacity-90 disabled:opacity-50"
+              className="rounded-lg bg-[#7c3aed] dark:bg-[#a78bfa] px-3 py-1.5 text-xs font-medium text-white dark:text-gray-900 hover:opacity-90 disabled:opacity-50"
             >
               Submit answers
             </button>

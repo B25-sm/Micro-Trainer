@@ -213,7 +213,7 @@ export default function CompanyInterview() {
           All companies
         </button>
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className={`${card} max-w-md w-full p-6 text-center`}>
-          <Building2 className="h-10 w-10 mx-auto mb-3 text-[#1a73e8] dark:text-[#8ab4f8]" />
+          <Building2 className="h-10 w-10 mx-auto mb-3 text-[#7c3aed] dark:text-[#a78bfa]" />
           <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
             Company mock interview
           </h2>
@@ -411,7 +411,7 @@ export default function CompanyInterview() {
               disabled={loading}
               rows={4}
               placeholder="Answer as you would in the interview..."
-              className="w-full rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-[#202124] px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#1a73e8]/20 disabled:opacity-60 select-none"
+              className="w-full rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-[#202124] px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/20 disabled:opacity-60 select-none"
               style={{ userSelect: "none" }}
               onCopy={(e) => e.preventDefault()}
               onPaste={(e) => e.preventDefault()}

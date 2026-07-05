@@ -163,7 +163,7 @@ export default function CompleteProfile() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 py-3 rounded-lg text-sm font-medium hover:opacity-90 disabled:opacity-50"
+            className="w-full bg-[#7c3aed] dark:bg-[#a78bfa] text-white dark:text-gray-900 py-3 rounded-lg text-sm font-medium hover:opacity-90 disabled:opacity-50"
           >
             {loading ? "Saving…" : "Continue"}
           </button>

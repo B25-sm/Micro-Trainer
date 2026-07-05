@@ -17,6 +17,8 @@ import {
   MessageSquareText,
   Building2,
   Shuffle,
+  Sparkles,
+  Bot,
 } from "lucide-react";
 import DisplayModeToggle from "./DisplayModeToggle";
 import { clearAuthSession } from "../utils/authSession";
@@ -25,7 +27,10 @@ import { useSidebar } from "../context/SidebarContext";
 
 const NAV_SECTIONS = [
   {
-    items: [{ path: "/", label: "Home", icon: Home }],
+    items: [
+      { path: "/", label: "Home", icon: Home },
+      { path: "/ai-chat", label: "AI Chat", icon: Bot },
+    ],
   },
   {
     label: "Practice",
@@ -54,20 +59,20 @@ const NAV_SECTIONS = [
 ];
 
 function navLinkClass(active, collapsed) {
-  return `group relative w-full flex items-center gap-3 rounded-xl transition-all duration-200 ${
-    collapsed ? "justify-center px-2 py-2.5" : "px-3 py-2.5"
+  return `group relative w-full flex items-center gap-2.5 rounded-xl transition-all duration-200 ${
+    collapsed ? "justify-center px-0 py-2.5" : "px-2.5 py-[9px]"
   } ${
     active
-      ? "bg-gradient-to-r from-blue-50 to-blue-50/0 dark:from-blue-500/15 dark:to-blue-500/0 text-blue-600 dark:text-blue-300 font-medium"
-      : "text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-white/[0.04]"
+      ? "bg-gradient-to-r from-blue-500/10 via-blue-500/[0.04] to-transparent dark:from-blue-400/[0.16] dark:via-blue-400/[0.05] dark:to-transparent text-blue-700 dark:text-blue-300 font-medium"
+      : "text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-black/[0.03] dark:hover:bg-white/[0.045]"
   }`;
 }
 
 function navIconClass(active) {
-  return `h-[17px] w-[17px] shrink-0 transition-all duration-200 ${
+  return `h-4 w-4 shrink-0 transition-all duration-200 ${
     active
       ? "drop-shadow-[0_0_5px_rgba(37,99,235,0.4)] dark:drop-shadow-[0_0_5px_rgba(139,180,248,0.5)]"
-      : "group-hover:scale-[1.12]"
+      : "group-hover:scale-[1.1]"
   }`;
 }
 
@@ -113,32 +118,38 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
   return (
     <div className="flex h-full flex-col">
       <div
-        className={`flex items-center border-b border-gray-200 dark:border-gray-700 ${
-          isCollapsed ? "justify-center px-2 py-4" : "gap-2 px-4 py-4"
+        className={`flex items-center ${
+          isCollapsed ? "justify-center px-2 py-4" : "gap-2.5 px-3.5 py-4"
         }`}
       >
         <button
           type="button"
           onClick={() => go("/")}
-          className={`font-semibold text-gray-800 dark:text-gray-100 read-mode:text-[var(--read-text-heading)] hover:text-blue-600 dark:hover:text-blue-400 transition ${
-            isCollapsed ? "text-sm" : "text-lg"
-          }`}
+          className="flex items-center gap-2.5 min-w-0"
           title="MicroTrainer home"
         >
-          {isCollapsed ? "MT" : "MicroTrainer"}
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[9px] bg-gradient-to-br from-blue-500 to-violet-500 text-white shadow-[0_2px_10px_rgba(99,102,241,0.4)]">
+            <Sparkles className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+          </span>
+          {!isCollapsed && (
+            <span className="truncate text-[15px] font-semibold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent read-mode:from-[var(--read-text-heading)] read-mode:to-[var(--read-text-heading)]">
+              MicroTrainer
+            </span>
+          )}
         </button>
       </div>
+      <div className="mx-3.5 h-px bg-gradient-to-r from-transparent via-black/[0.08] dark:via-white/[0.08] to-transparent read-mode:via-[var(--read-border)]" aria-hidden />
 
-      <nav className="flex-1 overflow-y-auto px-2 py-3 space-y-4" aria-label="Main">
+      <nav className="flex-1 overflow-y-auto px-2.5 py-3.5 space-y-5" aria-label="Main">
         {NAV_SECTIONS.map((section, idx) => (
           <div key={section.label || `section-${idx}`}>
             {section.label && !isCollapsed && (
-              <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+              <p className="px-2.5 mb-1.5 text-[9.5px] font-semibold uppercase tracking-[0.16em] text-gray-400/80 dark:text-gray-500/80">
                 {section.label}
               </p>
             )}
             {section.label && isCollapsed && (
-              <div className="mx-auto mb-2 h-px w-8 bg-gray-200 dark:bg-gray-700" aria-hidden />
+              <div className="mx-auto mb-2 h-px w-6 bg-black/[0.08] dark:bg-white/10" aria-hidden />
             )}
             <ul className="space-y-0.5">
               {section.items.map(({ path, label, icon: Icon, badge }) => {
@@ -153,16 +164,16 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
                   >
                     {active && (
                       <span
-                        className="absolute left-0 top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full bg-blue-500 dark:bg-blue-400"
+                        className="absolute left-0 top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full bg-blue-500 dark:bg-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.65)]"
                         aria-hidden
                       />
                     )}
-                    <Icon className={navIconClass(active)} strokeWidth={1.5} aria-hidden />
+                    <Icon className={navIconClass(active)} strokeWidth={1.75} aria-hidden />
                     {!isCollapsed && (
-                      <span className="flex min-w-0 flex-1 items-center justify-between gap-2 text-sm">
+                      <span className="flex min-w-0 flex-1 items-center justify-between gap-2 text-[13px]">
                         <span className="truncate">{label}</span>
                         {badge && (
-                          <span className="shrink-0 rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 dark:bg-amber-950/50 dark:text-amber-300">
+                          <span className="shrink-0 rounded-full bg-amber-500/10 dark:bg-amber-400/10 px-1.5 py-px text-[9px] font-medium text-amber-600 dark:text-amber-300 ring-1 ring-amber-500/20 dark:ring-amber-400/20">
                             {badge}
                           </span>
                         )}
@@ -179,12 +190,12 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
         {showTrainerNav && (
           <div>
             {!isCollapsed && (
-              <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+              <p className="px-2.5 mb-1.5 text-[9.5px] font-semibold uppercase tracking-[0.16em] text-gray-400/80 dark:text-gray-500/80">
                 Staff
               </p>
             )}
             {isCollapsed && (
-              <div className="mx-auto mb-2 h-px w-8 bg-gray-200 dark:bg-gray-700" aria-hidden />
+              <div className="mx-auto mb-2 h-px w-6 bg-black/[0.08] dark:bg-white/10" aria-hidden />
             )}
             <button
               type="button"
@@ -194,22 +205,20 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
             >
               {isActive("/trainer") && (
                 <span
-                  className="absolute left-0 top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full bg-blue-500 dark:bg-blue-400"
+                  className="absolute left-0 top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full bg-blue-500 dark:bg-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.65)]"
                   aria-hidden
                 />
               )}
-              <GraduationCap className={navIconClass(isActive("/trainer"))} strokeWidth={1.5} aria-hidden />
-              {!isCollapsed && <span className="text-sm truncate">Trainer</span>}
+              <GraduationCap className={navIconClass(isActive("/trainer"))} strokeWidth={1.75} aria-hidden />
+              {!isCollapsed && <span className="text-[13px] truncate">Trainer</span>}
             </button>
           </div>
         )}
       </nav>
 
-      <div
-        className={`border-t border-gray-200 dark:border-gray-700 ${
-          isCollapsed ? "px-2 py-3 space-y-2" : "px-3 py-3 space-y-3"
-        }`}
-      >
+      <div className="mx-3.5 h-px bg-gradient-to-r from-transparent via-black/[0.08] dark:via-white/[0.08] to-transparent read-mode:via-[var(--read-border)]" aria-hidden />
+
+      <div className={`px-2.5 py-3 space-y-2.5 ${isCollapsed ? "flex flex-col items-center" : ""}`}>
         <div className={isCollapsed ? "flex justify-center" : ""}>
           <DisplayModeToggle variant={isCollapsed ? "icon" : "compact"} />
         </div>
@@ -220,39 +229,50 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
           </span>
         )}
 
-        <div
-          className={`flex items-center gap-2.5 ${isCollapsed ? "justify-center" : ""}`}
-          title={userName || "Guest"}
-        >
-          <span
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 text-xs font-semibold text-gray-600 dark:text-gray-300"
-            aria-hidden
+        {isCollapsed ? (
+          <div className="flex flex-col items-center gap-1.5">
+            <span
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-violet-500 text-[11px] font-semibold text-white shadow-sm"
+              title={userName || "Guest"}
+              aria-hidden
+            >
+              {(userName || "G").charAt(0).toUpperCase()}
+            </span>
+            <button
+              type="button"
+              onClick={handleLogout}
+              aria-label="Sign out of MicroTrainer"
+              title="Sign out"
+              className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-500/10 transition-colors"
+            >
+              <LogOut className="h-[15px] w-[15px]" strokeWidth={1.75} aria-hidden />
+            </button>
+          </div>
+        ) : (
+          <div
+            className="group/user flex w-full items-center gap-2.5 rounded-xl px-1.5 py-1.5 hover:bg-black/[0.03] dark:hover:bg-white/[0.045] transition-colors"
+            title={userName || "Guest"}
           >
-            {(userName || "G").charAt(0).toUpperCase()}
-          </span>
-          {!isCollapsed && (
-            <span className="min-w-0 flex-1 truncate text-sm text-gray-700 dark:text-gray-200 leading-tight">
+            <span
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-violet-500 text-[11px] font-semibold text-white shadow-sm"
+              aria-hidden
+            >
+              {(userName || "G").charAt(0).toUpperCase()}
+            </span>
+            <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-gray-700 dark:text-gray-200 read-mode:text-[var(--read-text)]">
               {userName || "Guest"}
             </span>
-          )}
-        </div>
-
-        <button
-          type="button"
-          onClick={handleLogout}
-          aria-label="Sign out of MicroTrainer"
-          className={`group w-full inline-flex items-center rounded-lg text-sm font-normal text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-100/90 dark:hover:bg-white/[0.06] transition-colors ${
-            isCollapsed ? "justify-center p-2" : "gap-2 px-3 py-2"
-          }`}
-          title={isCollapsed ? "Sign out" : undefined}
-        >
-          <LogOut
-            className="h-[15px] w-[15px] shrink-0 opacity-80 transition-transform duration-200 group-hover:scale-[1.12]"
-            strokeWidth={1.5}
-            aria-hidden
-          />
-          {!isCollapsed && <span>Sign out</span>}
-        </button>
+            <button
+              type="button"
+              onClick={handleLogout}
+              aria-label="Sign out of MicroTrainer"
+              title="Sign out"
+              className="shrink-0 flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 dark:text-gray-500 opacity-70 group-hover/user:opacity-100 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-500/10 transition-colors"
+            >
+              <LogOut className="h-[15px] w-[15px]" strokeWidth={1.75} aria-hidden />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -280,23 +300,26 @@ export default function AppNavbar({ showLevelBadge = false, currentLevel = null 
   return (
     <>
       {/* Mobile top bar */}
-      <header className="lg:hidden sticky top-0 z-30 flex h-12 items-center gap-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] px-4">
+      <header className="lg:hidden sticky top-0 z-30 flex h-12 items-center gap-2.5 border-b border-black/[0.06] dark:border-white/[0.07] bg-white/85 dark:bg-[#18191c]/90 backdrop-blur-xl px-4">
         <button
           type="button"
           onClick={openMobile}
-          className="rounded-lg p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50"
+          className="rounded-lg p-2 -ml-2 text-gray-600 dark:text-gray-400 hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
           aria-label="Open menu"
         >
-          <Menu className="h-5 w-5" />
+          <Menu className="h-5 w-5" strokeWidth={1.75} />
         </button>
-        <span className="text-base font-semibold text-gray-800 dark:text-gray-100">MicroTrainer</span>
+        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[7px] bg-gradient-to-br from-blue-500 to-violet-500 text-white">
+          <Sparkles className="h-3 w-3" strokeWidth={2} aria-hidden />
+        </span>
+        <span className="text-[15px] font-semibold text-gray-800 dark:text-gray-100">MicroTrainer</span>
       </header>
 
       {/* Mobile drawer backdrop */}
       {mobileOpen && (
         <button
           type="button"
-          className="lg:hidden fixed inset-0 z-40 bg-black/40"
+          className="lg:hidden fixed inset-0 z-40 bg-black/40 backdrop-blur-[2px]"
           aria-label="Close menu"
           onClick={closeMobile}
         />
@@ -307,40 +330,43 @@ export default function AppNavbar({ showLevelBadge = false, currentLevel = null 
         onMouseEnter={handleSidebarMouseEnter}
         onMouseLeave={handleSidebarMouseLeave}
         className={`
-          fixed top-0 left-0 z-50 h-full border-r border-gray-200 dark:border-gray-700
-          bg-white dark:bg-[#292a2d] read-mode:bg-[var(--read-surface-elevated)] read-mode:border-[var(--read-border)]
+          fixed top-0 left-0 z-50 h-full
           transition-all duration-300 ease-in-out
           ${isCollapsed ? "w-[72px]" : "w-60"}
           ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0
         `}
       >
-        <div className="relative h-full lg:pr-3">
-          <button
-            type="button"
-            onClick={closeMobile}
-            className="lg:hidden absolute top-3 right-2 rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700/50"
-            aria-label="Close menu"
+        <div className="relative h-full lg:p-3">
+          <div
+            className="relative flex h-full flex-col overflow-hidden lg:rounded-[20px] border border-black/[0.06] dark:border-white/[0.07] bg-white/90 dark:bg-[#18191c]/90 backdrop-blur-2xl lg:shadow-[0_8px_30px_-6px_rgba(15,23,42,0.14)] dark:lg:shadow-[0_8px_36px_-6px_rgba(0,0,0,0.55)] read-mode:bg-[var(--read-surface-elevated)] read-mode:border-[var(--read-border)]"
           >
-            <X className="h-4 w-4" />
-          </button>
+            <button
+              type="button"
+              onClick={closeMobile}
+              className="lg:hidden absolute top-3 right-2 rounded-lg p-1.5 text-gray-500 hover:bg-black/[0.05] dark:hover:bg-white/[0.06]"
+              aria-label="Close menu"
+            >
+              <X className="h-4 w-4" strokeWidth={1.75} />
+            </button>
 
-          <SidebarContent
-            showLevelBadge={showLevelBadge}
-            currentLevel={currentLevel}
-          />
+            <SidebarContent
+              showLevelBadge={showLevelBadge}
+              currentLevel={currentLevel}
+            />
+          </div>
 
           {/* Desktop collapse toggle */}
           <button
             type="button"
             onClick={toggleCollapsed}
-            className="hidden lg:flex absolute -right-3 top-16 z-10 h-6 w-6 items-center justify-center rounded-full border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#292a2d] text-gray-500 dark:text-gray-400 shadow-sm hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+            className="hidden lg:flex absolute -right-3 top-9 z-10 h-6 w-6 items-center justify-center rounded-full border border-black/[0.07] dark:border-white/[0.1] bg-white/95 dark:bg-[#1c1d21]/95 backdrop-blur text-gray-500 dark:text-gray-400 shadow-[0_2px_8px_rgba(0,0,0,0.1)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.45)] hover:text-blue-600 dark:hover:text-blue-300 hover:border-blue-500/30 transition-colors"
             aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {isCollapsed ? (
-              <PanelLeftOpen className="h-3.5 w-3.5" />
+              <PanelLeftOpen className="h-3.5 w-3.5" strokeWidth={1.75} />
             ) : (
-              <PanelLeftClose className="h-3.5 w-3.5" />
+              <PanelLeftClose className="h-3.5 w-3.5" strokeWidth={1.75} />
             )}
           </button>
         </div>

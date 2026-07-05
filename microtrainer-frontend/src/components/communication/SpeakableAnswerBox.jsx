@@ -47,7 +47,7 @@ export default function SpeakableAnswerBox({
         disabled={disabled}
         rows={rows}
         placeholder={placeholder}
-        className="flex-1 w-full rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-[#202124] px-4 py-3 text-sm sm:text-base text-gray-800 dark:text-gray-100 resize-none focus:outline-none focus:ring-2 focus:ring-[#1a73e8]/20 dark:focus:ring-[#8ab4f8]/20 disabled:opacity-60"
+        className="flex-1 w-full rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-[#202124] px-4 py-3 text-sm sm:text-base text-gray-800 dark:text-gray-100 resize-none focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/20 dark:focus:ring-[#a78bfa]/20 disabled:opacity-60"
       />
       {speech.isRecording && (
         <p className="text-xs text-red-500 dark:text-red-400 mt-1.5 flex items-center gap-1.5">

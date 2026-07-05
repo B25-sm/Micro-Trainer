@@ -19,11 +19,11 @@
   --border: #e8eaed;
   --code-bg: #f1f3f4;
 
-  /* Accent Colors - Google Blue */
-  --accent: #1a73e8;
-  --accent-hover: #1765cc;
-  --accent-bg: rgba(26, 115, 232, 0.08);
-  --accent-border: rgba(26, 115, 232, 0.2);
+  /* Accent Colors - Violet Brand */
+  --accent: #7c3aed;
+  --accent-hover: #6d28d9;
+  --accent-bg: rgba(124, 58, 237, 0.08);
+  --accent-border: rgba(124, 58, 237, 0.2);
   
   /* Status Colors */
   --success: #1e8e3e;
@@ -59,18 +59,18 @@
   --text-h: #f9fafb;
   --text-secondary: #cbd5e1;
   
-  /* Background Colors — true black base, faint blue-lifted surfaces (premium) */
-  --bg: #000000;
-  --bg-secondary: #03040a;
-  --bg-elevated: #070910;
-  --border: #12151f;
-  --code-bg: #03040a;
+  /* Background Colors — near-black base, faint violet-lifted surfaces (premium) */
+  --bg: #060509;
+  --bg-secondary: #0a0812;
+  --bg-elevated: #0e0b18;
+  --border: #1c1626;
+  --code-bg: #0a0812;
 
   /* Accent Colors */
-  --accent: #8ab4f8;
-  --accent-hover: #aecbfa;
-  --accent-bg: rgba(138, 180, 248, 0.15);
-  --accent-border: rgba(138, 180, 248, 0.3);
+  --accent: #a78bfa;
+  --accent-hover: #c4b5fd;
+  --accent-bg: rgba(167, 139, 250, 0.15);
+  --accent-border: rgba(167, 139, 250, 0.3);
   
   /* Status Colors */
   --success: #81c995;
@@ -159,13 +159,13 @@
 }
 
 .setting-switch-track--on {
-  background-color: #1a73e8 !important;
-  border-color: #1557b0 !important;
+  background-color: #7c3aed !important;
+  border-color: #5b21b6 !important;
 }
 
 .dark .setting-switch-track--on {
-  background-color: #8ab4f8 !important;
-  border-color: #669df6 !important;
+  background-color: #a78bfa !important;
+  border-color: #c4b5fd !important;
 }
 
 .setting-switch-knob {
@@ -184,13 +184,13 @@
 }
 
 .read-mode .setting-switch-track--on {
-  background-color: #1a73e8 !important;
-  border-color: #1557b0 !important;
+  background-color: #7c3aed !important;
+  border-color: #5b21b6 !important;
 }
 
 .read-mode.dark .setting-switch-track--on {
-  background-color: #8ab4f8 !important;
-  border-color: #669df6 !important;
+  background-color: #a78bfa !important;
+  border-color: #c4b5fd !important;
 }
 
 .read-mode .setting-switch-knob,
@@ -501,10 +501,10 @@ pre code {
 }
 
 /* =========================
-   TEXT SELECTION - GOOGLE BLUE
+   TEXT SELECTION - VIOLET BRAND
 ========================= */
 ::selection {
-  background: rgba(26, 115, 232, 0.2);
+  background: rgba(124, 58, 237, 0.22);
   color: var(--text-h);
 }
 
@@ -555,8 +555,8 @@ select optgroup,
 .dark select,
 .dark .app-select {
   color: #e8eaed !important;
-  background-color: #070910 !important;
-  border-color: #12151f !important;
+  background-color: #0e0b18 !important;
+  border-color: #1c1626 !important;
   color-scheme: dark;
 }
 
@@ -564,7 +564,7 @@ select optgroup,
 .dark select optgroup,
 .dark .app-select option,
 .dark .app-select optgroup {
-  background-color: #070910 !important;
+  background-color: #0e0b18 !important;
   color: #e8eaed !important;
 }
 
@@ -713,7 +713,7 @@ textarea:focus {
   opacity: 0.92;
 }
 
-.read-mode :where([class*="bg-\[#1a73e8\]"], [class*="bg-\[#8ab4f8\]"]) {
+.read-mode :where([class*="bg-\[#7c3aed\]"], [class*="bg-\[#a78bfa\]"]) {
   background-color: var(--read-btn-bg) !important;
   color: var(--read-btn-text) !important;
   box-shadow: none !important;

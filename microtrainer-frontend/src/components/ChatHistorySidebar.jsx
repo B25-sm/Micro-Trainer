@@ -40,7 +40,7 @@ export default function ChatHistorySidebar({
               onNewChat?.();
               setMobileOpen(false);
             }}
-            className="text-xs font-medium px-2.5 py-1.5 rounded-lg bg-[#1a73e8] dark:bg-[#8ab4f8] text-white dark:text-gray-900 hover:opacity-90"
+            className="text-xs font-medium px-2.5 py-1.5 rounded-lg bg-[#7c3aed] dark:bg-[#a78bfa] text-white dark:text-gray-900 hover:opacity-90"
           >
             New
           </button>
@@ -180,7 +180,7 @@ export default function ChatHistorySidebar({
         <button
           type="button"
           onClick={() => setMobileOpen(true)}
-          className="fixed bottom-20 left-4 lg:left-auto lg:bottom-[4.5rem] lg:right-6 z-30 text-xs text-gray-500 dark:text-gray-400 hover:text-[#1a73e8] dark:hover:text-[#8ab4f8] underline-offset-2 hover:underline transition"
+          className="fixed bottom-20 left-4 lg:left-auto lg:bottom-[4.5rem] lg:right-6 z-30 text-xs text-gray-500 dark:text-gray-400 hover:text-[#7c3aed] dark:hover:text-[#a78bfa] underline-offset-2 hover:underline transition"
           aria-label="Open question history"
         >
           Past questions ({sessions.length})

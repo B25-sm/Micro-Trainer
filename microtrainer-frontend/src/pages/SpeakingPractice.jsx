@@ -100,7 +100,7 @@ export default function SpeakingPractice() {
         <header className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <Shuffle className="h-6 w-6 text-[#1a73e8] dark:text-[#8ab4f8]" strokeWidth={1.75} />
+              <Shuffle className="h-6 w-6 text-[#7c3aed] dark:text-[#a78bfa]" strokeWidth={1.75} />
               <h1 className={headingPage}>Speaking Practice</h1>
             </div>
             <p className={`${textMuted} max-w-xl`}>

@@ -517,7 +517,7 @@ export default function ConceptCards({ sections, seed }) {
           aria-pressed={colorOn}
           className={`flex shrink-0 items-center justify-center rounded-full p-1.5 transition-colors ${
             colorOn
-              ? "text-[#1a73e8] hover:bg-blue-50 dark:text-[#8ab4f8] dark:hover:bg-[#2a2b2e]"
+              ? "text-[#7c3aed] hover:bg-blue-50 dark:text-[#a78bfa] dark:hover:bg-[#2a2b2e]"
               : "text-gray-400 hover:bg-gray-100 dark:text-gray-500 dark:hover:bg-[#2a2b2e]"
           }`}
         >
@@ -580,7 +580,7 @@ export default function ConceptCards({ sections, seed }) {
           <button
             type="button"
             onClick={() => goTo(index + 1)}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-[#1a73e8] px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#1765cc] dark:bg-[#8ab4f8] dark:text-gray-900 dark:hover:bg-[#a5c6fa]"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-[#7c3aed] px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#6d28d9] dark:bg-[#a78bfa] dark:text-gray-900 dark:hover:bg-[#a5c6fa]"
           >
             Next
             <ChevronRight className="h-4 w-4" />

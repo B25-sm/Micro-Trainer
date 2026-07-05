@@ -226,7 +226,7 @@ export default function NotificationSettings() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-24">
-        <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-300 dark:border-gray-600 border-t-[#1a73e8] dark:border-t-[#8ab4f8]" />
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-300 dark:border-gray-600 border-t-[#7c3aed] dark:border-t-[#a78bfa]" />
       </div>
     );
   }

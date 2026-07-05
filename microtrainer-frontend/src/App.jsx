@@ -25,6 +25,8 @@ import CommunicationReview from "./pages/CommunicationReview.jsx";
 import SpeakingPractice from "./pages/SpeakingPractice.jsx";
 import CompanyInterviews from "./pages/CompanyInterviews.jsx";
 import CompanyInterview from "./pages/CompanyInterview.jsx";
+import AiChat from "./pages/AiChat.jsx";
+import AiChatSettings from "./pages/AiChatSettings.jsx";
 
 // Protected Route Component
 import { TrainerOnly } from "./components/ProtectedRoute.jsx";
@@ -222,6 +224,28 @@ function App() {
               <RequireAuth>
                 <MainLayout>
                   <CompanyInterview />
+                </MainLayout>
+              </RequireAuth>
+            }
+          />
+
+          {/* AI Chat - ChatGPT-style Grok assistant */}
+          <Route
+            path="/ai-chat"
+            element={
+              <RequireAuth>
+                <MainLayout>
+                  <AiChat />
+                </MainLayout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/ai-chat/settings"
+            element={
+              <RequireAuth>
+                <MainLayout>
+                  <AiChatSettings />
                 </MainLayout>
               </RequireAuth>
             }
