@@ -412,16 +412,23 @@ body {
 }
 
 /* Satin metallic-silver answer card. This is the default concept palette in
-   both themes; students can still opt back into the colored palettes. */
+   both themes; students can still opt back into the colored palettes.
+   Only the outer edge gets the metallic sheen — header and body keep the
+   app's normal light/dark surface so text stays legible in both themes. */
 .concept-metallic-silver {
-  background-color: #d7d8dc;
-  background-image:
-    radial-gradient(ellipse at 16% 2%, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0) 34%),
-    linear-gradient(132deg, #f8f8f9 0%, #c5c7cc 19%, #eeeeef 39%, #b4b6bc 58%, #f4f4f5 79%, #c8c9ce 100%) !important;
-  border-color: #aeb0b6;
+  background-color: #ffffff;
+  border: 1.5px solid #c7c9cf;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    0 10px 28px -22px rgba(31, 35, 42, 0.65);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6),
+    0 10px 28px -22px rgba(31, 35, 42, 0.5);
+}
+
+.dark .concept-metallic-silver {
+  background-color: #1a1b1e;
+  border-color: #7a7d85;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 10px 28px -22px rgba(0, 0, 0, 0.65);
 }
 
 .concept-metallic-silver .concept-stage-heading {
@@ -429,21 +436,21 @@ body {
   text-shadow: none;
 }
 
+.dark .concept-metallic-silver .concept-stage-heading {
+  color: #f4f4f4;
+}
+
 .concept-metallic-silver .concept-stage-icon {
-  background: rgba(17, 17, 17, 0.1);
+  background: rgba(17, 17, 17, 0.08);
 }
 
-.concept-metallic-silver .concept-text-panel {
-  background: rgba(255, 255, 255, 0.24) !important;
-}
-
-.dark .concept-metallic-silver .learning-prose,
-.dark .concept-metallic-silver .learning-prose :where(p, li, em, strong, h1, h2, h3, a) {
-  color: #171717 !important;
+.dark .concept-metallic-silver .concept-stage-icon {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .concept-metallic-silver.concept-style-plain {
   background: transparent !important;
+  border: none !important;
   border-radius: 0 !important;
   box-shadow: none !important;
   padding: 0 !important;
