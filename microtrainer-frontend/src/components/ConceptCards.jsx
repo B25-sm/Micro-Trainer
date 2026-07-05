@@ -311,11 +311,11 @@ const LANG_BADGE = {
 function Stage({ theme, icon: Icon, title, children }) {
   return (
     <div
-      className={`flex flex-col overflow-hidden rounded-[1.5rem] bg-gradient-to-br ${theme.stage} p-2.5 ${theme.glow} sm:p-3`}
+      className={`flex flex-col overflow-hidden rounded-[1.25rem] bg-gradient-to-br ${theme.stage} p-2 ${theme.glow}`}
     >
-      <div className="mb-2 flex items-center gap-2.5 px-1.5 py-1 text-white">
-        <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
-          <Icon className="h-4 w-4" strokeWidth={2.6} />
+      <div className="mb-1 flex items-center gap-2 px-1.5 py-1 text-white">
+        <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-white/20 backdrop-blur-sm">
+          <Icon className="h-3.5 w-3.5" strokeWidth={2.6} />
         </span>
         <h3 className="text-sm font-semibold tracking-wide drop-shadow-sm">
           {title}
@@ -328,7 +328,7 @@ function Stage({ theme, icon: Icon, title, children }) {
 
 function TextPanel({ body }) {
   return (
-    <div className="flex-1 rounded-xl bg-white px-5 py-4 dark:bg-[#1a1b1e] sm:px-7 sm:py-6 read-mode:bg-[var(--read-surface)]">
+    <div className="flex-1 rounded-xl bg-white px-4 py-3 dark:bg-[#1a1b1e] sm:px-5 sm:py-4 read-mode:bg-[var(--read-surface)]">
       <div className="text-[15px] leading-relaxed text-gray-700 dark:text-slate-300">
         <ReactMarkdown components={textComponents}>
           {normalizeLessonMarkdown(body)}
@@ -366,7 +366,7 @@ function CodeWindow({ lang, code, note }) {
         </div>
 
         {/* Code body — clean, no gutter (snappify style) */}
-        <div className="overflow-x-auto px-4 py-4 sm:px-5">
+        <div className="overflow-x-auto px-4 py-3">
           <pre className="m-0 font-mono text-[12.5px] leading-[1.75]">
             <code className="block">
               {lines.map((line, idx) => (
@@ -380,7 +380,7 @@ function CodeWindow({ lang, code, note }) {
       </div>
 
       {note && (
-        <div className="mt-3 rounded-xl bg-white px-5 py-4 dark:bg-[#1a1b1e] read-mode:bg-[var(--read-surface)]">
+        <div className="mt-2 rounded-xl bg-white px-4 py-3 dark:bg-[#1a1b1e] read-mode:bg-[var(--read-surface)]">
           <p className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-purple-600 dark:text-purple-300">
             Note
           </p>
