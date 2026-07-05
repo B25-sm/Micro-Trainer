@@ -285,6 +285,7 @@ const {
   getTechnicalIntent,
   isScopeRefusal,
 } = require("./services/chatTechnicalIntentService");
+const { callGroq } = require("./services/groqClient");
 const { saveStudentLevel, getStudentLevel } = require("./services/memoryService");
 const {
   logAskTopic,
@@ -529,21 +530,14 @@ Don't:
     ];
 
     // Call GROQ API
-    const response = await axios.post(
-      "https://api.groq.com/openai/v1/chat/completions",
+    const response = await callGroq(
       {
         model: "llama-3.1-8b-instant",
         messages: messages,
         temperature: referenceFacts ? 0.35 : 0.5,
         max_tokens: 950
       },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-          "Content-Type": "application/json"
-        },
-        timeout: 15000
-      }
+      1
     );
 
     let answer = response?.data?.choices?.[0]?.message?.content || "I'm having trouble responding right now. Please try again.";
@@ -561,21 +555,14 @@ Don't:
         },
       ];
       try {
-        const retryResponse = await axios.post(
-          "https://api.groq.com/openai/v1/chat/completions",
+        const retryResponse = await callGroq(
           {
             model: "llama-3.1-8b-instant",
             messages: retryMessages,
             temperature: 0.25,
             max_tokens: 950,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-              "Content-Type": "application/json",
-            },
-            timeout: 15000,
-          }
+          1
         );
         answer = retryResponse?.data?.choices?.[0]?.message?.content || answer;
       } catch (retryError) {
@@ -612,8 +599,9 @@ Don't:
       });
     }
     
-    res.status(500).json({ 
-      error: "I'm having trouble connecting. Please try again." 
+    const status = error.isRateLimit ? 429 : 503;
+    res.status(status).json({
+      error: error.message || "I'm having trouble connecting. Please try again."
     });
   }
 });
