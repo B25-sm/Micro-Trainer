@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GraduationCap, X, Loader2 } from "lucide-react";
 import { chatQuickCheck } from "../api";
+import useClipboardGuard from "../hooks/useClipboardGuard";
 
 /**
  * Optional, skippable "Test yourself" card shown after a student learns a
@@ -14,6 +15,8 @@ export default function QuickCheckCard({ topic }) {
   const [answers, setAnswers] = useState([]);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
+
+  useClipboardGuard(phase === "answering" || phase === "grading");
 
   if (phase === "dismissed") return null;
 

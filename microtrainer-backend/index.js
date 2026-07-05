@@ -157,6 +157,7 @@ const {
 
 // 🔥 NEW RANKING SYSTEM
 const { getLeaderboard } = require("./services/rankingService");
+const { getOpportunities } = require("./services/opportunityService");
 
 // 🔥 CODE EXECUTION & PROBLEM SOLVING
 const {
@@ -1106,6 +1107,25 @@ app.get("/dashboard/trends", async (req, res) => {
   } catch (error) {
     console.error("TRENDS ERROR:", error.message);
     res.status(500).json({ error: "Trends failed" });
+  }
+});
+
+
+// =======================================================
+// 💼 OPPORTUNITIES (live jobs/issues/bounties tied to a concept)
+// =======================================================
+
+app.get("/opportunities", async (req, res) => {
+  const { tech, concept } = req.query;
+  if (!tech) {
+    return res.status(400).json({ error: "tech is required" });
+  }
+  try {
+    const opportunities = await getOpportunities(tech, concept);
+    res.json({ opportunities });
+  } catch (error) {
+    console.error("OPPORTUNITIES ERROR:", error.message);
+    res.json({ opportunities: [] }); // never breaks the learning UI
   }
 });
 

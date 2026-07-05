@@ -26,6 +26,7 @@ function resolveLearnStudentId() {
 import TechnologySelection from "../components/TechnologySelection";
 import ConceptList from "../components/ConceptList";
 import StructuredTeaching from "../components/StructuredTeaching";
+import OpportunityChip from "../components/OpportunityChip";
 
 const Learn = () => {
   // Learning mode state
@@ -43,6 +44,7 @@ const Learn = () => {
   
   // Ask Anything mode state
   const [concept, setConcept] = useState("");
+  const [topicLabel, setTopicLabel] = useState(""); // first question asked — the "concept" being taught
   const [conversation, setConversation] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState(null);
@@ -145,6 +147,10 @@ const Learn = () => {
     const userInput = concept.trim();
     setConcept("");
 
+    if (conversation.length === 0) {
+      setTopicLabel(userInput);
+    }
+
     // Add user message
     setConversation(prev => [...prev, {
       role: "user",
@@ -219,6 +225,7 @@ const Learn = () => {
     setCurrentLevel(null);
     setAwaitingAnswer(false);
     setConcept("");
+    setTopicLabel("");
     setHighlightedIndex(null);
   };
 
@@ -228,6 +235,7 @@ const Learn = () => {
     setSessionId(session.sessionId ?? null);
     setCurrentLevel(session.meta?.currentLevel ?? null);
     setAwaitingAnswer(session.meta?.awaitingAnswer ?? false);
+    setTopicLabel(session.messages?.[0]?.content || "");
     setHighlightedIndex(null);
   };
 
@@ -276,6 +284,7 @@ const Learn = () => {
       setSessionId(null);
       setAwaitingAnswer(false);
       setConcept("");
+      setTopicLabel("");
     }
   };
 
@@ -563,6 +572,7 @@ const Learn = () => {
         {/* Input Box - Only for Ask Anything mode */}
         {learningMode === "ask-anything" && (
           <div className="w-full sticky bottom-6">
+            {topicLabel && <OpportunityChip tech={topicLabel} />}
             <form onSubmit={handleSubmit} className="bg-white dark:bg-[#2d2f35] rounded-full border border-gray-200 dark:border-gray-600 shadow-lg hover:shadow-xl focus-within:shadow-xl transition-all duration-200">
               <div className="flex items-center gap-3 px-6 py-4">
                 <input

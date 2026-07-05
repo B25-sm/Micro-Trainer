@@ -15,6 +15,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import CircularTimer from "../components/CircularTimer";
 import WebcamProctor from "../components/WebcamProctor";
+import OpportunityChip from "../components/OpportunityChip";
 import { getSessionStudentId, getStudentApiHeaders, getAuthUser } from "../utils/authSession";
 import { getTrack, getCareerTrack } from "../utils/careerTracks";
 
@@ -857,6 +858,7 @@ IMPORTANT:
               Need to leave? Use End interview above — progress is saved.
             </p>
           )}
+          {session?.completed && <OpportunityChip tech={subject} />}
           <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#202124] shadow-sm transition-shadow">
             <div className="flex items-end gap-3 px-5 py-3">
               <textarea

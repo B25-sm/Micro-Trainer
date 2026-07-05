@@ -14,6 +14,7 @@ import DisplayModeToggle from "./DisplayModeToggle";
 import LessonLoadingScreen, { LESSON_LOAD_ESTIMATE_SEC } from "./LessonLoadingScreen";
 import { needsElaborationRequest } from "../utils/quizAnswerUtils";
 import { createLessonMarkdownComponents } from "../utils/lessonMarkdown";
+import OpportunityChip from "./OpportunityChip";
 
 const quizMdComponents = createLessonMarkdownComponents();
 
@@ -811,6 +812,7 @@ const StructuredTeaching = ({
                 }}
               />
             </div>
+            <OpportunityChip tech={technology} concept={conceptData.title} />
             {!showingQuestions && !assessmentResult && (
               <div className="space-y-0">
                 <DisplayModeToggle />

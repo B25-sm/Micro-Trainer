@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Code2, Lightbulb, Target, Trophy, ChevronRight, History } from 'lucide-react';
 import CodeEditor from '../components/CodeEditor';
+import OpportunityChip from '../components/OpportunityChip';
 import { API_BASE, getCodePracticeHistory } from '../api.js';
 import { getStudentId } from '../utils/studentAuth';
 import { btnPrimary, btnSecondary, headingPage, textMuted, card } from '../lib/ui';
@@ -336,6 +337,7 @@ const ProblemSolving = () => {
                 </div>
 
                 {/* Code Editor */}
+                <OpportunityChip tech="javascript" concept={selectedProblem.title} />
                 <div className="flex h-[32rem] min-h-0 flex-none flex-col">
                   <CodeEditor
                     key={`${selectedProblem.id}-${selectedProblem.title}`}

@@ -6,6 +6,8 @@ import { companyInterviewAPI } from "../api/companyInterview";
 import { getStudentId } from "../utils/studentAuth";
 import { btnPrimary, btnSecondary, card, textMuted } from "../lib/ui";
 import CircularTimer from "../components/CircularTimer";
+import useClipboardGuard from "../hooks/useClipboardGuard";
+import OpportunityChip from "../components/OpportunityChip";
 
 function eligibilityStyle(fitResult) {
   if (fitResult?.eligible) {
@@ -56,6 +58,8 @@ export default function CompanyInterview() {
   const [questionSecondsLeft, setQuestionSecondsLeft] = useState(90);
   const [questionDifficulty, setQuestionDifficulty] = useState("medium");
   const chatEndRef = useRef(null);
+
+  useClipboardGuard(Boolean(session && !session.completed && !fitResult));
 
   const scrollToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -386,6 +390,8 @@ export default function CompanyInterview() {
                   </ul>
                 </div>
               )}
+
+              <OpportunityChip tech={fitResult.role} />
 
               <div className="flex flex-wrap gap-2">
                 <button type="button" onClick={() => navigate("/company-interviews")} className={btnPrimary}>

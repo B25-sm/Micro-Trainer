@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { startInterview, sendAnswer, abandonInterview } from "../../api";
 import { personalScheduleAPI } from "../../api/personalSchedule";
 import { btnPrimary, btnSecondary, card, textMuted } from "../../lib/ui";
+import useClipboardGuard from "../../hooks/useClipboardGuard";
 
 const QUESTIONS_PER_TECH = 5;
 
@@ -21,6 +22,8 @@ export default function ScheduleDiagnostic({
   const [loading, setLoading] = useState(false);
   const [starting, setStarting] = useState(true);
   const [interviewerNote, setInterviewerNote] = useState("");
+
+  useClipboardGuard(Boolean(sessionId && !starting));
 
   useEffect(() => {
     let cancelled = false;
@@ -54,7 +57,6 @@ export default function ScheduleDiagnostic({
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- restart only when technology changes
   }, [technology, interviewSubject, studentId]);
 
   const handleSubmit = async (e) => {

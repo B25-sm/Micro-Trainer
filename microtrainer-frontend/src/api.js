@@ -233,6 +233,14 @@ export const trackBehavior = (data) =>
 
 
 // =======================================================
+// 🔹 OPPORTUNITIES (live jobs/issues/bounties tied to a concept)
+// =======================================================
+
+export const getOpportunities = (tech, concept) =>
+  API.get("/opportunities", { params: { tech, concept } });
+
+
+// =======================================================
 // 🔹 EXPORT DEFAULT
 // =======================================================
 
