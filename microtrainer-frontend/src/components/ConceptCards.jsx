@@ -307,13 +307,13 @@ const LANG_BADGE = {
   bash: "SH", sh: "SH", html: "<>", css: "CSS",
 };
 
-/** A vibrant gradient "stage" that frames its content, snappify-style. */
+/** A slim gradient stage that frames the content without overpowering it. */
 function Stage({ theme, icon: Icon, title, children }) {
   return (
     <div
-      className={`flex flex-col overflow-hidden rounded-[2rem] bg-gradient-to-br ${theme.stage} p-4 ${theme.glow} sm:p-5`}
+      className={`flex flex-col overflow-hidden rounded-[1.5rem] bg-gradient-to-br ${theme.stage} p-2.5 ${theme.glow} sm:p-3`}
     >
-      <div className="mb-3 flex items-center gap-2.5 px-1 pt-0.5 text-white">
+      <div className="mb-2 flex items-center gap-2.5 px-1.5 py-1 text-white">
         <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
           <Icon className="h-4 w-4" strokeWidth={2.6} />
         </span>
