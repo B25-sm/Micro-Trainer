@@ -23,7 +23,7 @@
 const axios = require("axios");
 
 const CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12h
-const MAX_RESULTS = 10;
+const MAX_RESULTS = 6;
 const cache = new Map(); // "tech::concept" -> { data, expiresAt }
 
 // Seniority we never surface to a learner. Word-boundary matched so short
@@ -151,9 +151,34 @@ function githubHeaders() {
 function githubTechTerms(stack, tech, concept) {
   const parts = [];
   if (stack) parts.push(`language:${stack.githubLanguage}`);
-  else if (tech) parts.push(String(tech));
-  if (concept) parts.push(String(concept));
+  const tokens = topicTokens(tech, concept).slice(0, 4);
+  if (tokens.length) parts.push(...tokens);
   return parts;
+}
+
+const RELEVANCE_STOP_WORDS = new Set([
+  "what", "why", "when", "where", "which", "with", "from", "this", "that",
+  "about", "explain", "example", "code", "using", "used", "does", "work",
+]);
+
+function topicTokens(tech, concept) {
+  return String(concept || tech || "")
+    .toLowerCase()
+    .match(/[a-z0-9+#.]{3,}/g)?.filter((token) => !RELEVANCE_STOP_WORDS.has(token)) || [];
+}
+
+function isGithubIssueRelevant(issue, tech, concept) {
+  const tokens = topicTokens(tech, concept);
+  if (!tokens.length) return false;
+  const technologyTokens = new Set([
+    "react", "javascript", "typescript", "python", "java", "django", "node",
+    "express", "frontend", "backend", "mern", "sql", "mysql", "postgres",
+  ]);
+  const specificTokens = tokens.filter((token) => !technologyTokens.has(token));
+  const requiredTokens = specificTokens.length ? specificTokens : tokens;
+  const labels = (issue.labels || []).map((label) => label?.name || label).join(" ");
+  const haystack = `${issue.title || ""} ${issue.body || ""} ${labels} ${issue.repository_url || ""}`.toLowerCase();
+  return requiredTokens.some((token) => haystack.includes(token));
 }
 
 async function searchGithubIssues(query) {
@@ -174,7 +199,7 @@ async function fetchGithubIssues(stack, tech, concept) {
       ...githubTechTerms(stack, tech, concept),
     ].join(" ");
     const items = await searchGithubIssues(query);
-    return items.map((issue) => ({
+    return items.filter((issue) => isGithubIssueRelevant(issue, tech, concept)).map((issue) => ({
       type: "issue",
       title: issue.title,
       org: (issue.repository_url || "").split("/").slice(-2).join("/"),
@@ -199,7 +224,7 @@ async function fetchBounties(stack, tech, concept) {
       ...githubTechTerms(stack, tech, concept),
     ].join(" ");
     const items = await searchGithubIssues(query);
-    return items.map((issue) => ({
+    return items.filter((issue) => isGithubIssueRelevant(issue, tech, concept)).map((issue) => ({
       type: "bounty",
       title: issue.title,
       org: (issue.repository_url || "").split("/").slice(-2).join("/"),
@@ -301,6 +326,9 @@ async function getOpportunities(tech, concept) {
   }
 
   const stack = resolveStack(tech, concept);
+  // A language-agnostic concept such as "inheritance" or "authentication"
+  // cannot be mapped to credible jobs/issues without knowing the stack.
+  if (!stack) return [];
 
   const [issues, bounties, jobs] = await Promise.all([
     fetchGithubIssues(stack, tech, concept),
@@ -316,4 +344,4 @@ async function getOpportunities(tech, concept) {
   return data;
 }
 
-module.exports = { getOpportunities, resolveStack };
+module.exports = { getOpportunities, resolveStack, isGithubIssueRelevant };

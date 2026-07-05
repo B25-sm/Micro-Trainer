@@ -155,6 +155,7 @@ const Home = () => {
     setSessionId(null);
     setQuestion("");
     setHighlightedIndex(null);
+    setLastConcept(null);
   };
 
   const handleSelectSession = (session) => {
