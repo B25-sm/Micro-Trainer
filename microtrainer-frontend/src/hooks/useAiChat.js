@@ -8,6 +8,7 @@ import {
 } from "../api";
 import { streamAiChat } from "../utils/aiChatStream";
 import { loadAiChatSettings } from "../utils/aiChatSettingsStorage";
+import { toStreamAttachments } from "../utils/fileAttachments";
 
 function genLocalId() {
   return `local-${crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`}`;
@@ -156,8 +157,9 @@ export function useAiChat() {
   );
 
   const sendMessage = useCallback(
-    async (content) => {
-      if (!content.trim() || isStreaming) return;
+    async (content, attachments = []) => {
+      const text = (content || "").trim();
+      if ((!text && !attachments.length) || isStreaming) return;
 
       let conversationId = activeId;
       if (!conversationId) {
@@ -167,17 +169,28 @@ export function useAiChat() {
         refreshConversations();
       }
 
+      // Chip metadata for the optimistic bubble (images keep their local
+      // dataUrl only until the server reconciles the message).
+      const chipMeta = attachments.map((a) => ({
+        id: a.id,
+        name: a.name,
+        kind: a.kind,
+        size: a.size,
+        dataUrl: a.kind === "image" ? a.dataUrl : undefined,
+      }));
+
       const userMessage = {
         id: genLocalId(),
         role: "user",
-        content: content.trim(),
+        content: text,
+        attachments: chipMeta,
         createdAt: new Date().toISOString(),
       };
       const assistantPlaceholder = placeholderAssistantMessage();
       streamingTargetIdRef.current = assistantPlaceholder.id;
 
       setMessages((prev) => [...prev, userMessage, assistantPlaceholder]);
-      runStream(conversationId, "send", { content: content.trim() });
+      runStream(conversationId, "send", { content: text, attachments: toStreamAttachments(attachments) });
     },
     [activeId, isStreaming, runStream, refreshConversations]
   );

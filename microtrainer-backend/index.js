@@ -429,7 +429,7 @@ const chatSessions = {};
 
 app.post("/chat/ask", requireStudentIdentity, async (req, res) => {
   try {
-    const { question, sessionId, studentId } = req.body;
+    const { question, sessionId, studentId, attachmentText } = req.body;
 
     if (!question || typeof question !== "string") {
       return res.status(400).json({ error: "Question is required" });
@@ -438,6 +438,11 @@ app.post("/chat/ask", requireStudentIdentity, async (req, res) => {
     if (question.length > 500) {
       return res.status(400).json({ error: "Question too long (max 500 characters)" });
     }
+
+    // Optional extracted document text (from an attached file). Capped so a
+    // large upload can't blow past the model's context window.
+    const cleanAttachmentText =
+      typeof attachmentText === "string" ? attachmentText.slice(0, 16000).trim() : "";
 
     // Get or create session
     const sid = sessionId || "chat_" + Date.now();
@@ -466,6 +471,12 @@ app.post("/chat/ask", requireStudentIdentity, async (req, res) => {
     });
     const technicalIntentHint = technicalIntent.recognized
       ? `INTERNAL ROUTING: This prompt has already been recognized as technical. Do NOT apply the out-of-scope refusal. Interpret the student's wording as: ${matchingText}`
+      : "";
+    // A student who attaches a document (resume, code, notes) clearly wants it
+    // discussed — treat reviewing/summarizing/improving it as in-scope so the
+    // "technical topics only" guard doesn't falsely refuse it.
+    const attachmentHint = cleanAttachmentText
+      ? "INTERNAL ROUTING: The student attached a document (included below). Reviewing, summarizing, improving, or answering questions about this document — especially resumes, cover letters, code, or study material — is IN SCOPE for interview/career prep. Do NOT apply the out-of-scope refusal to questions about the attached document."
       : "";
     const messages = [
       {
@@ -524,7 +535,13 @@ Don't:
       ...session.history.slice(-6), // Last 3 exchanges
       {
         role: "user",
-        content: [technicalIntentHint, referenceFacts, `Student question:\n${question}`]
+        content: [
+          technicalIntentHint,
+          attachmentHint,
+          referenceFacts,
+          cleanAttachmentText ? `Attached document(s):\n${cleanAttachmentText}` : "",
+          `Student question:\n${question}`,
+        ]
           .filter(Boolean)
           .join("\n\n---\n\n")
       }

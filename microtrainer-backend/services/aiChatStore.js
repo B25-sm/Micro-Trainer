@@ -118,13 +118,22 @@ function saveMessages(ownerId, id, messages, extra = {}) {
   return conversation;
 }
 
-function createMessage({ role, content, hidden = false, usage = null }) {
+function createMessage({
+  role,
+  content,
+  hidden = false,
+  usage = null,
+  attachments = null,
+  contextText = null,
+}) {
   return {
     id: randomUUID(),
     role,
-    content,
+    content, // what the user sees (typed text)
+    contextText, // extra text sent to the model only (extracted doc text, image notes)
     hidden,
     usage,
+    attachments, // lightweight metadata only ({name, kind}); never image bytes
     createdAt: new Date().toISOString(),
   };
 }

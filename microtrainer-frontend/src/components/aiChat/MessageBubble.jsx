@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Check, Copy, Pencil, RotateCcw } from "lucide-react";
 import MarkdownRenderer from "./MarkdownRenderer";
 import TypingIndicator from "./TypingIndicator";
+import AttachmentChips from "../attachments/AttachmentChips";
 import { formatHistoryTime } from "../../utils/chatHistoryStorage";
 
 function UsageBadge({ usage }) {
@@ -81,6 +82,10 @@ export default function MessageBubble({ message, isLastAssistant, onEdit, onRege
   return (
     <div className={`group flex ${isUser ? "justify-end" : "justify-start"}`}>
       <div className={`max-w-2xl w-full ${isUser ? "flex flex-col items-end" : ""}`}>
+        {message.attachments?.length > 0 && (
+          <AttachmentChips attachments={message.attachments} />
+        )}
+        {(!isUser || message.content) && (
         <div
           className={
             isUser
@@ -106,6 +111,7 @@ export default function MessageBubble({ message, isLastAssistant, onEdit, onRege
             </>
           )}
         </div>
+        )}
 
         {message.errored && (
           <p className="text-xs text-red-500 mt-1">Failed to respond.</p>

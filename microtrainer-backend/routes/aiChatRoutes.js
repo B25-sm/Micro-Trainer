@@ -17,6 +17,44 @@ const DEFAULT_SYSTEM_PROMPT =
 const CONTINUE_NUDGE =
   "Continue exactly where you left off. Do not repeat any text you already wrote, and do not add a preamble.";
 
+const MAX_ATTACHMENT_TEXT = 16000;
+
+/**
+ * Fold a user turn's typed text + attachments into what we persist and what we
+ * send to Grok. Document text is inlined (it's just text); images are NOT
+ * persisted — history keeps a "[Attached image: name]" placeholder, and the
+ * raw dataUrls are returned separately for this turn's multimodal request only.
+ */
+function buildUserMessageParts(text = "", attachments = []) {
+  const list = Array.isArray(attachments) ? attachments : [];
+  const docs = list.filter((a) => a.kind === "document" && a.text);
+  const images = list.filter((a) => a.kind === "image" && a.dataUrl);
+
+  // Model-only context: extracted document text + notes that an image was
+  // shared (so later turns still "know" about it, without re-sending bytes).
+  const contextParts = [];
+  if (docs.length) {
+    let docText = docs
+      .map((d) => `--- Attached file: ${d.name} ---\n${d.text}`)
+      .join("\n\n");
+    if (docText.length > MAX_ATTACHMENT_TEXT) {
+      docText = `${docText.slice(0, MAX_ATTACHMENT_TEXT)}\n\n[…truncated]`;
+    }
+    contextParts.push(docText);
+  }
+  for (const img of images) {
+    contextParts.push(`[Attached image: ${img.name}]`);
+  }
+
+  const meta = list.map((a) => ({ name: a.name, kind: a.kind }));
+  return {
+    content: text || "", // what the user sees (typed text only)
+    contextText: contextParts.length ? contextParts.join("\n\n") : null,
+    images,
+    attachments: meta.length ? meta : null,
+  };
+}
+
 function resolveOwnerId(req) {
   return req.studentId || req.authUser?.email || null;
 }
@@ -83,16 +121,27 @@ router.post("/conversations/:id/stream", async (req, res) => {
   const conversation = store.getConversation(req.ownerId, req.params.id);
   if (!conversation) return res.status(404).json({ error: "Conversation not found" });
 
-  const { action, content, messageId, model, temperature, systemPrompt } = req.body || {};
+  const { action, content, messageId, model, temperature, systemPrompt, attachments } =
+    req.body || {};
 
   let messages = [...conversation.messages];
   let targetAssistantId;
+  let turnImages = []; // images to send to Grok for THIS turn only (not persisted)
 
   if (action === "send") {
-    if (!content?.trim()) {
-      return res.status(400).json({ error: "content is required" });
+    if (!content?.trim() && !(attachments && attachments.length)) {
+      return res.status(400).json({ error: "content or an attachment is required" });
     }
-    messages.push(store.createMessage({ role: "user", content: content.trim() }));
+    const built = buildUserMessageParts(content?.trim(), attachments);
+    turnImages = built.images;
+    messages.push(
+      store.createMessage({
+        role: "user",
+        content: built.content,
+        contextText: built.contextText,
+        attachments: built.attachments,
+      })
+    );
     const assistantMsg = store.createMessage({ role: "assistant", content: "" });
     messages.push(assistantMsg);
     targetAssistantId = assistantMsg.id;
@@ -172,6 +221,26 @@ router.post("/conversations/:id/stream", async (req, res) => {
     const contextMessages = buildContextWindow(messages, {
       systemPrompt: systemPrompt || DEFAULT_SYSTEM_PROMPT,
     });
+
+    // For this turn only, attach the raw images to the last user message as a
+    // multimodal content array (the stored history keeps just placeholders).
+    if (turnImages.length) {
+      for (let i = contextMessages.length - 1; i >= 0; i--) {
+        if (contextMessages[i].role === "user") {
+          contextMessages[i] = {
+            role: "user",
+            content: [
+              { type: "text", text: contextMessages[i].content },
+              ...turnImages.map((img) => ({
+                type: "image_url",
+                image_url: { url: img.dataUrl },
+              })),
+            ],
+          };
+          break;
+        }
+      }
+    }
 
     const upstream = await grokClient.streamGrokChat({
       messages: contextMessages,

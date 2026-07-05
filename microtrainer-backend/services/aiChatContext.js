@@ -16,8 +16,16 @@ const CHARS_PER_TOKEN = 4;
  * @param {number} opts.maxChars - approx char budget for history (excludes system prompt)
  * @param {number} opts.minKeep - always keep at least this many most-recent turns
  */
+// Merge the displayed text with any model-only context (extracted document
+// text / image notes) into the single string the model actually receives.
+function messageText(m) {
+  return [m.content, m.contextText].filter((s) => s && s.trim()).join("\n\n");
+}
+
 function buildContextWindow(messages, { systemPrompt, maxChars = 24000, minKeep = 4 } = {}) {
-  const usable = messages.filter((m) => m.content?.trim());
+  const usable = messages
+    .map((m) => ({ role: m.role, content: messageText(m) }))
+    .filter((m) => m.content.trim());
 
   let kept = [...usable];
   let totalChars = kept.reduce((sum, m) => sum + m.content.length, 0);
@@ -27,11 +35,9 @@ function buildContextWindow(messages, { systemPrompt, maxChars = 24000, minKeep 
     totalChars -= dropped.content.length;
   }
 
-  const history = kept.map((m) => ({ role: m.role, content: m.content }));
-
   return systemPrompt
-    ? [{ role: "system", content: systemPrompt }, ...history]
-    : history;
+    ? [{ role: "system", content: systemPrompt }, ...kept]
+    : kept;
 }
 
 function estimateTokens(text) {

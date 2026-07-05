@@ -12,6 +12,10 @@ import QuickCheckCard from "../components/QuickCheckCard";
 import OpportunityChip from "../components/OpportunityChip";
 import TopNudgeBanner from "../components/TopNudgeBanner";
 import { useSpeechToText } from "../hooks/useSpeechToText";
+import { useAttachments } from "../hooks/useAttachments";
+import AttachButton from "../components/attachments/AttachButton";
+import AttachmentChips from "../components/attachments/AttachmentChips";
+import { ACCEPT_DOCUMENTS, documentsToContextText } from "../utils/fileAttachments";
 
 const HOME_CHAT_STORAGE = "microtrainer-chat-history-home";
 
@@ -38,6 +42,7 @@ const Home = () => {
   const isChatting = chatHistory.length > 0;
   const hasSavedSessions = sessions.length > 0;
   const [historyOpen, setHistoryOpen] = useState(false);
+  const attach = useAttachments();
 
   useEffect(() => {
     if (chatHistory.length > 0) {
@@ -58,16 +63,29 @@ const Home = () => {
   }, [chatHistory, highlightedIndex]);
 
   const sendMessage = async (rawText) => {
-    const userQuestion = rawText.trim();
-    if (!userQuestion || isLoading) return;
+    const typed = rawText.trim();
+    const currentAttachments = attach.attachments;
+    if ((!typed && !currentAttachments.length) || isLoading) return;
+
+    // Without a typed question, use a default so the scoped tutor has an instruction.
+    const userQuestion = typed || "Please review the attached document.";
+    const attachmentText = documentsToContextText(currentAttachments);
+    const chipMeta = currentAttachments.map((a) => ({
+      id: a.id,
+      name: a.name,
+      kind: a.kind,
+      size: a.size,
+    }));
 
     setQuestion("");
+    attach.clearAttachments();
 
     setChatHistory((prev) => [
       ...prev,
       {
         role: "user",
         content: userQuestion,
+        attachments: chipMeta.length ? chipMeta : undefined,
         timestamp: new Date().toISOString(),
       },
     ]);
@@ -77,6 +95,7 @@ const Home = () => {
     try {
       const response = await chatWithMicroTrainer({
         question: userQuestion,
+        attachmentText: attachmentText || undefined,
         sessionId: sessionId,
         studentId: getStudentId(),
       });
@@ -199,6 +218,7 @@ const Home = () => {
               onKeyDown={handleKeyDown}
               onNewChat={startNewChat}
               lastConcept={lastConcept}
+              attach={attach}
             />
           ) : (
             <WelcomeView
@@ -208,6 +228,7 @@ const Home = () => {
               inputRef={inputRef}
               onSubmit={handleSubmit}
               onKeyDown={handleKeyDown}
+              attach={attach}
             />
           )}
         </main>
@@ -227,6 +248,7 @@ function WelcomeView({
   inputRef,
   onSubmit,
   onKeyDown,
+  attach,
 }) {
   return (
     <div className="flex-1 flex flex-col items-center px-4 sm:px-6 pt-[18vh] pb-10 overflow-y-auto">
@@ -259,6 +281,7 @@ function WelcomeView({
           placeholder="Ask a question..."
           size="large"
           className="w-full"
+          attach={attach}
         />
 
         <p className="w-full text-[11px] text-gray-400 dark:text-gray-500 text-center mt-2.5 break-words">
@@ -352,6 +375,7 @@ function ActiveChatView({
   onKeyDown,
   onNewChat,
   lastConcept,
+  attach,
 }) {
   return (
     <div className="flex-1 flex flex-col min-h-0">
@@ -451,6 +475,7 @@ function ActiveChatView({
             onKeyDown={onKeyDown}
             placeholder="Ask a follow-up..."
             size="compact"
+            attach={attach}
           />
         </div>
       </div>
@@ -470,8 +495,10 @@ function HomeChatInput({
   placeholder,
   size = "compact",
   className = "",
+  attach,
 }) {
   const isLarge = size === "large";
+  const hasAttachments = attach?.attachments?.length > 0;
   const speech = useSpeechToText({
     getBaseText: () => question,
     onTranscript: setQuestion,
@@ -485,19 +512,35 @@ function HomeChatInput({
   }, [isLoading, speech.isRecording, speech.stopRecording]);
 
   return (
-    <form
-      onSubmit={onSubmit}
-      className={`relative ${className} ${
-        isLarge
-          ? "rounded-full border border-black/[0.08] dark:border-white/10 bg-white dark:bg-[#2f2f2f] shadow-sm dark:shadow-none focus-within:border-black/20 dark:focus-within:border-white/20 transition-colors duration-200"
-          : "rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#2f2f2f] shadow-sm dark:shadow-none focus-within:border-black/20 dark:focus-within:border-white/20 transition-colors"
-      }`}
-    >
-      <div
-        className={`flex items-center gap-2 ${
-          isLarge ? "pl-5 pr-2 py-2" : "px-4 py-3 items-end"
+    <div className={`relative ${className}`}>
+      {attach?.error && (
+        <p className="text-xs text-red-500 px-1 pb-1.5">{attach.error}</p>
+      )}
+      {hasAttachments && (
+        <AttachmentChips attachments={attach.attachments} onRemove={attach.removeAttachment} />
+      )}
+      <form
+        onSubmit={onSubmit}
+        className={`relative ${
+          isLarge || hasAttachments
+            ? "rounded-3xl border border-black/[0.08] dark:border-white/10 bg-white dark:bg-[#2f2f2f] shadow-sm dark:shadow-none focus-within:border-black/20 dark:focus-within:border-white/20 transition-colors duration-200"
+            : "rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#2f2f2f] shadow-sm dark:shadow-none focus-within:border-black/20 dark:focus-within:border-white/20 transition-colors"
         }`}
       >
+      <div
+        className={`flex items-center gap-1.5 ${
+          isLarge ? "pl-2 pr-2 py-2" : "px-2 py-2 items-end"
+        }`}
+      >
+        {!speech.isRecording && (
+          <AttachButton
+            accept={ACCEPT_DOCUMENTS}
+            count={attach?.attachments?.length || 0}
+            onAdd={attach?.addAttachments}
+            onError={attach?.setError}
+            disabled={isLoading}
+          />
+        )}
         {speech.isRecording ? (
           <div className="flex min-w-0 flex-1 items-center gap-3 px-1" role="status">
             <div className="flex h-7 shrink-0 items-center gap-[2px]" aria-hidden="true">
@@ -575,7 +618,7 @@ function HomeChatInput({
         )}
         {!speech.isRecording && <button
           type="submit"
-          disabled={!question.trim() || isLoading}
+          disabled={(!question.trim() && !hasAttachments) || isLoading}
           className={`flex-shrink-0 flex items-center justify-center rounded-full bg-gradient-to-b from-[#8b5cf6] to-[#7c3aed] dark:from-[#b7a3fb] dark:to-[#a78bfa] text-white dark:text-gray-900 shadow-[0_2px_8px_-2px_rgba(124,58,237,0.35)] dark:shadow-[0_2px_9px_-2px_rgba(167,139,250,0.28)] hover:opacity-90 transition disabled:opacity-30 disabled:shadow-none disabled:cursor-not-allowed ${
             isLarge ? "h-9 w-9" : "h-9 w-9"
           }`}
@@ -616,6 +659,7 @@ function HomeChatInput({
           {question.length}/500
         </div>
       )}
-    </form>
+      </form>
+    </div>
   );
 }

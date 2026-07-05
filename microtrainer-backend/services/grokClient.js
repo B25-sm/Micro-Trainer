@@ -9,8 +9,10 @@ const GROK_BASE_URL = "https://api.x.ai/v1/chat/completions";
 
 // Models this backend allows a client to request; anything else is clamped
 // to the default so a caller can never point the server at an arbitrary model.
-const ALLOWED_MODELS = ["grok-4-latest", "grok-3-mini"];
+const ALLOWED_MODELS = ["grok-4-latest", "grok-3-mini", "grok-2-vision-latest"];
 const DEFAULT_MODEL = "grok-4-latest";
+// Used automatically when a request contains image content.
+const VISION_MODEL = "grok-2-vision-latest";
 
 function loadGrokKey() {
   let key = process.env.GROK_API_KEY;
@@ -98,6 +100,14 @@ async function callGrokOnce({ messages, model, maxTokens = 20, temperature = 0.4
  * response.body as Server-Sent Events coming from xAI (OpenAI-compatible
  * format: lines like `data: {...}` ending with `data: [DONE]`).
  */
+function messagesContainImage(messages) {
+  return messages.some(
+    (m) =>
+      Array.isArray(m.content) &&
+      m.content.some((part) => part?.type === "image_url")
+  );
+}
+
 async function streamGrokChat({ messages, model, temperature, maxTokens, signal }) {
   const key = loadGrokKey();
   if (!key) {
@@ -106,6 +116,11 @@ async function streamGrokChat({ messages, model, temperature, maxTokens, signal 
     );
   }
 
+  // Images require a vision-capable model regardless of what the client asked for.
+  const resolvedModel = messagesContainImage(messages)
+    ? VISION_MODEL
+    : resolveModel(model);
+
   const response = await fetch(GROK_BASE_URL, {
     method: "POST",
     headers: {
@@ -113,7 +128,7 @@ async function streamGrokChat({ messages, model, temperature, maxTokens, signal 
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: resolveModel(model),
+      model: resolvedModel,
       messages,
       temperature: clampTemperature(temperature),
       max_tokens: maxTokens || 4096,
