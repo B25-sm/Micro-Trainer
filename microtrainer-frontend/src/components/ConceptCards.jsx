@@ -23,19 +23,14 @@ const textComponents = createLessonMarkdownComponents();
 /* ------------------------------------------------------------------ */
 
 const FENCE_RE = /```([\w+#-]*)\s*\n?([\s\S]*?)```/;
+const FENCE_RE_G = /```([\w+#-]*)\s*\n?([\s\S]*?)```/g;
 
 export function parseConceptSections(raw) {
   const text = String(raw || "").trim();
   if (!text) return null;
 
-  // The fenced code block is the anchor of a concept answer.
-  const fence = text.match(FENCE_RE);
-  if (!fence) return null;
-  const codeLang = (fence[1] || "").toLowerCase();
-  const codeRaw = fence[2].replace(/\s+$/, "");
-  if (!codeRaw) return null;
-  const fenceStart = fence.index;
-  const fenceEnd = fence.index + fence[0].length;
+  // A concept answer is anchored by a fenced code block.
+  if (!FENCE_RE.test(text)) return null;
 
   // Bold section headers, e.g. **Explanation**, **Real-World Application**.
   const headerRegex = /\*\*([^*\n]{2,60}?)\*\*/g;
@@ -60,6 +55,34 @@ export function parseConceptSections(raw) {
     (h, i) =>
       i > rwIdx && /code\s*example|code\s*snippet|^example$|^code$/i.test(h.title)
   );
+
+  // Pick the fence that belongs to the Code Example section, not merely the first
+  // one in the text. Models sometimes drop a small snippet inside the explanation
+  // (before Real-World Application); grabbing that early fence used to leave the
+  // real-world slice empty and fail the whole parse, falling back to plain markdown.
+  // Prefer the first fence starting after the Code Example header (or, lacking one,
+  // after Real-World); otherwise fall back to the first fence overall.
+  const fences = [];
+  let fm;
+  FENCE_RE_G.lastIndex = 0;
+  while ((fm = FENCE_RE_G.exec(text)) !== null) {
+    const body = fm[2].replace(/\s+$/, "");
+    if (!body) continue;
+    fences.push({
+      lang: (fm[1] || "").toLowerCase(),
+      raw: body,
+      start: fm.index,
+      end: fm.index + fm[0].length,
+    });
+  }
+  if (fences.length === 0) return null;
+
+  const preferAfter = codeIdx >= 0 ? headers[codeIdx].end : headers[rwIdx].end;
+  const chosenFence = fences.find((f) => f.start >= preferAfter) || fences[0];
+  const codeLang = chosenFence.lang;
+  const codeRaw = chosenFence.raw;
+  const fenceStart = chosenFence.start;
+  const fenceEnd = chosenFence.end;
 
   const explHeader = headers[0];
   const explanationTitle = explHeader.title || "Explanation";
