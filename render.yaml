@@ -18,6 +18,14 @@ services:
         value: 5000
       - key: GROQ_API_KEY
         sync: false  # Student will provide this
+      - key: GITHUB_TOKEN
+        sync: false  # Live opportunity feed — GitHub good-first-issues/bounties
+      - key: ADZUNA_APP_ID
+        sync: false  # Live India job listings (opportunity feed)
+      - key: ADZUNA_APP_KEY
+        sync: false  # Live India job listings (opportunity feed)
+      - key: ADZUNA_COUNTRY
+        value: "in"  # Job market for the opportunity feed (India)
       - key: LICENSE_KEY
         sync: false  # Prefilled by the verified setup link
       - key: STUDENT_EMAIL
