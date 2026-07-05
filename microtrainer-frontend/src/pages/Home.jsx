@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect, useMemo } from "react";
-import { ArrowUp, Mic, MicOff } from "lucide-react";
+import { ArrowUp, Check, Mic, X } from "lucide-react";
 import { chatWithMicroTrainer } from "../api";
 import { pageShell, textMuted } from "../lib/ui";
 import ConceptCards, { parseConceptSections } from "../components/ConceptCards";
@@ -496,48 +496,69 @@ function HomeChatInput({
           isLarge ? "pl-5 pr-2 py-2" : "px-4 py-3 items-end"
         }`}
       >
-        <textarea
-          ref={inputRef}
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          onKeyDown={onKeyDown}
-          placeholder={placeholder}
-          disabled={isLoading}
-          maxLength={500}
-          rows={1}
-          className={`flex-1 resize-none bg-transparent text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 disabled:opacity-50 border-0 outline-none focus:ring-0 ${
-            isLarge ? "text-[15px] py-1.5 leading-relaxed" : "text-[15px] py-1 leading-relaxed"
-          }`}
-          style={{
-            boxShadow: "none",
-            WebkitAppearance: "none",
-          }}
-        />
-        <button
-          type="button"
-          onClick={speech.isRecording ? speech.stopRecording : speech.startRecording}
-          disabled={isLoading || !speech.supported}
-          className={`flex-shrink-0 flex h-9 w-9 items-center justify-center rounded-full transition disabled:cursor-not-allowed disabled:opacity-30 ${
-            speech.isRecording
-              ? "bg-red-100 text-red-600 dark:bg-red-950/40 dark:text-red-400"
-              : "text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-200"
-          }`}
-          title={
-            !speech.supported
-              ? "Voice input is not supported in this browser"
-              : speech.isRecording
-                ? "Stop listening"
-                : "Speak your question"
-          }
-          aria-label={speech.isRecording ? "Stop listening" : "Speak your question"}
-        >
-          {speech.isRecording ? (
-            <MicOff className="h-4 w-4" strokeWidth={2.25} />
-          ) : (
-            <Mic className="h-4 w-4" strokeWidth={2.25} />
-          )}
-        </button>
-        <button
+        {speech.isRecording ? (
+          <div className="flex min-w-0 flex-1 items-center gap-3 px-1" role="status">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-200">Listening</span>
+            <div className="flex h-7 flex-1 items-center gap-[3px] overflow-hidden" aria-hidden="true">
+              {[10, 18, 13, 24, 16, 21, 11, 19, 14, 23, 12, 17, 9, 15].map((height, index) => (
+                <span
+                  key={index}
+                  className="w-[3px] shrink-0 animate-pulse rounded-full bg-gray-800 dark:bg-gray-100"
+                  style={{ height, animationDelay: `${index * 70}ms`, animationDuration: "700ms" }}
+                />
+              ))}
+            </div>
+          </div>
+        ) : (
+          <textarea
+            ref={inputRef}
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            onKeyDown={onKeyDown}
+            placeholder={placeholder}
+            disabled={isLoading}
+            maxLength={500}
+            rows={1}
+            className={`flex-1 resize-none bg-transparent text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 disabled:opacity-50 border-0 outline-none focus:ring-0 ${
+              isLarge ? "text-[15px] py-1.5 leading-relaxed" : "text-[15px] py-1 leading-relaxed"
+            }`}
+            style={{ boxShadow: "none", WebkitAppearance: "none" }}
+          />
+        )}
+        {speech.isRecording ? (
+          <>
+            <button
+              type="button"
+              onClick={speech.cancelRecording}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-900 transition hover:bg-gray-200 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
+              title="Cancel dictation"
+              aria-label="Cancel dictation"
+            >
+              <X className="h-4 w-4" strokeWidth={2.5} />
+            </button>
+            <button
+              type="button"
+              onClick={speech.stopRecording}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black text-white transition hover:bg-black/80 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+              title="Finish dictation"
+              aria-label="Finish dictation"
+            >
+              <Check className="h-4 w-4" strokeWidth={2.75} />
+            </button>
+          </>
+        ) : (
+          <button
+            type="button"
+            onClick={speech.startRecording}
+            disabled={isLoading || !speech.supported}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-600 transition hover:bg-gray-100 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-30 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white"
+            title={speech.supported ? "Dictate" : "Voice input is not supported in this browser"}
+            aria-label="Dictate"
+          >
+            <Mic className="h-[18px] w-[18px]" strokeWidth={2} />
+          </button>
+        )}
+        {!speech.isRecording && <button
           type="submit"
           disabled={!question.trim() || isLoading}
           className={`flex-shrink-0 flex items-center justify-center rounded-full bg-gradient-to-b from-[#8b5cf6] to-[#7c3aed] dark:from-[#b7a3fb] dark:to-[#a78bfa] text-white dark:text-gray-900 shadow-[0_2px_8px_-2px_rgba(124,58,237,0.35)] dark:shadow-[0_2px_9px_-2px_rgba(167,139,250,0.28)] hover:opacity-90 transition disabled:opacity-30 disabled:shadow-none disabled:cursor-not-allowed ${
@@ -568,19 +589,11 @@ function HomeChatInput({
           ) : (
             <ArrowUp className="h-4 w-4" strokeWidth={2.5} />
           )}
-        </button>
+        </button>}
       </div>
-      {(speech.isRecording || speech.voiceError) && (
-        <div
-          className={`px-4 pb-2 text-xs ${
-            speech.voiceError
-              ? "text-amber-600 dark:text-amber-400"
-              : "text-red-500 dark:text-red-400"
-          }`}
-          role="status"
-        >
-          {speech.voiceError ||
-            `Listening${speech.interimText ? `: "${speech.interimText}"` : "..."}`}
+      {speech.voiceError && (
+        <div className="px-4 pb-2 text-xs text-amber-600 dark:text-amber-400" role="alert">
+          {speech.voiceError}
         </div>
       )}
       {question.length > 400 && (

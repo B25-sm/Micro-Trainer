@@ -17,10 +17,16 @@ export function useSpeechToText({ getBaseText, onTranscript, disabled }) {
   const [voiceError, setVoiceError] = useState("");
   const recognitionRef = useRef(null);
   const baseTextRef = useRef("");
+  const originalTextRef = useRef("");
 
   const stopRecording = useCallback(() => {
     recognitionRef.current?.stop();
   }, []);
+
+  const cancelRecording = useCallback(() => {
+    recognitionRef.current?.abort();
+    onTranscript(originalTextRef.current);
+  }, [onTranscript]);
 
   const startRecording = useCallback(() => {
     if (!SpeechRecognitionAPI || disabled) return;
@@ -32,6 +38,7 @@ export function useSpeechToText({ getBaseText, onTranscript, disabled }) {
     recognition.lang = "en-US";
 
     const base = getBaseText ? getBaseText() : "";
+    originalTextRef.current = base;
     baseTextRef.current = base.trim() ? base.trim() + " " : "";
 
     recognition.onresult = (event) => {
@@ -84,6 +91,7 @@ export function useSpeechToText({ getBaseText, onTranscript, disabled }) {
     voiceError,
     startRecording,
     stopRecording,
+    cancelRecording,
     stopIfRecording: stopRecording,
   };
 }
