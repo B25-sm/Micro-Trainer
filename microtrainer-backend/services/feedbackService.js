@@ -310,6 +310,7 @@ async function submitFeedbackReport({
   authUser,
   req,
   message = "",
+  contactEmail = "",
   pageUrl = "",
   pagePath = "",
   userAgent = "",
@@ -327,7 +328,13 @@ async function submitFeedbackReport({
   const reportId = `rpt_${Date.now()}_${crypto.randomBytes(4).toString("hex")}`;
 
   const studentId = authUser?.studentId || "(not signed in)";
-  const email = authUser?.email || "(guest)";
+  const submittedEmail = String(contactEmail || "").trim().toLowerCase().slice(0, 254);
+  if (!authUser?.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(submittedEmail)) {
+    const err = new Error("Please enter a valid email so your trainer can reply.");
+    err.statusCode = 400;
+    throw err;
+  }
+  const email = authUser?.email || submittedEmail;
   const name = authUser?.name || "(guest)";
   const role = authUser?.role || "guest";
 

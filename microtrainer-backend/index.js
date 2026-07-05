@@ -2658,11 +2658,12 @@ const {
 
 app.post("/api/feedback", optionalAuth, async (req, res) => {
   try {
-    const { message, pageUrl, pagePath, userAgent, screenshots } = req.body || {};
+    const { message, contactEmail, pageUrl, pagePath, userAgent, screenshots } = req.body || {};
     const result = await submitFeedbackReport({
       authUser: req.authUser,
       req,
       message,
+      contactEmail,
       pageUrl,
       pagePath,
       userAgent,

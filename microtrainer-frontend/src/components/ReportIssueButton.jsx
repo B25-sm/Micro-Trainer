@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { Send, X, ImagePlus, ClipboardPaste } from "lucide-react";
 import { reportIssue } from "../api";
+import { getAuthUser } from "../utils/authSession";
 
 const MAX_SCREENSHOTS = 3;
 const MAX_BYTES = 2.5 * 1024 * 1024;
@@ -42,11 +43,19 @@ export default function ReportIssueButton() {
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
+  const authUser = getAuthUser();
+  const [contactEmail, setContactEmail] = useState(
+    () => authUser?.email || localStorage.getItem("userEmail") || ""
+  );
   const [screenshots, setScreenshots] = useState([]);
   const [status, setStatus] = useState("idle");
   const [toast, setToast] = useState("");
   const panelRef = useRef(null);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    if (authUser?.email) setContactEmail(authUser.email);
+  }, [authUser?.email]);
 
   useEffect(() => {
     if (!open) return;
@@ -118,6 +127,7 @@ export default function ReportIssueButton() {
       const pagePath = location.pathname + location.search;
       const payload = {
         message: note,
+        contactEmail: contactEmail.trim(),
         pageUrl,
         pagePath,
         userAgent: navigator.userAgent,
@@ -217,6 +227,31 @@ export default function ReportIssueButton() {
               maxLength={2000}
               className="w-full text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2.5 resize-none text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 read-mode:bg-[var(--read-surface)]"
             />
+
+            {!authUser?.email && (
+              <div>
+                <label
+                  htmlFor="snag-contact-email"
+                  className="mb-1 block text-xs font-medium text-slate-600 dark:text-slate-300"
+                >
+                  Your email
+                </label>
+                <input
+                  id="snag-contact-email"
+                  type="email"
+                  value={contactEmail}
+                  onChange={(e) => setContactEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  required
+                  autoComplete="email"
+                  maxLength={254}
+                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+                />
+                <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                  Add this so your trainer can identify and reply to you.
+                </p>
+              </div>
+            )}
 
             <div className="flex flex-wrap items-center gap-2">
               <input
