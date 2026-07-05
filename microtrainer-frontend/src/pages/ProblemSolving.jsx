@@ -211,9 +211,9 @@ const ProblemSolving = () => {
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
           {/* Problem List Sidebar */}
-          <div className="flex min-h-[28rem] flex-col lg:col-span-3">
+          <div className="flex h-[36rem] min-h-0 flex-col lg:col-span-3 lg:h-[48rem]">
             <div className={`${card} flex min-h-0 flex-1 flex-col p-4`}>
               <h2 className="text-gray-900 dark:text-gray-100 text-sm font-medium mb-4 flex items-center gap-2 shrink-0">
                 <Target className="w-5 h-5" />
@@ -255,7 +255,7 @@ const ProblemSolving = () => {
             {selectedProblem ? (
               <>
                 {/* Problem Description */}
-                <div className={`max-h-[300px] shrink-0 overflow-y-auto ${card} p-6`}>
+                <div className={`max-h-[240px] shrink-0 overflow-y-auto ${card} p-6`}>
                   <div className="flex items-start justify-between mb-4 gap-4">
                     <div>
                       <h2 className="text-xl font-medium text-gray-900 dark:text-gray-100 mb-2">
@@ -336,7 +336,7 @@ const ProblemSolving = () => {
                 </div>
 
                 {/* Code Editor */}
-                <div className="flex min-h-[29rem] flex-1 flex-col">
+                <div className="flex h-[32rem] min-h-0 flex-none flex-col">
                   <CodeEditor
                     key={`${selectedProblem.id}-${selectedProblem.title}`}
                     problem={selectedProblem}
