@@ -279,8 +279,12 @@ app.get("/trainer/sync-status", trainerOnly, (req, res) => {
 // =======================================================
 const { adaptiveTeach } = require("./services/adaptiveTeachingService");
 const { CODE_SNIPPET_RULES_CHAT, CONCEPT_QA_RESPONSE_STRUCTURE, TECHNICAL_ACCURACY_RULES, INPUT_INTERPRETATION_RULES } = require("./services/personaConfig");
-const { getConceptReference, detectTechnologies } = require("./services/conceptReferenceService");
+const { getConceptReference } = require("./services/conceptReferenceService");
 const { normalizeForMatching } = require("./services/inputNormalizationService");
+const {
+  getTechnicalIntent,
+  isScopeRefusal,
+} = require("./services/chatTechnicalIntentService");
 const { saveStudentLevel, getStudentLevel } = require("./services/memoryService");
 const {
   logAskTopic,
@@ -454,9 +458,13 @@ app.post("/chat/ask", requireStudentIdentity, async (req, res) => {
 
     // Build conversation history
     const matchingText = normalizeForMatching(question);
+    const technicalIntent = getTechnicalIntent(matchingText);
     const referenceFacts = getConceptReference(matchingText, {
-      technology: detectTechnologies(matchingText)[0],
+      technology: technicalIntent.technologies[0],
     });
+    const technicalIntentHint = technicalIntent.recognized
+      ? `INTERNAL ROUTING: This prompt has already been recognized as technical. Do NOT apply the out-of-scope refusal. Interpret the student's wording as: ${matchingText}`
+      : "";
     const messages = [
       {
         role: "system",
@@ -514,9 +522,9 @@ Don't:
       ...session.history.slice(-6), // Last 3 exchanges
       {
         role: "user",
-        content: referenceFacts
-          ? `${referenceFacts}\n\n---\n\nStudent question:\n${question}`
-          : question
+        content: [technicalIntentHint, referenceFacts, `Student question:\n${question}`]
+          .filter(Boolean)
+          .join("\n\n---\n\n")
       }
     ];
 
@@ -538,7 +546,42 @@ Don't:
       }
     );
 
-    const answer = response?.data?.choices?.[0]?.message?.content || "I'm having trouble responding right now. Please try again.";
+    let answer = response?.data?.choices?.[0]?.message?.content || "I'm having trouble responding right now. Please try again.";
+
+    // A small model can occasionally ignore routing instructions. Retry only
+    // the contradictory case: a known technical prompt receiving the stock
+    // out-of-scope refusal.
+    if (technicalIntent.recognized && isScopeRefusal(answer)) {
+      const retryMessages = [
+        ...messages,
+        { role: "assistant", content: answer },
+        {
+          role: "system",
+          content: `Correction: the student prompt is a recognized technical topic (${matchingText}). Replace the refusal with the requested technical explanation.`,
+        },
+      ];
+      try {
+        const retryResponse = await axios.post(
+          "https://api.groq.com/openai/v1/chat/completions",
+          {
+            model: "llama-3.1-8b-instant",
+            messages: retryMessages,
+            temperature: 0.25,
+            max_tokens: 950,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            timeout: 15000,
+          }
+        );
+        answer = retryResponse?.data?.choices?.[0]?.message?.content || answer;
+      } catch (retryError) {
+        console.error("CHAT technical-intent retry error:", retryError.message);
+      }
+    }
 
     // Update session
     session.history.push({ role: "user", content: question });

@@ -13,6 +13,9 @@ const WORD_CORRECTIONS = {
   diff: "difference", coz: "because", bcoz: "because", cuz: "because",
   thx: "thanks", tnx: "thanks", msg: "message", def: "definition",
   expln: "explain", xplain: "explain", py: "python", db: "database",
+  // In MicroTrainer's technical-only chat, students commonly use "oops" for
+  // OOP/OOPs (Object-Oriented Programming), not as an interjection.
+  oop: "object-oriented programming", oops: "object-oriented programming",
 
   // common tech-word misspellings
   pyhton: "python", phyton: "python", pyton: "python",
