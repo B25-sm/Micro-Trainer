@@ -141,7 +141,7 @@ export default function ReportIssueButton() {
       }
 
       const res = await reportIssue(payload);
-      setStatus("ok");
+      setStatus(res.data?.emailSent === false ? "err" : "ok");
       setOpen(false);
       setMessage("");
       setScreenshots([]);

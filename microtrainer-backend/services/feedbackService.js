@@ -102,19 +102,19 @@ function withTimeout(promise, ms, label = "operation") {
 }
 
 async function deliverFeedbackReport(record, savedScreenshots) {
-  let sheetsLogged = false;
-  try {
-    sheetsLogged = await withTimeout(
-      logFeedbackReport(record),
-      12_000,
-      "Google Sheets"
-    );
-  } catch (e) {
+  // Start Sheets and SMTP together. Sheets must never delay email delivery.
+  const sheetsPromise = withTimeout(
+    logFeedbackReport(record),
+    12_000,
+    "Google Sheets"
+  ).catch((e) => {
     console.warn("⚠️  Feedback sheets delivery:", e.message);
-  }
+    return false;
+  });
 
   const recipients = getBugReportRecipients();
   let emailSent = false;
+  let emailError = recipients.length === 0 ? "no_recipients" : null;
 
   if (recipients.length > 0) {
     const { reportId, timestamp, studentId, email, name, role } = record;
@@ -172,20 +172,27 @@ async function deliverFeedbackReport(record, savedScreenshots) {
         20_000,
         "Email delivery"
       );
-      emailSent = results.some((r) => r.success === true);
+      emailSent = results.length > 0 && results.every((r) => r.success === true);
+      if (!emailSent) emailError = "smtp_rejected";
     } catch (e) {
+      emailError = "smtp_timeout";
       console.warn("⚠️  Feedback email delivery:", e.message);
     }
   }
 
+  const sheetsLogged = await sheetsPromise;
+
   logReportBanner(record, {
     emailSent,
+    emailError,
     recipients: getBugReportRecipients(),
     sheetsLogged,
   });
+
+  return { emailSent, emailError, sheetsLogged };
 }
 
-function logReportBanner(record, { emailSent, recipients, sheetsLogged }) {
+function logReportBanner(record, { emailSent, emailError, recipients, sheetsLogged }) {
   const shotCount = record.screenshotCount || 0;
   const lines = [
     "══════════════════════════════════════════════════",
@@ -197,7 +204,7 @@ function logReportBanner(record, { emailSent, recipients, sheetsLogged }) {
     `   Message: ${record.message.slice(0, 120)}${record.message.length > 120 ? "…" : ""}`,
     `   Screens: ${shotCount}`,
     `   Saved:   data/feedback-reports.jsonl`,
-    `   Email:   ${emailSent ? `sent to ${recipients.join(", ")}` : "NOT sent — configure SMTP email settings"}`,
+    `   Email:   ${emailSent ? `sent to ${recipients.join(", ")}` : `NOT sent (${emailError || "unknown_error"})`}`,
     `   Sheets:  ${sheetsLogged ? "logged to BugReports tab" : "skipped or failed"}`,
     "══════════════════════════════════════════════════",
   ];
@@ -372,17 +379,17 @@ async function submitFeedbackReport({
 
   const saved = appendLocalLog(record);
 
-  // Respond quickly — email and Sheets can be slow on production (SMTP timeouts).
-  void deliverFeedbackReport(record, savedScreenshots).catch((err) => {
-    console.error("Background feedback delivery failed:", err.message);
-  });
+  // Do not claim that email was sent until SMTP confirms delivery. Sheets and
+  // email run concurrently inside deliverFeedbackReport to bound latency.
+  const delivery = await deliverFeedbackReport(record, savedScreenshots);
 
   return {
     success: true,
     saved,
-    message: saved
-      ? "Report sent. Thank you!"
-      : "Report received. Thank you!",
+    emailSent: delivery.emailSent,
+    message: delivery.emailSent
+      ? "Report emailed to your trainers. Thank you!"
+      : "Report saved, but email delivery failed. Please contact your trainer directly.",
   };
 }
 
