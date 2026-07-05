@@ -726,17 +726,17 @@ textarea:focus {
    READ MODE — DIM, LOW-GLARE (easy on eyes)
 ========================= */
 .read-mode {
-  --read-surface: #ddd5c4;
-  --read-surface-elevated: #d4cbb8;
-  --read-text: #5a5348;
-  --read-text-heading: #4a443c;
-  --read-text-muted: #6f6860;
-  --read-border: #c4b9a4;
-  --read-accent: #7a6b4f;
-  --read-btn-bg: #6b6254;
-  --read-btn-text: #ebe6dc;
-  --read-callout-bg: #d0c8b6;
-  --read-callout-border: #a89a7e;
+  --read-surface: #f4efe6;
+  --read-surface-elevated: #fffaf0;
+  --read-text: #332e27;
+  --read-text-heading: #1d1914;
+  --read-text-muted: #625b50;
+  --read-border: #cfc3b0;
+  --read-accent: #654d2f;
+  --read-btn-bg: #5c4931;
+  --read-btn-text: #fffaf0;
+  --read-callout-bg: #ebe2d3;
+  --read-callout-border: #aa9678;
 
   --bg: var(--read-surface);
   --bg-secondary: var(--read-surface);
@@ -746,21 +746,21 @@ textarea:focus {
   --text-secondary: var(--read-text-muted);
   --border: var(--read-border);
   --accent: var(--read-accent);
-  --accent-hover: #6a5d45;
+  --accent-hover: #4d3a23;
 }
 
 .read-mode.dark {
-  --read-surface: #0a0908;
-  --read-surface-elevated: #12100d;
-  --read-text: #6f6860;
-  --read-text-heading: #8a8276;
-  --read-text-muted: #5c564e;
-  --read-border: #1e1c18;
-  --read-accent: #7a7264;
-  --read-btn-bg: #2a2722;
-  --read-btn-text: #a39a8c;
-  --read-callout-bg: #14120f;
-  --read-callout-border: #3a352c;
+  --read-surface: #0f0e0c;
+  --read-surface-elevated: #191713;
+  --read-text: #d8d1c5;
+  --read-text-heading: #f3ede3;
+  --read-text-muted: #aaa092;
+  --read-border: #3c372f;
+  --read-accent: #d0af7d;
+  --read-btn-bg: #c5a574;
+  --read-btn-text: #17130e;
+  --read-callout-bg: #211e19;
+  --read-callout-border: #665a49;
 
   --bg: var(--read-surface);
   --bg-secondary: var(--read-surface);
@@ -770,7 +770,7 @@ textarea:focus {
   --text-secondary: var(--read-text-muted);
   --border: var(--read-border);
   --accent: var(--read-accent);
-  --accent-hover: #8a8274;
+  --accent-hover: #e0c292;
 }
 
 .read-mode body,
@@ -793,8 +793,17 @@ textarea:focus {
   color: var(--read-text-heading) !important;
 }
 
-.read-mode :where(.text-gray-700, .text-gray-600, .text-gray-500, .text-slate-700, .text-slate-600, .text-slate-500) {
+.read-mode :where(.text-gray-700, .text-gray-600, .text-gray-500, .text-gray-400, .text-slate-700, .text-slate-600, .text-slate-500, .text-slate-400) {
   color: var(--read-text) !important;
+}
+
+.read-mode :where(.text-gray-400, .text-slate-400) {
+  color: var(--read-text-muted) !important;
+}
+
+.read-mode :where(input, textarea)::placeholder {
+  color: var(--read-text-muted) !important;
+  opacity: 1;
 }
 
 /* Soften bright blues, greens, and primary buttons in read mode */
@@ -824,6 +833,10 @@ textarea:focus {
 /* Dark arbitrary page backgrounds → read surfaces */
 .read-mode.dark :where([class*="dark:bg-\[#"]) {
   background-color: var(--read-surface-elevated) !important;
+}
+
+.read-mode .app-canvas {
+  background-color: var(--read-surface) !important;
 }
 
 .read-mode .mt-callout--warning,
@@ -856,10 +869,11 @@ textarea:focus {
 
 .read-mode .lesson-prose,
 .read-mode .lesson-prose p,
-.read-mode .prose {
+.read-mode .prose,
+.read-mode .learning-prose {
   font-size: 1.125rem;
   line-height: 1.85;
-  color: var(--read-text);
+  color: var(--read-text) !important;
 }
 
 .read-mode .lesson-prose h1,
@@ -875,6 +889,20 @@ textarea:focus {
   background-color: var(--read-surface-elevated);
   border-color: var(--read-border);
   color: var(--read-text);
+}
+
+.read-mode .lesson-card-surface {
+  background-color: var(--read-surface-elevated) !important;
+  border-color: var(--read-border) !important;
+  color: var(--read-text) !important;
+}
+
+.read-mode .app-sidebar-nav button {
+  color: var(--read-text) !important;
+}
+
+.read-mode .app-sidebar-nav button:hover {
+  color: var(--read-text-heading) !important;
 }
 
 .read-mode ::selection {
