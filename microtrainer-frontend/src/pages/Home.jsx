@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect, useMemo } from "react";
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, Mic, MicOff } from "lucide-react";
 import { chatWithMicroTrainer } from "../api";
 import { pageShell, textMuted } from "../lib/ui";
 import ConceptCards, { parseConceptSections } from "../components/ConceptCards";
@@ -10,6 +10,7 @@ import { useChatHistoryPersistence } from "../hooks/useChatHistoryPersistence";
 import { getStudentId } from "../utils/studentAuth";
 import QuickCheckCard from "../components/QuickCheckCard";
 import TopNudgeBanner from "../components/TopNudgeBanner";
+import { useSpeechToText } from "../hooks/useSpeechToText";
 
 const HOME_CHAT_STORAGE = "microtrainer-chat-history-home";
 
@@ -469,6 +470,17 @@ function HomeChatInput({
   className = "",
 }) {
   const isLarge = size === "large";
+  const speech = useSpeechToText({
+    getBaseText: () => question,
+    onTranscript: setQuestion,
+    disabled: isLoading,
+  });
+
+  useEffect(() => {
+    if (isLoading && speech.isRecording) {
+      speech.stopRecording();
+    }
+  }, [isLoading, speech.isRecording, speech.stopRecording]);
 
   return (
     <form
@@ -502,6 +514,30 @@ function HomeChatInput({
           }}
         />
         <button
+          type="button"
+          onClick={speech.isRecording ? speech.stopRecording : speech.startRecording}
+          disabled={isLoading || !speech.supported}
+          className={`flex-shrink-0 flex h-9 w-9 items-center justify-center rounded-full transition disabled:cursor-not-allowed disabled:opacity-30 ${
+            speech.isRecording
+              ? "bg-red-100 text-red-600 dark:bg-red-950/40 dark:text-red-400"
+              : "text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-200"
+          }`}
+          title={
+            !speech.supported
+              ? "Voice input is not supported in this browser"
+              : speech.isRecording
+                ? "Stop listening"
+                : "Speak your question"
+          }
+          aria-label={speech.isRecording ? "Stop listening" : "Speak your question"}
+        >
+          {speech.isRecording ? (
+            <MicOff className="h-4 w-4" strokeWidth={2.25} />
+          ) : (
+            <Mic className="h-4 w-4" strokeWidth={2.25} />
+          )}
+        </button>
+        <button
           type="submit"
           disabled={!question.trim() || isLoading}
           className={`flex-shrink-0 flex items-center justify-center rounded-full bg-gradient-to-b from-[#8b5cf6] to-[#7c3aed] dark:from-[#b7a3fb] dark:to-[#a78bfa] text-white dark:text-gray-900 shadow-[0_2px_8px_-2px_rgba(124,58,237,0.35)] dark:shadow-[0_2px_9px_-2px_rgba(167,139,250,0.28)] hover:opacity-90 transition disabled:opacity-30 disabled:shadow-none disabled:cursor-not-allowed ${
@@ -534,6 +570,19 @@ function HomeChatInput({
           )}
         </button>
       </div>
+      {(speech.isRecording || speech.voiceError) && (
+        <div
+          className={`px-4 pb-2 text-xs ${
+            speech.voiceError
+              ? "text-amber-600 dark:text-amber-400"
+              : "text-red-500 dark:text-red-400"
+          }`}
+          role="status"
+        >
+          {speech.voiceError ||
+            `Listening${speech.interimText ? `: "${speech.interimText}"` : "..."}`}
+        </div>
+      )}
       {question.length > 400 && (
         <div className="px-4 pb-2 text-xs text-gray-400 text-right">
           {question.length}/500
