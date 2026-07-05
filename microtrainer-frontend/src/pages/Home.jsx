@@ -229,12 +229,12 @@ function WelcomeView({
   onKeyDown,
 }) {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-10 overflow-y-auto">
+    <div className="flex-1 flex flex-col items-center px-4 sm:px-6 pt-[18vh] pb-10 overflow-y-auto">
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: "easeOut" }}
-        className="w-full max-w-xl flex flex-col items-center"
+        className="w-full max-w-3xl flex flex-col items-center"
       >
         <div className="w-full mb-5">
           <TopNudgeBanner />
