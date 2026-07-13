@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
-import { Send, X, ImagePlus, ClipboardPaste } from "lucide-react";
+import { Mail, MessageCircle, Send, X, ImagePlus, ClipboardPaste } from "lucide-react";
 import { reportIssue } from "../api";
 import { getAuthUser } from "../utils/authSession";
 
 const MAX_SCREENSHOTS = 3;
 const MAX_BYTES = 2.5 * 1024 * 1024;
+const WHATSAPP_NUMBER = "918712623006";
 
 function readFileAsDataUrl(file) {
   return new Promise((resolve, reject) => {
@@ -167,6 +168,40 @@ export default function ReportIssueButton() {
     }
   }
 
+  function openWhatsAppReport() {
+    const studentName =
+      authUser?.name ||
+      localStorage.getItem("userName") ||
+      localStorage.getItem("studentFullName") ||
+      "Not available";
+    const studentId =
+      authUser?.studentId || localStorage.getItem("studentId") || "Not available";
+    const reportText = [
+      "*MicroTrainer snag report*",
+      "",
+      `*Student:* ${studentName}`,
+      `*Student ID:* ${studentId}`,
+      `*Email:* ${contactEmail.trim() || "Not available"}`,
+      `*Page:* ${location.pathname}${location.search}`,
+      `*URL:* ${window.location.href}`,
+      "",
+      `*Issue:* ${message.trim() || "Quick report — please review this page."}`,
+      screenshots.length > 0
+        ? `\n*Screenshots:* ${screenshots.length} selected in MicroTrainer. Please attach them manually in WhatsApp.`
+        : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    window.open(
+      `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(reportText)}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
+    setOpen(false);
+    setToast("WhatsApp opened with your report. Review it, attach screenshots if needed, then tap Send.");
+  }
+
   const isSending = status === "sending";
   const canSubmit = message.trim().length > 0 || screenshots.length > 0;
   const hasAppNavigation = !["/login", "/auth/callback", "/complete-profile"].includes(location.pathname);
@@ -199,8 +234,8 @@ export default function ReportIssueButton() {
                 Report a problem
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                We&apos;ll notify your trainer with this page, your account
-                details, and any screenshots you attach.
+                Send this page, your account details, and your note directly to
+                the trainer through WhatsApp.
               </p>
             </div>
             <button
@@ -314,21 +349,28 @@ export default function ReportIssueButton() {
               </div>
             )}
 
+            {screenshots.length > 0 && (
+              <p className="text-[11px] leading-relaxed text-amber-600 dark:text-amber-300">
+                WhatsApp links cannot transfer images automatically. Attach these screenshots manually after WhatsApp opens.
+              </p>
+            )}
+
+            <button
+              type="button"
+              onClick={openWhatsAppReport}
+              disabled={!canSubmit}
+              className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white disabled:opacity-50 transition shadow-sm"
+            >
+              <MessageCircle className="w-4 h-4" />
+              Continue in WhatsApp
+            </button>
             <button
               type="submit"
               disabled={isSending || !canSubmit}
-              className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-60 transition shadow-sm"
+              className="w-full flex items-center justify-center gap-2 py-2 text-xs font-medium rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 disabled:opacity-50 transition"
             >
-              <Send className="w-4 h-4" />
-              {isSending ? "Sending…" : "Send report"}
-            </button>
-            <button
-              type="button"
-              disabled={isSending}
-              onClick={() => submit("(quick report — no extra details)", false)}
-              className="w-full py-2 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
-            >
-              Send without details (page info only)
+              {isSending ? <Send className="w-3.5 h-3.5 animate-pulse" /> : <Mail className="w-3.5 h-3.5" />}
+              {isSending ? "Sending email…" : "Send by email instead"}
             </button>
           </form>
         </div>
