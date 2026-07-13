@@ -16,7 +16,6 @@ import {
   X,
   MessageSquareText,
   Building2,
-  Shuffle,
   Sparkles,
   UserRound,
   Bug,
@@ -40,8 +39,7 @@ const NAV_SECTIONS = [
     items: [
       { path: "/interview", label: "Interview", icon: Mic },
       { path: "/company-interviews", label: "Company Interviews", icon: Building2 },
-      { path: "/communication", label: "Communication", icon: MessageSquareText, badge: "Under progress" },
-      { path: "/speaking-practice", label: "Speaking Practice", icon: Shuffle },
+      { path: "/communication", label: "Communication Practice", icon: MessageSquareText },
       { path: "/problems", label: "Code Practice", icon: Code2 },
     ],
   },

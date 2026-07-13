@@ -5,6 +5,7 @@ import {
   ChevronRight,
   History,
   RotateCcw,
+  Shuffle,
 } from "lucide-react";
 import {
   communicationReviewAPI,
@@ -27,7 +28,7 @@ import {
 function apiErrorMessage(err, fallback = "Something went wrong. Please try again.") {
   const status = err?.response?.status;
   if (status === 404) {
-    return "Communication Review is not available on the live server yet. Redeploy the MicroTrainer backend on Render (latest main branch), then try again.";
+    return "Communication Practice is not available on the live server yet. Redeploy the MicroTrainer backend on Render (latest main branch), then try again.";
   }
   return err?.response?.data?.error || err?.error || err?.message || fallback;
 }
@@ -115,7 +116,7 @@ export default function CommunicationReview() {
         setHistory([]);
       }
     } catch (err) {
-      setError(apiErrorMessage(err, "Failed to load communication review."));
+      setError(apiErrorMessage(err, "Failed to load communication practice."));
       setScenarios(COMMUNICATION_REVIEW_SCENARIOS);
       setSelectedId((prev) => prev || COMMUNICATION_REVIEW_SCENARIOS[0]?.id || null);
     } finally {
@@ -162,6 +163,21 @@ export default function CommunicationReview() {
     setError("");
   };
 
+  const chooseRandomPrompt = () => {
+    if (!scenarios.length) return;
+
+    const alternatives = scenarios.filter((scenario) => scenario.id !== selectedId);
+    const pool = alternatives.length ? alternatives : scenarios;
+    const next = pool[Math.floor(Math.random() * pool.length)];
+
+    speech.stopRecording();
+    setSelectedId(next.id);
+    setCustomPrompt("");
+    setResponse("");
+    setResult(null);
+    setError("");
+  };
+
   const loadFromHistory = (entry) => {
     setResult(entry);
     setResponse(entry.response || "");
@@ -178,7 +194,7 @@ export default function CommunicationReview() {
   if (loading) {
     return (
       <div className={`flex items-center justify-center min-h-[50vh] ${pageShell}`}>
-        <p className={textMuted}>Loading communication review...</p>
+        <p className={textMuted}>Loading communication practice...</p>
       </div>
     );
   }
@@ -194,14 +210,11 @@ export default function CommunicationReview() {
                 className="h-6 w-6 text-[#7c3aed] dark:text-[#a78bfa]"
                 strokeWidth={1.75}
               />
-              <h1 className={headingPage}>Communication Review</h1>
-              <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-950/50 dark:text-amber-300">
-                Under progress
-              </span>
+              <h1 className={headingPage}>Communication Practice</h1>
             </div>
             <p className={`${textMuted} max-w-xl`}>
-              Practice how you say things — clarity, structure, and confidence — separate from
-              technical mock interviews.
+              Build clarity, structure, and confidence with guided prompts, your own scenario, or
+              a random speaking topic.
             </p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
@@ -237,9 +250,19 @@ export default function CommunicationReview() {
           {/* Scenario picker */}
           <aside className="lg:w-72 shrink-0 space-y-4">
             <div className={`${card} p-4 max-h-[420px] lg:max-h-none overflow-y-auto`}>
-              <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-3">
-                Practice prompts
-              </p>
+              <div className="flex items-center justify-between gap-3 mb-3">
+                <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                  Practice prompts
+                </p>
+                <button
+                  type="button"
+                  onClick={chooseRandomPrompt}
+                  className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-[#7c3aed] hover:bg-[#7c3aed]/10 dark:text-[#a78bfa] dark:hover:bg-[#a78bfa]/10 transition-colors"
+                >
+                  <Shuffle className="h-3.5 w-3.5" />
+                  Random topic
+                </button>
+              </div>
               {Object.entries(groupedScenarios).map(([category, items]) => (
                 <div key={category} className="mb-4 last:mb-0">
                   <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 mb-1.5 px-1">

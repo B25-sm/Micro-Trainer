@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 
 // Layout
@@ -22,7 +22,6 @@ import AdminEngagementDashboard from "./pages/AdminEngagementDashboard.jsx";
 import NotificationSettings from "./pages/NotificationSettings.jsx";
 import PersonalSchedule from "./pages/PersonalSchedule.jsx";
 import CommunicationReview from "./pages/CommunicationReview.jsx";
-import SpeakingPractice from "./pages/SpeakingPractice.jsx";
 import CompanyInterviews from "./pages/CompanyInterviews.jsx";
 import CompanyInterview from "./pages/CompanyInterview.jsx";
 import AiChat from "./pages/AiChat.jsx";
@@ -184,7 +183,7 @@ function App() {
             }
           />
 
-          {/* Communication Review */}
+          {/* Consolidated communication and speaking practice */}
           <Route
             path="/communication"
             element={
@@ -196,16 +195,10 @@ function App() {
             }
           />
 
-          {/* Speaking Practice — random topic */}
+          {/* Keep old Speaking Practice links working. */}
           <Route
             path="/speaking-practice"
-            element={
-              <RequireAuth>
-                <MainLayout>
-                  <SpeakingPractice />
-                </MainLayout>
-              </RequireAuth>
-            }
+            element={<Navigate to="/communication" replace />}
           />
 
           <Route
