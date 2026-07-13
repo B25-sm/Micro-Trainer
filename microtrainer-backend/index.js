@@ -2154,10 +2154,22 @@ const {
   checkAndBuildReminder,
   sendScheduleReminder,
   resetSchedule,
+  restoreSchedule,
   publicView: publicScheduleView,
   DIAGNOSTIC_QUESTIONS_PER_TECH,
 } = require("./services/personalScheduleService");
 const { getSchedule: getStoredSchedule } = require("./services/personalScheduleStore");
+const {
+  createScheduleBackup,
+  verifyScheduleBackup,
+} = require("./services/personalScheduleBackupService");
+
+function withScheduleBackup(result) {
+  const schedule = result?.schedule || null;
+  return schedule
+    ? { ...result, backupToken: createScheduleBackup(schedule) }
+    : result;
+}
 
 const {
   getScenarios,
@@ -2332,10 +2344,10 @@ app.get("/api/personal-schedule/:studentId", studentSelfOrTrainer, (req, res) =>
   try {
     const { studentId } = req.params;
     const schedule = getStoredSchedule(studentId);
-    res.json({
+    res.json(withScheduleBackup({
       schedule: schedule ? publicScheduleView(schedule) : null,
       diagnosticQuestionsPerTech: DIAGNOSTIC_QUESTIONS_PER_TECH,
-    });
+    }));
   } catch (error) {
     console.error("GET PERSONAL SCHEDULE ERROR:", error.message);
     res.status(500).json({ error: error.message });
@@ -2346,7 +2358,7 @@ app.put("/api/personal-schedule/:studentId/category", studentSelfOrTrainer, (req
   try {
     const { category } = req.body;
     const result = setScheduleCategory(req.params.studentId, category);
-    res.json(result);
+    res.json(withScheduleBackup(result));
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -2355,7 +2367,7 @@ app.put("/api/personal-schedule/:studentId/category", studentSelfOrTrainer, (req
 app.put("/api/personal-schedule/:studentId/skills", studentSelfOrTrainer, (req, res) => {
   try {
     const result = setScheduleSkills(req.params.studentId, req.body);
-    res.json(result);
+    res.json(withScheduleBackup(result));
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -2364,7 +2376,7 @@ app.put("/api/personal-schedule/:studentId/skills", studentSelfOrTrainer, (req, 
 app.post("/api/personal-schedule/:studentId/diagnostic", studentSelfOrTrainer, (req, res) => {
   try {
     const result = recordDiagnosticResult(req.params.studentId, req.body);
-    res.json(result);
+    res.json(withScheduleBackup(result));
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -2373,7 +2385,7 @@ app.post("/api/personal-schedule/:studentId/diagnostic", studentSelfOrTrainer, (
 app.post("/api/personal-schedule/:studentId/generate", studentSelfOrTrainer, async (req, res) => {
   try {
     const result = await generatePersonalPlan(req.params.studentId);
-    res.json(result);
+    res.json(withScheduleBackup(result));
   } catch (error) {
     console.error("GENERATE PLAN ERROR:", error.message);
     res.status(400).json({ error: error.message });
@@ -2383,7 +2395,7 @@ app.post("/api/personal-schedule/:studentId/generate", studentSelfOrTrainer, asy
 app.post("/api/personal-schedule/:studentId/complete-task", studentSelfOrTrainer, (req, res) => {
   try {
     const result = completeScheduleTask(req.params.studentId, req.body);
-    res.json(result);
+    res.json(withScheduleBackup(result));
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -2411,9 +2423,19 @@ app.post("/api/personal-schedule/:studentId/reminder", studentSelfOrTrainer, asy
 app.post("/api/personal-schedule/:studentId/reset", studentSelfOrTrainer, (req, res) => {
   try {
     const schedule = resetSchedule(req.params.studentId);
-    res.json({ schedule: publicScheduleView(schedule) });
+    res.json(withScheduleBackup({ schedule: publicScheduleView(schedule) }));
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/api/personal-schedule/:studentId/restore", studentSelfOrTrainer, (req, res) => {
+  try {
+    const snapshot = verifyScheduleBackup(req.body?.backupToken, req.params.studentId);
+    const schedule = restoreSchedule(req.params.studentId, snapshot);
+    res.json(withScheduleBackup({ schedule, restored: true }));
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 });
 

@@ -2,6 +2,36 @@ import axios from "axios";
 import { getStudentApiHeaders, getTrainerApiHeaders } from "../utils/authSession";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const BACKUP_KEY_PREFIX = "microtrainer-personal-schedule-backup:";
+
+function backupKey(studentId) {
+  return `${BACKUP_KEY_PREFIX}${studentId}`;
+}
+
+function getStoredBackup(studentId) {
+  try {
+    return localStorage.getItem(backupKey(studentId));
+  } catch {
+    return null;
+  }
+}
+
+function storeBackup(studentId, token) {
+  if (!studentId || !token) return;
+  try {
+    localStorage.setItem(backupKey(studentId), token);
+  } catch {
+    // Recovery is best-effort when browser storage is disabled or full.
+  }
+}
+
+function removeBackup(studentId) {
+  try {
+    localStorage.removeItem(backupKey(studentId));
+  } catch {
+    // Nothing else to clean up.
+  }
+}
 
 function unwrapError(error) {
   console.error("PERSONAL SCHEDULE API ERROR:", error?.response || error.message);
@@ -28,29 +58,73 @@ function client(studentId) {
   return instance;
 }
 
+async function scheduleRequest(studentId, request) {
+  const response = await request;
+  storeBackup(studentId, response.data?.backupToken);
+  return response;
+}
+
+async function getScheduleWithRecovery(studentId) {
+  const response = await scheduleRequest(
+    studentId,
+    client(studentId).get(`/api/personal-schedule/${studentId}`)
+  );
+  if (response.data?.schedule) return response;
+
+  const backupToken = getStoredBackup(studentId);
+  if (!backupToken) return response;
+
+  try {
+    return await scheduleRequest(
+      studentId,
+      client(studentId).post(`/api/personal-schedule/${studentId}/restore`, { backupToken })
+    );
+  } catch (error) {
+    if (error?.status === 400) {
+      removeBackup(studentId);
+      return response;
+    }
+    throw error;
+  }
+}
+
 export const personalScheduleAPI = {
   getCategories: () => client().get(`/api/personal-schedule/categories`),
 
   getTechOptions: (category) =>
     client().get(`/api/personal-schedule/tech-options/${category}`),
 
-  getSchedule: (studentId) =>
-    client(studentId).get(`/api/personal-schedule/${studentId}`),
+  getSchedule: (studentId) => getScheduleWithRecovery(studentId),
 
   setCategory: (studentId, category) =>
-    client(studentId).put(`/api/personal-schedule/${studentId}/category`, { category }),
+    scheduleRequest(
+      studentId,
+      client(studentId).put(`/api/personal-schedule/${studentId}/category`, { category })
+    ),
 
   setSkills: (studentId, body) =>
-    client(studentId).put(`/api/personal-schedule/${studentId}/skills`, body),
+    scheduleRequest(
+      studentId,
+      client(studentId).put(`/api/personal-schedule/${studentId}/skills`, body)
+    ),
 
   recordDiagnostic: (studentId, body) =>
-    client(studentId).post(`/api/personal-schedule/${studentId}/diagnostic`, body),
+    scheduleRequest(
+      studentId,
+      client(studentId).post(`/api/personal-schedule/${studentId}/diagnostic`, body)
+    ),
 
   generatePlan: (studentId) =>
-    client(studentId).post(`/api/personal-schedule/${studentId}/generate`),
+    scheduleRequest(
+      studentId,
+      client(studentId).post(`/api/personal-schedule/${studentId}/generate`)
+    ),
 
   completeTask: (studentId, body) =>
-    client(studentId).post(`/api/personal-schedule/${studentId}/complete-task`, body),
+    scheduleRequest(
+      studentId,
+      client(studentId).post(`/api/personal-schedule/${studentId}/complete-task`, body)
+    ),
 
   getToday: (studentId) =>
     client(studentId).get(`/api/personal-schedule/${studentId}/today`),
@@ -59,7 +133,10 @@ export const personalScheduleAPI = {
     client(studentId).post(`/api/personal-schedule/${studentId}/reminder`),
 
   reset: (studentId) =>
-    client(studentId).post(`/api/personal-schedule/${studentId}/reset`),
+    scheduleRequest(
+      studentId,
+      client(studentId).post(`/api/personal-schedule/${studentId}/reset`)
+    ),
 
   /** Trainer view — same endpoints, trainer Bearer auth */
   getScheduleForTrainer: (studentId) =>

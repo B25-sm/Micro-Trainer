@@ -109,10 +109,6 @@ export default function PersonalSchedule() {
   };
 
   const handleSaveSkills = async () => {
-    if (selectedTechs.length === 0) {
-      setError("Select at least one technology you already know.");
-      return;
-    }
     setLoading(true);
     setError("");
     try {
@@ -243,7 +239,8 @@ export default function PersonalSchedule() {
                     </h2>
                     <p className={`${textMuted} text-sm mb-4`}>
                       Select technologies you're comfortable with. We'll interview you on each
-                      to calibrate your plan.
+                      to calibrate your plan. If you're starting fresh, continue without selecting
+                      anything and we'll build a beginner plan.
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {techOptions.map((tech) => (
@@ -281,10 +278,12 @@ export default function PersonalSchedule() {
                   <button
                     type="button"
                     onClick={handleSaveSkills}
-                    disabled={loading || selectedTechs.length === 0}
+                    disabled={loading}
                     className={btnPrimary}
                   >
-                    Continue to skill check
+                    {selectedTechs.length > 0
+                      ? "Continue to skill check"
+                      : "Build my beginner plan"}
                   </button>
                 </div>
               )}

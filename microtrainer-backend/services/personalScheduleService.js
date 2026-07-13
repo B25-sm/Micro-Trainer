@@ -21,6 +21,19 @@ const DIAGNOSTIC_QUESTIONS_PER_TECH = 5;
 const MIN_PLAN_DAYS = 7;
 const MAX_PLAN_DAYS = 90;
 const DEFAULT_HOURS_PER_DAY = 2;
+const COACH_SUMMARY_TIMEOUT_MS = 8000;
+
+function uniqueStrings(values) {
+  return [...new Set(values.map((value) => String(value || "").trim()).filter(Boolean))];
+}
+
+function withTimeout(promise, timeoutMs) {
+  let timeoutId;
+  const timeout = new Promise((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error("Coach summary timed out.")), timeoutMs);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timeoutId));
+}
 
 function createEmptySchedule(studentId) {
   return {
@@ -77,8 +90,8 @@ function setCategory(studentId, category) {
 }
 
 function setDeclaredSkills(studentId, { declaredSkills, hoursPerDay }) {
-  if (!Array.isArray(declaredSkills) || declaredSkills.length === 0) {
-    throw new Error("Add at least one technology you already know.");
+  if (!Array.isArray(declaredSkills)) {
+    throw new Error("declaredSkills must be an array.");
   }
 
   const schedule = getOrCreate(studentId);
@@ -86,18 +99,34 @@ function setDeclaredSkills(studentId, { declaredSkills, hoursPerDay }) {
     throw new Error("Select a track category first.");
   }
 
-  const normalized = declaredSkills.map((s) => ({
-    technology: String(s.technology || s).trim(),
-    selfRating: s.selfRating || "intermediate",
-    notes: s.notes || "",
-  }));
+  const allowedTechnologies = new Set(getTechOptionsForCategory(schedule.category));
+  const requestedTechnologies = uniqueStrings(
+    declaredSkills.map((skill) => skill?.technology || skill)
+  );
+  const invalidTechnologies = requestedTechnologies.filter(
+    (technology) => !allowedTechnologies.has(technology)
+  );
+  if (invalidTechnologies.length > 0) {
+    throw new Error(`Invalid technologies for this track: ${invalidTechnologies.join(", ")}.`);
+  }
+
+  const normalized = requestedTechnologies.map((technology) => {
+    const source = declaredSkills.find(
+      (skill) => String(skill?.technology || skill).trim() === technology
+    );
+    return {
+      technology,
+      selfRating: source?.selfRating || "intermediate",
+      notes: source?.notes || "",
+    };
+  });
 
   schedule.declaredSkills = normalized;
   schedule.hoursPerDay = Math.min(8, Math.max(1, Number(hoursPerDay) || DEFAULT_HOURS_PER_DAY));
   schedule.diagnostics = {};
   schedule.diagnosticQueue = normalized.map((s) => s.technology);
-  schedule.step = "diagnostic";
-  schedule.status = "diagnostic";
+  schedule.step = normalized.length > 0 ? "diagnostic" : "generate";
+  schedule.status = normalized.length > 0 ? "diagnostic" : "ready_to_generate";
   saveSchedule(studentId, schedule);
 
   return {
@@ -119,8 +148,19 @@ function recordDiagnosticResult(studentId, { technology, averageScore, sessionId
     throw new Error("Schedule not started.");
   }
 
-  const tech = String(technology).trim();
-  const score = Math.min(10, Math.max(0, Number(averageScore) || 0));
+  const tech = String(technology || "").trim();
+  const declaredTechnologies = new Set(
+    (schedule.declaredSkills || []).map((skill) => skill.technology)
+  );
+  if (!tech || !declaredTechnologies.has(tech)) {
+    throw new Error("Diagnostic technology must be one of the student's declared skills.");
+  }
+
+  const numericScore = Number(averageScore);
+  if (!Number.isFinite(numericScore) || numericScore < 0 || numericScore > 10) {
+    throw new Error("Diagnostic score must be a number between 0 and 10.");
+  }
+  const score = numericScore;
 
   schedule.diagnostics[tech] = {
     averageScore: score,
@@ -316,16 +356,15 @@ function calculateRecommendedDays(tasks, hoursPerDay) {
   return { totalDays: days, totalMinutes, totalTasks: tasks.length };
 }
 
-async function generatePlan(studentId) {
+async function generatePlan(
+  studentId,
+  { coachSummaryCall = callGroq, coachSummaryTimeoutMs = COACH_SUMMARY_TIMEOUT_MS } = {}
+) {
   const schedule = getOrCreate(studentId);
 
   if (!schedule.category) {
     throw new Error("Select a category first.");
   }
-  if (!schedule.declaredSkills?.length) {
-    throw new Error("Declare your skills first.");
-  }
-
   const pending = schedule.diagnosticQueue || [];
   if (pending.length > 0) {
     throw new Error(
@@ -349,14 +388,17 @@ async function generatePlan(studentId) {
   const startDate = days[0]?.date;
   const endDate = days[days.length - 1]?.date;
 
-  let summary = null;
-  try {
-    const categoryLabel = getCategoryMeta(schedule.category)?.label || schedule.category;
-    const skillSummary = schedule.declaredSkills
-      .map((s) => `${s.technology} (${schedule.diagnostics[s.technology]?.averageScore ?? "?"}/10)`)
-      .join(", ");
+  const categoryLabel = getCategoryMeta(schedule.category)?.label || schedule.category;
+  let summary = `Your ${totalDays}-day plan covers ${totalTasks} concepts across ${categoryLabel}. Stay consistent at ${schedule.hoursPerDay}h/day and you'll be interview-ready.`;
+  const aiSummaryEnabled =
+    coachSummaryCall !== callGroq || process.env.PERSONAL_SCHEDULE_AI_SUMMARY === "1";
+  if (aiSummaryEnabled) {
+    try {
+      const skillSummary = schedule.declaredSkills
+        .map((s) => `${s.technology} (${schedule.diagnostics[s.technology]?.averageScore ?? "?"}/10)`)
+        .join(", ");
 
-    const prompt = `You are MicroTrainer coach. A student needs a ${totalDays}-day ${categoryLabel} interview prep plan.
+      const prompt = `You are MicroTrainer coach. A student needs a ${totalDays}-day ${categoryLabel} interview prep plan.
 Known skills (diagnostic scores): ${skillSummary}.
 Total study tasks: ${totalTasks}. Hours per day: ${schedule.hoursPerDay}.
 
@@ -367,16 +409,20 @@ Write 3 short motivational sentences (plain text, no markdown headers):
 
 Keep under 120 words total.`;
 
-    const groqRes = await callGroq({
-      model: QUALITY_MODEL,
-      messages: [{ role: "user", content: prompt }],
-      max_tokens: 200,
-      temperature: 0.5,
-    });
-    summary =
-      groqRes.data?.choices?.[0]?.message?.content?.trim() || summary;
-  } catch {
-    summary = `Your ${totalDays}-day plan covers ${totalTasks} concepts across ${categoryLabel}. Stay consistent at ${schedule.hoursPerDay}h/day and you'll be interview-ready.`;
+      const groqRes = await withTimeout(
+        coachSummaryCall({
+          model: QUALITY_MODEL,
+          messages: [{ role: "user", content: prompt }],
+          max_tokens: 200,
+          temperature: 0.5,
+        }),
+        coachSummaryTimeoutMs
+      );
+      summary =
+        groqRes.data?.choices?.[0]?.message?.content?.trim() || summary;
+    } catch (error) {
+      console.warn(`Personal schedule coach summary skipped: ${error.message}`);
+    }
   }
 
   schedule.plan = {
@@ -409,13 +455,18 @@ Keep under 120 words total.`;
 
 function completeTask(studentId, { dayNumber, taskId }) {
   const schedule = getSchedule(studentId);
-  if (!schedule?.plan) {
+  if (!schedule?.plan || schedule.status !== "active") {
     throw new Error("No active schedule found.");
   }
 
   const day = schedule.plan.days.find((d) => d.dayNumber === Number(dayNumber));
   if (!day) {
     throw new Error("Invalid day number.");
+  }
+
+  const task = day.tasks.find((candidate) => candidate.id === taskId);
+  if (!task) {
+    throw new Error("Task does not belong to the selected day.");
   }
 
   if (!day.completedTaskIds.includes(taskId)) {
@@ -604,6 +655,40 @@ function resetSchedule(studentId) {
   return fresh;
 }
 
+function restoreSchedule(studentId, snapshot) {
+  if (!snapshot || typeof snapshot !== "object" || Array.isArray(snapshot)) {
+    throw new Error("Invalid schedule backup.");
+  }
+  if (snapshot.studentId !== studentId) {
+    throw new Error("Schedule backup belongs to a different student.");
+  }
+  if (snapshot.category && !getCategoryMeta(snapshot.category)) {
+    throw new Error("Schedule backup has an invalid category.");
+  }
+  if (snapshot.plan && !Array.isArray(snapshot.plan.days)) {
+    throw new Error("Schedule backup has an invalid plan.");
+  }
+
+  const restored = {
+    ...snapshot,
+    studentId,
+    declaredSkills: Array.isArray(snapshot.declaredSkills) ? snapshot.declaredSkills : [],
+    diagnostics: snapshot.diagnostics && typeof snapshot.diagnostics === "object"
+      ? snapshot.diagnostics
+      : {},
+    diagnosticQueue: Array.isArray(snapshot.diagnosticQueue) ? snapshot.diagnosticQueue : [],
+    progress: {
+      completedTaskIds: [],
+      completedDays: 0,
+      lastReminderAt: null,
+      lastReminderType: null,
+      ...(snapshot.progress || {}),
+    },
+  };
+  saveSchedule(studentId, restored);
+  return publicView(getSchedule(studentId));
+}
+
 function getCurrentDiagnostic(schedule) {
   if (!schedule?.diagnosticQueue?.length) return null;
   const technology = schedule.diagnosticQueue[0];
@@ -651,5 +736,6 @@ module.exports = {
   sendScheduleReminder,
   runDailyScheduleReminders,
   resetSchedule,
+  restoreSchedule,
   publicView,
 };
