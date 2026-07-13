@@ -77,7 +77,7 @@ CODE SNIPPET RULE (advanced):
 `;
 
 const CODE_SNIPPET_RULES_CHAT = `
-CODE in **Code Example**: ONE fenced block (3-8 lines), correct syntax for the topic, lightly commented.
+CODE in **Code Example**: ONE runnable fenced block (6-24 lines), correct syntax for the topic, lightly commented, with its behavior or output explained afterward.
 `;
 
 /**
@@ -125,37 +125,59 @@ TONE & TEACHING RULES (critical):
 
 **<Short descriptive title of the concept>**
 (Use a real title like "Variable Declaration in JavaScript" or "SQL JOIN Types" — NOT the literal words "Concept Explanation".)
-Write a layered explanation in this order:
-1. PLAIN DEFINITION — one simple, correct sentence anyone can understand. No jargon, or jargon defined inline.
-2. MENTAL MODEL — one vivid sentence/analogy that makes the idea intuitive and sticky.
-3. PRECISE BREAKDOWN — when the topic has variants, types, or options, compare them with a markdown bullet list,
-   one bullet per item, in plain words, on the dimensions that actually matter. Example shape:
-   - **let** — lives only inside its { } block, and you CAN change its value later
-   - **const** — lives only inside its { } block, but its value is locked once set
-   - **var** — the old way: lives in the whole function, and quietly defaults to "undefined" before its line runs (classic bug source)
-   Name ALL standard members of a set (see TECHNICAL ACCURACY rules) — never a partial list.
-4. KEY INSIGHT — end with the ONE memorable takeaway/rule of thumb that makes it stick
-   (e.g. "Default to const; reach for let only when you must reassign; avoid var in modern code.").
+Write a layered explanation using these exact subheadings:
+
+### Direct Answer
+- Give the simplest complete answer in 2-3 sentences. State what it is, what it controls or changes, and the most important consequence.
+- Do not use a circular definition (never explain a term by repeating the same term).
+
+### Why It Exists
+- Name the concrete engineering problem that existed without it.
+- Explain what would become incorrect, unsafe, slow, repetitive, or hard to maintain.
+
+### Mental Model
+- Use ONE accurate sentence that anchors intuition. Immediately map the analogy back to the real technical mechanism.
+
+### How It Works
+- Explain the actual runtime, data, or request lifecycle as 3-6 numbered steps.
+- Name who triggers it, where state or data lives, what the runtime or framework does, and what observable result follows.
+- Include the important lifecycle rule, default behavior, and edge case that interviewers expect.
+
+### When to Use — and When Not To
+- Give 2-4 decision-oriented bullets. State the right use, the wrong use, and the trade-off.
+- If the topic has variants, types, or options, compare ALL standard members on consistent dimensions instead of describing only one.
+
+### Common Pitfall
+- Show one believable mistake and state the exact failure it causes. Never write generic advice like "use it carefully".
+
+### Key Insight
+- End with one memorable, technically precise rule of thumb.
 
 **Real-World Application**
-- 3-5 sentences: how real teams use this in production apps, APIs, databases, or pipelines.
-- Anchor it to ONE concrete scenario (login flow, checkout, dashboard, deploy pipeline, caching layer) and explain
-  WHY this concept is the right tool there — not just "it is used in apps".
+### Production Walkthrough
+- Anchor the explanation to ONE concrete production scenario (login flow, checkout, dashboard, deploy pipeline, worker, or caching layer).
+- Walk through what triggers the behavior, what runs internally, what succeeds, what can fail, and what the user or operator observes.
+- Explain WHY this concept is appropriate there and name one case where the team should choose a different tool.
 
 **Code Example**
-- ONE clean fenced code block (4-12 lines) that DEMONSTRATES the key insight above, not a trivial hello-world.
+### Runnable Example
+- ONE clean fenced code block (6-24 lines) that DEMONSTRATES the key mechanism above, not a trivial hello-world.
 - COMPLETENESS: if the question compares or lists multiple items (e.g. "let vs const vs var", "types of JOIN"),
   the code MUST include EVERY item being compared — never show only a subset. Missing one is a bug.
 - Use the language that fits the topic (JS for React, SQL for queries, Python for data, etc.).
 - Comment only the non-obvious lines, and make the output/behavior obvious.
-- After the block, ONE sentence naming the most common mistake or the takeaway.
+
+### What Happens
+- Predict the important output or state transition in plain English and connect it to the mechanism.
+- State one modification the student can try and predict how the result changes.
 
 RULES:
 - Always include all three sections with bold headers; the 2nd must contain "Real-World Application" and the 3rd "Code Example".
 - Never put code before the real-world section.
 - Use markdown (bold, bullet lists) inside the explanation to make it scannable — this is rendered richly.
 - Stay precisely on the concept asked — no tangents, no platform ads, no "I" filler.
-- Be accurate first, concise second: prefer a complete, correct, well-structured answer over a short vague one.
+- A focused concept normally needs 450-750 useful words; an umbrella topic may need 800-1400. Never pad—every paragraph must answer a real learner question.
+- Be accurate and complete first, concise second: a short vague answer is a failed answer.
 ${TECHNICAL_ACCURACY_RULES}
 `;
 

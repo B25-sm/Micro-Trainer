@@ -540,7 +540,12 @@ Don't:
 - Provide incorrect or incomplete information (especially partial type lists)
 - Skip or reorder the three concept sections when explaining a concept`
       },
-      ...session.history.slice(-6), // Last 3 exchanges
+      // Keep enough continuity to understand a follow-up without letting an old,
+      // long lesson crowd the current teaching instructions out of the context.
+      ...session.history.slice(-4).map((message) => ({
+        ...message,
+        content: String(message.content || "").slice(0, 2200),
+      })),
       {
         role: "user",
         content: [
@@ -601,14 +606,15 @@ Don't:
     // Do not ship a fluent but incomplete lesson. Broad topics have an explicit
     // coverage contract; one focused repair pass fills omissions or removes
     // retrieved-context pollution before the student sees the answer.
-    const quality = assessAnswer(answer, answerPlan);
+    let quality = assessAnswer(answer, answerPlan);
+    let qualityRepaired = false;
     if (!quality.passed) {
       const repairMessages = [
         ...messages,
         { role: "assistant", content: answer },
         {
           role: "system",
-          content: `QUALITY REVIEW FAILED. Rewrite the answer completely; do not merely append a correction. Fix every issue below while preserving correct material:\n- ${quality.issues.join("\n- ")}\nReturn only the improved final answer.`,
+          content: `QUALITY REVIEW FAILED. Rewrite the answer completely; do not merely append a correction. Fix every issue below while preserving correct material:\n- ${quality.issues.join("\n- ")}\n\nA strong answer must teach the causal chain (problem -> mechanism -> decision -> failure mode -> observable result), use every required heading, and include runnable code whose behavior is predicted. Return only the improved final answer.`,
         },
       ];
       try {
@@ -622,10 +628,28 @@ Don't:
           1
         );
         const repaired = repairedResponse?.data?.choices?.[0]?.message?.content?.trim();
-        if (repaired) answer = repaired;
+        if (repaired) {
+          const repairedQuality = assessAnswer(repaired, answerPlan);
+          // Never replace an imperfect answer with a rewrite that regressed. A
+          // fully passing rewrite wins; otherwise keep whichever has fewer
+          // objectively detected omissions.
+          if (repairedQuality.passed || repairedQuality.issues.length < quality.issues.length) {
+            answer = repaired;
+            quality = repairedQuality;
+            qualityRepaired = true;
+          }
+        }
       } catch (repairError) {
         console.error("CHAT quality repair error:", repairError.message);
       }
+    }
+
+    if (!quality.passed) {
+      console.warn("CHAT answer left quality gate with unresolved issues:", {
+        question: matchingText.slice(0, 120),
+        repaired: qualityRepaired,
+        issues: quality.issues,
+      });
     }
 
     // Update session

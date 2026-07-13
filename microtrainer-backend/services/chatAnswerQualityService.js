@@ -5,6 +5,8 @@ const BROAD_TOPIC_PATTERNS = [
 
 const BROAD_UMBRELLA_PATTERN = /^(?:react(?:\.js)?|hooks?|javascript|typescript|python|java|sql|databases?|apis?|oop|dsa|data structures?|algorithms?|machine learning|data science|docker|kubernetes|git|css|html|node(?:\.js)?)\??$/i;
 
+const NON_CONCEPT_PATTERN = /\b(?:career path|career advice|resume|curriculum|study plan|roadmap|prepare for|preparation tips|how do i (?:begin|start)|platform help|where should i start)\b/i;
+
 const COVERAGE_CONTRACTS = [
   {
     id: "react-hooks",
@@ -47,14 +49,37 @@ Go deeper on the commonly used hooks and label specialized hooks as specialized.
     requiredGroups: [["GET"], ["POST"], ["PUT"], ["PATCH"], ["DELETE"], ["HEAD"], ["OPTIONS"]],
     scope: "Cover GET, POST, PUT, PATCH, DELETE, HEAD, and OPTIONS. Compare safety, idempotency, request bodies, typical status codes, and practical API usage.",
   },
+  {
+    id: "python-daemon-threads",
+    match: (text) => /\b(?:python\s+)?d(?:ae|ea)mon\s+threads?\b/i.test(text),
+    broad: false,
+    requiredGroups: [
+      ["non-daemon", "non daemon"],
+      ["daemon flag", "daemon=True", "daemon = True"],
+      ["start()", ".start()"],
+      ["join()", ".join()"],
+      ["abruptly", "abrupt", "not gracefully"],
+      ["finally", "cleanup"],
+    ],
+    scope: `Explain Python daemon threads precisely:
+- daemon is a lifecycle flag, not a different Thread class and not an operating-system daemon process
+- the process exits when no alive non-daemon threads remain; daemon threads can be stopped abruptly
+- daemon must be set before start(), otherwise Python raises RuntimeError
+- join() means the caller waits; it does not convert a daemon thread into a non-daemon thread
+- a child thread inherits the creating thread's daemon value unless explicitly overridden
+- finally blocks, file flushes, transactions, and other cleanup are not guaranteed at interpreter shutdown
+- use daemon threads only for non-critical background helpers; use non-daemon threads plus explicit signaling/join for work that must finish
+Show a runnable example with a threading.Event for cooperative shutdown and explain what changes if daemon=False.`,
+  },
 ];
 
 function classifyQuestion(question) {
   const text = String(question || "").trim();
   const words = text.split(/\s+/).filter(Boolean);
   const contract = COVERAGE_CONTRACTS.find((item) => item.match(text)) || null;
+  const isConceptQuestion = !NON_CONCEPT_PATTERN.test(text);
   const isBroad =
-    (Boolean(contract) && words.length <= 5) ||
+    (Boolean(contract) && contract.broad !== false && words.length <= 5) ||
     BROAD_UMBRELLA_PATTERN.test(text) ||
     BROAD_TOPIC_PATTERNS.slice(1).some((pattern) => pattern.test(text));
 
@@ -64,7 +89,7 @@ function classifyQuestion(question) {
   else if (/\b(?:interview|answer in interview)\b/i.test(text)) mode = "interview-prep";
   else if (/\b(?:build|implement|write|code|example)\b/i.test(text)) mode = "implementation";
 
-  return { mode, isBroad, contract };
+  return { mode, isBroad, contract, isConceptQuestion };
 }
 
 function buildAnswerPlan(question, options = {}) {
@@ -80,7 +105,7 @@ function buildAnswerPlan(question, options = {}) {
 
   return {
     ...plan,
-    qualityGate: options.technical !== false,
+    qualityGate: options.technical !== false && plan.isConceptQuestion,
     instruction: `ANSWER PLAN (internal; do not mention this plan):
 Mode: ${plan.mode}
 ${modeRules[plan.mode]}
@@ -88,9 +113,12 @@ ${plan.contract ? `Mandatory coverage:\n${plan.contract.scope}` : ""}
 
 QUALITY BAR:
 - First answer the student's actual question; never substitute a nearby curriculum topic.
+- Teach causally: problem -> mechanism -> decision -> failure mode -> observable result. A definition without the mechanism is incomplete.
+- Use the exact layered subheadings from the concept response contract so the learner can progressively deepen understanding.
 - Make all major members of a named set visible before deep-diving into one.
 - Prefer mechanisms, decisions, trade-offs, and failure modes over generic definitions.
 - Examples must be internally consistent and production-plausible.
+- The code must be runnable, and the prose must predict what it does and how changing one input or option changes the result.
 - Explicitly distinguish common practice from specialized/rare APIs.
 - Never add unrelated facts merely because they appeared in retrieved context.`,
   };
@@ -103,19 +131,66 @@ function assessAnswer(answer, plan) {
 
   if (plan.qualityGate === false) return { passed: true, issues };
 
-  if (text.length < (plan.isBroad ? 1800 : 650)) {
+  if (text.length < (plan.isBroad ? 4000 : 2200)) {
     issues.push("The answer is too shallow for the scope of the question.");
+  }
+
+  const requiredTeachingLayers = [
+    ["direct answer"],
+    ["why it exists"],
+    ["mental model"],
+    ["how it works"],
+    ["when to use", "when not to"],
+    ["common pitfall", "common mistake"],
+    ["key insight", "rule of thumb"],
+    ["production walkthrough"],
+    ["what happens"],
+  ];
+  for (const alternatives of requiredTeachingLayers) {
+    if (!alternatives.some((heading) => lower.includes(heading))) {
+      issues.push(`Missing teaching layer: ${alternatives.join(" / ")}.`);
+    }
   }
   for (const header of ["real-world application", "code example"]) {
     if (!lower.includes(header)) issues.push(`Missing required section: ${header}.`);
   }
-  if (!/```[\s\S]+```/.test(text)) issues.push("Missing a fenced, runnable code example.");
+  const codeMatch = text.match(/```[^\n]*\n([\s\S]+?)```/);
+  if (!codeMatch) {
+    issues.push("Missing a fenced, runnable code example.");
+  } else {
+    const codeLines = codeMatch[1].split("\n").filter((line) => line.trim()).length;
+    if (codeLines < 6) issues.push("The code example is too small to demonstrate the mechanism.");
+  }
 
   if (plan.contract) {
     const missing = plan.contract.requiredGroups
       .filter((group) => !group.some((term) => lower.includes(term.toLowerCase())))
       .map((group) => group.join(" / "));
     if (missing.length) issues.push(`Missing topic coverage: ${missing.join(", ")}.`);
+  }
+
+  if (plan.contract?.id === "python-daemon-threads") {
+    const semanticChecks = [
+      {
+        pattern: /(?:join\(\)[\s\S]{0,180}(?:wait|does not change|doesn't change)|(?:wait|does not change|doesn't change)[\s\S]{0,180}join\(\))/i,
+        issue: "Missing the fact that join() waits but does not change daemon status.",
+      },
+      {
+        pattern: /(?:no (?:alive )?non-daemon threads? remain|when (?:all|the) non-daemon threads? (?:finish|exit|end))/i,
+        issue: "Missing the exact process-exit condition: no alive non-daemon threads remain.",
+      },
+      {
+        pattern: /(?:threading\.)?Event\s*\(/,
+        issue: "Missing explicit cooperative shutdown with threading.Event.",
+      },
+      {
+        pattern: /before[\s\S]{0,80}(?:\.start|start)\(\)[\s\S]{0,120}RuntimeError/i,
+        issue: "Missing the before-start daemon rule and its RuntimeError consequence.",
+      },
+    ];
+    for (const check of semanticChecks) {
+      if (!check.pattern.test(text)) issues.push(check.issue);
+    }
   }
 
   if (plan.contract?.id === "react-hooks" && /\*\*let\*\*|\*\*const\*\*|\*\*var\*\*/i.test(text)) {

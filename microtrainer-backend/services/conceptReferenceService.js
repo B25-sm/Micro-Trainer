@@ -58,6 +58,18 @@ GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS`,
     reference: `SOLID — all five: Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion`,
   },
   {
+    id: "python-daemon-threads",
+    match: (text) => /\b(?:python\s+)?d(?:ae|ea)mon\s+threads?\b/i.test(text),
+    reference: `Python threading daemon semantics (authoritative):
+- daemon is a boolean Thread property; ordinary main-created threads default to daemon=False
+- the Python process exits when no alive non-daemon threads remain; alive daemon threads are then stopped abruptly
+- set thread.daemon or pass daemon= before start(); changing it after start() raises RuntimeError
+- join() only makes the calling thread wait; it does not change daemon status
+- a newly created thread inherits the daemon status of the thread that created it unless daemon is explicitly supplied
+- interpreter shutdown does not guarantee daemon-thread finally blocks, buffered writes, locks, or transactions finish
+- use daemon=True for disposable helper work only; use a non-daemon thread plus Event-based shutdown and join() for work that must complete`,
+  },
+  {
     id: "django-mvt",
     match: (text) =>
       /\bdjango\b/i.test(text) &&
