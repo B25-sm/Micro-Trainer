@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { createPortal } from "react-dom";
 import { useLocation } from "react-router-dom";
-import { Bug, Send, X, ImagePlus, ClipboardPaste } from "lucide-react";
+import { Send, X, ImagePlus, ClipboardPaste } from "lucide-react";
 import { reportIssue } from "../api";
 import { getAuthUser } from "../utils/authSession";
 
@@ -51,7 +50,6 @@ export default function ReportIssueButton() {
   const [screenshots, setScreenshots] = useState([]);
   const [status, setStatus] = useState("idle");
   const [toast, setToast] = useState("");
-  const [actionTargets, setActionTargets] = useState({ mobile: null, sidebar: null });
   const panelRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -60,11 +58,10 @@ export default function ReportIssueButton() {
   }, [authUser?.email]);
 
   useEffect(() => {
-    setActionTargets({
-      mobile: document.getElementById("app-mobile-context-actions"),
-      sidebar: document.getElementById("app-sidebar-context-actions"),
-    });
-  }, [location.pathname]);
+    const openReporter = () => setOpen(true);
+    window.addEventListener("microtrainer:open-issue-report", openReporter);
+    return () => window.removeEventListener("microtrainer:open-issue-report", openReporter);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -172,36 +169,9 @@ export default function ReportIssueButton() {
 
   const isSending = status === "sending";
   const canSubmit = message.trim().length > 0 || screenshots.length > 0;
-  const hasAppNavigation = Boolean(actionTargets.mobile || actionTargets.sidebar);
+  const hasAppNavigation = !["/login", "/auth/callback", "/complete-profile"].includes(location.pathname);
   return (
     <>
-      {actionTargets.mobile && createPortal(
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 transition hover:bg-black/[0.05] hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/[0.08] dark:hover:text-white lg:hidden"
-          aria-label="Report a snag"
-          title="Report a snag"
-        >
-          <Bug className="h-[18px] w-[18px]" strokeWidth={1.75} />
-        </button>,
-        actionTargets.mobile
-      )}
-
-      {actionTargets.sidebar && createPortal(
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          className="app-context-action flex w-full items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition hover:bg-black/[0.04] hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/[0.07] dark:hover:text-white"
-          aria-label="Report a snag"
-          title="Report a snag"
-        >
-          <Bug className="h-[18px] w-[18px] shrink-0" strokeWidth={1.5} />
-          <span className="truncate text-[13px]">Report a snag</span>
-        </button>,
-        actionTargets.sidebar
-      )}
-
       <div
         ref={panelRef}
         className="fixed z-[120] bottom-16 right-4 lg:bottom-4 flex flex-col gap-3 items-end"

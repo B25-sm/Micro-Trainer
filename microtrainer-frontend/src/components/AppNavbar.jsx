@@ -20,11 +20,15 @@ import {
   Sparkles,
   Bot,
   UserRound,
+  Bug,
 } from "lucide-react";
 import DisplayModeToggle from "./DisplayModeToggle";
 import { clearAuthSession } from "../utils/authSession";
 import { isTrainerSession } from "../utils/trainerAuth";
 import { useSidebar } from "../context/SidebarContext";
+import usePageTools from "../hooks/usePageTools";
+
+const OPEN_ISSUE_REPORT_EVENT = "microtrainer:open-issue-report";
 
 const NAV_SECTIONS = [
   {
@@ -77,6 +81,7 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { isCollapsed, closeMobile } = useSidebar();
+  const { historyTool } = usePageTools();
   const [userName, setUserName] = useState("");
   const showTrainerNav = isTrainerSession();
 
@@ -194,12 +199,37 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
       </nav>
 
       <div className={`px-2.5 py-3 space-y-2.5 ${isCollapsed ? "flex flex-col items-center" : ""}`}>
-        <div
-          id="app-sidebar-context-actions"
-          data-collapsed={isCollapsed ? "true" : "false"}
-          className="app-context-actions w-full space-y-1"
-          aria-label="Page tools"
-        />
+        <div className="w-full space-y-1" aria-label="Page tools">
+          {historyTool && (
+            <button
+              type="button"
+              onClick={historyTool.open}
+              className={`flex w-full items-center rounded-lg py-2 text-gray-500 transition-colors hover:bg-black/[0.04] hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/[0.07] dark:hover:text-white ${isCollapsed ? "justify-center px-0" : "gap-3 px-3"}`}
+              aria-label={`Open ${historyTool.count} past questions`}
+              title="Past questions"
+            >
+              <MessageSquareText className="h-[18px] w-[18px] shrink-0" strokeWidth={1.5} />
+              {!isCollapsed && (
+                <>
+                  <span className="min-w-0 flex-1 truncate text-left text-[13px]">Past questions</span>
+                  <span className="rounded-full bg-violet-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-violet-600 dark:text-violet-300">
+                    {historyTool.count}
+                  </span>
+                </>
+              )}
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new Event(OPEN_ISSUE_REPORT_EVENT))}
+            className={`flex w-full items-center rounded-lg py-2 text-gray-500 transition-colors hover:bg-black/[0.04] hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/[0.07] dark:hover:text-white ${isCollapsed ? "justify-center px-0" : "gap-3 px-3"}`}
+            aria-label="Report a snag"
+            title="Report a snag"
+          >
+            <Bug className="h-[18px] w-[18px] shrink-0" strokeWidth={1.5} />
+            {!isCollapsed && <span className="truncate text-[13px]">Report a snag</span>}
+          </button>
+        </div>
         <div className={isCollapsed ? "flex justify-center" : ""}>
           <DisplayModeToggle variant={isCollapsed ? "icon" : "compact"} />
         </div>
@@ -267,6 +297,7 @@ export default function AppNavbar({ showLevelBadge = false, currentLevel = null 
     openMobile,
     closeMobile,
   } = useSidebar();
+  const { historyTool } = usePageTools();
 
   return (
     <>
@@ -284,11 +315,31 @@ export default function AppNavbar({ showLevelBadge = false, currentLevel = null 
           <Sparkles className="h-3 w-3" strokeWidth={2} aria-hidden />
         </span>
         <span className="text-[15px] font-semibold text-gray-800 dark:text-gray-100">MicroTrainer</span>
-        <div
-          id="app-mobile-context-actions"
-          className="ml-auto flex items-center gap-1"
-          aria-label="Page tools"
-        />
+        <div className="ml-auto flex items-center gap-1" aria-label="Page tools">
+          {historyTool && (
+            <button
+              type="button"
+              onClick={historyTool.open}
+              className="relative flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-black/[0.05] hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/[0.08] dark:hover:text-white"
+              aria-label={`Open ${historyTool.count} past questions`}
+              title="Past questions"
+            >
+              <MessageSquareText className="h-[18px] w-[18px]" strokeWidth={1.75} />
+              <span className="absolute right-0 top-0 flex min-h-4 min-w-4 items-center justify-center rounded-full bg-violet-600 px-1 text-[9px] font-semibold leading-none text-white ring-2 ring-white dark:ring-[#18191c]">
+                {historyTool.count > 99 ? "99+" : historyTool.count}
+              </span>
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new Event(OPEN_ISSUE_REPORT_EVENT))}
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-black/[0.05] hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/[0.08] dark:hover:text-white"
+            aria-label="Report a snag"
+            title="Report a snag"
+          >
+            <Bug className="h-[18px] w-[18px]" strokeWidth={1.75} />
+          </button>
+        </div>
       </header>
 
       {/* Mobile drawer backdrop */}

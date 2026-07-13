@@ -700,6 +700,15 @@ const StructuredTeaching = ({
     }
   };
 
+  useEffect(() => {
+    const field = answerInputRef.current;
+    if (!field) return;
+    field.style.height = "auto";
+    const nextHeight = Math.min(field.scrollHeight, 160);
+    field.style.height = `${nextHeight}px`;
+    field.style.overflowY = field.scrollHeight > 160 ? "auto" : "hidden";
+  }, [currentAnswer]);
+
   if (isLoading) {
     return (
       <LessonLoadingScreen
@@ -1061,20 +1070,20 @@ const StructuredTeaching = ({
         )}
 
         {showingQuestions && !assessmentResult && currentQuestion?.type !== "mcq" && (
-          <form onSubmit={handleAnswerSubmit} className="bg-white dark:bg-[#2d2f35] rounded-full border border-gray-200 dark:border-slate-600 shadow-lg">
-            <div className="flex items-center gap-3 px-6 py-4">
-              <input
+          <form onSubmit={handleAnswerSubmit} className="bg-white dark:bg-[#2d2f35] rounded-[1.75rem] border border-gray-200 dark:border-slate-600 shadow-lg">
+            <div className="flex items-end gap-3 px-6 py-3.5">
+              <textarea
                 ref={answerInputRef}
-                type="text"
                 value={currentAnswer}
                 onChange={(e) => setCurrentAnswer(e.target.value)}
-                onKeyPress={handleKeyPress}
+                onKeyDown={handleKeyPress}
                 onCopy={(e) => e.preventDefault()}
                 onPaste={(e) => e.preventDefault()}
                 onCut={(e) => e.preventDefault()}
                 placeholder="Type your answer in your own words..."
                 disabled={isAssessing}
-                className="flex-1 bg-transparent text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400 text-base disabled:opacity-50 select-none"
+                rows={1}
+                className="max-h-40 min-h-6 flex-1 resize-none overflow-y-hidden bg-transparent py-0.5 text-base leading-6 text-gray-800 placeholder-gray-400 disabled:opacity-50 dark:text-gray-100 dark:placeholder-gray-400"
                 style={{ 
                   border: 'none',
                   outline: 'none',

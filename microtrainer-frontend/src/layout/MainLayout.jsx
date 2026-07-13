@@ -2,6 +2,7 @@ import Navbar from "./Navbar";
 import { motion } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import { SidebarProvider, useSidebar } from "../context/SidebarContext";
+import PageToolsProvider from "../context/PageToolsProvider";
 
 function MainLayoutInner({ children }) {
   const location = useLocation();
@@ -44,7 +45,9 @@ function MainLayoutInner({ children }) {
 
 const MainLayout = ({ children }) => (
   <SidebarProvider>
-    <MainLayoutInner>{children}</MainLayoutInner>
+    <PageToolsProvider>
+      <MainLayoutInner>{children}</MainLayoutInner>
+    </PageToolsProvider>
   </SidebarProvider>
 );
 
