@@ -261,22 +261,12 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
 
 export default function AppNavbar({ showLevelBadge = false, currentLevel = null }) {
   const {
-    collapsed,
     isCollapsed,
-    setHoverExpanded,
     mobileOpen,
     toggleCollapsed,
     openMobile,
     closeMobile,
   } = useSidebar();
-
-  const handleSidebarMouseEnter = () => {
-    if (collapsed) setHoverExpanded(true);
-  };
-
-  const handleSidebarMouseLeave = () => {
-    setHoverExpanded(false);
-  };
 
   return (
     <>
@@ -313,11 +303,9 @@ export default function AppNavbar({ showLevelBadge = false, currentLevel = null 
 
       {/* Sidebar */}
       <aside
-        onMouseEnter={handleSidebarMouseEnter}
-        onMouseLeave={handleSidebarMouseLeave}
         className={`
           fixed top-0 left-0 z-50 h-full
-          transition-all duration-300 ease-in-out
+          transition-[width,transform] duration-300 ease-in-out
           ${isCollapsed ? "w-[72px]" : "w-60"}
           ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0

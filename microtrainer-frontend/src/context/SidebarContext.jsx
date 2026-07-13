@@ -13,10 +13,9 @@ export function SidebarProvider({ children }) {
     }
   });
   const [mobileOpen, setMobileOpen] = useState(false);
-  /** Temporary expand on hover when sidebar is collapsed (desktop only) */
-  const [hoverExpanded, setHoverExpanded] = useState(false);
-
-  const isCollapsed = collapsed && !hoverExpanded;
+  // Expansion is explicit. Hover-driven width changes caused portaled page
+  // tools to repeatedly enter/leave the sidebar boundary and visibly jitter.
+  const isCollapsed = collapsed;
 
   useEffect(() => {
     try {
@@ -38,11 +37,8 @@ export function SidebarProvider({ children }) {
   const value = {
     collapsed,
     isCollapsed,
-    hoverExpanded,
-    setHoverExpanded,
     mobileOpen,
     toggleCollapsed: () => {
-      setHoverExpanded(false);
       setCollapsed((c) => !c);
     },
     openMobile: () => setMobileOpen(true),
