@@ -952,8 +952,13 @@ const TrainerDashboard = () => {
                     gridTemplateColumns: `minmax(140px, 1.4fr) repeat(${readinessData.technologies.length}, minmax(72px, 1fr))`,
                   }}
                 >
-                  <span className="font-medium text-gray-800 dark:text-gray-200 truncate">
-                    {student.displayName || student.name || student.studentId}
+                  <span className="min-w-0 font-medium text-gray-800 dark:text-gray-200">
+                    <span className="block truncate">{student.displayName || student.name || student.studentId}</span>
+                    {student.quickChecks?.unverified > 0 && (
+                      <span className="mt-0.5 block text-[10px] font-normal text-amber-600 dark:text-amber-300">
+                        {student.quickChecks.unverified} learned, not verified
+                      </span>
+                    )}
                   </span>
                   {readinessData.technologies.map((tech) => {
                     const band = getStudentTechBand(student, tech);

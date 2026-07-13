@@ -91,7 +91,7 @@ export const askAI = (data) =>
 export const chatWithMicroTrainer = (data) =>
   API.post("/chat/ask", data, { timeout: 60000 });
 
-// Optional post-learning quick check (mode: "generate" | "grade")
+// Adaptive post-learning quick check lifecycle and grading.
 export const chatQuickCheck = (data) =>
   API.post("/chat/quick-check", data, { timeout: 30000 });
 

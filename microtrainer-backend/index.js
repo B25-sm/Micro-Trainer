@@ -672,11 +672,28 @@ Don't:
 // =======================================================
 app.post("/chat/quick-check", requireStudentIdentity, async (req, res) => {
   try {
-    const { mode, topic, questions, answers, studentId } = req.body || {};
+    const { mode, topic, questions, answers, studentId, sessionId, event } = req.body || {};
     const concept = String(topic || "").trim();
 
     if (!concept || concept.length > 300) {
       return res.status(400).json({ error: "A valid topic is required" });
+    }
+
+    const {
+      getQuickCheckStatus,
+      recordQuickCheckEvent,
+    } = require("./services/quickCheckProgressService");
+
+    if (mode === "status") {
+      return res.json(getQuickCheckStatus(studentId, concept));
+    }
+
+    if (mode === "event") {
+      if (!["offered", "dismissed", "abandoned"].includes(event)) {
+        return res.status(400).json({ error: "Invalid quick-check event" });
+      }
+      const progress = recordQuickCheckEvent({ studentId, topic: concept, event, sessionId });
+      return res.json({ success: true, progress });
     }
 
     const groqCall = async (messages, maxTokens) => {
@@ -719,6 +736,7 @@ app.post("/chat/quick-check", requireStudentIdentity, async (req, res) => {
       if (qs.length === 0) {
         return res.status(502).json({ error: "Could not generate a quick check" });
       }
+      recordQuickCheckEvent({ studentId, topic: concept, event: "started", sessionId });
       return res.json({ topic: concept, questions: qs });
     }
 
@@ -754,12 +772,19 @@ app.post("/chat/quick-check", requireStudentIdentity, async (req, res) => {
         } catch (ledgerErr) {
           console.error("Quick-check ledger error:", ledgerErr.message);
         }
+        recordQuickCheckEvent({
+          studentId,
+          topic: concept,
+          event: "submitted",
+          sessionId,
+          score,
+        });
       }
 
       return res.json({ topic: concept, score, passed: score >= 60, feedback });
     }
 
-    return res.status(400).json({ error: "mode must be 'generate' or 'grade'" });
+    return res.status(400).json({ error: "Invalid quick-check mode" });
   } catch (error) {
     console.error("QUICK CHECK ERROR:", error.message);
     res.status(500).json({ error: "Quick check failed. Please try again." });

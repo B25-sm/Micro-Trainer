@@ -27,6 +27,7 @@ const Home = () => {
   const [sessionId, setSessionId] = useState(null);
   const [highlightedIndex, setHighlightedIndex] = useState(null);
   const [lastConcept, setLastConcept] = useState(null);
+  const [focusStartedAt, setFocusStartedAt] = useState(null);
   const chatEndRef = useRef(null);
   const messageRefs = useRef({});
   const inputRef = useRef(null);
@@ -107,6 +108,7 @@ const Home = () => {
     ]);
 
     setIsLoading(true);
+    setFocusStartedAt((previous) => previous || Date.now());
 
     try {
       const response = await chatWithMicroTrainer({
@@ -131,7 +133,7 @@ const Home = () => {
 
       // Offer an optional quick check for concept-like questions (skip greetings).
       if (userQuestion.length >= 10 && !/^(hi|hey|hello|thanks|thank you)\b/i.test(userQuestion)) {
-        setLastConcept(userQuestion);
+        setLastConcept((previous) => previous || userQuestion);
       }
     } catch (err) {
       console.error("Chat error:", err);
@@ -172,6 +174,7 @@ const Home = () => {
     setQuestion("");
     setHighlightedIndex(null);
     setLastConcept(null);
+    setFocusStartedAt(null);
   };
 
   const handleSelectSession = (session) => {
@@ -179,6 +182,9 @@ const Home = () => {
     setChatHistory(session.messages || []);
     setSessionId(session.sessionId ?? null);
     setHighlightedIndex(null);
+    const firstQuestion = (session.messages || []).find((message) => message.role === "user");
+    setLastConcept(firstQuestion?.content || null);
+    setFocusStartedAt(firstQuestion?.timestamp ? new Date(firstQuestion.timestamp).getTime() : Date.now());
   };
 
   const handleSelectQuestion = (session, messageIndex) => {
@@ -235,6 +241,8 @@ const Home = () => {
               onKeyDown={handleKeyDown}
               onNewChat={startNewChat}
               lastConcept={lastConcept}
+              sessionId={sessionId}
+              focusStartedAt={focusStartedAt}
               attach={attach}
             />
           ) : (
@@ -392,8 +400,22 @@ function ActiveChatView({
   onKeyDown,
   onNewChat,
   lastConcept,
+  sessionId,
+  focusStartedAt,
   attach,
 }) {
+  const [endReminder, setEndReminder] = useState(false);
+  const [quickCheckResolved, setQuickCheckResolved] = useState(false);
+  const userTurnCount = chatHistory.filter((message) => message.role === "user").length;
+
+  const handleNewQuestion = () => {
+    if (lastConcept && !quickCheckResolved && !endReminder) {
+      setEndReminder(true);
+      return;
+    }
+    onNewChat();
+  };
+
   return (
     <div className="flex-1 flex flex-col min-h-0">
       {/* Messages */}
@@ -472,12 +494,22 @@ function ActiveChatView({
         <div className="max-w-3xl mx-auto">
           {lastConcept && !isLoading && (
             <div className="mb-3">
-              <QuickCheckCard key={lastConcept} topic={lastConcept} />
+              <QuickCheckCard
+                key={lastConcept}
+                topic={lastConcept}
+                sessionId={sessionId}
+                userTurnCount={userTurnCount}
+                focusStartedAt={focusStartedAt}
+                forceOffer={endReminder}
+                onOutcome={(event, details) => {
+                  if (event === "submitted" || details?.forced) setQuickCheckResolved(true);
+                }}
+              />
             </div>
           )}
           {lastConcept && !isLoading && <OpportunityChip tech={lastConcept} />}
           <div className="mb-2 flex justify-end">
-            <NewQuestionButton onConfirm={onNewChat} />
+            <NewQuestionButton onConfirm={handleNewQuestion} />
           </div>
           <HomeChatInput
             question={question}

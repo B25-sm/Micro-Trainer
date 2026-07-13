@@ -289,6 +289,39 @@ const StudentDetailView = () => {
         </div>
       </div>
 
+      {techReadiness?.quickChecks?.topics?.length > 0 && (
+        <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50/60 p-5 dark:border-amber-900/70 dark:bg-amber-950/20">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">Knowledge-check follow-up</h2>
+              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                Learning activity is preserved; deferred checks remain unverified and do not count as failures.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2 text-xs">
+              <span className="rounded-full bg-white px-2.5 py-1 text-amber-700 ring-1 ring-amber-200 dark:bg-white/5 dark:text-amber-300 dark:ring-amber-800">
+                {techReadiness.quickChecks.unverified} unverified
+              </span>
+              <span className="rounded-full bg-white px-2.5 py-1 text-emerald-700 ring-1 ring-emerald-200 dark:bg-white/5 dark:text-emerald-300 dark:ring-emerald-800">
+                {techReadiness.quickChecks.verified} verified
+              </span>
+            </div>
+          </div>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            {techReadiness.quickChecks.topics.slice(0, 6).map((check) => (
+              <div key={`${check.topic}-${check.updatedAt}`} className="rounded-lg bg-white/80 px-3 py-2 ring-1 ring-black/[0.05] dark:bg-white/[0.04] dark:ring-white/10">
+                <p className="truncate text-sm font-medium text-gray-800 dark:text-gray-200">{check.topic}</p>
+                <p className="mt-0.5 text-xs capitalize text-gray-500 dark:text-gray-400">
+                  {check.status.replaceAll("_", " ")}
+                  {check.score != null ? ` · ${check.score}%` : ""}
+                  {check.dismissCount > 0 ? ` · deferred ${check.dismissCount}×` : ""}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* OVERALL FEEDBACK — the capstone synthesis */}
       {overallFeedback && (
         <div className="rounded-xl border border-gray-900/10 dark:border-gray-100/10 bg-gradient-to-br from-gray-50 to-white dark:from-[#2a2b2e] dark:to-[#232427] p-6 mb-6 shadow-sm">

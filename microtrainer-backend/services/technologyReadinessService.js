@@ -248,6 +248,7 @@ async function buildStudentReadiness(studentId) {
     }));
 
   const profile = getStudentProfile(studentId);
+  const quickChecks = require("./quickCheckProgressService").getStudentQuickCheckSummary(studentId);
 
   return {
     studentId,
@@ -267,6 +268,7 @@ async function buildStudentReadiness(studentId) {
     },
     technologies: byTechnology,
     timeline,
+    quickChecks,
   };
 }
 
