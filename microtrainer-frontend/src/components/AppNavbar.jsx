@@ -18,7 +18,6 @@ import {
   Building2,
   Shuffle,
   Sparkles,
-  Bot,
   UserRound,
   Bug,
 } from "lucide-react";
@@ -34,7 +33,6 @@ const NAV_SECTIONS = [
   {
     items: [
       { path: "/", label: "Home", icon: Home },
-      { path: "/ai-chat", label: "AI Chat", icon: Bot },
     ],
   },
   {
