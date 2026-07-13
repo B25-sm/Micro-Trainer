@@ -168,16 +168,70 @@ export default function InterviewHistoryPanel({ studentId, title = "Interview hi
                           )}
                           {row.questionScores?.length > 0 && (
                             <div>
-                              <p className="font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Per-question scores
+                              <p className="font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Per-question feedback
                               </p>
-                              <ul className="list-disc list-inside text-gray-600 dark:text-gray-400 space-y-0.5">
-                                {row.questionScores.map((q) => (
-                                  <li key={q.index}>
-                                    Q{q.index}: {q.score}/10 ({q.difficulty})
-                                  </li>
-                                ))}
-                              </ul>
+                              <div className="space-y-3">
+                                {row.questionScores.map((q) => {
+                                  const hasFeedback =
+                                    q.strengths || q.mistakes || q.improvement;
+                                  return (
+                                    <div
+                                      key={q.index}
+                                      className="rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] p-3"
+                                    >
+                                      <div className="flex items-center justify-between gap-2 mb-1">
+                                        <span className="font-medium text-gray-800 dark:text-gray-200">
+                                          Q{q.index}
+                                          {q.question || q.questionPreview ? (
+                                            <span className="font-normal text-gray-600 dark:text-gray-400">
+                                              {" "}
+                                              — {q.question || q.questionPreview}
+                                            </span>
+                                          ) : null}
+                                        </span>
+                                        <span className="shrink-0 text-xs text-gray-500 dark:text-gray-400 tabular-nums">
+                                          {q.score}/10 · {q.difficulty}
+                                        </span>
+                                      </div>
+                                      {(q.communication || q.technical) && (
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                                          {q.technical && (
+                                            <>Technical: <span className="font-medium">{q.technical}</span></>
+                                          )}
+                                          {q.technical && q.communication ? " · " : ""}
+                                          {q.communication && (
+                                            <>Communication: <span className="font-medium">{q.communication}</span></>
+                                          )}
+                                        </p>
+                                      )}
+                                      {hasFeedback ? (
+                                        <div className="space-y-1 text-sm">
+                                          {q.strengths && (
+                                            <p className="text-green-700 dark:text-green-300">
+                                              <span className="font-medium">Strengths:</span> {q.strengths}
+                                            </p>
+                                          )}
+                                          {q.mistakes && (
+                                            <p className="text-red-700 dark:text-red-300">
+                                              <span className="font-medium">Mistakes:</span> {q.mistakes}
+                                            </p>
+                                          )}
+                                          {q.improvement && (
+                                            <p className="text-amber-700 dark:text-amber-300">
+                                              <span className="font-medium">Improve:</span> {q.improvement}
+                                            </p>
+                                          )}
+                                        </div>
+                                      ) : (
+                                        <p className="text-xs text-gray-400 italic">
+                                          No written feedback captured for this answer.
+                                        </p>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </div>
                             </div>
                           )}
                         </div>

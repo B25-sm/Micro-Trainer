@@ -164,6 +164,28 @@ export const getReadiness = (id) =>
 export const getLeaderboard = () =>
   API.get("/trainer/leaderboard", { headers: getTrainerApiHeaders() });
 
+// Placement scorecard — per-candidate skill summary (trainer or self)
+export const getPlacementScorecard = (studentId) =>
+  API.get(`/student/${studentId}/placement-scorecard`, {
+    headers: getStudentApiHeaders(studentId),
+  });
+
+// Refresh the whole "Placement Summary" Google Sheet tab
+export const syncPlacementSummary = () =>
+  API.post(
+    "/trainer/placement-summary/sync",
+    {},
+    { headers: getTrainerApiHeaders(), timeout: 120000 }
+  );
+
+// Sync one candidate's row to the "Placement Summary" tab
+export const syncPlacementSummaryForStudent = (studentId) =>
+  API.post(
+    `/trainer/placement-summary/sync/${studentId}`,
+    {},
+    { headers: getTrainerApiHeaders(), timeout: 60000 }
+  );
+
 // =======================================================
 // 🔹 ANTI-CHEAT (mock interview proctoring)
 // =======================================================

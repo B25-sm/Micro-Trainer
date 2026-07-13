@@ -90,6 +90,7 @@ const TrainerDashboard = () => {
   const [exporting, setExporting] = useState(false);
   const [syncingLearning, setSyncingLearning] = useState(false);
   const [syncingReadiness, setSyncingReadiness] = useState(false);
+  const [syncingPlacement, setSyncingPlacement] = useState(false);
   const [exportMessage, setExportMessage] = useState("");
   const [activeTab, setActiveTab] = useState("interviews");
   const [bugReports, setBugReports] = useState([]);
@@ -332,6 +333,28 @@ const TrainerDashboard = () => {
     }
   };
 
+  const handleSyncPlacementSummary = async () => {
+    try {
+      setSyncingPlacement(true);
+      setExportMessage("");
+      const res = await axios.post(
+        `${BASE_URL}/trainer/placement-summary/sync`,
+        {},
+        { headers: getTrainerHeaders(), timeout: 120000 }
+      );
+      setExportMessage(res.data.message || "Placement summary synced.");
+      setTimeout(() => setExportMessage(""), 6000);
+    } catch (err) {
+      console.error("Placement summary sync error:", err);
+      setExportMessage(
+        "Placement sync failed. Check Google Sheets credentials on the server."
+      );
+      setTimeout(() => setExportMessage(""), 6000);
+    } finally {
+      setSyncingPlacement(false);
+    }
+  };
+
   const getTrendDisplay = (trend) => {
     if (trend === "improving") {
       return {
@@ -482,6 +505,18 @@ const TrainerDashboard = () => {
                 className={`w-4 h-4 ${syncingReadiness ? "animate-spin" : ""}`}
               />
               {syncingReadiness ? "Syncing…" : "Sync tech readiness"}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleSyncPlacementSummary}
+              disabled={syncingPlacement}
+              className={btnSecondary}
+            >
+              <RefreshCw
+                className={`w-4 h-4 ${syncingPlacement ? "animate-spin" : ""}`}
+              />
+              {syncingPlacement ? "Syncing…" : "Sync placement summary"}
             </button>
 
             <button

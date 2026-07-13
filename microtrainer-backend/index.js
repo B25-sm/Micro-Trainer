@@ -1135,6 +1135,68 @@ app.post("/trainer/technology-readiness/sync/:studentId", trainerOnly, async (re
 
 
 // =======================================================
+// 🎓 PLACEMENT SCORECARD (forwardable candidate skill summary)
+// =======================================================
+const { buildScorecard } = require("./services/placementScorecardService");
+const { logPlacementSummary } = require("./services/placementSheetsService");
+
+// A student may see their own scorecard; trainers may see anyone's.
+app.get("/student/:studentId/placement-scorecard", studentSelfOrTrainer, async (req, res) => {
+  try {
+    const scorecard = await buildScorecard(req.params.studentId);
+    res.json(scorecard);
+  } catch (error) {
+    console.error("PLACEMENT SCORECARD ERROR:", error.message);
+    res.status(500).json({ error: "Failed to build placement scorecard" });
+  }
+});
+
+// Sync one candidate's summary row to the "Placement Summary" tab.
+app.post("/trainer/placement-summary/sync/:studentId", trainerOnly, async (req, res) => {
+  try {
+    const scorecard = await buildScorecard(req.params.studentId);
+    const ok = await logPlacementSummary(scorecard);
+    res.json({
+      success: ok,
+      message: ok
+        ? `Placement summary synced for ${req.params.studentId}`
+        : "Google Sheets not configured — nothing synced",
+      scorecard,
+    });
+  } catch (error) {
+    console.error("PLACEMENT SUMMARY SYNC ERROR:", error.message);
+    res.status(500).json({ error: "Failed to sync placement summary", details: error.message });
+  }
+});
+
+// Refresh the whole "Placement Summary" tab — one row per candidate.
+app.post("/trainer/placement-summary/sync", trainerOnly, async (req, res) => {
+  try {
+    const { students = [] } = await getAllStudentsReadiness();
+    const scorecards = [];
+    for (const s of students) {
+      try {
+        scorecards.push(await buildScorecard(s.studentId));
+      } catch (err) {
+        console.error(`Scorecard failed for ${s.studentId}:`, err.message);
+      }
+    }
+    const ok = await logPlacementSummary(scorecards);
+    res.json({
+      success: ok,
+      students: scorecards.length,
+      message: ok
+        ? `Placement summary synced for ${scorecards.length} candidate${scorecards.length === 1 ? "" : "s"}`
+        : "Google Sheets not configured — nothing synced",
+    });
+  } catch (error) {
+    console.error("PLACEMENT SUMMARY SYNC ALL ERROR:", error.message);
+    res.status(500).json({ error: "Failed to sync placement summary", details: error.message });
+  }
+});
+
+
+// =======================================================
 // 🔹 DASHBOARD APIs
 // =======================================================
 app.get("/dashboard/overview", async (req, res) => {

@@ -59,15 +59,28 @@ function verdictFromAverage(avg) {
 function summarizeQuestions(history) {
   return (history || [])
     .filter((h) => h && h.answer != null && h.answer !== "" && h.score !== undefined)
-    .map((h, index) => ({
-      index: index + 1,
-      score: Number(h.score),
-      difficulty: h.difficulty || "medium",
-      questionPreview:
-        typeof h.question === "string"
-          ? h.question.slice(0, 120)
-          : String(h.question || "").slice(0, 120),
-    }));
+    .map((h, index) => {
+      // The per-answer AI feedback text lives in h._evaluation (set in
+      // interviewSessionService via Object.assign(currentEntry, result)).
+      // Persist it here so trainers can read the actual strengths / mistakes /
+      // improvement, not just the numeric score.
+      const evalText = h._evaluation || {};
+      const questionText =
+        typeof h.question === "string" ? h.question : String(h.question || "");
+      return {
+        index: index + 1,
+        score: Number(h.score),
+        difficulty: h.difficulty || "medium",
+        question: questionText,
+        questionPreview: questionText.slice(0, 120),
+        answerPreview: String(h.answer || "").slice(0, 400),
+        strengths: evalText.strengths || h.strengths || "",
+        mistakes: evalText.mistakes || h.mistakes || "",
+        improvement: evalText.improvement || h.improvement || "",
+        communication: h.communication || "",
+        technical: h.technical || "",
+      };
+    });
 }
 
 /**
@@ -157,6 +170,17 @@ function recordInterviewSession(opts) {
   console.log(
     `✅ Interview history saved [${sessionId}] ${status} — academic ${record.averageScore ?? "n/a"}/10`
   );
+
+  // Push the per-question feedback to the "Interview Feedback" Google Sheet tab
+  // so trainers can forward real strengths/mistakes/improvement to placement.
+  // Fire-and-forget — never block or fail the interview flow.
+  try {
+    const { logInterviewFeedback } = require("./placementSheetsService");
+    logInterviewFeedback(record).catch(() => {});
+  } catch (_) {
+    /* sheets optional */
+  }
+
   return record;
 }
 

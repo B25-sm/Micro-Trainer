@@ -23,6 +23,9 @@ const StudentDetailView = () => {
   const [scheduleToday, setScheduleToday] = useState(null);
   const [techReadiness, setTechReadiness] = useState(null);
   const [expandedTech, setExpandedTech] = useState(null);
+  const [scorecard, setScorecard] = useState(null);
+  const [syncingScorecard, setSyncingScorecard] = useState(false);
+  const [scorecardMsg, setScorecardMsg] = useState("");
 
   useEffect(() => {
     fetchStudentData();
@@ -33,7 +36,7 @@ const StudentDetailView = () => {
       setLoading(true);
 
       // Fetch all student data in parallel
-      const [analyticsRes, memoryRes, profileRes, learningRes, readinessRes, scheduleRes, todayRes] =
+      const [analyticsRes, memoryRes, profileRes, learningRes, readinessRes, scheduleRes, todayRes, scorecardRes] =
         await Promise.all([
           axios.get(`${BASE_URL}/student/${studentId}/analytics`, {
             headers: getTrainerHeaders(),
@@ -58,6 +61,11 @@ const StudentDetailView = () => {
           personalScheduleAPI.getTodayForTrainer(studentId).catch(() => ({
             data: { hasPlan: false },
           })),
+          axios
+            .get(`${BASE_URL}/student/${studentId}/placement-scorecard`, {
+              headers: getTrainerHeaders(),
+            })
+            .catch(() => ({ data: null })),
         ]);
 
       setAnalytics(analyticsRes.data);
@@ -67,6 +75,7 @@ const StudentDetailView = () => {
       setTechReadiness(readinessRes.data);
       setPersonalSchedule(scheduleRes.data?.schedule ?? null);
       setScheduleToday(todayRes.data ?? null);
+      setScorecard(scorecardRes.data ?? null);
 
     } catch (err) {
       console.error("Error fetching student data:", err);
@@ -101,6 +110,36 @@ const StudentDetailView = () => {
     if (band === "Average") return "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800";
     if (band === "Weak") return "bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800";
     return "bg-gray-50 dark:bg-gray-800/60 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700";
+  };
+
+  const getScorecardLevelClass = (level) => {
+    if (level === "Above average")
+      return "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800";
+    if (level === "Average")
+      return "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800";
+    if (level === "Below average")
+      return "bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800";
+    return "bg-gray-50 dark:bg-gray-800/60 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700";
+  };
+
+  const handleSyncScorecard = async () => {
+    try {
+      setSyncingScorecard(true);
+      setScorecardMsg("");
+      const res = await axios.post(
+        `${BASE_URL}/trainer/placement-summary/sync/${studentId}`,
+        {},
+        { headers: getTrainerHeaders() }
+      );
+      setScorecardMsg(res.data?.message || "Synced to placement sheet.");
+      setTimeout(() => setScorecardMsg(""), 5000);
+    } catch (err) {
+      console.error("Scorecard sync error:", err);
+      setScorecardMsg("Sync failed. Check Google Sheets credentials on the server.");
+      setTimeout(() => setScorecardMsg(""), 5000);
+    } finally {
+      setSyncingScorecard(false);
+    }
   };
 
   const formatActivityLabel = (type) => {
@@ -218,6 +257,64 @@ const StudentDetailView = () => {
           )}
         </div>
       </div>
+
+      {/* PLACEMENT SCORECARD */}
+      {scorecard?.skills?.length > 0 && (
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] p-6 mb-6">
+          <div className="flex items-start justify-between gap-4 mb-1 flex-wrap">
+            <div>
+              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
+                Placement scorecard
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Per-skill level across all MicroTrainer activity. Forward this to the
+                placement team.
+              </p>
+            </div>
+            <div className="text-right">
+              <button
+                onClick={handleSyncScorecard}
+                disabled={syncingScorecard}
+                className="px-4 py-2 rounded-lg text-sm font-medium border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition disabled:opacity-60"
+              >
+                {syncingScorecard ? "Syncing…" : "Sync to placement sheet"}
+              </button>
+              {scorecardMsg && (
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-[220px]">
+                  {scorecardMsg}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {scorecard.skills.map((s) => (
+              <div
+                key={s.key}
+                className="flex items-center justify-between gap-2 px-3 py-2 rounded-lg border border-gray-100 dark:border-gray-700/70"
+              >
+                <span className="text-sm text-gray-700 dark:text-gray-300">{s.label}</span>
+                <span
+                  className={`inline-flex px-2.5 py-0.5 rounded-md text-xs font-medium border ${getScorecardLevelClass(s.level)}`}
+                >
+                  {s.level}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {scorecard.overall?.message && (
+            <div className="mt-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#202124]/60 px-4 py-3">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Overall:
+              </span>{" "}
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                {scorecard.overall.message}
+              </span>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* STATS GRID */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
