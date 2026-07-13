@@ -194,6 +194,12 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
       </nav>
 
       <div className={`px-2.5 py-3 space-y-2.5 ${isCollapsed ? "flex flex-col items-center" : ""}`}>
+        <div
+          id="app-sidebar-context-actions"
+          data-collapsed={isCollapsed ? "true" : "false"}
+          className="app-context-actions w-full space-y-1"
+          aria-label="Page tools"
+        />
         <div className={isCollapsed ? "flex justify-center" : ""}>
           <DisplayModeToggle variant={isCollapsed ? "icon" : "compact"} />
         </div>
@@ -288,6 +294,11 @@ export default function AppNavbar({ showLevelBadge = false, currentLevel = null 
           <Sparkles className="h-3 w-3" strokeWidth={2} aria-hidden />
         </span>
         <span className="text-[15px] font-semibold text-gray-800 dark:text-gray-100">MicroTrainer</span>
+        <div
+          id="app-mobile-context-actions"
+          className="ml-auto flex items-center gap-1"
+          aria-label="Page tools"
+        />
       </header>
 
       {/* Mobile drawer backdrop */}

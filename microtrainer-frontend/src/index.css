@@ -696,6 +696,16 @@ pre code {
   animation: ai-loader-halo 1.35s ease-in-out infinite;
 }
 
+.app-context-actions[data-collapsed="true"] .app-context-action {
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.app-context-actions[data-collapsed="true"] .app-context-action span {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .mt-ai-loader__orbit--outer,
   .mt-ai-loader__orbit--inner,

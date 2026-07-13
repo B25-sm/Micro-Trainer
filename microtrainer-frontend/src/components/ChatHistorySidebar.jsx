@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { ChevronDown, MessageSquareText, Plus, Trash2, X } from "lucide-react";
 import { formatHistoryTime, listUserQuestions } from "../utils/chatHistoryStorage";
 
@@ -20,6 +21,14 @@ export default function ChatHistorySidebar({
   const mobileOpen = controlledOpen ?? internalOpen;
   const setMobileOpen = onOpenChange ?? setInternalOpen;
   const [expandedId, setExpandedId] = useState(null);
+  const [actionTargets, setActionTargets] = useState({ mobile: null, sidebar: null });
+
+  useEffect(() => {
+    setActionTargets({
+      mobile: document.getElementById("app-mobile-context-actions"),
+      sidebar: document.getElementById("app-sidebar-context-actions"),
+    });
+  }, []);
 
   const close = () => setMobileOpen(false);
 
@@ -174,16 +183,40 @@ export default function ChatHistorySidebar({
         </div>
       )}
 
-      {!docked && sessions.length > 0 && !mobileOpen && (
-        <button
-          type="button"
-          onClick={() => setMobileOpen(true)}
-          className="fixed bottom-20 left-4 z-30 text-xs text-gray-500 underline-offset-2 transition hover:text-[#7c3aed] hover:underline dark:text-gray-400 dark:hover:text-[#a78bfa] lg:bottom-[4.5rem] lg:left-auto lg:right-6"
-          aria-label="Open question history"
-        >
-          Past questions ({sessions.length})
-        </button>
-      )}
+      {!docked && sessions.length > 0 && !mobileOpen && actionTargets.mobile &&
+        createPortal(
+          <button
+            type="button"
+            onClick={() => setMobileOpen(true)}
+            className="relative flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 transition hover:bg-black/[0.05] hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/[0.08] dark:hover:text-white lg:hidden"
+            aria-label={`Open ${sessions.length} past questions`}
+            title="Past questions"
+          >
+            <MessageSquareText className="h-[18px] w-[18px]" strokeWidth={1.75} />
+            <span className="absolute right-0 top-0 flex min-h-4 min-w-4 items-center justify-center rounded-full bg-violet-600 px-1 text-[9px] font-semibold leading-none text-white ring-2 ring-white dark:ring-[#18191c]">
+              {sessions.length > 99 ? "99+" : sessions.length}
+            </span>
+          </button>,
+          actionTargets.mobile
+        )}
+
+      {!docked && sessions.length > 0 && !mobileOpen && actionTargets.sidebar &&
+        createPortal(
+          <button
+            type="button"
+            onClick={() => setMobileOpen(true)}
+            className="app-context-action flex w-full items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition hover:bg-black/[0.04] hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/[0.07] dark:hover:text-white"
+            aria-label={`Open ${sessions.length} past questions`}
+            title="Past questions"
+          >
+            <MessageSquareText className="h-[18px] w-[18px] shrink-0" strokeWidth={1.5} />
+            <span className="min-w-0 flex-1 truncate text-left text-[13px]">Past questions</span>
+            <span className="rounded-full bg-violet-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-violet-600 dark:text-violet-300">
+              {sessions.length}
+            </span>
+          </button>,
+          actionTargets.sidebar
+        )}
 
       {!docked && mobileOpen && (
         <div className="fixed inset-0 z-50 flex lg:justify-end">
