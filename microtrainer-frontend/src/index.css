@@ -634,12 +634,74 @@ pre code {
 /* =========================
    ANIMATIONS - SMOOTH & SUBTLE
 ========================= */
-@keyframes neon-spin {
-  from {
-    transform: rotate(0deg);
-  }
+@keyframes ai-loader-orbit {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes ai-loader-orbit-reverse {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes ai-loader-core {
+  0%, 100% {
+    opacity: 0.78;
+    transform: scale(0.82) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08) rotate(45deg);
+  }
+}
+
+@keyframes ai-loader-halo {
+  0%, 100% {
+    opacity: 0.08;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.2;
+    transform: scale(1.2);
+  }
+}
+
+.mt-ai-loader {
+  display: block;
+  overflow: visible;
+}
+
+.mt-ai-loader__orbit,
+.mt-ai-loader__core,
+.mt-ai-loader__halo {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.mt-ai-loader__orbit--outer {
+  animation: ai-loader-orbit 1.75s cubic-bezier(0.55, 0.18, 0.45, 0.82) infinite;
+}
+
+.mt-ai-loader__orbit--inner {
+  animation: ai-loader-orbit-reverse 1.15s cubic-bezier(0.55, 0.18, 0.45, 0.82) infinite;
+}
+
+.mt-ai-loader__core {
+  animation: ai-loader-core 1.35s ease-in-out infinite;
+}
+
+.mt-ai-loader__halo {
+  animation: ai-loader-halo 1.35s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mt-ai-loader__orbit--outer,
+  .mt-ai-loader__orbit--inner,
+  .mt-ai-loader__core,
+  .mt-ai-loader__halo {
+    animation: none;
   }
 }
 
