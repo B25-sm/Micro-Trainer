@@ -16,7 +16,7 @@ const {
   stripAnswerLeak,
 } = require("./quizQuestionUtils");
 
-const MAX_REVALIDATION_PASSES = 3;
+const MAX_REVALIDATION_PASSES = 1;
 
 function questionText(q) {
   return typeof q === "string" ? q : q?.question || "";
@@ -297,26 +297,28 @@ Return ONLY JSON: {"fair":true|false,"correctedScore":0-10,"reason":"one sentenc
 }
 
 async function aiAuditPass(assessment, answers, questions, lessonContent) {
-  let changed = false;
-
   if (!Array.isArray(assessment?.detailedFeedback)) {
     return { assessment, changed: false };
   }
 
-  for (let i = 0; i < assessment.detailedFeedback.length; i++) {
+  // Audit disputed answers concurrently. The old serial loop added one full
+  // model round-trip per answer and could repeat for three passes.
+  const audits = await Promise.all(assessment.detailedFeedback.map(async (item, i) => {
     const q = questions[i];
-    if (q?.type === "mcq") continue;
+    if (q?.type === "mcq" || (item.score ?? 0) >= 8) return null;
 
-    const item = assessment.detailedFeedback[i];
-    if ((item.score ?? 0) >= 8) continue;
-
-    const audit = await aiAuditOpenAnswer({
+    return aiAuditOpenAnswer({
       question: questionText(q),
       answer: answers[i],
       lessonContent,
       priorScore: item.score ?? 0,
     });
+  }));
 
+  let changed = false;
+  for (let i = 0; i < audits.length; i++) {
+    const audit = audits[i];
+    const item = assessment.detailedFeedback[i];
     if (audit && audit.correctedScore > (item.score ?? 0)) {
       changed = true;
       console.log(

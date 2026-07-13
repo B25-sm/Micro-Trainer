@@ -29,6 +29,7 @@ const {
   MAX_REVALIDATION_PASSES,
 } = require('./gradingRevalidationService');
 const { getConceptReference } = require('./conceptReferenceService');
+const { normalizeAssessmentRows } = require('./assessmentResultNormalizer');
 const fs = require('fs');
 const path = require('path');
 
@@ -551,13 +552,13 @@ Questions and Answers:
   
   evaluationText += `\n\nProvide ONLY a JSON response (no markdown, no explanation) with this exact format:
 {
-  "scores": [score1, score2, score3],
-  "totalPercentage": number,
-  "feedback": ["explanation for answer 1", "explanation for answer 2", "explanation for answer 3"]
+  "results": [
+    {"questionNumber": 1, "score": 0, "feedback": "explanation for answer 1"}
+  ]
 }
 
-Each score should be 0-10. Calculate totalPercentage as average of scores.
-For feedback, explain what was correct or incorrect about each answer.`;
+Return exactly ${answers.length} result objects, one for every question, in the original order.
+Never omit a score. For feedback, explain what was correct or incorrect about each answer.`;
   
   try {
     console.log(`🔑 Using API key: ${process.env.GROQ_API_KEY ? 'Present (length: ' + process.env.GROQ_API_KEY.length + ')' : 'MISSING!'}`);
@@ -605,11 +606,21 @@ For feedback, explain what was correct or incorrect about each answer.`;
       return intelligentFallbackScoring(answers, crossQuestions, lessonContext);
     }
     
-    const rawScores = Array.isArray(evaluation.scores) ? evaluation.scores : [];
-    const normalizedScores = answers.map((_, index) => {
-      const s = Number(rawScores[index]);
-      return Number.isFinite(s) ? Math.max(0, Math.min(10, s)) : 0;
+    const resultRows = Array.isArray(evaluation.results) ? evaluation.results : [];
+    const rawScores = resultRows.length
+      ? resultRows.map((row) => row?.score)
+      : Array.isArray(evaluation.scores) ? evaluation.scores : [];
+    const rawFeedback = resultRows.length
+      ? resultRows.map((row) => row?.feedback)
+      : Array.isArray(evaluation.feedback) ? evaluation.feedback : [];
+    const normalizedRows = normalizeAssessmentRows({
+      answers,
+      questions: crossQuestions,
+      rawScores,
+      feedback: rawFeedback,
+      lessonContext,
     });
+    const normalizedScores = normalizedRows.map((row) => row.score);
     const totalScore = normalizedScores.reduce((a, b) => a + b, 0);
     const maxScore = answers.length * 10;
     const percentage = Math.round((totalScore / maxScore) * 100);
@@ -619,7 +630,6 @@ For feedback, explain what was correct or incorrect about each answer.`;
       const score = normalizedScores[index];
       const isPerfect = score >= 9;
       const isGood = score >= 7;
-      const isFailed = score < 6;
       
       return {
         questionNumber: index + 1,
@@ -628,7 +638,7 @@ For feedback, explain what was correct or incorrect about each answer.`;
         score: score,
         maxScore: 10,
         status: isPerfect ? 'correct' : isGood ? 'partial' : 'incorrect',
-        feedback: evaluation.feedback?.[index] || (
+        feedback: normalizedRows[index]?.feedback || (
           isPerfect ? '✅ Excellent! Your answer is correct.' :
           isGood ? '⚠️ Partially correct. Your answer shows some understanding but could be more complete.' :
           '❌ This answer needs improvement. Review the concept again.'
