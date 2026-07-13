@@ -157,7 +157,9 @@ export default function ReportIssueButton() {
 
     // Open the tab synchronously so the popup is tied to the user's click
     // (avoids popup blockers when we await the upload first).
-    const waWindow = window.open("", "_blank", "noopener,noreferrer");
+    // NOTE: do NOT pass "noopener" here — that makes window.open return null,
+    // and we need the handle to navigate the tab after the async upload.
+    const waWindow = window.open("about:blank", "_blank");
 
     let screenshotLinks = [];
     if (screenshots.length > 0) {
@@ -191,6 +193,12 @@ export default function ReportIssueButton() {
     )}`;
     if (waWindow) {
       waWindow.location.href = url;
+      // Sever the reverse handle now that navigation is under way.
+      try {
+        waWindow.opener = null;
+      } catch {
+        /* cross-origin after navigation — ignore */
+      }
     } else {
       // Popup was blocked — navigate via a fresh open as a fallback.
       window.open(url, "_blank", "noopener,noreferrer");
