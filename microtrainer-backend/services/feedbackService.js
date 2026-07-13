@@ -393,6 +393,88 @@ async function submitFeedbackReport({
   };
 }
 
+/**
+ * WhatsApp report flow: log the report (local log + Google Sheets, NO email —
+ * email delivery is disabled) and persist any screenshots so the caller can
+ * build public view links to embed in the WhatsApp message. Rate-limited.
+ */
+async function logReportForWhatsApp({
+  authUser,
+  req,
+  message = "",
+  contactEmail = "",
+  pageUrl = "",
+  pagePath = "",
+  userAgent = "",
+  screenshots = [],
+}) {
+  const key = rateLimitKey(authUser, req);
+  if (!checkRateLimit(key)) {
+    const err = new Error("Too many reports. Please try again in an hour.");
+    err.statusCode = 429;
+    throw err;
+  }
+
+  const trimmedMessage = String(message || "").trim().slice(0, 2000);
+  const timestamp = new Date().toISOString();
+  const reportId = `rpt_${Date.now()}_${crypto.randomBytes(4).toString("hex")}`;
+  const savedScreenshots = saveScreenshots(reportId, screenshots);
+
+  if (!trimmedMessage && savedScreenshots.length === 0) {
+    const err = new Error("Please describe the problem or attach a screenshot.");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const record = {
+    reportId,
+    timestamp,
+    studentId: authUser?.studentId || "(not signed in)",
+    email: authUser?.email || String(contactEmail || "").trim().toLowerCase().slice(0, 254),
+    name: authUser?.name || "(guest)",
+    role: authUser?.role || "guest",
+    channel: "whatsapp",
+    message:
+      trimmedMessage ||
+      (savedScreenshots.length > 0
+        ? `(screenshot report — ${savedScreenshots.length} image(s))`
+        : "(quick report — no extra details)"),
+    pageUrl: String(pageUrl || "").slice(0, 500),
+    pagePath: String(pagePath || "").slice(0, 300),
+    userAgent: String(userAgent || "").slice(0, 400),
+    screenshotCount: savedScreenshots.length,
+    screenshots: savedScreenshots.map((s) => ({
+      id: s.id,
+      mimeType: s.mimeType,
+      size: s.size,
+      reportId: s.reportId,
+    })),
+  };
+
+  appendLocalLog(record);
+
+  // Log to the Sheets "BugReports" tab; never block the WhatsApp hand-off.
+  const sheetsLogged = await withTimeout(logFeedbackReport(record), 12_000, "Google Sheets").catch(
+    (e) => {
+      console.warn("⚠️  WhatsApp report sheets delivery:", e.message);
+      return false;
+    }
+  );
+
+  logReportBanner(record, {
+    emailSent: false,
+    emailError: "email_disabled",
+    recipients: [],
+    sheetsLogged,
+  });
+
+  return {
+    success: true,
+    reportId,
+    screenshots: savedScreenshots.map((s) => ({ id: s.id })),
+  };
+}
+
 function getRecentFeedbackReports(limit = 20) {
   if (!fs.existsSync(FEEDBACK_LOG)) {
     return [];
@@ -420,6 +502,7 @@ function getRecentFeedbackReports(limit = 20) {
 
 module.exports = {
   submitFeedbackReport,
+  logReportForWhatsApp,
   getBugReportRecipients,
   getRecentFeedbackReports,
   resolveScreenshotPath,

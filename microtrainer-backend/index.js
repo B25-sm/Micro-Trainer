@@ -2918,6 +2918,7 @@ const { setBrowserNotificationsEnabled } = require('./services/notificationPrefe
 const { requireAuth, optionalAuth } = require("./routes/authRoutes");
 const {
   submitFeedbackReport,
+  logReportForWhatsApp,
   getRecentFeedbackReports,
   resolveScreenshotPath,
 } = require("./services/feedbackService");
@@ -2971,6 +2972,46 @@ app.get("/trainer/feedback/screenshot/:reportId/:screenshotId", trainerOnly, (re
   } catch (error) {
     console.error("FEEDBACK SCREENSHOT ERROR:", error.message);
     res.status(500).json({ error: "Failed to load screenshot" });
+  }
+});
+
+// WhatsApp report flow: log the report (local + Sheets, NO email) and store
+// screenshots, returning ids so the client can embed public view links.
+app.post("/api/feedback/whatsapp", optionalAuth, async (req, res) => {
+  try {
+    const { message, contactEmail, pageUrl, pagePath, userAgent, screenshots } = req.body || {};
+    const result = await logReportForWhatsApp({
+      authUser: req.authUser,
+      req,
+      message,
+      contactEmail,
+      pageUrl,
+      pagePath,
+      userAgent,
+      screenshots,
+    });
+    res.json(result);
+  } catch (error) {
+    const status = error.statusCode || 500;
+    if (status >= 500) console.error("WHATSAPP FEEDBACK ERROR:", error.message);
+    res.status(status).json({ error: error.message || "Failed to log report" });
+  }
+});
+
+// Public, unguessable screenshot view link (reportId + random id). Used so a
+// screenshot can be opened from the WhatsApp message without trainer auth.
+app.get("/f/s/:reportId/:screenshotId", (req, res) => {
+  try {
+    const filePath = resolveScreenshotPath(req.params.reportId, req.params.screenshotId);
+    if (!filePath) {
+      return res.status(404).send("Screenshot not found or expired.");
+    }
+    res.setHeader("Content-Disposition", "inline");
+    res.setHeader("Cache-Control", "public, max-age=86400");
+    res.sendFile(path.resolve(filePath));
+  } catch (error) {
+    console.error("PUBLIC SCREENSHOT ERROR:", error.message);
+    res.status(500).send("Failed to load screenshot.");
   }
 });
 

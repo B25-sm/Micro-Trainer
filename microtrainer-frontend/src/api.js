@@ -242,6 +242,14 @@ export const reportIssue = (data) =>
     timeout: 30000,
   });
 
+// WhatsApp report: logs the report (no email) + stores screenshots, returns
+// { reportId, screenshots:[{id}] } so the client can build public view links.
+export const logWhatsAppReport = (data) =>
+  API.post("/api/feedback/whatsapp", data, {
+    headers: getBearerHeaders(),
+    timeout: 30000,
+  });
+
 
 // =======================================================
 // 🔹 LEARNER INTELLIGENCE (profiles, recommendations, behavior)

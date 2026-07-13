@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
-import { Mail, MessageCircle, Send, X, ImagePlus, ClipboardPaste } from "lucide-react";
-import { reportIssue } from "../api";
+import { MessageCircle, X, ImagePlus, ClipboardPaste } from "lucide-react";
+import { logWhatsAppReport, API_BASE } from "../api";
 import { getAuthUser } from "../utils/authSession";
 
 const MAX_SCREENSHOTS = 3;
@@ -126,49 +126,7 @@ export default function ReportIssueButton() {
     return () => document.removeEventListener("paste", onPaste);
   }, [open, addScreenshotFiles]);
 
-  async function submit(note = "", includeScreenshots = true) {
-    if (status === "sending") return;
-    setStatus("sending");
-    try {
-      const pageUrl = window.location.href;
-      const pagePath = location.pathname + location.search;
-      const payload = {
-        message: note,
-        contactEmail: contactEmail.trim(),
-        pageUrl,
-        pagePath,
-        userAgent: navigator.userAgent,
-      };
-
-      if (includeScreenshots && screenshots.length > 0) {
-        payload.screenshots = screenshots.map((shot) => ({
-          mimeType: shot.mimeType,
-          data: shot.data,
-        }));
-      }
-
-      const res = await reportIssue(payload);
-      setStatus(res.data?.emailSent === false ? "err" : "ok");
-      setOpen(false);
-      setMessage("");
-      setScreenshots([]);
-      setToast(res.data?.message || "Report sent. Thank you!");
-    } catch (err) {
-      setStatus("err");
-      const message =
-        err?.error ||
-        (err?.status === 408
-          ? "Request timed out — please try again."
-          : null) ||
-        err?.message ||
-        "Could not send report. Try again.";
-      setToast(message);
-    } finally {
-      setTimeout(() => setStatus("idle"), 1200);
-    }
-  }
-
-  function openWhatsAppReport() {
+  function buildReportText(screenshotLinks) {
     const studentName =
       authUser?.name ||
       localStorage.getItem("userName") ||
@@ -176,7 +134,7 @@ export default function ReportIssueButton() {
       "Not available";
     const studentId =
       authUser?.studentId || localStorage.getItem("studentId") || "Not available";
-    const reportText = [
+    return [
       "*MicroTrainer snag report*",
       "",
       `*Student:* ${studentName}`,
@@ -186,20 +144,66 @@ export default function ReportIssueButton() {
       `*URL:* ${window.location.href}`,
       "",
       `*Issue:* ${message.trim() || "Quick report — please review this page."}`,
-      screenshots.length > 0
-        ? `\n*Screenshots:* ${screenshots.length} selected in MicroTrainer. Please attach them manually in WhatsApp.`
+      screenshotLinks.length > 0
+        ? `\n*Screenshot${screenshotLinks.length > 1 ? "s" : ""}:*\n${screenshotLinks.join("\n")}`
         : "",
     ]
       .filter(Boolean)
       .join("\n");
+  }
 
-    window.open(
-      `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(reportText)}`,
-      "_blank",
-      "noopener,noreferrer"
-    );
+  async function openWhatsAppReport() {
+    if (status === "sending") return;
+
+    // Open the tab synchronously so the popup is tied to the user's click
+    // (avoids popup blockers when we await the upload first).
+    const waWindow = window.open("", "_blank", "noopener,noreferrer");
+
+    let screenshotLinks = [];
+    if (screenshots.length > 0) {
+      setStatus("sending");
+      try {
+        const res = await logWhatsAppReport({
+          message: message.trim(),
+          contactEmail: contactEmail.trim(),
+          pageUrl: window.location.href,
+          pagePath: location.pathname + location.search,
+          userAgent: navigator.userAgent,
+          screenshots: screenshots.map((shot) => ({
+            mimeType: shot.mimeType,
+            data: shot.data,
+          })),
+        });
+        const { reportId, screenshots: saved = [] } = res.data || {};
+        if (reportId) {
+          screenshotLinks = saved.map((s) => `${API_BASE}/f/s/${reportId}/${s.id}`);
+        }
+      } catch (err) {
+        console.error("WhatsApp report upload failed:", err);
+        setToast("Couldn't upload the screenshot link — sending the report text only.");
+      } finally {
+        setStatus("idle");
+      }
+    }
+
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+      buildReportText(screenshotLinks)
+    )}`;
+    if (waWindow) {
+      waWindow.location.href = url;
+    } else {
+      // Popup was blocked — navigate via a fresh open as a fallback.
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+
     setOpen(false);
-    setToast("WhatsApp opened with your report. Review it, attach screenshots if needed, then tap Send.");
+    setMessage("");
+    setScreenshots([]);
+    setToast(
+      screenshotLinks.length > 0
+        ? "WhatsApp opened with your report and screenshot link. Tap Send."
+        : "WhatsApp opened with your report. Tap Send."
+    );
   }
 
   const isSending = status === "sending";
@@ -251,7 +255,7 @@ export default function ReportIssueButton() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              submit(message.trim());
+              openWhatsAppReport();
             }}
             className="p-4 space-y-3"
           >
@@ -350,27 +354,20 @@ export default function ReportIssueButton() {
             )}
 
             {screenshots.length > 0 && (
-              <p className="text-[11px] leading-relaxed text-amber-600 dark:text-amber-300">
-                WhatsApp links cannot transfer images automatically. Attach these screenshots manually after WhatsApp opens.
+              <p className="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
+                Your screenshot{screenshots.length > 1 ? "s" : ""} will be uploaded and added to the
+                WhatsApp message as a tappable link — no manual attaching needed.
               </p>
             )}
 
             <button
               type="button"
               onClick={openWhatsAppReport}
-              disabled={!canSubmit}
+              disabled={!canSubmit || isSending}
               className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white disabled:opacity-50 transition shadow-sm"
             >
               <MessageCircle className="w-4 h-4" />
-              Continue in WhatsApp
-            </button>
-            <button
-              type="submit"
-              disabled={isSending || !canSubmit}
-              className="w-full flex items-center justify-center gap-2 py-2 text-xs font-medium rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 disabled:opacity-50 transition"
-            >
-              {isSending ? <Send className="w-3.5 h-3.5 animate-pulse" /> : <Mail className="w-3.5 h-3.5" />}
-              {isSending ? "Sending email…" : "Send by email instead"}
+              {isSending ? "Preparing…" : "Continue in WhatsApp"}
             </button>
           </form>
         </div>
