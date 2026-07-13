@@ -1140,6 +1140,20 @@ app.post("/trainer/technology-readiness/sync/:studentId", trainerOnly, async (re
 const { buildScorecard } = require("./services/placementScorecardService");
 const { logPlacementSummary } = require("./services/placementSheetsService");
 
+// Holistic overall feedback — synthesizes every signal across the app.
+// Pass ?ai=1 for an AI-polished narrative (falls back to rule-based).
+app.get("/student/:studentId/overall-feedback", studentSelfOrTrainer, async (req, res) => {
+  try {
+    const { buildOverallFeedback } = require("./services/overallFeedbackService");
+    const ai = req.query.ai === "1" || req.query.ai === "true";
+    const feedback = await buildOverallFeedback(req.params.studentId, { ai });
+    res.json(feedback);
+  } catch (error) {
+    console.error("OVERALL FEEDBACK ERROR:", error.message);
+    res.status(500).json({ error: "Failed to build overall feedback" });
+  }
+});
+
 // Per-concept understanding judgement (self or trainer).
 app.get("/student/:studentId/concept-mastery", studentSelfOrTrainer, (req, res) => {
   try {

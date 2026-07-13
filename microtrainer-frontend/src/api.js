@@ -176,6 +176,14 @@ export const getConceptMastery = (studentId) =>
     headers: getStudentApiHeaders(studentId),
   });
 
+// Holistic overall feedback synthesized from every signal (trainer or self)
+export const getOverallFeedback = (studentId, { ai = false } = {}) =>
+  API.get(`/student/${studentId}/overall-feedback`, {
+    params: ai ? { ai: 1 } : {},
+    headers: getStudentApiHeaders(studentId),
+    timeout: ai ? 30000 : 15000,
+  });
+
 // Refresh the whole "Placement Summary" Google Sheet tab
 export const syncPlacementSummary = () =>
   API.post(

@@ -28,6 +28,8 @@ const StudentDetailView = () => {
   const [scorecardMsg, setScorecardMsg] = useState("");
   const [conceptMastery, setConceptMastery] = useState(null);
   const [expandedMasteryTech, setExpandedMasteryTech] = useState(null);
+  const [overallFeedback, setOverallFeedback] = useState(null);
+  const [refiningNarrative, setRefiningNarrative] = useState(false);
 
   useEffect(() => {
     fetchStudentData();
@@ -38,7 +40,7 @@ const StudentDetailView = () => {
       setLoading(true);
 
       // Fetch all student data in parallel
-      const [analyticsRes, memoryRes, profileRes, learningRes, readinessRes, scheduleRes, todayRes, scorecardRes, masteryRes] =
+      const [analyticsRes, memoryRes, profileRes, learningRes, readinessRes, scheduleRes, todayRes, scorecardRes, masteryRes, feedbackRes] =
         await Promise.all([
           axios.get(`${BASE_URL}/student/${studentId}/analytics`, {
             headers: getTrainerHeaders(),
@@ -73,6 +75,11 @@ const StudentDetailView = () => {
               headers: getTrainerHeaders(),
             })
             .catch(() => ({ data: null })),
+          axios
+            .get(`${BASE_URL}/student/${studentId}/overall-feedback`, {
+              headers: getTrainerHeaders(),
+            })
+            .catch(() => ({ data: null })),
         ]);
 
       setAnalytics(analyticsRes.data);
@@ -84,6 +91,7 @@ const StudentDetailView = () => {
       setScheduleToday(todayRes.data ?? null);
       setScorecard(scorecardRes.data ?? null);
       setConceptMastery(masteryRes.data ?? null);
+      setOverallFeedback(feedbackRes.data ?? null);
 
     } catch (err) {
       console.error("Error fetching student data:", err);
@@ -147,6 +155,21 @@ const StudentDetailView = () => {
       setTimeout(() => setScorecardMsg(""), 5000);
     } finally {
       setSyncingScorecard(false);
+    }
+  };
+
+  const handleRefineNarrative = async () => {
+    try {
+      setRefiningNarrative(true);
+      const res = await axios.get(
+        `${BASE_URL}/student/${studentId}/overall-feedback?ai=1`,
+        { headers: getTrainerHeaders() }
+      );
+      setOverallFeedback(res.data ?? overallFeedback);
+    } catch (err) {
+      console.error("Refine narrative error:", err);
+    } finally {
+      setRefiningNarrative(false);
     }
   };
 
@@ -265,6 +288,121 @@ const StudentDetailView = () => {
           )}
         </div>
       </div>
+
+      {/* OVERALL FEEDBACK — the capstone synthesis */}
+      {overallFeedback && (
+        <div className="rounded-xl border border-gray-900/10 dark:border-gray-100/10 bg-gradient-to-br from-gray-50 to-white dark:from-[#2a2b2e] dark:to-[#232427] p-6 mb-6 shadow-sm">
+          <div className="flex items-start justify-between gap-4 flex-wrap mb-3">
+            <div className="flex items-center gap-3">
+              <Award className="w-6 h-6 text-indigo-500" />
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                  Overall feedback
+                </h2>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Synthesized from every signal across the app
+                  {overallFeedback.narrativeSource === "ai" ? " · AI-written" : ""}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              {overallFeedback.readinessScore != null && (
+                <div className="text-right">
+                  <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 leading-none">
+                    {overallFeedback.readinessScore}
+                    <span className="text-base font-normal text-gray-400">/100</span>
+                  </div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    {overallFeedback.level}
+                  </div>
+                </div>
+              )}
+              <button
+                onClick={handleRefineNarrative}
+                disabled={refiningNarrative || !overallFeedback.hasData}
+                className="px-3 py-2 rounded-lg text-xs font-medium border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition disabled:opacity-50"
+                title="Rewrite the summary with AI"
+              >
+                {refiningNarrative ? "Writing…" : "✨ AI rewrite"}
+              </button>
+            </div>
+          </div>
+
+          <p className="text-[15px] leading-relaxed text-gray-800 dark:text-gray-200">
+            {overallFeedback.narrative}
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            {overallFeedback.strengths?.length > 0 && (
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">
+                  Strengths
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {overallFeedback.strengths.map((s, i) => (
+                    <span
+                      key={i}
+                      className="px-2.5 py-0.5 rounded-md text-xs bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
+                    >
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {overallFeedback.focusAreas?.length > 0 && (
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">
+                  Focus areas
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {overallFeedback.focusAreas.map((s, i) => (
+                    <span
+                      key={i}
+                      className="px-2.5 py-0.5 rounded-md text-xs bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800"
+                    >
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {overallFeedback.recommendations?.length > 0 && (
+            <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">
+                Recommended next steps
+              </p>
+              <ul className="list-disc list-inside space-y-0.5 text-sm text-gray-700 dark:text-gray-300">
+                {overallFeedback.recommendations.map((r, i) => (
+                  <li key={i}>{r}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {overallFeedback.engagement && (
+            <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1 text-xs text-gray-500 dark:text-gray-400">
+              {overallFeedback.engagement.activeDaysLast14 != null && (
+                <span>Active {overallFeedback.engagement.activeDaysLast14}/14 days</span>
+              )}
+              {overallFeedback.engagement.momentum && (
+                <span>Momentum: {overallFeedback.engagement.momentum}</span>
+              )}
+              {overallFeedback.engagement.churnRisk && (
+                <span>Churn risk: {overallFeedback.engagement.churnRisk}</span>
+              )}
+              {overallFeedback.interviews?.count > 0 && (
+                <span>{overallFeedback.interviews.count} interviews</span>
+              )}
+              {overallFeedback.recentSearches?.length > 0 && (
+                <span>Seeking: {overallFeedback.recentSearches.slice(0, 2).join(", ")}</span>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* PLACEMENT SCORECARD */}
       {scorecard?.skills?.length > 0 && (

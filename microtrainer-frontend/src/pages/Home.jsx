@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { ArrowUp, Check, Mic, X } from "lucide-react";
-import { chatWithMicroTrainer } from "../api";
+import { chatWithMicroTrainer, trackBehavior } from "../api";
 import { pageShell, textMuted } from "../lib/ui";
 import ConceptCards, { parseConceptSections } from "../components/ConceptCards";
 import ConceptMarkdownAnswer from "../components/ConceptMarkdownAnswer";
@@ -80,6 +80,21 @@ const Home = () => {
 
     setQuestion("");
     attach.clearAttachments();
+
+    // Track what the student searches/asks on the home page — a first-party
+    // signal of interest and where they feel a gap. Fire-and-forget; the
+    // backend infers the technology from the text. Only real typed questions.
+    if (typed) {
+      const sid = getStudentId();
+      if (sid) {
+        trackBehavior({
+          studentId: sid,
+          eventType: "search_query",
+          topic: typed,
+          metadata: { source: "home_chat" },
+        });
+      }
+    }
 
     setChatHistory((prev) => [
       ...prev,
