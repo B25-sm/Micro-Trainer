@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { buildStudentId, buildDisplayName } from "../utils/studentIdentity";
 import { getAuthToken, setAuthSession } from "../utils/authSession";
 import { CAREER_TRACKS } from "../utils/careerTracks";
+import BrandMark from "../components/BrandMark";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
@@ -84,6 +85,7 @@ export default function CompleteProfile() {
   return (
     <div className="min-h-screen bg-white dark:bg-[#202124] flex items-center justify-center px-4">
       <div className="max-w-md w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] shadow-sm p-8">
+        <BrandMark className="mb-4 h-12 w-12 rounded-xl" alt="MicroTrainer logo" />
         <h1 className="text-2xl font-medium text-gray-900 dark:text-gray-100 mb-2">Complete your profile</h1>
         <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
           You signed in with Google or GitHub. Add your class details so your trainer

@@ -174,8 +174,8 @@ async function notifyProgressPush(studentId, { title, body, url = "/engagement" 
       sendPushNotification(studentId, {
         title,
         body,
-        icon: "/logo.png",
-        badge: "/badge.png",
+        icon: "/notification-icon.png",
+        badge: "/notification-icon.png",
         tag: "progress-alert",
         url,
         data: { type: "progress_alert" },

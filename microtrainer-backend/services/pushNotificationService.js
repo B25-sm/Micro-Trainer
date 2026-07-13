@@ -133,8 +133,8 @@ async function sendDailyPracticeReminder(studentId, streak, technology) {
   const payload = {
     title: '🎯 Time to Practice!',
     body: `Keep your ${streak}-day streak alive! Practice ${technology} today.`,
-    icon: '/logo.png',
-    badge: '/badge.png',
+    icon: '/notification-icon.png',
+    badge: '/notification-icon.png',
     tag: 'daily-reminder',
     url: '/engagement',
     data: {
@@ -154,8 +154,8 @@ async function sendStreakRiskAlert(studentId, streak, hoursRemaining) {
   const payload = {
     title: '⚠️ Streak at Risk!',
     body: `Your ${streak}-day streak ends in ${hoursRemaining} hours! Practice now to keep it alive.`,
-    icon: '/logo.png',
-    badge: '/badge.png',
+    icon: '/notification-icon.png',
+    badge: '/notification-icon.png',
     tag: 'streak-risk',
     requireInteraction: true,
     url: '/engagement',
@@ -176,8 +176,8 @@ async function sendBadgeEarnedNotification(studentId, badgeName, badgeIcon) {
   const payload = {
     title: '🎉 Badge Earned!',
     body: `Congratulations! You earned the "${badgeName}" badge!`,
-    icon: '/logo.png',
-    badge: '/badge.png',
+    icon: '/notification-icon.png',
+    badge: '/notification-icon.png',
     tag: 'badge-earned',
     url: '/engagement',
     data: {
@@ -197,8 +197,8 @@ async function sendAssessmentAvailableNotification(studentId, technology) {
   const payload = {
     title: '📝 New Assessment Available!',
     body: `Your ${technology} mini-assessment is ready. Take it now!`,
-    icon: '/logo.png',
-    badge: '/badge.png',
+    icon: '/notification-icon.png',
+    badge: '/notification-icon.png',
     tag: 'assessment-available',
     url: '/engagement',
     data: {
@@ -217,8 +217,8 @@ async function sendMockTestReminder(studentId, technologies, timeUntilTest) {
   const payload = {
     title: '🎓 Mock Test Reminder',
     body: `Your ${technologies.join(', ')} mock test starts in ${timeUntilTest}!`,
-    icon: '/logo.png',
-    badge: '/badge.png',
+    icon: '/notification-icon.png',
+    badge: '/notification-icon.png',
     tag: 'mock-test-reminder',
     requireInteraction: true,
     url: '/engagement',
@@ -239,8 +239,8 @@ async function sendSchedulePlanReminder(studentId, { title, body, reminderType }
   const payload = {
     title: title || "📅 Your study plan",
     body: body || "Check today's concepts on your Personal Schedule.",
-    icon: "/logo.png",
-    badge: "/badge.png",
+    icon: "/notification-icon.png",
+    badge: "/notification-icon.png",
     tag: `schedule-${reminderType || "daily"}`,
     url: "/schedule",
     data: {
@@ -259,8 +259,8 @@ async function sendTestNotification(studentId) {
   const payload = {
     title: '✅ Test Notification',
     body: 'Push notifications are working! You will receive reminders and updates here.',
-    icon: '/logo.png',
-    badge: '/badge.png',
+    icon: '/notification-icon.png',
+    badge: '/notification-icon.png',
     tag: 'test-notification',
     url: '/engagement',
     data: {

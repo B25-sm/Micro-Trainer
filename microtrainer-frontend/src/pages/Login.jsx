@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { setAuthSession } from "../utils/authSession";
+import BrandMark from "../components/BrandMark";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
@@ -63,6 +64,10 @@ export default function Login() {
     <div className="min-h-screen bg-white dark:bg-[#202124] flex items-center justify-center px-4 py-8">
       <div className="max-w-md w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] shadow-sm p-8">
         <div className="text-center mb-8">
+          <BrandMark
+            className="mx-auto mb-4 h-20 w-20 rounded-2xl shadow-sm"
+            alt="MicroTrainer logo"
+          />
           <h1 className="text-2xl font-medium text-gray-900 dark:text-gray-100 mb-2">MicroTrainer</h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm">
             Sign in with Google to continue
@@ -76,6 +81,11 @@ export default function Login() {
         )}
 
         <div className="space-y-3">
+          {oauthLoading && (
+            <p className="text-center text-sm text-blue-600 dark:text-blue-300">
+              Signing you in…
+            </p>
+          )}
           {GOOGLE_CLIENT_ID ? (
             <div className="flex justify-center">
               <GoogleLogin

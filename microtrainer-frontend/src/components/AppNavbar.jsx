@@ -16,7 +16,6 @@ import {
   X,
   MessageSquareText,
   Building2,
-  Sparkles,
   UserRound,
   Bug,
 } from "lucide-react";
@@ -25,6 +24,7 @@ import { clearAuthSession } from "../utils/authSession";
 import { isTrainerSession } from "../utils/trainerAuth";
 import { useSidebar } from "../context/SidebarContext";
 import usePageTools from "../hooks/usePageTools";
+import BrandMark from "./BrandMark";
 
 const OPEN_ISSUE_REPORT_EVENT = "microtrainer:open-issue-report";
 
@@ -126,9 +126,7 @@ function SidebarContent({ showLevelBadge, currentLevel, onNavigate }) {
           className="flex items-center gap-2.5 min-w-0"
           title="MicroTrainer home"
         >
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center text-gray-900 dark:text-white">
-            <Sparkles className="h-[17px] w-[17px]" strokeWidth={1.5} aria-hidden />
-          </span>
+          <BrandMark className="h-8 w-8 rounded-lg" />
           {!isCollapsed && (
             <span className="truncate text-[15px] font-semibold tracking-tight text-gray-900 dark:text-gray-100 read-mode:text-[var(--read-text-heading)]">
               MicroTrainer
@@ -307,9 +305,7 @@ export default function AppNavbar({ showLevelBadge = false, currentLevel = null 
         >
           <Menu className="h-5 w-5" strokeWidth={1.75} />
         </button>
-        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-gray-950 text-white dark:bg-white dark:text-black">
-          <Sparkles className="h-3 w-3" strokeWidth={2} aria-hidden />
-        </span>
+        <BrandMark className="h-7 w-7 rounded-md" />
         <span className="text-[15px] font-semibold text-gray-800 dark:text-gray-100">MicroTrainer</span>
         <div className="ml-auto flex items-center gap-1" aria-label="Page tools">
           {historyTool && (

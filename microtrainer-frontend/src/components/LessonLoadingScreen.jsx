@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import BrandMark from "./BrandMark";
 
 /** Initial estimate — AI lesson often takes 30–90s (parallel on server) */
 export const LESSON_LOAD_ESTIMATE_SEC = 55;
@@ -51,6 +52,7 @@ export default function LessonLoadingScreen({
         animate={{ opacity: 1, scale: 1 }}
         className="w-full max-w-sm rounded-2xl border border-gray-200 bg-white shadow-lg px-6 py-8 text-center"
       >
+        <BrandMark className="mx-auto mb-4 h-10 w-10 rounded-xl" alt="MicroTrainer logo" />
         <div className="relative mx-auto w-24 h-24 mb-5">
           <svg className="w-24 h-24 -rotate-90" viewBox="0 0 100 100" aria-hidden>
             <circle

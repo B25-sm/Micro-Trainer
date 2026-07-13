@@ -26,8 +26,8 @@ self.addEventListener('push', (event) => {
   let data = {
     title: 'MicroTrainer',
     body: 'You have a new notification',
-    icon: '/logo.png',
-    badge: '/badge.png',
+    icon: '/notification-icon.png',
+    badge: '/notification-icon.png',
     tag: 'microtrainer-notification',
     requireInteraction: false
   };

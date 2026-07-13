@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import CircularTimer from "../components/CircularTimer";
 import WebcamProctor from "../components/WebcamProctor";
 import OpportunityChip from "../components/OpportunityChip";
+import BrandMark from "../components/BrandMark";
 import { getSessionStudentId, getStudentApiHeaders, getAuthUser } from "../utils/authSession";
 import { getTrack, getCareerTrack } from "../utils/careerTracks";
 
@@ -741,9 +742,10 @@ IMPORTANT:
                 navigate("/");
               }
             }}
-            className="text-xl font-semibold text-gray-800 dark:text-gray-100 hover:text-blue-500 dark:hover:text-blue-400 transition"
+            className="flex items-center gap-2.5 text-xl font-semibold text-gray-800 dark:text-gray-100 hover:text-blue-500 dark:hover:text-blue-400 transition"
           >
-            MicroTrainer
+            <BrandMark className="h-9 w-9 rounded-lg" />
+            <span>MicroTrainer</span>
           </button>
           <div>
             <h1 className="text-lg font-normal text-gray-800 dark:text-gray-100">
