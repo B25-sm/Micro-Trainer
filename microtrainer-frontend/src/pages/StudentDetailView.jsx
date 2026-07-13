@@ -26,6 +26,8 @@ const StudentDetailView = () => {
   const [scorecard, setScorecard] = useState(null);
   const [syncingScorecard, setSyncingScorecard] = useState(false);
   const [scorecardMsg, setScorecardMsg] = useState("");
+  const [conceptMastery, setConceptMastery] = useState(null);
+  const [expandedMasteryTech, setExpandedMasteryTech] = useState(null);
 
   useEffect(() => {
     fetchStudentData();
@@ -36,7 +38,7 @@ const StudentDetailView = () => {
       setLoading(true);
 
       // Fetch all student data in parallel
-      const [analyticsRes, memoryRes, profileRes, learningRes, readinessRes, scheduleRes, todayRes, scorecardRes] =
+      const [analyticsRes, memoryRes, profileRes, learningRes, readinessRes, scheduleRes, todayRes, scorecardRes, masteryRes] =
         await Promise.all([
           axios.get(`${BASE_URL}/student/${studentId}/analytics`, {
             headers: getTrainerHeaders(),
@@ -66,6 +68,11 @@ const StudentDetailView = () => {
               headers: getTrainerHeaders(),
             })
             .catch(() => ({ data: null })),
+          axios
+            .get(`${BASE_URL}/student/${studentId}/concept-mastery`, {
+              headers: getTrainerHeaders(),
+            })
+            .catch(() => ({ data: null })),
         ]);
 
       setAnalytics(analyticsRes.data);
@@ -76,6 +83,7 @@ const StudentDetailView = () => {
       setPersonalSchedule(scheduleRes.data?.schedule ?? null);
       setScheduleToday(todayRes.data ?? null);
       setScorecard(scorecardRes.data ?? null);
+      setConceptMastery(masteryRes.data ?? null);
 
     } catch (err) {
       console.error("Error fetching student data:", err);
@@ -291,28 +299,129 @@ const StudentDetailView = () => {
             {scorecard.skills.map((s) => (
               <div
                 key={s.key}
-                className="flex items-center justify-between gap-2 px-3 py-2 rounded-lg border border-gray-100 dark:border-gray-700/70"
+                className="px-3 py-2 rounded-lg border border-gray-100 dark:border-gray-700/70"
               >
-                <span className="text-sm text-gray-700 dark:text-gray-300">{s.label}</span>
-                <span
-                  className={`inline-flex px-2.5 py-0.5 rounded-md text-xs font-medium border ${getScorecardLevelClass(s.level)}`}
-                >
-                  {s.level}
-                </span>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-sm text-gray-700 dark:text-gray-300">{s.label}</span>
+                  <span
+                    className={`inline-flex px-2.5 py-0.5 rounded-md text-xs font-medium border ${getScorecardLevelClass(s.level)}`}
+                  >
+                    {s.level}
+                  </span>
+                </div>
+                {s.weakConcepts?.length > 0 && (
+                  <p className="mt-1 text-xs text-red-600/80 dark:text-red-400/80">
+                    Weak: {s.weakConcepts.join(", ")}
+                  </p>
+                )}
               </div>
             ))}
           </div>
 
           {scorecard.overall?.message && (
             <div className="mt-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#202124]/60 px-4 py-3">
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Overall:
-              </span>{" "}
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {scorecard.overall.message}
-              </span>
+              <p>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Overall:
+                </span>{" "}
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  {scorecard.overall.message}
+                </span>
+              </p>
+              {scorecard.topWeakConcepts?.length > 0 && (
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  <span className="font-medium">Focus areas:</span>{" "}
+                  {scorecard.topWeakConcepts
+                    .map((c) => `${c.technology} — ${c.label}`)
+                    .join(" · ")}
+                </p>
+              )}
             </div>
           )}
+        </div>
+      )}
+
+      {/* UNDERSTANDING BY CONCEPT */}
+      {conceptMastery?.hasData && conceptMastery.technologies?.length > 0 && (
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#292a2d] p-6 mb-6">
+          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1">
+            Understanding by concept
+          </h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+            Judged from every graded answer across the app — concept by concept, not
+            just totals. Click a technology to see each concept.
+          </p>
+          <div className="space-y-3">
+            {conceptMastery.technologies.map((tech) => {
+              const open = expandedMasteryTech === tech.technology;
+              return (
+                <div
+                  key={tech.technology}
+                  className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden"
+                >
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setExpandedMasteryTech(open ? null : tech.technology)
+                    }
+                    className="w-full flex items-center justify-between gap-4 px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800/40 transition"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span className="font-medium text-gray-800 dark:text-gray-200 capitalize">
+                        {tech.technology}
+                      </span>
+                      <span
+                        className={`inline-flex px-2.5 py-0.5 rounded-md text-xs font-medium border ${getReadinessBandClass(tech.band)}`}
+                      >
+                        {tech.band}
+                      </span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400 tabular-nums">
+                        {tech.mastery}/100
+                      </span>
+                      {tech.trend !== "steady" && (
+                        <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                          {getTrendIcon(tech.trend === "improving" ? "improving" : "declining")}
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-xs text-gray-400 shrink-0">
+                      {tech.conceptCount} concept{tech.conceptCount === 1 ? "" : "s"} ·{" "}
+                      {tech.attempts} answer{tech.attempts === 1 ? "" : "s"}
+                    </span>
+                  </button>
+
+                  {open && (
+                    <div className="px-4 pb-4 pt-1 border-t border-gray-100 dark:border-gray-700/80 bg-gray-50/50 dark:bg-gray-900/20 space-y-2">
+                      {tech.concepts.map((c) => (
+                        <div key={c.slug} className="pt-2">
+                          <div className="flex items-center justify-between gap-2 mb-1">
+                            <span className="text-sm text-gray-700 dark:text-gray-300">
+                              {c.label}
+                            </span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400 tabular-nums">
+                              {c.mastery}/100 · {c.attempts} ans · {c.confidence} conf
+                            </span>
+                          </div>
+                          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                            <div
+                              className={`h-1.5 rounded-full ${
+                                c.mastery >= 75
+                                  ? "bg-emerald-500"
+                                  : c.mastery >= 50
+                                    ? "bg-amber-500"
+                                    : "bg-red-500"
+                              }`}
+                              style={{ width: `${Math.max(4, c.mastery)}%` }}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 

@@ -129,6 +129,16 @@ function appendEvent(event) {
     // and push live updates to the trainer dashboard. One chokepoint keeps every
     // feature — chat, interview, coding, courses — tracked in realtime.
     syncEngagement(record);
+
+    // Judge understanding from this answer — updates per-concept mastery.
+    // Lazy-required to avoid a load-time cycle; best-effort, never blocks.
+    if (record.score != null) {
+      try {
+        require("./conceptMasteryService").syncConceptMastery(record);
+      } catch (masteryErr) {
+        console.error("Concept mastery sync error:", masteryErr.message);
+      }
+    }
   }
 
   return record;

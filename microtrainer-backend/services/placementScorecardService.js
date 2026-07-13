@@ -12,6 +12,7 @@ const {
 } = require("./technologyReadinessService");
 const { normalizeTechnology } = require("./studentLearningLedgerService");
 const { getStudentProfile: getIdentityProfile } = require("./studentProfileStore");
+const { getTechnologyMasteryMap } = require("./conceptMasteryService");
 
 const LEVEL = {
   NOT_STARTED: "Not yet started",
@@ -68,6 +69,35 @@ function combineTechs(readinessTechs, techKeys) {
   }
   const score = Math.round(weightedSum / weightTotal);
   return { level: bandToLevel(scoreToBand(score, eventCount)), score, eventCount };
+}
+
+/**
+ * Combine per-concept understanding (mastery) across a row's technologies.
+ * This is the behavioral judgement — it reflects HOW well the student
+ * answered, concept by concept, not just how much activity happened.
+ */
+function combineMastery(masteryMap, techKeys) {
+  const wanted = new Set(techKeys.map((t) => normalizeTechnology(t)));
+  let wSum = 0;
+  let wTot = 0;
+  let attempts = 0;
+  const weakConcepts = [];
+  for (const [tech, m] of Object.entries(masteryMap || {})) {
+    if (!wanted.has(normalizeTechnology(tech))) continue;
+    const w = Math.max(1, m.attempts || 0);
+    wSum += m.mastery * w;
+    wTot += w;
+    attempts += m.attempts || 0;
+    weakConcepts.push(...(m.weakConcepts || []));
+  }
+  if (attempts === 0) return { level: LEVEL.NOT_STARTED, score: null, attempts: 0, weakConcepts: [] };
+  const score = Math.round(wSum / wTot);
+  return {
+    level: bandToLevel(scoreToBand(score, attempts)),
+    score,
+    attempts,
+    weakConcepts: [...new Set(weakConcepts)].slice(0, 4),
+  };
 }
 
 /** Problem-solving from the coding-practice profile (0–100 average). */
@@ -139,10 +169,24 @@ async function buildScorecard(studentId) {
   const readiness = await buildStudentReadiness(studentId);
   const readinessTechs = readiness?.technologies || [];
   const identity = getIdentityProfile(studentId);
+  const { map: masteryMap, topWeakConcepts } = getTechnologyMasteryMap(studentId);
 
   const techSkills = SKILL_ROWS.map((row) => {
-    const combined = combineTechs(readinessTechs, row.techs);
-    return { key: row.key, label: row.label, ...combined };
+    const readinessCombined = combineTechs(readinessTechs, row.techs);
+    const mastery = combineMastery(masteryMap, row.techs);
+    // Prefer the understanding judgement (mastery) when we actually have
+    // graded answers; fall back to activity-based readiness otherwise.
+    const useMastery = mastery.attempts > 0;
+    return {
+      key: row.key,
+      label: row.label,
+      level: useMastery ? mastery.level : readinessCombined.level,
+      score: useMastery ? mastery.score : readinessCombined.score,
+      eventCount: readinessCombined.eventCount,
+      answersJudged: mastery.attempts,
+      weakConcepts: mastery.weakConcepts,
+      basis: useMastery ? "understanding" : "activity",
+    };
   });
 
   const skills = [
@@ -161,6 +205,7 @@ async function buildScorecard(studentId) {
     generatedAt: new Date().toISOString(),
     skills,
     assessedCount,
+    topWeakConcepts: topWeakConcepts || [],
     overall: overallVerdict(skills),
   };
 }

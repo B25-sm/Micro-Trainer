@@ -1140,6 +1140,17 @@ app.post("/trainer/technology-readiness/sync/:studentId", trainerOnly, async (re
 const { buildScorecard } = require("./services/placementScorecardService");
 const { logPlacementSummary } = require("./services/placementSheetsService");
 
+// Per-concept understanding judgement (self or trainer).
+app.get("/student/:studentId/concept-mastery", studentSelfOrTrainer, (req, res) => {
+  try {
+    const { getStudentMastery } = require("./services/conceptMasteryService");
+    res.json(getStudentMastery(req.params.studentId));
+  } catch (error) {
+    console.error("CONCEPT MASTERY ERROR:", error.message);
+    res.status(500).json({ error: "Failed to build concept mastery" });
+  }
+});
+
 // A student may see their own scorecard; trainers may see anyone's.
 app.get("/student/:studentId/placement-scorecard", studentSelfOrTrainer, async (req, res) => {
   try {

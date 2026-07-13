@@ -170,6 +170,12 @@ export const getPlacementScorecard = (studentId) =>
     headers: getStudentApiHeaders(studentId),
   });
 
+// Per-concept understanding judgement (trainer or self)
+export const getConceptMastery = (studentId) =>
+  API.get(`/student/${studentId}/concept-mastery`, {
+    headers: getStudentApiHeaders(studentId),
+  });
+
 // Refresh the whole "Placement Summary" Google Sheet tab
 export const syncPlacementSummary = () =>
   API.post(

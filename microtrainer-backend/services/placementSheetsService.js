@@ -28,6 +28,7 @@ const SUMMARY_HEADER = [
   ...SKILL_LABELS,
   "Overall",
   "Verdict",
+  "Focus areas",
 ];
 
 const FEEDBACK_HEADER = [
@@ -104,6 +105,10 @@ function scorecardToRow(scorecard) {
     safe(levelByKey["communication"]),
   ];
 
+  const focusAreas = (scorecard.topWeakConcepts || [])
+    .map((c) => `${c.technology}: ${c.label}`)
+    .join("; ");
+
   return [
     new Date(scorecard.generatedAt || Date.now()).toISOString(),
     safe(scorecard.studentId),
@@ -113,6 +118,7 @@ function scorecardToRow(scorecard) {
     ...skillCells,
     safe(scorecard.overall?.level),
     safe(scorecard.overall?.message),
+    safe(focusAreas),
   ];
 }
 
