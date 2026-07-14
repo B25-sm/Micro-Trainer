@@ -30,6 +30,7 @@ const {
   getQuestionMixCounts,
 } = require("./quizQuestionUtils");
 const { callGroq } = require("./groqClient");
+const { getOrGenerate } = require("./lessonCacheService");
 const { getConceptReference, detectTechnologies } = require("./conceptReferenceService");
 const { normalizeForMatching } = require("./inputNormalizationService");
 const {
@@ -637,7 +638,40 @@ ${snippetRules}`;
 // Teaches like Sai Mahendra — NOT raw documentation
 // =======================================================
 
-async function generateGuidedCourseLesson({
+// Shared cross-student key: identical guided content collapses to one entry.
+// Deliberately excludes studentId/session so a whole batch shares one lesson.
+function buildGuidedLessonKey({ technology, title, level, questionCount, lessonBrief, conceptId }) {
+  const norm = (v) => String(v || "").trim().toLowerCase();
+  const concept = conceptId ? norm(conceptId) : norm(title);
+  return [
+    "guided:v1",
+    norm(technology),
+    concept,
+    norm(level) || "beginner",
+    `q${Number(questionCount) || 0}`,
+    lessonBrief ? "brief" : "plain",
+  ].join("|");
+}
+
+/**
+ * Shared, single-flight caching wrapper. A batch of students on the same
+ * concept triggers ONE generation; the rest ride the same in-flight promise or
+ * a warm cache entry. Reteach lessons are personalized (they fold in the
+ * student's prior explanation) so they always bypass the shared cache.
+ */
+async function generateGuidedCourseLesson(params) {
+  if (params.reteach) {
+    return generateGuidedCourseLessonUncached(params);
+  }
+  const key = buildGuidedLessonKey(params);
+  return getOrGenerate(key, () => generateGuidedCourseLessonUncached(params), {
+    // Only pin real AI output; degraded fallbacks (analogy DB) are served once
+    // but not cached, so a transient Groq outage can't stick for hours.
+    shouldCache: (lesson) => lesson?.contentSource === "sai-mahendra-guided",
+  });
+}
+
+async function generateGuidedCourseLessonUncached({
   technology,
   title,
   description,
