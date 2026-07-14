@@ -7,6 +7,17 @@ const BROAD_UMBRELLA_PATTERN = /^(?:react(?:\.js)?|hooks?|javascript|typescript|
 
 const NON_CONCEPT_PATTERN = /\b(?:career path|career advice|resume|curriculum|study plan|roadmap|prepare for|preparation tips|how do i (?:begin|start)|platform help|where should i start)\b/i;
 
+// First-principles programming primitives. A learner asking these is almost
+// always a beginner, so the answer must stay simple — a shopping-cart example,
+// not a production login flow with sessions and tokens.
+const FOUNDATIONAL_CONCEPT_PATTERN =
+  /\b(?:variables?|data\s?types?|strings?|integers?|floats?|booleans?|operators?|arithmetic|comments?|printing|print statements?|inputs?|if(?:[\s/-]?else)?|elif|conditionals?|for\s?loops?|while\s?loops?|loops?|lists?|arrays?|dictionar(?:y|ies)|tuples?|sets?|functions?|parameters?|arguments?|return values?|type\s?cast(?:ing)?|type\s?conversion|concatenation|indentation|f[\s-]?strings?|string formatting|slicing)\b/i;
+
+// Topics that borrow a foundational word ("linked LIST", "hash SET") but are
+// genuinely advanced — they must NOT be treated as beginner concepts.
+const NOT_FOUNDATIONAL_PATTERN =
+  /\b(?:linked\s?lists?|array\s?lists?|hash\s?(?:sets?|maps?|tables?)|stacks?|queues?|trees?|graphs?|heaps?|recursion|closures?|decorators?|generators?|comprehensions?|lambdas?|async|await|threads?|processes?|pointers?|big[\s-]?o|complexity|algorithms?)\b/i;
+
 const COVERAGE_CONTRACTS = [
   {
     id: "react-hooks",
@@ -89,7 +100,15 @@ function classifyQuestion(question) {
   else if (/\b(?:interview|answer in interview)\b/i.test(text)) mode = "interview-prep";
   else if (/\b(?:build|implement|write|code|example)\b/i.test(text)) mode = "implementation";
 
-  return { mode, isBroad, contract, isConceptQuestion };
+  // A named coverage contract or umbrella topic is inherently non-foundational;
+  // only a bare primitive with no advanced qualifier counts as beginner-level.
+  const isFoundational =
+    !contract &&
+    !isBroad &&
+    FOUNDATIONAL_CONCEPT_PATTERN.test(text) &&
+    !NOT_FOUNDATIONAL_PATTERN.test(text);
+
+  return { mode, isBroad, contract, isConceptQuestion, isFoundational };
 }
 
 function buildAnswerPlan(question, options = {}) {
@@ -103,6 +122,15 @@ function buildAnswerPlan(question, options = {}) {
     implementation: `Provide a runnable, realistic implementation, explain the important lines, cover failure/edge cases, and show how a real project would structure it.`,
   };
 
+  const foundationalDirective = plan.isFoundational
+    ? `
+BEGINNER-CONCEPT MODE (critical — this is a first-principles topic a beginner is asking about):
+- Assume the learner knows nothing yet. Introduce NOTHING they haven't met — no authentication, sessions, tokens, databases, API requests, servers, caching, pipelines, threads, or classes.
+- Real-World Application must be ONE small, everyday scenario (a shopping-cart total, a game score, counting unread messages) that uses ONLY this concept.
+- The Code Example must be a few lines (2-8) using ONLY this concept — no functions, classes, imports, error handling, or DB/API calls unless the concept itself is exactly that.
+- Depth here means crystal clarity and confidence, NOT production complexity. Short and correct beats long and intimidating.`
+    : "";
+
   return {
     ...plan,
     qualityGate: options.technical !== false && plan.isConceptQuestion,
@@ -110,6 +138,7 @@ function buildAnswerPlan(question, options = {}) {
 Mode: ${plan.mode}
 ${modeRules[plan.mode]}
 ${plan.contract ? `Mandatory coverage:\n${plan.contract.scope}` : ""}
+${foundationalDirective}
 
 QUALITY BAR:
 - First answer the student's actual question; never substitute a nearby curriculum topic.
@@ -131,21 +160,36 @@ function assessAnswer(answer, plan) {
 
   if (plan.qualityGate === false) return { passed: true, issues };
 
-  if (text.length < (plan.isBroad ? 4000 : 2200)) {
+  const foundational = Boolean(plan.isFoundational);
+
+  // Foundational concepts get a lower bar on purpose: forcing a 2200-char
+  // "production walkthrough" with 6+ lines of code onto "what is a variable"
+  // is exactly what buries beginners in login flows, tokens, and DB calls.
+  const minLength = foundational ? 900 : plan.isBroad ? 4000 : 2200;
+  if (text.length < minLength) {
     issues.push("The answer is too shallow for the scope of the question.");
   }
 
-  const requiredTeachingLayers = [
-    ["direct answer"],
-    ["why it exists"],
-    ["mental model"],
-    ["how it works"],
-    ["when to use", "when not to"],
-    ["common pitfall", "common mistake"],
-    ["key insight", "rule of thumb"],
-    ["production walkthrough"],
-    ["what happens"],
-  ];
+  const requiredTeachingLayers = foundational
+    ? [
+        ["direct answer"],
+        ["why it exists"],
+        ["mental model"],
+        ["how it works"],
+        ["common pitfall", "common mistake"],
+        ["key insight", "rule of thumb"],
+      ]
+    : [
+        ["direct answer"],
+        ["why it exists"],
+        ["mental model"],
+        ["how it works"],
+        ["when to use", "when not to"],
+        ["common pitfall", "common mistake"],
+        ["key insight", "rule of thumb"],
+        ["production walkthrough", "real-world walkthrough"],
+        ["what happens"],
+      ];
   for (const alternatives of requiredTeachingLayers) {
     if (!alternatives.some((heading) => lower.includes(heading))) {
       issues.push(`Missing teaching layer: ${alternatives.join(" / ")}.`);
@@ -159,7 +203,8 @@ function assessAnswer(answer, plan) {
     issues.push("Missing a fenced, runnable code example.");
   } else {
     const codeLines = codeMatch[1].split("\n").filter((line) => line.trim()).length;
-    if (codeLines < 6) issues.push("The code example is too small to demonstrate the mechanism.");
+    const minCodeLines = foundational ? 2 : 6;
+    if (codeLines < minCodeLines) issues.push("The code example is too small to demonstrate the mechanism.");
   }
 
   if (plan.contract) {

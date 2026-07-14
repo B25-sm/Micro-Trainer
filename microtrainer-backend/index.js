@@ -568,7 +568,7 @@ Don't:
         model: chatModel,
         messages: messages,
         temperature: referenceFacts ? 0.2 : 0.3,
-        max_tokens: answerPlan.isBroad ? 3000 : 2200
+        max_tokens: answerPlan.isFoundational ? 1600 : answerPlan.isBroad ? 3000 : 2200
       },
       1
     );
@@ -593,7 +593,7 @@ Don't:
             model: chatModel,
             messages: retryMessages,
             temperature: 0.25,
-            max_tokens: answerPlan.isBroad ? 3000 : 2200,
+            max_tokens: answerPlan.isFoundational ? 1600 : answerPlan.isBroad ? 3000 : 2200,
           },
           1
         );
@@ -623,7 +623,7 @@ Don't:
             model: chatModel,
             messages: repairMessages,
             temperature: 0.15,
-            max_tokens: answerPlan.isBroad ? 3200 : 2400,
+            max_tokens: answerPlan.isFoundational ? 1800 : answerPlan.isBroad ? 3200 : 2400,
           },
           1
         );

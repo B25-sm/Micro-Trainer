@@ -136,6 +136,67 @@ The worker normally prints working twice, receives the Event, runs its finally b
   assert.deepEqual(result, { passed: true, issues: [] });
 });
 
+test("a first-principles topic is flagged foundational and gets a beginner directive", () => {
+  const plan = buildAnswerPlan("python variables");
+  assert.equal(plan.isFoundational, true);
+  assert.equal(plan.mode, "focused-concept");
+  assert.match(plan.instruction, /BEGINNER-CONCEPT MODE/);
+  assert.match(plan.instruction, /shopping-cart|game score|counting/);
+});
+
+test("named contracts and umbrella topics are never treated as foundational", () => {
+  assert.equal(buildAnswerPlan("hooks").isFoundational, false); // react-hooks contract
+  assert.equal(buildAnswerPlan("sql joins").isFoundational, false); // sql-joins contract
+  assert.equal(buildAnswerPlan("python").isFoundational, false); // umbrella
+  // borrows a foundational word but is an advanced DSA topic
+  assert.equal(buildAnswerPlan("linked list").isFoundational, false);
+  assert.equal(buildAnswerPlan("list comprehension").isFoundational, false);
+});
+
+test("a SIMPLE beginner answer passes the relaxed foundational gate", () => {
+  const plan = buildAnswerPlan("python variables");
+  const answer = `**Python Variables**
+
+### Direct Answer
+A variable is a name that points to a value in memory. You create one with a name, an equals sign, and a value, and you can point it at something new whenever you like.
+
+### Why It Exists
+Without variables you would have to write the same value everywhere and change every copy by hand. A variable lets you store a value once and reuse it by name, so your program can remember things and change them as it runs.
+
+### Mental Model
+Think of a variable as a labelled sticky note on a box: the label is the name, and you can move it to a different box any time.
+
+### How It Works
+1. You write \`score = 10\`.
+2. Python stores the value 10 and links the name \`score\` to it.
+3. When you use \`score\`, Python looks up the value behind the name.
+4. Assigning again, like \`score = 20\`, just moves the label to a new value.
+
+### Common Pitfall
+Using a variable before you assign it raises a NameError. Always give it a value first.
+
+### Key Insight
+A variable is a name for a value, not the value itself.
+
+**Real-World Application**
+### Real-World Walkthrough
+Imagine a simple game score. You start with \`score = 0\`, add points as the player wins, and show the score on screen. The variable remembers the running total between rounds.
+
+**Code Example**
+### Runnable Example
+\`\`\`python
+score = 0        # start the score
+score = score + 10  # player scores 10
+print(score)     # shows 10
+\`\`\`
+
+### What Happens
+The score starts at 0, becomes 10 after adding points, and \`print\` shows 10. Change the 10 to 25 and the output becomes 25.`;
+
+  const result = assessAnswer(answer, plan);
+  assert.deepEqual(result, { passed: true, issues: [] });
+});
+
 test("career and study-plan questions are not forced into the concept-card schema", () => {
   const plan = buildAnswerPlan("Give me a Python study plan");
   assert.equal(plan.isConceptQuestion, false);
