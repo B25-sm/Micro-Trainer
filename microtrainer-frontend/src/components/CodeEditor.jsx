@@ -10,14 +10,17 @@ import {
   normalizeJudgeOutput,
   runCodeInBrowser,
   supportsBrowserExecution,
+  prewarmBrowserRuntime,
 } from '../lib/browserCodeRunner.js';
 import { runCodeOnServer, submitProblemOnServer } from '../lib/serverCodeRunner.js';
 import { getSessionStudentId, getStudentApiHeaders } from '../utils/authSession';
 
+// Java is intentionally omitted: it has no browser runtime and needs a
+// server-side Piston/Judge0 runner, which is not deployed. Offering it here only
+// produces "timed out"/unsupported errors, so we don't show it as an option.
 const PROBLEM_SOLVING_LANGUAGES = [
   { value: 'javascript', label: 'JavaScript' },
   { value: 'python', label: 'Python' },
-  { value: 'java', label: 'Java' },
 ];
 
 const codeStorageKey = (prob, lang) =>
@@ -98,6 +101,14 @@ const CodeEditor = ({ problem, onSubmit, blockClipboard = true }) => {
     const t = setTimeout(() => setClipboardNotice(''), 2500);
     return () => clearTimeout(t);
   }, [clipboardNotice]);
+
+  // Warm the runtime (esp. Pyodide's ~10MB download) while the learner reads the
+  // problem and writes code, so the first Run is instant instead of timing out.
+  useEffect(() => {
+    if (supportsBrowserExecution(language)) {
+      prewarmBrowserRuntime(language);
+    }
+  }, [language]);
 
   const handleEditorMount = useCallback(
     (editor, monaco) => {

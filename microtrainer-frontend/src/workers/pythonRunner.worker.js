@@ -163,7 +163,21 @@ __microtrainer_result = solution(json.loads(__microtrainer_input))
 }
 
 self.onmessage = async (event) => {
-  const { language, code, mode, input, testCases = [] } = event.data;
+  const data = event.data || {};
+
+  // Handshake: load Pyodide up front so the download does not count against the
+  // caller's execution timeout. Reply __ready once the runtime is usable.
+  if (data.__init) {
+    try {
+      await getPyodide();
+      self.postMessage({ __ready: true });
+    } catch (error) {
+      self.postMessage({ __ready: false, error: error?.message || String(error) });
+    }
+    return;
+  }
+
+  const { requestId, language, code, mode, input, testCases = [] } = data;
 
   try {
     const pyodide = await getPyodide();
@@ -177,6 +191,7 @@ self.onmessage = async (event) => {
     if (mode === 'run') {
       const result = await runTestCase(pyodide, preparedCode, { input });
       self.postMessage({
+        requestId,
         success: !result.error,
         mode: 'run',
         language,
@@ -200,16 +215,17 @@ self.onmessage = async (event) => {
       results.push(await runTestCase(pyodide, preparedCode, testCase));
     }
 
-    self.postMessage(buildJudgeResponse({ mode, language, results }));
+    self.postMessage({ requestId, ...buildJudgeResponse({ mode, language, results }) });
   } catch (error) {
-    self.postMessage(
-      buildJudgeResponse({
+    self.postMessage({
+      requestId,
+      ...buildJudgeResponse({
         mode,
         language,
         results: [],
         error: error.message || String(error),
         stderr: error.message || String(error),
-      })
-    );
+      }),
+    });
   }
 };

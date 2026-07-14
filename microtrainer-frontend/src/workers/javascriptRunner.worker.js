@@ -115,7 +115,16 @@ async function runTestCase(solution, testCase) {
 }
 
 self.onmessage = async (event) => {
-  const { language, code, mode, input, testCases = [] } = event.data;
+  const data = event.data || {};
+
+  // Handshake for protocol parity with the Python worker. JS has no runtime to
+  // download, so it is ready immediately.
+  if (data.__init) {
+    self.postMessage({ __ready: true });
+    return;
+  }
+
+  const { requestId, language, code, mode, input, testCases = [] } = data;
 
   try {
     const solution = await getSolution(code);
@@ -124,6 +133,7 @@ self.onmessage = async (event) => {
       const testCase = { input };
       const result = await runTestCase(solution, testCase);
       self.postMessage({
+        requestId,
         success: !result.error,
         mode: 'run',
         language,
@@ -147,16 +157,17 @@ self.onmessage = async (event) => {
       results.push(await runTestCase(solution, testCase));
     }
 
-    self.postMessage(buildJudgeResponse({ mode, language, results }));
+    self.postMessage({ requestId, ...buildJudgeResponse({ mode, language, results }) });
   } catch (error) {
-    self.postMessage(
-      buildJudgeResponse({
+    self.postMessage({
+      requestId,
+      ...buildJudgeResponse({
         mode,
         language,
         results: [],
         error: error.stack || error.message || String(error),
         stderr: error.message || String(error),
-      })
-    );
+      }),
+    });
   }
 };
